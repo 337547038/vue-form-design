@@ -1,0 +1,10 @@
+@charset "utf-8";
+$namespace: 'ak-';
+@mixin ns($cls){
+  $NS: $namespace+$cls;
+  //$NS: 'ak-'+$cls;
+
+  .#{$NS}{
+    @content;
+  }
+}

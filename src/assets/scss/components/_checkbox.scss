@@ -1,0 +1,49 @@
+@charset "UTF-8";
+@include ns(checkbox){
+  $border: #dcdfe6; // 默认边框色
+  $background: #fff; // 默认背景色
+  $radius: 2px; // 圆角
+  $checkedBorder: #409eff; // 选中边框颜色
+  $checkedBackground: #409eff; // 选中背景色
+  $fontColor: #fff; // 显示勾勾的颜色
+  $disabledBorder: #dcdfe6; // 禁用时边框颜色
+  $disabledBackground: #edf2fc; // 禁用背景色
+  $disabledFontColor: #c0c4cc; // 禁用勾勾色
+  cursor: pointer;
+  input{opacity: 0;outline: none;position: absolute;margin: 0;width: 0;height: 0;z-index: -1;}
+  span{display: inline-block;vertical-align: middle}
+  /*默认*/
+  @include ns(checkbox-text){margin-left: 5px}
+  @include ns(checkbox-inner){
+    border: 1px solid $border;
+    background-color: $background;
+    position: relative;border-radius: $radius;box-sizing: border-box;width: 14px;height: 14px;z-index: 1;transition: border-color .3s, background-color .3s;font-family: 'iconfont';
+    &:after{content: '\e61b';width: 100%;height: 14px;font-size: 12px;line-height: 14px;opacity: 0;transition: all .3s;display: block;visibility: hidden;transform: scale(.5);font-weight: 700}
+    &:hover{opacity: .8}
+  }
+  /*选中状态*/
+  input:checked + .#{$namespace}checkbox-inner{
+    background-color: $checkedBackground;
+    border-color: $checkedBorder;
+    &:after{opacity: 1;visibility: visible;color: $fontColor;transform: scale(1)}
+  }
+  /*禁用状态*/
+  input:disabled + .#{$namespace}checkbox-inner{
+    background-color: $disabledBackground;
+    border-color: $disabledBorder;
+    cursor: not-allowed;
+    &:after{color: $disabledFontColor;}
+  }
+  &.disabled{cursor: not-allowed}
+  /*部分选择状态*/
+  &.some-select{
+    @include ns(checkbox-inner){
+      border: 1px solid $checkedBorder;
+      background-color: $checkedBackground;
+      &:after{height: 5px;background: $background;opacity: 1;position: absolute;left: -2px; top: 3px; width: 15px;display: block;visibility: visible;content: '';}
+    }
+  }
+}
+@include ns(checkbox-group){
+  @include ns(checkbox){margin-right: 10px}
+}

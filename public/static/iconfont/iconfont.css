@@ -1,0 +1,99 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2578019 */
+  src: url('iconfont.woff2?t=1623037001448') format('woff2'),
+       url('iconfont.woff?t=1623037001448') format('woff'),
+       url('iconfont.ttf?t=1623037001448') format('truetype');
+}
+
+.iconfont,[class*="icon-"] {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-close:before {
+  content: "\e615";
+}
+
+.icon-plus:before {
+  content: "\e603";
+}
+
+.icon-arrow:before {
+  content: "\e61b";
+}
+
+.icon-check:before {
+  content: "\e6c1";
+}
+
+.icon-vue:before {
+  content: "\e69a";
+}
+
+.icon-childTable:before {
+  content: "\e713";
+}
+
+.icon-switch:before {
+  content: "\e646";
+}
+
+.icon-save:before {
+  content: "\e61f";
+}
+
+.icon-move:before {
+  content: "\e696";
+}
+
+.icon-clone:before {
+  content: "\e692";
+}
+
+.icon-del:before {
+  content: "\e67d";
+}
+
+.icon-eye:before {
+  content: "\e601";
+}
+
+.icon-json:before {
+  content: "\e60e";
+}
+
+.icon-grid:before {
+  content: "\e652";
+}
+
+.icon-text:before {
+  content: "\e621";
+}
+
+.icon-date:before {
+  content: "\e64c";
+}
+
+.icon-input:before {
+  content: "\e629";
+}
+
+.icon-checkbox:before {
+  content: "\e61e";
+}
+
+.icon-textarea:before {
+  content: "\e60a";
+}
+
+.icon-radio:before {
+  content: "\e6b1";
+}
+
+.icon-select:before {
+  content: "\e64d";
+}
+

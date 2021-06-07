@@ -1,0 +1,214 @@
+@charset "UTF-8";
+@include ns(dialog) {
+  position: fixed;z-index: 2019;box-shadow: 1px 1px 20px rgba(0, 0, 0, .3); border-radius: 5px; background: #fff; overflow: hidden;min-width: 300px;transition: all .3s;
+  @include ns(dialog-icon) {display: block; position: absolute; right: 10px; top: 10px; height: 20px; z-index: 10; line-height: 20px; text-align: center;
+    a {color: #666;font-size: 14px;width: 20px;margin-left: 10px;text-decoration: none;
+      &:hover {
+        opacity: .8;
+      }
+    }
+  }
+  @include ns(dialog-header) {overflow: hidden; font-size: 16px; padding-left: 15px; position: relative; border: 1px solid #e9eaec; color: #333; border-radius: 5px 5px 0 0;-webkit-user-select: none;height: 40px;line-height: 40px;}
+  @include ns(dialog-content) {overflow: hidden;overflow-y: auto;padding: 20px;box-sizing: border-box;transition: all .3s}
+  @include ns(dialog-footer) {text-align: center;padding: 10px 0}
+  @include ns(dialog-auto-close) {position: absolute; left: 10px; top: 45px;display: none }
+  @include ns(dialog-alert) {text-align: center;
+    @include ns(dialog-text) {display: inline-block;text-align: left;font-size: 16px;
+      i {font-size: 30px;display: inline-block;vertical-align: middle;margin-right: 5px;}
+    }
+    // 其他的需要再定义样式
+    // success
+    .icon-success {
+      &:before {color: green;}
+    }
+    //failure
+    .icon-failure {
+      &:before {color: red;}
+    }
+    //warning
+    .icon-tips {
+      &:before {color: orange;}
+    }
+  }
+  // 最大最小化使用样式控制
+  &.dialog-full-screen {width: 100vw !important;height: 100vh !important;left: 0 !important;top: 0 !important;z-index: 100}
+}
+@include ns(dialog-min-list) {position: fixed;left: 200px;bottom: 10px;display: flex;align-items: center;
+  div {}
+}
+@include ns(dialog-modal) {position: fixed;left: 0;top: 0;right: 0;bottom: 0;z-index: 2018;background: rgba(55, 55, 55, .6); animation: dialog-modal .3s;transition: .3s}
+@keyframes dialog-modal {
+  0% {opacity: 0}
+  100% {opacity: 1}
+}
+/*过渡动画*/
+.zoom-enter-active { animation: zoom-enter;}
+.zoom-leave-active { animation: zoom-leave;}
+@keyframes zoom-enter {
+  0% {opacity: 0;transform: scale(.5)}
+  100% {opacity: 1;transform: scale(1)}
+}
+@keyframes zoom-leave {
+  0% {opacity: 1;transform: scale(1)}
+  100% {opacity: 0;transform: scale(.5)}
+}
+.flip-enter-active {animation: flip-enter both ease-in;backface-visibility: visible !important;}
+.flip-leave-active { animation: flip-leave;}
+@keyframes flip-enter {
+  0% {transform: perspective(400px) rotateX(60deg)}
+  70% {transform: perspective(400px) rotateX(-15deg)}
+  to {transform: perspective(400px)}
+}
+@keyframes flip-leave {
+  0% {transform: perspective(400px)}
+  30% {transform: perspective(400px) rotateX(-15deg)}
+  to {transform: perspective(400px) rotateX(45deg)}
+}
+.door-enter-active {animation: door-enter both cubic-bezier(0.4, 0, 0, 1.5);}
+.door-leave-active {animation: door-leave both;}
+@keyframes door-enter {
+  from {transform: scale3d(0, 1, 1);opacity: 0}
+}
+@keyframes door-leave {
+  60% {transform: scale3d(.01, 1, 1);}
+  to {transform: scale3d(0, 1, .1);opacity: 0}
+}
+.rotate-enter-active {
+  animation: rotate-enter both;
+  transform-origin: center;
+}
+.rotate-leave-active {
+  animation: rotate-leave both;
+  transform-origin: center;
+}
+@keyframes rotate-enter {
+  from {transform: rotate3d(0, 0, 1, -180deg) scale3d(.3, .3, .3);opacity: 0}
+}
+@keyframes rotate-leave {
+  to {transform: rotate3d(0, 0, 1, 180deg) scale3d(.3, .3, .3);opacity: 0}
+}
+.slideDown-enter-active {
+  animation: slideDown-enter both cubic-bezier(0.4, 0, 0, 1.5);
+}
+.slideDown-leave-active {
+  animation: slideDown-leave both;
+}
+@keyframes slideDown-enter {
+  from {transform: translate3d(0, -100px, 0);opacity: 0}
+}
+@keyframes slideDown-leave {
+  to {transform: translate3d(0, -100px, 0);opacity: 0}
+}
+.slideUp-enter-active {animation: slideUp-enter both cubic-bezier(0.4, 0, 0, 1.5);}
+.slideUp-leave-active {animation: slideUp-leave both;}
+@keyframes slideUp-enter {
+  from {transform: translate3d(0, 100px, 0);opacity: 0}
+}
+@keyframes slideUp-leave {
+  to {transform: translate3d(0, 100px, 0);opacity: 0}
+}
+.slideLeft-enter-active {
+  animation: slideLeft-enter both cubic-bezier(0.4, 0, 0, 1.5);
+}
+.slideLeft-leave-active {
+  animation: slideLeft-leave both;
+}
+@keyframes slideLeft-enter {
+  from {transform: translate3d(-150px, 0, 0);opacity: 0}
+}
+@keyframes slideLeft-leave {
+  to {transform: translate3d(-150px, 0, 0);opacity: 0}
+}
+.slideRight-enter-active {animation: slideRight-enter both cubic-bezier(0.4, 0, 0, 1.5) .3s;}
+.slideRight-leave-active {animation: slideRight-leave both;}
+@keyframes slideRight-enter {
+  from {transform: translate3d(150px, 0, 0);opacity: 0}
+}
+@keyframes slideRight-leave {
+  to {transform: translate3d(150px, 0, 0);opacity: 0}
+}
+.val-enter-active {
+  animation: val-enter forwards ease-out .5s;
+}
+.val-leave-active {animation: val-leave forwards ease-out .5s;}
+@keyframes val-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(calc(-100vw - 50%), 0, 0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(100px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes val-leave {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(-100px, 0, 0) scale3d(1.1, 1.1, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(100vw + 50%), 0, 0);
+  }
+}
+.donna-enter-active {
+  animation: donna-enter 0.4s forwards cubic-bezier(0.7, 0, 0.3, 1);
+}
+.donna-leave-active {animation: donna-leave 0.4s forwards cubic-bezier(0.7, 0, 0.3, 1);}
+@keyframes donna-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(-400px, 0, 0) scale3d(1.4, 0, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+}
+@keyframes donna-leave {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+  20% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-400px, 0, 0) scale3d(1.4, 0, 1);
+  }
+}
+.ricky-enter-active {
+  animation: ricky-enter 0.4s forwards cubic-bezier(0.7, 0, 0.3, 1);
+  transform-origin: -150% 50%;
+}
+.ricky-leave-active {animation: ricky-leave 0.4s forwards cubic-bezier(0.7, 0, 0.3, 1);
+  transform-origin: -150% 50%;}
+@keyframes ricky-enter {
+  0% {
+    opacity: 0;
+    transform: rotate3d(0, 0, 1, -45deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+}
+@keyframes ricky-leave {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate3d(0, 0, 1, 45deg);
+  }
+}

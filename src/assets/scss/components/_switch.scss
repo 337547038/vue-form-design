@@ -1,0 +1,16 @@
+@charset "utf-8";
+@include ns(switch){
+  $height: 22px;
+  display: inline-block; box-sizing: border-box; height: $height; min-width: 44px; vertical-align: middle; border-radius: 20px; background: #ccc; border: 1px solid #ccc; cursor: pointer; transition: all 1s; user-select: none; position: relative;
+  &:after{ position: absolute; width: 18px; height: 18px; left: 1px; top: 1px; border-radius: 18px; background-color: #fff; content: " "; cursor: pointer; transition: all .5s; display: inline-block }
+  /*选中*/
+  &.switch-checked{ border-color: #108ee9; background-color: #108ee9;
+    @include ns(switch-inner){ text-align: left }
+    &:after{ left: 23px;}
+  }
+  @include ns(switch-inner){ color: #fff; font-size: 12px; display: block; height: $height; line-height: $height; padding: 0 5px; box-sizing: border-box; text-align: right; font-style: normal }
+  //禁用状态
+  &.disabled{ cursor: not-allowed; background: #f3f3f3; border-color: #f3f3f3;
+    &:after{ background: #ccc;cursor: not-allowed; }
+  }
+}

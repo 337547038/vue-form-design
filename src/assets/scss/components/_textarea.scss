@@ -1,0 +1,5 @@
+@charset "utf-8";
+@include ns(textarea){ padding: 5px 10px; line-height: 22px; border: 1px solid #e2e2e2; display: inline-block; width: 100%; font-size: 14px; border-radius: 3px; box-sizing: border-box; resize: none; color: #333;outline: none;
+  &:focus{ border-color: #f60 }
+  &:disabled{cursor: not-allowed}
+}
