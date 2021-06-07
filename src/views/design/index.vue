@@ -8,9 +8,9 @@
         <formDrag :data="formData"></formDrag>
       </div>
     </div>
-    <form-control-attr :formConfig="formData.config" />
+    <form-control-attr :formConfig="formData.config"/>
     <ak-dialog v-model="visible" confirm="保存" :callback="_getJson" :width="800" :height="500">
-      <div v-if="visible" id="editJson">{{editFormData}}</div>
+      <div v-if="visible" id="editJson">{{ editFormData }}</div>
     </ak-dialog>
   </div>
 </template>
@@ -19,6 +19,7 @@ import headTools from './components/headTools'
 import formControl from './components/formControl'
 import formDrag from './components/formDrag'
 import formControlAttr from './components/formControlAttr'
+import {evil} from '@/utils'
 
 export default {
   name: 'Index',
@@ -66,18 +67,29 @@ export default {
       }
       if (type === 'json') {
         this.visible = true
-        this.editFormData = this.formData
+        const str = JSON.stringify(this.formData, function (key, val) {
+          if (typeof val === 'function') {
+            return val + ''
+          }
+          return val
+        })
+        // this.editFormData = this.obj2Str(this.formData)
+        this.editFormData = str
         this.$nextTick(() => {
           const editor = ace.edit('editJson')
           editor.session.setMode('ace/mode/javascript')
           this.aceEditor = editor
+          const beautify = ace.require('ace/ext/beautify')
+          console.log(beautify)
+         const a= beautify.beautify(editor.getValue())
+          console.log(a)
         })
       }
     },
     init() {
       const queryId = this.$route.query.id
       if (queryId) {
-        this.formData = JSON.parse(window.localStorage.getItem(queryId))
+        this.formData = evil(window.localStorage.getItem(queryId))
       }
     },
     _getJson() {
@@ -90,7 +102,40 @@ export default {
       window.localStorage.setItem('formDesign', string)
       this.$msg('保存成功')
       this.$router.push({path: '/'})
+    },
+    obj2Str(obj) {
+      switch (typeof (obj)) {
+        case 'object':
+          var ret = []
+          if (obj instanceof Array) {
+            for (var i = 0, len = obj.length; i < len; i++) {
+              ret.push(this.obj2Str(obj[i]))
+            }
+            return '[' + ret.join(',') + ']'
+          } else if (obj instanceof RegExp) {
+            return obj.toString()
+          } else {
+            for (var a in obj) {
+              ret.push(a + ':' + this.obj2Str(obj[a]))
+            }
+            return '{' + ret.join(',') + '}'
+          }
+        case 'function':
+          // return 'function() {}'
+          return obj.toString()
+        case 'number':
+          return obj.toString()
+        case 'string':
+          return '"' + obj.replace(/(\\|\\")/g, '\\$1').replace(/\n|\r|\t/g, function (a) {
+            return (a === '\n') ? '\\n' : (a === '\r') ? '\\r' : (a === '\t') ? '\\t' : ''
+          }) + '"'
+        case 'boolean':
+          return obj.toString()
+        default:
+          return obj.toString()
+      }
     }
+
   },
   destroy() {
     this.aceEditor.destroy()

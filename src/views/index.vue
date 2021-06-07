@@ -15,6 +15,7 @@
   </div>
 </template>
 <script>
+import {evil} from '@/utils'
 
 export default {
   name: 'Index',
@@ -31,10 +32,17 @@ export default {
     }
   },
   created() {
-    const storage = JSON.parse(window.localStorage.getItem('formDesign'))
+    /* const storage = JSON.parse(window.localStorage.getItem('formDesign'))
     if (storage) {
       this.dataList.list.push({
         title: storage.config.name
+      })
+    } */
+    const storage = window.localStorage.getItem('formDesign')
+    if (storage) {
+      const data = evil(storage)
+      this.dataList.list.push({
+        title: data.config.name
       })
     }
   },
