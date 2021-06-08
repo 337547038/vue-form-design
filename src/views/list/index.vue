@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import {evil} from '@/utils'
+
 export default {
   name: 'list',
   data() {
@@ -35,7 +37,7 @@ export default {
   methods: {
     init() {
       // 从表单数据里提取表头相关的
-      const formData = JSON.parse(window.localStorage.getItem('formDesign'))
+      const formData = evil(window.localStorage.getItem('formDesign'))
       formData && formData.list.forEach(item => {
         if (item.type === 'grid') {
           item.columns.forEach(co => {

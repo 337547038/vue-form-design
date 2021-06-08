@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "core-js": "^2.6.5",
+    "js-beautify": "^1.10.1-rc2",
     "js-md5": "^0.7.3",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",

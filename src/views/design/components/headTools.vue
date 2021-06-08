@@ -3,7 +3,7 @@
   <div class="main-tools">
     <ak-button type="text" @click="_btnClick('del',$event)"><i class="icon-del"></i>清空</ak-button>
     <ak-button type="text" @click="_btnClick('preview',$event)"><i class="icon-eye"></i>预览</ak-button>
-    <ak-button type="text" @click="_btnClick('json',$event)"><i class="icon-json"></i>生成JSON</ak-button>
+    <ak-button type="text" @click="_btnClick('json',$event)"><i class="icon-json"></i>生成脚本</ak-button>
     <ak-button type="text" @click="_btnClick('save',$event)"><i class="icon-save"></i>保存</ak-button>
   </div>
 </template>

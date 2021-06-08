@@ -47,11 +47,13 @@
         v-html="vModel"></div>
       <div class="item-tips" v-if="item.other" v-html="item.other.value" @click="item.other.click(item)"></div>
     </template>
-    <drag-control
-      @click="_click($event)"
-      v-show="activeKey===item.name"
-      v-if="showControl">
-    </drag-control>
+    <template slot="other">
+      <drag-control
+        @click="_click($event)"
+        v-show="activeKey===item.name"
+        v-if="showControl">
+      </drag-control>
+    </template>
   </ak-form-item>
 </template>
 
@@ -118,8 +120,7 @@ export default {
       }
     }
   },
-  computed: {
-  },
+  computed: {},
   mounted() {
     bus.$on('setRemoteFunc', this.setRemoteFunc) // 检索事件监听
   }

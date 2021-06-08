@@ -34,7 +34,7 @@
                       :item="colList"
                       v-model="colList.control.value"
                       :key="listIndex"
-                      @click="_formItemClick(colList,listIndex,item.list,$event,'table')">
+                      @click="_formItemClick(colList,listIndex,item.list,$event,'child')">
                     </form-item>
                   </template>
                 </transition-group>
@@ -138,7 +138,7 @@ export default {
         this._setControlAttr(item, controlType)
       }
     },
-    _draggableAdd(evt, item) {
+    _draggableAdd(evt, item, isChildTable) {
       // console.log('add', evt)
       // console.log(item)
       const newIndex = evt.newIndex
@@ -162,7 +162,7 @@ export default {
         }, obj))
       }
       this.activeKey = obj.type + key
-      this._setControlAttr(dataList[newIndex])
+      this._setControlAttr(dataList[newIndex], isChildTable)
     },
     _draggableEnd() {
 
@@ -179,10 +179,11 @@ export default {
       if (row.className === 'grid' || row.className === 'childTable') {
         list.splice(newIndex, 1)
       }
-      this._draggableAdd(evt, list)
+      this._draggableAdd(evt, list, isChildTable)
     },
-    _setControlAttr(obj, controlType) {
-      this.$store.commit('setControlAttr', Object.assign(obj, {parentType: controlType}))
+    _setControlAttr(obj, controlType = '') {
+      this.$store.commit('setControlAttr', obj)
+      this.$store.commit('setParentType', controlType)
     }
   },
   computed: {},

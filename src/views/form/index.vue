@@ -5,8 +5,7 @@
       :data="data"
       ref="auform"
       :readOnly="readOnly"
-      :remoteFunc="remoteFunc"
-      :eventScript="eventScript">
+      :remoteFunc="remoteFunc">
     </autoForm>
     <div class="submit-button" v-if="!readOnly">
       <ak-button @click="submit" type="primary">提交表单</ak-button>
@@ -16,6 +15,7 @@
 
 <script>
 import autoForm from './components/form'
+import {evil} from '@/utils'
 
 export default {
   name: 'formSubmit',
@@ -31,7 +31,6 @@ export default {
           resolve(obj)
         } */
       },
-      eventScript: {},
       readOnly: false
     }
   },
@@ -42,7 +41,7 @@ export default {
     if (query.type === 'preview') {
       key = 'preview'
     }
-    this.data = JSON.parse(window.localStorage.getItem(key)) || []
+    this.data = evil(window.localStorage.getItem(key)) || []
     if (query.id) {
       // 编辑时，模拟请求数据
       setTimeout(() => {

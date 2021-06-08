@@ -10,6 +10,7 @@
       <div :class="`${prefixCls}-form-tips ${iconType}`" v-text="errorTips" v-if="showMessage&&errorTips"></div>
       <div :class="`${prefixCls}-form-tips ${iconType}`" v-else-if="showMessage&&error===false"></div>
     </div>
+    <slot name="other"></slot>
   </div>
 </template>
 

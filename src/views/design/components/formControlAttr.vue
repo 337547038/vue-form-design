@@ -20,7 +20,7 @@
           <ak-form-item label="默认值">
             <ak-input v-model="dataList.control.value"></ak-input>
           </ak-form-item>
-          <ak-form-item label="列表显示" v-if="!dataList.parentType">
+          <ak-form-item label="列表显示" v-if="!parentType">
             <ak-checkbox v-model="dataList.tableList"></ak-checkbox>
           </ak-form-item>
           <div v-if="dataList.type==='datePicker'">
@@ -168,6 +168,9 @@ export default {
     },
     selectOptionList() {
       return this.dataList.control.options || this.dataList.control.data
+    },
+    parentType() {
+      return this.$store.state.form.parentType
     }
   },
   mounted() {

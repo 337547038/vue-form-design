@@ -3,21 +3,45 @@ export function evil(fn) {
   return new Fn('return ' + fn)()
 }
 
-// json对象转换成字符串
-/*
-var str = JSON.stringify(json, function(key, val) {
-  if (typeof val === 'function') {
-    return val + '';
-  }
-  return val;
-});
-// json字符串转换成对象
-var json = JSON.parse(str,function(k,v){
-  if(v.indexOf && v.indexOf('function') > -1){
-    return eval("(function(){return "+v+" })()")
-  }
-  return v;
+export function jsonStringify(obj) {
+  return JSON.stringify(obj, function (key, val) {
+    if (typeof val === 'function') {
+      return val + ''
+    }
+    return val
+  })
+}
 
-————————————————
-版权声明：本文为CSDN博主「ao123056」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/ao123056/article/details/98728814 */
+export function jsonParse(string) {
+  return JSON.parse(string, function (k, v) {
+    if (v.indexOf && v.indexOf('function') > -1) {
+      return evil('(function(){return ' + v + ' })()')
+    }
+    return v
+  })
+}
+
+export function obj2string(o) {
+  var r = []
+  if (typeof o === 'string') {
+    return '"' + o.replace(/([\\'\\"\\])/g, '\\$1').replace(/(\n)/g, '\\n').replace(/(\r)/g, '\\r').replace(/(\t)/g, '\\t') + '"'
+  }
+  if (typeof o === 'object') {
+    if (!o.sort) {
+      for (let i in o) {
+        r.push(i + ':' + obj2string(o[i]))
+      }
+      if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {
+        r.push('toString:' + o.toString.toString())
+      }
+      r = '{' + r.join() + '}'
+    } else {
+      for (let i = 0; i < o.length; i++) {
+        r.push(obj2string(o[i]))
+      }
+      r = '[' + r.join() + ']'
+    }
+    return r
+  }
+  return o && o.toString()
+}

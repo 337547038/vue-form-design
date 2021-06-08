@@ -8,9 +8,15 @@
         <formDrag :data="formData"></formDrag>
       </div>
     </div>
-    <form-control-attr :formConfig="formData.config"/>
-    <ak-dialog v-model="visible" confirm="保存" :callback="_getJson" :width="800" :height="500">
-      <div v-if="visible" id="editJson">{{ editFormData }}</div>
+    <form-control-attr :formConfig="formData.config" />
+    <ak-dialog
+      v-model="visible"
+      confirm="保存"
+      :callback="_getJson"
+      :width="800"
+      :height="500"
+      title="生成代码">
+      <div v-if="visible" id="editJson"></div>
     </ak-dialog>
   </div>
 </template>
@@ -19,7 +25,8 @@ import headTools from './components/headTools'
 import formControl from './components/formControl'
 import formDrag from './components/formDrag'
 import formControlAttr from './components/formControlAttr'
-import {evil} from '@/utils'
+import {obj2string, evil} from '@/utils'
+import jsbeautify from 'js-beautify'
 
 export default {
   name: 'Index',
@@ -32,17 +39,13 @@ export default {
         config: {
           labelWidth: '',
           className: '',
-          name: 'form' + new Date().getTime(),
-          change: function () {
-            console.log('000')
-            return 'a'
-          }
+          name: 'form' + new Date().getTime()
         }
-      },
-      editFormData: {}
+      }
     }
   },
   created() {
+    this.$store.commit('setControlAttr', {})
     this.init()
   },
   methods: {
@@ -54,10 +57,10 @@ export default {
       }
       if (type === 'save') {
         // 将数据保存在本地供测试
-        this._saveFormData(JSON.stringify(this.formData))
+        this._saveFormData(obj2string(this.formData))
       }
       if (type === 'preview') {
-        window.localStorage.setItem(type, JSON.stringify(this.formData))
+        window.localStorage.setItem(type, obj2string(this.formData))
         const query = {
           id: this.formData.config.name,
           type: type
@@ -67,22 +70,23 @@ export default {
       }
       if (type === 'json') {
         this.visible = true
-        const str = JSON.stringify(this.formData, function (key, val) {
-          if (typeof val === 'function') {
-            return val + ''
-          }
-          return val
-        })
-        // this.editFormData = this.obj2Str(this.formData)
-        this.editFormData = str
+        const beautifyOpt = {
+          'indent_size': 2,
+          'brace_style': 'expand'
+        }
+        const editFormData = jsbeautify('opt=' + obj2string(this.formData), beautifyOpt)
         this.$nextTick(() => {
           const editor = ace.edit('editJson')
+          editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true
+          })
+          editor.setFontSize(14)
+          editor.setShowPrintMargin(false)
           editor.session.setMode('ace/mode/javascript')
+          editor.setValue(editFormData)
           this.aceEditor = editor
-          const beautify = ace.require('ace/ext/beautify')
-          console.log(beautify)
-         const a= beautify.beautify(editor.getValue())
-          console.log(a)
         })
       }
     },
@@ -102,40 +106,7 @@ export default {
       window.localStorage.setItem('formDesign', string)
       this.$msg('保存成功')
       this.$router.push({path: '/'})
-    },
-    obj2Str(obj) {
-      switch (typeof (obj)) {
-        case 'object':
-          var ret = []
-          if (obj instanceof Array) {
-            for (var i = 0, len = obj.length; i < len; i++) {
-              ret.push(this.obj2Str(obj[i]))
-            }
-            return '[' + ret.join(',') + ']'
-          } else if (obj instanceof RegExp) {
-            return obj.toString()
-          } else {
-            for (var a in obj) {
-              ret.push(a + ':' + this.obj2Str(obj[a]))
-            }
-            return '{' + ret.join(',') + '}'
-          }
-        case 'function':
-          // return 'function() {}'
-          return obj.toString()
-        case 'number':
-          return obj.toString()
-        case 'string':
-          return '"' + obj.replace(/(\\|\\")/g, '\\$1').replace(/\n|\r|\t/g, function (a) {
-            return (a === '\n') ? '\\n' : (a === '\r') ? '\\r' : (a === '\t') ? '\\t' : ''
-          }) + '"'
-        case 'boolean':
-          return obj.toString()
-        default:
-          return obj.toString()
-      }
     }
-
   },
   destroy() {
     this.aceEditor.destroy()

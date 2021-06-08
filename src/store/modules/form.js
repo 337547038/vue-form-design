@@ -1,6 +1,7 @@
 export default {
   state: {
-    controlAttr: {}
+    controlAttr: {},
+    parentType: ''
   },
   mutations: {
     // 这里填充数据的操作方法
@@ -11,6 +12,9 @@ export default {
     setControlAttr(state, obj) {
       // console.log(obj)
       state.controlAttr = obj
+    },
+    setParentType(state, type) {
+      state.parentType = type
     }
     /* setRemoteFunc(state, obj) {
       console.log(obj)

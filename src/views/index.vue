@@ -23,21 +23,12 @@ export default {
   props: {},
   data() {
     return {
-      eventClick: function () {
-        console.log('p')
-      },
       dataList: {
         list: []
       }
     }
   },
   created() {
-    /* const storage = JSON.parse(window.localStorage.getItem('formDesign'))
-    if (storage) {
-      this.dataList.list.push({
-        title: storage.config.name
-      })
-    } */
     const storage = window.localStorage.getItem('formDesign')
     if (storage) {
       const data = evil(storage)
@@ -51,9 +42,6 @@ export default {
 
   },
   methods: {
-    inputClick() {
-      console.log('1212')
-    },
     add(row) {
       let query = {}
       if (row) {

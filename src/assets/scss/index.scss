@@ -77,7 +77,9 @@ $mainColor: #66b1ff;
   .padding {padding-bottom: 20px;
     .tabs-content {padding: 0 20px;}
   }
-  .ak-form-item .ak-form-label {width: auto}
+  .ak-form-item {margin-bottom: 10px;
+    .ak-form-label {width: auto}
+  }
   .validate {display: flex;align-items: center;margin-bottom: 10px;
     > div {margin-right: 3px;}
     .icon-del {margin-left: 5px;cursor: pointer}
@@ -92,6 +94,7 @@ $mainColor: #66b1ff;
     div {flex: 2;margin-left: 5px}
   }
   .padding-top {padding-top: 10px}
+  h3 {font-size: 14px;}
 }
 .ak-tabs {
   .tabs-nav {height: 47px;display: flex;align-items: center;justify-content: space-between;}
@@ -109,6 +112,9 @@ $mainColor: #66b1ff;
   }
   .form-row {display: flex;
     .form-col {flex: 2}
+  }
+  .child-table {
+    .ak-form-tips {top: 10px;left: auto;right: 0}
   }
 }
 .submit-button {text-align: center;padding-top: 20px;}
