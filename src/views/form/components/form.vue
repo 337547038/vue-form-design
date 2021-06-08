@@ -12,7 +12,11 @@
     <template v-for="(list,index) in dataList">
       <template v-if="list.type==='grid'">
         <div :class="[list.className]" class="form-row" :key="`${list.name+index}`">
-          <div v-for="(col,colIndex) in list.columns" :key="colIndex" class="form-col">
+          <div
+            v-for="(col,colIndex) in list.columns"
+            :key="colIndex"
+            :class="`span-${[col.span]}`"
+            class="form-col">
             <template v-for="colList in col.list">
               <form-item
                 :readOnly="readOnly"
@@ -196,7 +200,7 @@ export default {
       return obj
     },
     dataList() {
-      const event = ['change', 'click']
+      /* const event = ['change', 'click']
       this.data.list.forEach(item => {
         for (let key in item.control) {
           if (event.indexOf(key) !== -1) {
@@ -205,7 +209,7 @@ export default {
           }
         }
         // item.control.change = 'eval(item.control.change)'
-      })
+      }) */
       return this.data.list
     }
   },

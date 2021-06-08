@@ -49,7 +49,8 @@
     </template>
     <template slot="other">
       <drag-control
-        @click="_click($event)"
+        :clone="true"
+        @click="_click"
         v-show="activeKey===item.name"
         v-if="showControl">
       </drag-control>
@@ -62,7 +63,7 @@ import DragControl from './dragControl'
 import bus from '@/utils/bus'
 
 export default {
-  name: 'formItem',
+  name: 'formItem1',
   data() {
     return {
       vModel: this.value

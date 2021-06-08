@@ -41,7 +41,6 @@
               </draggable>
               <drag-control
                 v-show="activeKey===item.name"
-                type="grid"
                 @click="_formItemClick('',index,data.list,$event)">
               </drag-control>
             </div>
@@ -51,7 +50,11 @@
                  :key="index"
                  :class="{active:activeKey===item.name,[item.className]:item.className}"
                  @click="_formItemClick(item,index)">
-              <div class="form-col" v-for="(col,colIndex) in item.columns" :key="colIndex">
+              <div
+                class="form-col"
+                v-for="(col,colIndex) in item.columns"
+                :class="`span-${[col.span]}`"
+                :key="colIndex">
                 <draggable
                   v-model="col.list"
                   :no-transition-on-drag="true"
@@ -75,7 +78,6 @@
               </div>
               <drag-control
                 v-show="activeKey===item.name"
-                type="grid"
                 @click="_formItemClick('',index,data.list,$event)"></drag-control>
             </div>
           </template>
@@ -124,7 +126,7 @@ export default {
   },
   methods: {
     _formItemClick(item, index, dataList, type, controlType) {
-      // console.log(item)
+      console.log(item)
       if (type === 'clone') {
         const newItem = JSON.parse(JSON.stringify(item))
         const key = newItem.type + new Date().getTime().toString()
