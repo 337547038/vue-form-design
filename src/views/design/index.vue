@@ -8,7 +8,7 @@
         <formDrag :data="formData"></formDrag>
       </div>
     </div>
-    <form-control-attr :formConfig="formData.config" />
+    <form-control-attr :formConfig="formData.config"/>
     <ak-dialog
       v-model="visible"
       confirm="保存"
@@ -57,7 +57,7 @@ export default {
       }
       if (type === 'save') {
         // 将数据保存在本地供测试
-        this._saveFormData(obj2string(this.formData))
+        this._saveFormData('opt=' + obj2string(this.formData))
       }
       if (type === 'preview') {
         window.localStorage.setItem(type, obj2string(this.formData))
