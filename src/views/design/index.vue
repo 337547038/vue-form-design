@@ -5,14 +5,14 @@
       <headTools @click="_headToolClick(arguments)"></headTools>
       <div class="empty-tips" v-if="formData.list.length===0">从左侧拖拽来添加字段</div>
       <div class="main-form">
-        <formDrag :data="formData"></formDrag>
+        <form-design :data="formData" :is-design="true"></form-design>
       </div>
     </div>
     <form-control-attr :formConfig="formData.config"/>
     <ak-dialog
       v-model="visible"
       confirm="保存"
-      :callback="_getJson"
+      :callback="_getDialogJson"
       :width="800"
       :height="500"
       title="生成代码">
@@ -23,14 +23,14 @@
 <script>
 import headTools from './components/headTools'
 import formControl from './components/formControl'
-import formDrag from './components/formDrag'
+import formDesign from './components/formDesign'
 import formControlAttr from './components/formControlAttr'
 import {obj2string, evil} from '@/utils'
 import jsbeautify from 'js-beautify'
 
 export default {
   name: 'Index',
-  components: {headTools, formControl, formDrag, formControlAttr},
+  components: {headTools, formControl, formDesign, formControlAttr},
   data() {
     return {
       visible: false,
@@ -96,7 +96,7 @@ export default {
         this.formData = evil(window.localStorage.getItem(queryId))
       }
     },
-    _getJson() {
+    _getDialogJson() {
       const val = this.aceEditor.getValue()
       this.visible = false
       this._saveFormData(val)

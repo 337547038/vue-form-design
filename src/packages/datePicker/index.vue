@@ -27,7 +27,7 @@ const Picker = Vue.extend(DatePicker)
 export default {
   name: `${prefixCls}DatePicker`,
   mixins: [dom, emitter],
-  data () {
+  data() {
     return {
       prefixCls: prefixCls,
       component: '', // 挂载的组件
@@ -38,7 +38,7 @@ export default {
     }
   },
   watch: {
-    value () {
+    value() {
       this._getShowValue()
     }
   },
@@ -84,7 +84,7 @@ export default {
   },
   components: {vInput},
   methods: {
-    _getShowValue (date) {
+    _getShowValue(date) {
       // 当value变化时，返回指定的输出格式
       let dateValue = date || this.value
       if (!dateValue) {
@@ -115,7 +115,7 @@ export default {
       date && this._emit(vModel)
     },
     // 格式化时间
-    _parseDate (date, formatType) {
+    _parseDate(date, formatType) {
       let dateTime = new Date(date)
       if (dateTime.toString() === 'Invalid Date') {
         // 日期不合法
@@ -151,13 +151,13 @@ export default {
         return value
       })
     },
-    _emit (date) {
+    _emit(date) {
       this.$emit('input', date)// 返回父组件更新
       // 通知表单组件
       this.dispatch('formItem', `${prefixCls}.form.change`, [date, ''])
       this.$emit('change', date)
     },
-    _open (e) {
+    _open(e) {
       // 判断当前点击元素在组件里即展开，即属于组件子节点，不在关闭
       if (this.$el.contains(e.target) && !this.disabled && !this.status) {
         this.offset = this.getOffset(this.$refs.input.$el)
@@ -201,9 +201,10 @@ export default {
           this.status = false
         }
       }
+      e.stopPropagation()
     },
 
-    _input (val) {
+    _input(val) {
       // readonly=false时，用户输入事件。清空事件
       this.showValue = val
       if (val === '') {
@@ -211,7 +212,7 @@ export default {
       }
     },
     // 当只读模式为false，有失焦事件，对日期进行检验
-    _blur (e) {
+    _blur(e) {
       /* console.log('ok')
       const value = e.target.value
       if (!value) {
@@ -224,7 +225,7 @@ export default {
       }
       this._emit(dateTime) */
     },
-    _setPosition (e) {
+    _setPosition(e) {
       let top = false
       if (this.maxHeight) {
         // 设有距浏览器底部高度时
@@ -235,17 +236,25 @@ export default {
         }
       }
       return top
+    },
+    _documentClick() {
+      if (this.component) {
+        this.component.close()
+        this.status = false
+      }
     }
   },
   computed: {},
-  mounted () {
-    document.addEventListener('click', this._open)
+  mounted() {
+    document.addEventListener('click', this._documentClick)
+    this.$el.addEventListener('click', this._open)
     this._getShowValue()
   },
-  beforeDestroy () {
-    document.removeEventListener('click', this._open)
+  beforeDestroy() {
+    document.addEventListener('click', this._documentClick)
+    this.$el.addEventListener('click', this._open)
   },
-  destroyed () {
+  destroyed() {
     console.log('destroyed')
     // if appendToBody is true, remove DOM node after destroy
     if (this.$el && this.$el.parentNode) {

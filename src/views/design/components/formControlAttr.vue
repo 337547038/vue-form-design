@@ -14,7 +14,7 @@
           <ak-form-item label="标题">
             <ak-input v-model="dataList.item.label" placeholder="显示的label标签名称"></ak-input>
           </ak-form-item>
-          <ak-form-item label="占位内容">
+          <ak-form-item label="占位内容" v-if="placeholder">
             <ak-input v-model="dataList.control.placeholder"></ak-input>
           </ak-form-item>
           <ak-form-item label="默认值">
@@ -36,8 +36,9 @@
               <ak-checkbox v-model="dataList.control.readonly"></ak-checkbox>
             </ak-form-item>
           </div>
-          <div v-if="dataList.type==='radio'||dataList.type==='checkbox'||dataList.type==='select'"
-               class="select-option">
+          <div
+            v-if="dataList.type==='radio'||dataList.type==='checkbox'||dataList.type==='select'"
+            class="select-option">
             <div class="select-head">
               <h3>选项配置</h3>
               <ak-tabs :showContent="false" @change="_selectType">
@@ -61,15 +62,22 @@
           <div v-if="dataList.type==='input'">
             <div v-for="(item,index) in dataList.rules" :key="index" class="validate">
               <ak-select :options="rulesOptions" v-model="item.type" :maxHeight="0"></ak-select>
-              <ak-input v-model="item.msg" placeholder="检验提示信息"></ak-input>
+              <ak-input v-model="item.msg" placeholder="检验提示信息" title="检验提示信息"></ak-input>
+              <ak-input v-model.number="item.len" placeholder="最大/最小字符数"
+                        v-show="item.type==='maxLength'||item.type==='minLength'" title="最大/最小字符数"></ak-input>
+              <ak-input v-model="item.rule" placeholder="校验正则表达式" v-show="item.type==='rule'"
+                        title="校验正则表达式"></ak-input>
               <i class="icon-del" @click="_delRules(index)"></i>
             </div>
             <ak-button @click="_addRules" type="primary">新增</ak-button>
           </div>
           <div v-else class="required">
             <ak-checkbox v-model="required" @change="_requiredChange">必填</ak-checkbox>
-            <ak-input v-model="dataList.rules[0].msg" placeholder="必填检验提示信息"
-                      v-if="dataList.rules&&dataList.rules[0]"></ak-input>
+            <ak-input
+              v-model="dataList.rules[0].msg"
+              placeholder="必填检验提示信息"
+              v-if="dataList.rules&&dataList.rules[0]">
+            </ak-input>
           </div>
         </div>
       </ak-tab-pane>
@@ -171,10 +179,13 @@ export default {
     },
     parentType() {
       return this.$store.state.form.parentType
+    },
+    placeholder() {
+      const include = ['input', 'select', 'textarea', 'datePicker']
+      return include.indexOf(this.dataList.type) !== -1
     }
   },
   mounted() {
-    // this.dataList = this.$store.state.form.controlAttr
   }
 }
 </script>

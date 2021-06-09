@@ -50,7 +50,7 @@
     <template slot="other">
       <drag-control
         :clone="true"
-        @click="_click"
+        @click="_controlClick"
         v-show="activeKey===item.name"
         v-if="showControl">
       </drag-control>
@@ -100,7 +100,11 @@ export default {
         })
       }
     },
-    _click(type) {
+    _click(evt) {
+      this.$emit('checkClick', evt)
+      evt && evt.stopPropagation()
+    },
+    _controlClick(type) {
       this.$emit('click', type)
     },
     validate() {

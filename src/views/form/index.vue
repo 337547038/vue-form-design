@@ -7,14 +7,14 @@
       :readOnly="readOnly"
       :remoteFunc="remoteFunc">
     </autoForm>
-    <div class="submit-button" v-if="!readOnly">
+    <div class="submit-button" v-if="submitShow">
       <ak-button @click="submit" type="primary">提交表单</ak-button>
     </div>
   </div>
 </template>
 
 <script>
-import autoForm from './components/form'
+import autoForm from '../design/components/formDesign'
 import {evil} from '@/utils'
 
 export default {
@@ -31,7 +31,8 @@ export default {
           resolve(obj)
         } */
       },
-      readOnly: false
+      readOnly: false,
+      submitShow: false
     }
   },
   components: {autoForm},
@@ -50,6 +51,9 @@ export default {
       }, 500)
     }
     this.readOnly = query.detail === 'detail'
+    if (query.detail !== 'detail' && query.type !== 'preview') {
+      this.submitShow = true
+    }
   },
   methods: {
     submit() {

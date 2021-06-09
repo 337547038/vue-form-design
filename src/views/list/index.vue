@@ -10,6 +10,9 @@
         :label="item.label"
         :prop="item.prop"
         :key="item.prop">
+        <template slot-scope="scope">
+          {{scope.row[item.prop]}}
+        </template>
       </ak-column>
       <ak-column label="操作" :order="10">
         <template slot-scope="scope">

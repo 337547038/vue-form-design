@@ -5,24 +5,26 @@
     <div :class="{
     'show-clear':clear&&value.length>0,
     [prefixCls+'-select-control']:true}" @click="_selectControlClick">
-      <input type="text" v-if="filterable"
-             :class="{
+      <input
+        type="text" v-if="filterable"
+        :class="{
              [prefixCls+'-input-control']:true,
              'focus':show,
              'placeholder':placeholder&&value.length===0,
              'disabled':disabled}"
-             :placeholder="placeholder"
-             :disabled="disabled"
-             @input="_change"
-             @blur="_blur"
-             :value="keywords"
-             ref="input">
-      <div :class="{
+        :placeholder="placeholder"
+        :disabled="disabled"
+        @input="_change"
+        @blur="_blur"
+        :value="keywords"
+        ref="input">
+      <div
+        :class="{
            [prefixCls+'-input-control']:true,
            'focus':show,
            'disabled':disabled}"
-           v-if="!filterable"
-           :placeholder="!text?placeholder:''">
+        v-if="!filterable"
+        :placeholder="!text?placeholder:''">
         <ul v-if="multiple&&text" class="multiple-text" :placeholder="!text?placeholder:''">
           <li v-for="(item,index) in text.split(',')" :key="index">
             <span v-text="item"></span>
@@ -50,7 +52,7 @@
           <li v-for="(item,index) in filterOption" @click="_itemClick(item,$event)"
               :class="{'disabled':item.disabled,'active':_getActive(item),[item.className]:item.className}" ref="li"
               :key="index" :title="item.label||item.value">
-            {{ item.label || item.value }}
+            {{item.label || item.value}}
           </li>
         </ul>
       </div>
@@ -144,7 +146,9 @@ export default {
       this.text = this.value
     }
     /* 注册点击事件 */
-    document.addEventListener('click', this._showHide)
+    // document.addEventListener('click', this._showHide)
+    this.$el.addEventListener('click', this._showHide)
+    document.addEventListener('click', this._documentClick)
     if (this.filterable) {
       this.keywords = this.value ? this.text : ''
     }
@@ -178,6 +182,9 @@ export default {
     }
   },
   methods: {
+    _documentClick() {
+      this.show = false
+    },
     _showHide(e) {
       if (e && this.$el.contains(e.target)) {
         if (!this.disabled) {
@@ -196,6 +203,7 @@ export default {
       } else {
         this.show = false
       }
+      e.stopPropagation()
     },
     _itemClick(item, e) {
       if (!item.disabled) {
@@ -400,7 +408,9 @@ export default {
     }
   },
   destroyed() {
-    document.removeEventListener('click', this._showHide)
+    // document.removeEventListener('click', this._showHide)
+    this.$el.addEventListener('click', this._showHide)
+    document.addEventListener('click', this._documentClick)
   }
 }
 </script>
