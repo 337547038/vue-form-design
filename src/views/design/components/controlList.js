@@ -53,7 +53,8 @@ export default [
         icon: 'select',
         control: {
           value: [],
-          options: selectOption
+          options: selectOption,
+          appendToBody: true
         }
       },
       {
@@ -63,7 +64,8 @@ export default [
         control: {
           value: '',
           type: 'date',
-          readonly: true
+          readonly: true,
+          appendToBody: true
         }
       },
       {
@@ -92,7 +94,8 @@ export default [
         label: '子表',
         icon: 'childTable',
         list: [],
-        tableData: []
+        tableData: [],
+        control: {}
       }
     ]
   },
@@ -112,7 +115,20 @@ export default [
             span: 12,
             list: []
           }
-        ]
+        ],
+        control: {}
+      },
+      {
+        type: 'tabs',
+        label: '标签页',
+        icon: 'tabs',
+        columns: [
+          {
+            label: 'Tab1',
+            list: []
+          }
+        ],
+        control: {}
       }
     ]
   }

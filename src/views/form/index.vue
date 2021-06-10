@@ -1,10 +1,11 @@
 <!-- Created by 337547038 表单提交 -->
 <template>
   <div style="margin: 30px">
+    <h1>表单数据提交/修改/详情</h1>
     <autoForm
       :data="data"
       ref="auform"
-      :readOnly="readOnly"
+      :form-type="formType"
       :remoteFunc="remoteFunc">
     </autoForm>
     <div class="submit-button" v-if="submitShow">
@@ -31,7 +32,7 @@ export default {
           resolve(obj)
         } */
       },
-      readOnly: false,
+      formType: 1,
       submitShow: false
     }
   },
@@ -53,6 +54,10 @@ export default {
     this.readOnly = query.detail === 'detail'
     if (query.detail !== 'detail' && query.type !== 'preview') {
       this.submitShow = true
+    }
+    if (query.detail === 'detail') {
+      // 表单详情页展示模式
+      this.formType = 2
     }
   },
   methods: {

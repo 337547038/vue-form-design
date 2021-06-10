@@ -7,7 +7,15 @@
         <ak-form-item label="样式名称">
           <ak-input v-model="dataList.className" placeholder="样式类名"></ak-input>
         </ak-form-item>
-        <div v-if="dataList.type&&dataList.type!=='grid'&&dataList.type!=='childTable'">
+        <template v-if="dataList.type==='tabs'">
+          <h3>标签配置项</h3>
+          <div v-for="(item,index) in dataList.columns" :key="index" class="flex">
+            <ak-input v-model="item.label" placeholder="标签名称"></ak-input>
+            <i class="icon-del" @click="_delTabsLabel(index)"></i>
+          </div>
+          <ak-button @click="_addTabsLabel" type="primary">添加标签</ak-button>
+        </template>
+        <template v-if="isFormControl">
           <ak-form-item label="字段标识">
             <ak-input v-model="dataList.name" placeholder="字段标识名称，唯一不可重复"></ak-input>
           </ak-form-item>
@@ -20,7 +28,7 @@
           <ak-form-item label="默认值">
             <ak-input v-model="dataList.control.value"></ak-input>
           </ak-form-item>
-          <ak-form-item label="列表显示" v-if="!parentType">
+          <ak-form-item label="列表显示" v-if="tableHeadCheck">
             <ak-checkbox v-model="dataList.tableList"></ak-checkbox>
           </ak-form-item>
           <div v-if="dataList.type==='datePicker'">
@@ -60,7 +68,7 @@
           </div>
           <h3>校验设置</h3>
           <div v-if="dataList.type==='input'">
-            <div v-for="(item,index) in dataList.rules" :key="index" class="validate">
+            <div v-for="(item,index) in dataList.rules" :key="index" class="flex">
               <ak-select :options="rulesOptions" v-model="item.type" :maxHeight="0"></ak-select>
               <ak-input v-model="item.msg" placeholder="检验提示信息" title="检验提示信息"></ak-input>
               <ak-input v-model.number="item.len" placeholder="最大/最小字符数"
@@ -79,7 +87,7 @@
               v-if="dataList.rules&&dataList.rules[0]">
             </ak-input>
           </div>
-        </div>
+        </template>
       </ak-tab-pane>
       <ak-tab-pane label="表单属性">
         <div class="padding-top">
@@ -133,6 +141,15 @@ export default {
     _delRules(index) {
       this.dataList.rules.splice(index, 1)
     },
+    _addTabsLabel() {
+      this.dataList.columns.push({
+        label: 'Tab' + new Date().getTime(),
+        list: []
+      })
+    },
+    _delTabsLabel(index) {
+      this.dataList.columns.splice(index, 1)
+    },
     _requiredChange(val) {
       if (val) {
         this.dataList.rules.push({
@@ -177,12 +194,17 @@ export default {
     selectOptionList() {
       return this.dataList.control.options || this.dataList.control.data
     },
-    parentType() {
-      return this.$store.state.form.parentType
+    tableHeadCheck() {
+      return this.$store.state.form.tableHeadCheck
     },
     placeholder() {
       const include = ['input', 'select', 'textarea', 'datePicker']
       return include.indexOf(this.dataList.type) !== -1
+    },
+    isFormControl() {
+      const type = this.dataList.type
+      const include = ['grid', 'childTable', 'tabs']
+      return include.indexOf(type) === -1
     }
   },
   mounted() {

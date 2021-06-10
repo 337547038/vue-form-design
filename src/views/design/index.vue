@@ -5,10 +5,10 @@
       <headTools @click="_headToolClick(arguments)"></headTools>
       <div class="empty-tips" v-if="formData.list.length===0">从左侧拖拽来添加字段</div>
       <div class="main-form">
-        <form-design :data="formData" :is-design="true"></form-design>
+        <form-design :data="formData" :form-type="0"></form-design>
       </div>
     </div>
-    <form-control-attr :formConfig="formData.config"/>
+    <form-control-attr :formConfig="formData.config" />
     <ak-dialog
       v-model="visible"
       confirm="保存"
@@ -93,7 +93,10 @@ export default {
     init() {
       const queryId = this.$route.query.id
       if (queryId) {
-        this.formData = evil(window.localStorage.getItem(queryId))
+        const fd = evil(window.localStorage.getItem(queryId))
+        if (fd) {
+          this.formData = fd
+        }
       }
     },
     _getDialogJson() {

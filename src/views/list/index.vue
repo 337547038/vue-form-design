@@ -1,6 +1,7 @@
 <!-- Created by 337547038 on 2021. -->
 <template>
   <div style="margin: 20px">
+    <h1>数据列表</h1>
     <ak-button @click="add" type="primary">添加</ak-button>
     <br><br>
     <ak-table :data="dataTable">

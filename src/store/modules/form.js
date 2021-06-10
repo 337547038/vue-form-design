@@ -1,7 +1,8 @@
 export default {
   state: {
     controlAttr: {},
-    parentType: ''
+    tableHeadCheck: true,
+    activeKey: ''
   },
   mutations: {
     // 这里填充数据的操作方法
@@ -13,8 +14,11 @@ export default {
       // console.log(obj)
       state.controlAttr = obj
     },
-    setParentType(state, type) {
-      state.parentType = type
+    tableHeadCheck(state, bool) {
+      state.tableHeadCheck = bool
+    },
+    setActiveKey(state, key) {
+      state.activeKey = key
     }
     /* setRemoteFunc(state, obj) {
       console.log(obj)
