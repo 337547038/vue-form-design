@@ -126,7 +126,9 @@ export default {
     },
     _setValue() {
       // 修改后提交表格检验时存在问题，这里更新下
-      this.$refs.itemform.controlValue = this.value
+      if (this.$refs.itemform) {
+        this.$refs.itemform.controlValue = this.value
+      }
     }
   },
   computed: {},
