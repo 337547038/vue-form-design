@@ -7,6 +7,14 @@
         <ak-form-item label="样式名称">
           <ak-input v-model="dataList.className" placeholder="样式类名"></ak-input>
         </ak-form-item>
+        <template v-if="dataList.type==='tabs'">
+          <h3>标签配置项</h3>
+          <div v-for="(item,index) in dataList.columns" :key="index" class="flex">
+            <ak-input v-model="item.label" placeholder="标签名称"></ak-input>
+            <i class="icon-del" @click="_delTabsLabel(index)"></i>
+          </div>
+          <ak-button @click="_addTabsLabel" type="primary">添加标签</ak-button>
+        </template>
         <template v-if="isFormControl">
           <ak-form-item label="字段标识">
             <ak-input v-model="dataList.name" placeholder="字段标识名称，唯一不可重复"></ak-input>
@@ -155,6 +163,15 @@ export default {
         label: '',
         value: ''
       })
+    },
+    _addTabsLabel() {
+      this.dataList.columns.push({
+        label: 'Tab' + new Date().getTime(),
+        list: []
+      })
+    },
+    _delTabsLabel(index) {
+      this.dataList.columns.splice(index, 1)
     }
   },
   watch: {
@@ -186,7 +203,7 @@ export default {
     },
     isFormControl() {
       const type = this.dataList.type
-      const include = ['grid', 'childTable']
+      const include = ['grid', 'childTable', 'tabs']
       return include.indexOf(type) === -1
     }
   },

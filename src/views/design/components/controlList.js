@@ -117,6 +117,18 @@ export default [
           }
         ],
         control: {}
+      },
+      {
+        type: 'tabs',
+        label: '标签页',
+        icon: 'tabs',
+        columns: [
+          {
+            label: 'Tab1',
+            list: []
+          }
+        ],
+        control: {}
       }
     ]
   }

@@ -126,7 +126,7 @@ export default {
     },
     _setValue() {
       // 修改后提交表格检验时存在问题，这里更新下
-      if (this.$refs.itemform) {
+      if (this.$refs.itemform && this.value !== undefined) {
         this.$refs.itemform.controlValue = this.value
       }
     }
