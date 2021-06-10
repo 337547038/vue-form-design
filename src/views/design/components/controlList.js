@@ -104,7 +104,7 @@ export default [
     children: [
       {
         type: 'grid',
-        label: '栅格布局',
+        label: '格栅布局',
         icon: 'grid',
         columns: [
           {
@@ -113,18 +113,6 @@ export default [
           },
           {
             span: 12,
-            list: []
-          }
-        ],
-        control: {}
-      },
-      {
-        type: 'tabs',
-        label: '标签页',
-        icon: 'tabs',
-        columns: [
-          {
-            label: 'Tab1',
             list: []
           }
         ],
