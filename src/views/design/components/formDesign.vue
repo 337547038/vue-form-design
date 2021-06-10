@@ -250,6 +250,10 @@ export default {
           item.control.value = obj[item.name]
         }
       })
+      // 修改后提交表格检验时存在问题，这里更新下
+      this.$nextTick(() => {
+        bus.$emit('setValue')
+      })
     },
     _setRemoteFunc(v) {
       if (this.formType === 1) {

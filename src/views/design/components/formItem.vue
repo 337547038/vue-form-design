@@ -123,11 +123,16 @@ export default {
       } else {
         return text && text.toString()
       }
+    },
+    _setValue() {
+      // 修改后提交表格检验时存在问题，这里更新下
+      this.$refs.itemform.controlValue = this.value
     }
   },
   computed: {},
   mounted() {
     bus.$on('setRemoteFunc', this.setRemoteFunc) // 检索事件监听
+    bus.$on('setValue', this._setValue)
   }
 }
 </script>

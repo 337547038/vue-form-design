@@ -153,6 +153,13 @@ export default {
           rule = this.itemRules
         }
       }
+      /* console.log('************')
+      console.log(value2)
+      console.log(rule)
+      console.log(this.form.value)
+      console.log(this.prop)
+      console.log(this.controlValue)
+      console.log('=======************=========') */
       if (rule) {
         const result = Validate(value2, rule)
         // console.log(result)
