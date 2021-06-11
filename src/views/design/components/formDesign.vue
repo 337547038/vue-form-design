@@ -93,8 +93,36 @@ export default {
       })
     },
     _setRemoteFunc(v) {
-      if (this.formType === 1) {
-        bus.$emit('setRemoteFunc', v)
+      const obj = v || this.remoteFunc
+      if (this.formType === 1 && Object.keys(obj).length > 0) {
+        // bus.$emit('setRemoteFunc', obj)
+        this._setRemote(obj, this.data.list)
+      }
+    },
+    _setRemote(obj, dataList) {
+      dataList && dataList.forEach(item => {
+        if (item.type === 'childTable') {
+          item.list.forEach(li => {
+            this._setRemoteSet(li, obj)
+          })
+        } else if (item.type === 'tabs') {
+          item.columns.forEach(tab => {
+            this._setRemote(obj, tab.list)
+          })
+        } else {
+          this._setRemoteSet(item, obj)
+        }
+      })
+    },
+    _setRemoteSet(item, obj) {
+      if (item.isFun === 'true' && obj[item.func]) {
+        obj[item.func](res => {
+          if (item.type === 'select') {
+            item.control.options = res
+          } else {
+            item.control.data = res
+          }
+        })
       }
     },
     validate() {
@@ -104,6 +132,7 @@ export default {
             resolve(Object.assign({}, res, this._getTableData(this.data.list, {}))) // 验证通过
           })
           .catch(res => {
+            console.log('ok')
             reject(res)
           })
       })
@@ -157,6 +186,7 @@ export default {
     }
   },
   mounted() {
+    this._setRemoteFunc()
   }
 }
 </script>

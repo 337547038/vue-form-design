@@ -45,12 +45,6 @@ export default {
   },
   components: {},
   created() {
-    // 接收formItem发送过来需要验证的集合
-    /* this.$on('ak.form.addField', (field) => {
-      if (field) {
-        this.fields.push(field)
-      }
-    }) */
   },
   methods: {
     validate(props) {
@@ -76,8 +70,8 @@ export default {
       let errorTips = []
       console.log('validate fields')
       console.log(fields)
-      if (fields.length > 0) {
-        return new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
+        if (fields.length > 0) {
           fields.forEach(field => {
             // 引用formItem的validate验证方法
             // console.log(field)
@@ -100,8 +94,10 @@ export default {
               }
             })
           })
-        })
-      }
+        } else {
+          resolve()
+        }
+      })
     },
     resetFields() {
       // 重置表单元素值

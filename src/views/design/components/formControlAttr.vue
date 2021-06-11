@@ -49,9 +49,9 @@
             class="select-option">
             <div class="select-head">
               <h3>选项配置</h3>
-              <ak-tabs :showContent="false" @change="_selectType">
-                <ak-tab-pane label="固定选项"></ak-tab-pane>
-                <ak-tab-pane label="动态选项"></ak-tab-pane>
+              <ak-tabs :showContent="false" @change="_selectType" v-model="dataList.isFun">
+                <ak-tab-pane label="固定选项" name="tab-1"></ak-tab-pane>
+                <ak-tab-pane label="动态选项" name="true"></ak-tab-pane>
               </ak-tabs>
             </div>
             <div v-if="selectTypeName==='tab-1'" class="set-option">
@@ -156,7 +156,7 @@ export default {
     },
     _selectType(name) {
       this.selectTypeName = name
-      this.dataList.isFun = name === 'tab-2'
+      // this.dataList.isFun = name
     },
     _addSelect() {
       this.selectOptionList.push({
@@ -203,8 +203,11 @@ export default {
     },
     isFormControl() {
       const type = this.dataList.type
-      const include = ['grid', 'childTable', 'tabs']
-      return include.indexOf(type) === -1
+      if (type) {
+        const include = ['grid', 'childTable', 'tabs']
+        return include.indexOf(type) === -1
+      }
+      return false
     }
   },
   mounted() {

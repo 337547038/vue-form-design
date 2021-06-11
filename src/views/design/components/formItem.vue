@@ -91,6 +91,9 @@ export default {
   },
   methods: {
     setRemoteFunc(obj) {
+      /* console.log('setRemoteFunc')
+      console.log(obj)
+      console.log(this.item)
       if (this.item.isFun && obj[this.item.func]) {
         obj[this.item.func](res => {
           if (this.item.type === 'select') {
@@ -99,7 +102,7 @@ export default {
             this.item.control.data = res
           }
         })
-      }
+      } */
     },
     _click(evt) {
       this.$emit('checkClick', evt)
@@ -134,7 +137,8 @@ export default {
   },
   computed: {},
   mounted() {
-    bus.$on('setRemoteFunc', this.setRemoteFunc) // 检索事件监听
+    // this.setRemoteFunc()
+    // bus.$on('setRemoteFunc', this.setRemoteFunc) // 检索事件监听
     bus.$on('setValue', this._setValue)
   }
 }

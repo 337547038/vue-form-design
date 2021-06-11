@@ -24,7 +24,7 @@ export default {
     return {
       data: {},
       remoteFunc: {
-        /* callbackFun(resolve) {
+        /* radioFunc(resolve) {
           const obj = [
             {label: '111', value: '111'},
             {label: '222', value: '22'}
@@ -62,7 +62,6 @@ export default {
   },
   methods: {
     submit() {
-      // this.$refs.auform.validateTable()
       this.$refs.auform.validate()
         .then(res => {
           console.log('通过验证')
@@ -70,7 +69,7 @@ export default {
           // 将数据保存在storage
           window.localStorage.setItem('formData', JSON.stringify(res))
           this.$msg('提交成功')
-          // this.$router.push({path: 'list', query: {id: '111'}})
+          this.$router.push({path: 'list', query: {id: '111'}})
         })
         .catch(res => {
           console.log('不通过')

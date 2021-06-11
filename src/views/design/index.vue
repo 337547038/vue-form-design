@@ -108,7 +108,7 @@ export default {
       // 保存表单数据
       window.localStorage.setItem('formDesign', string)
       this.$msg('保存成功')
-      // this.$router.push({path: '/'})
+      this.$router.push({path: '/'})
     }
   },
   destroy() {
