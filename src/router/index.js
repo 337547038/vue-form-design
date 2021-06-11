@@ -28,6 +28,7 @@ export const defaultRouterMap = [
 ]
 
 export default new Router({
-  mode: 'history',
-  routes: defaultRouterMap
+  // mode: 'history',
+  routes: defaultRouterMap,
+  base: process.env.BASE_URL
 })

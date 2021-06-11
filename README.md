@@ -18,6 +18,10 @@ src
       ├─list // 数据列表页
       └─index // 页面入口，表单列表页
 ```
+
+### 演示地址
+https://337547038.github.io/vue-form-design/
+
 ## 部署
 ``` bash
 1、本地开发
