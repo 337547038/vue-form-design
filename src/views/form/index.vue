@@ -2,12 +2,12 @@
 <template>
   <div style="margin: 30px">
     <h1>表单数据提交/修改/详情</h1>
-    <autoForm
+    <form-design
       :data="data"
       ref="auform"
       :form-type="formType"
       :remoteFunc="remoteFunc">
-    </autoForm>
+    </form-design>
     <div class="submit-button" v-if="submitShow">
       <ak-button @click="submit" type="primary">提交表单</ak-button>
     </div>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import autoForm from '../design/components/formDesign'
+import FormDesign from '../design/components/formDesign'
 import {evil} from '@/utils'
 
 export default {
@@ -36,7 +36,7 @@ export default {
       submitShow: false
     }
   },
-  components: {autoForm},
+  components: {FormDesign},
   created() {
     const query = this.$route.query
     let key = 'formDesign'

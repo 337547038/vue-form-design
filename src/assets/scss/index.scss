@@ -65,6 +65,13 @@ $mainColor: #66b1ff;
     }
     .tag-table {position: absolute;right: 0;top: 0;font-size: 12px;background: $mainColor;color: #fff}
   }
+  .preview-form {position: fixed;left: 0;top: 0;height: 100vh;width: 100vw;z-index: 5;margin: 0;border: none;
+    .add-form {margin: 0 20px 20px;height: calc(100vh - 118px);overflow-y: auto }
+    .pre-title {text-align: center;background: #e6eff5;height: 44px;line-height: 44px;font-size: 16px;}
+    .pre-footer {text-align: center}
+    .form-list > div {border: none}
+    .ak-form-item.active, .form-row.active, .form-tabs.active {border: none}
+  }
 }
 .components-list {height: 100vh;width: 250px;padding: 8px 0;position: fixed;overflow-y: auto;
   .title {padding: 8px 12px;}

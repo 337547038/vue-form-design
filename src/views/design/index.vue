@@ -4,8 +4,13 @@
     <div class="main-body">
       <headTools @click="_headToolClick(arguments)"></headTools>
       <div class="empty-tips" v-if="formData.list.length===0">从左侧拖拽来添加字段</div>
-      <div class="main-form">
-        <form-design :data="formData" :form-type="0"></form-design>
+      <div class="main-form" :class="{'preview-form':formType===1}">
+        <div class="pre-title" v-if="formType===1">预览</div>
+        <form-design :data="formData" :form-type="formType" ref="formdesignel"></form-design>
+        <div class="pre-footer" v-if="formType===1">
+          <ak-button @click="_quitPreview" type="primary">退出</ak-button>
+          <ak-button @click="_submitPreview" type="primary">提交测试</ak-button>
+        </div>
       </div>
     </div>
     <form-control-attr :formConfig="formData.config" />
@@ -34,6 +39,7 @@ export default {
   data() {
     return {
       visible: false,
+      formType: 0,
       formData: {
         list: [],
         config: {
@@ -60,13 +66,15 @@ export default {
         this._saveFormData('opt=' + obj2string(this.formData))
       }
       if (type === 'preview') {
-        window.localStorage.setItem(type, obj2string(this.formData))
+        this.formType = 1
+        this.$refs.formdesignel._getRulesModel()
+        /* window.localStorage.setItem(type, obj2string(this.formData))
         const query = {
           id: this.formData.config.name,
           type: type
         }
         const routeData = this.$router.resolve({path: 'form', query: query})
-        window.open(routeData.href, '_blank')
+        window.open(routeData.href, '_blank') */
       }
       if (type === 'json') {
         this.visible = true
@@ -109,6 +117,19 @@ export default {
       window.localStorage.setItem('formDesign', string)
       this.$msg('保存成功')
       this.$router.push({path: '/'})
+    },
+    _quitPreview() {
+      this.formType = 0
+    },
+    _submitPreview() {
+      this.$refs.formdesignel.validate()
+        .then(res => {
+          this.$msg('通过验证')
+        })
+        .catch(res => {
+          this.$msg('提交失败，验证不通过')
+          console.log(res)
+        })
     }
   },
   destroy() {

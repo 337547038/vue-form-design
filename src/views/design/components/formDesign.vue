@@ -47,6 +47,13 @@ export default {
         this._setRemoteFunc(v)
       },
       deep: true
+    },
+    formType(v) {
+      /* console.log('formtype')
+      console.log(v)
+      if (v === 1) {
+        this._getRulesModel()
+      } */
     }
   },
   created() {
@@ -152,6 +159,7 @@ export default {
     },
     _getRulesModel() {
       this.$nextTick(() => {
+        console.log('ok0')
         this._getRules(this.data.list)
         this.$emit('input', this.model)
       })
