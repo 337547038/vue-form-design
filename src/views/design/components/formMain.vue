@@ -156,8 +156,8 @@ export default {
   components: {Draggable, FormItem, DragControl, DragItem},
   methods: {
     _formItemCheck(item, isChildTable) {
-      console.log('_formItemCheck')
-      console.log(item.name)
+      /* console.log('_formItemCheck')
+      console.log(item.name) */
       // this.activeKey = item.name
       this.$store.commit('setActiveKey', item.name)
       this._setControlAttr(item, !isChildTable)

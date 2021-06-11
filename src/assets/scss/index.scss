@@ -63,6 +63,7 @@ $mainColor: #66b1ff;
       }
       .field-type {position: absolute;right: 0;top: 0;color: $mainColor;display: none}
     }
+    .tag-table {position: absolute;right: 0;top: 0;font-size: 12px;background: $mainColor;color: #fff}
   }
 }
 .components-list {height: 100vh;width: 250px;padding: 8px 0;position: fixed;overflow-y: auto;
@@ -105,8 +106,8 @@ $mainColor: #66b1ff;
     &.active {border-color: $mainColor}
   }
 }
-.ak-form{
-  .tabs-nav{margin-bottom: 15px}
+.ak-form {
+  .tabs-nav {margin-bottom: 15px}
 }
 .add-form {
   .child-table {margin-bottom: 20px;

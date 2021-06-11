@@ -70,7 +70,7 @@ export default {
           // 将数据保存在storage
           window.localStorage.setItem('formData', JSON.stringify(res))
           this.$msg('提交成功')
-          this.$router.push({path: 'list', query: {id: '111'}})
+          // this.$router.push({path: 'list', query: {id: '111'}})
         })
         .catch(res => {
           console.log('不通过')

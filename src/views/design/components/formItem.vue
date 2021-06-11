@@ -54,6 +54,7 @@
         v-show="activeKey===item.name"
         v-if="showControl">
       </drag-control>
+      <div class="tag-table" v-if="showControl&&item.tableList" title="在列表表头中显示该字段">TH</div>
     </template>
   </ak-form-item>
 </template>

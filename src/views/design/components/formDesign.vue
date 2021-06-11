@@ -55,12 +55,21 @@ export default {
     }
   },
   methods: {
-    setValue(obj) {
+    setValue(obj, dataList) {
+      if (!dataList) {
+        dataList = this.data.list
+      }
       if (!obj || Object.keys(obj).length === 0) {
         return
       }
-      this.data.list.forEach(item => {
-        if (item.type === 'grid') {
+      dataList.forEach(item => {
+        if (item.type === 'tabs') {
+          item.columns.forEach(col => {
+            if (col.list && col.list.length > 0) {
+              this.setValue(obj, col.list)
+            }
+          })
+        } else if (item.type === 'grid') {
           item.columns.forEach(col => {
             col.list.forEach(li => {
               if (obj[li.name] !== undefined) {
@@ -92,40 +101,25 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs.form.validate()
           .then(res => {
-            // console.log(res)
-            // console.log('----====')
-            /* const vt = this.validateTable()
-            if (vt.length === 0) {
-              resolve(Object.assign({}, res, this._getTableData())) // 验证通过
-            } else {
-              reject(res, vt)
-            } */
-            resolve(Object.assign({}, res, this._getTableData())) // 验证通过
+            resolve(Object.assign({}, res, this._getTableData(this.data.list, {}))) // 验证通过
           })
           .catch(res => {
             reject(res)
           })
       })
     },
-    _getTableData() {
-      let temp = {}
-      this.data.list.forEach(item => {
+    _getTableData(dataList, temp) {
+      dataList && dataList.forEach(item => {
         if (item.type === 'childTable') {
           temp[item.name] = item.tableData
         }
-      })
-      return temp
-    },
-    validateTable() {
-      // console.log('validateTable')
-      /* const tableItem = this.$refs.formItemEl
-      let error = []
-      tableItem && tableItem.forEach(item => {
-        if (item.validate().length > 0) {
-          error.push(item.validate())
+        if (item.type === 'tabs') {
+          item.columns.forEach(col => {
+            return this._getTableData(col.list, temp)
+          })
         }
       })
-      return error */
+      return temp
     },
     _getRulesModel() {
       this.$nextTick(() => {
