@@ -30,7 +30,7 @@
               v-show="activeKey===item.name"
               @click="_formItemControlClick({item:'',index:index,data:data.list,evt:$event})">
             </drag-control>
-            <div class="field-type" v-if="formType===0">{{item.type}}</div>
+            <div class="field-type" v-if="formType===0">{{ item.type }}</div>
           </div>
         </template>
         <template v-else-if="item.type==='childTable'">
@@ -52,14 +52,14 @@
               v-show="formType===0&&activeKey===item.name"
               @click="_formItemControlClick({item:'',index:index,data:data.list,evt:$event})">
             </drag-control>
-            <div class="field-type">{{item.type}}</div>
+            <div class="field-type">{{ item.type }}</div>
           </div>
           <div v-else :key="index" class="child-table">
             <ak-table :data="item.tableData" :key="item.name" v-bind="item.control">
               <template v-for="(t,index) in item.list">
                 <ak-column :label="t.item.label" :key="index" :className="t.className">
                   <template slot-scope="scope">
-                    <div v-if="formType===2">{{_getText(scope.row[t.name])}}</div>
+                    <div v-if="formType===2">{{ _getText(scope.row[t.name]) }}</div>
                     <form-item
                       v-else
                       :readOnly="formType===2"
@@ -91,6 +91,7 @@
               class="form-col"
               v-for="(col,colIndex) in item.columns"
               :class="`span-${[col.span]}`"
+              :style="{width:`${col.span/24*100}%`}"
               :key="colIndex">
               <drag-item
                 @add="_draggableColAdd(item, colIndex, $event)"
@@ -106,7 +107,7 @@
               v-show="activeKey===item.name"
               @click="_formItemControlClick({item:'',index:index,data:data.list,evt:$event})">
             </drag-control>
-            <div class="field-type" v-if="formType===0">{{item.type}}</div>
+            <div class="field-type" v-if="formType===0">{{ item.type }}</div>
           </div>
         </template>
         <template v-else>

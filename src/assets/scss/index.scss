@@ -34,6 +34,7 @@ $mainColor: #66b1ff;
       &.active {border: 3px solid $mainColor;position: relative}
       &:hover {border-color: $mainColor;background: #ecf5ff}
     }
+    .tips-unit{line-height: 38px}
     .drag-control {
       .item-control {position: absolute;right: 0;bottom: 0;z-index: 2; display: flex;align-items: center;height: 24px;background: $mainColor;
         i {width: 24px;height: 24px;color: #fff;display: flex;align-items: center;justify-content: center;cursor: pointer}
@@ -42,7 +43,7 @@ $mainColor: #66b1ff;
     }
     .drag-list {min-height: 40px;}
     .form-row {display: flex;
-      .form-col {background: #fff;border: 1px dashed #ddd;margin: 2px;flex: 2}
+      .form-col {background: #fff;border: 1px dashed #ddd;margin: 2px;}
     }
     .child-table {
       .drag-list {min-height: 80px;align-items: stretch;border: 1px dashed #ddd;margin: 2px;overflow-x: auto;white-space: nowrap;
@@ -118,7 +119,7 @@ $mainColor: #66b1ff;
     }
   }
   .form-row {display: flex;
-    .form-col {flex: 2}
+/*    .form-col {}*/
   }
   .child-table {
     .ak-form-tips {top: 10px;left: auto;right: 0}
@@ -127,7 +128,7 @@ $mainColor: #66b1ff;
 .detail-form {
   .child-table {margin-bottom: 20px;}
   .form-row {display: flex;
-    .form-col {flex: 2}
+    /*.form-col {flex: 2}*/
   }
 }
 .submit-button {text-align: center;padding-top: 20px;}

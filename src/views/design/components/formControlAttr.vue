@@ -7,10 +7,17 @@
         <ak-form-item label="样式名称">
           <ak-input v-model="dataList.className" placeholder="样式类名"></ak-input>
         </ak-form-item>
+        <template v-if="dataList.type==='grid'">
+          <div v-for="(col,index) in dataList.columns" :key="index" class="flex">
+            <ak-input v-model="col.span" placeholder="列宽比"></ak-input>
+            <i class="icon-del" @click="_delGridCol(index)"></i>
+          </div>
+          <ak-button @click="_addGridCol" type="primary">添加列</ak-button>
+        </template>
         <template v-if="dataList.type==='tabs'">
           <h3>标签配置项</h3>
           <div v-for="(item,index) in dataList.columns" :key="index" class="flex">
-            <ak-input v-model="item.label" placeholder="标签名称"></ak-input>
+            <ak-input v-model.number="item.label" placeholder="标签名称"></ak-input>
             <i class="icon-del" @click="_delTabsLabel(index)"></i>
           </div>
           <ak-button @click="_addTabsLabel" type="primary">添加标签</ak-button>
@@ -27,6 +34,9 @@
           </ak-form-item>
           <ak-form-item label="默认值">
             <ak-input v-model="dataList.control.value"></ak-input>
+          </ak-form-item>
+          <ak-form-item label="其他提示信息">
+            <ak-input v-model="dataList.tipsUnit" title="位于输入框后的一些提示信息，例如：(元)"></ak-input>
           </ak-form-item>
           <ak-form-item label="列表显示" v-if="tableHeadCheck">
             <ak-checkbox v-model="dataList.tableList"></ak-checkbox>
@@ -171,6 +181,15 @@ export default {
       })
     },
     _delTabsLabel(index) {
+      this.dataList.columns.splice(index, 1)
+    },
+    _addGridCol() {
+      this.dataList.columns.push({
+        span: 0,
+        list: []
+      })
+    },
+    _delGridCol(index) {
       this.dataList.columns.splice(index, 1)
     }
   },

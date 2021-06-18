@@ -48,6 +48,7 @@
       <div class="item-tips" v-if="item.other" v-html="item.other.value" @click="item.other.click(item)"></div>
     </template>
     <template slot="other">
+      <div class="tips-unit" v-if="item.tipsUnit">{{item.tipsUnit}}</div>
       <drag-control
         :clone="true"
         @click="_controlClick"
