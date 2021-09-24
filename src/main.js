@@ -1,14 +1,8 @@
-import Vue from 'vue'
-import App from './App'
+import { createApp } from 'vue'
+import App from './App.vue'
 import router from './router'
-import Component from './packages/index'
-import store from './store'
-
-Vue.config.productionTip = false
-// 全局注册基础组件
-Vue.use(Component)
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+import ElementPlus from 'element-plus'
+import store from './store/index'
+import 'element-plus/dist/index.css'
+import './assets/scss/index.scss'
+createApp(App).use(ElementPlus).use(router).use(store).mount('#app')

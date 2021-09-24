@@ -1,13 +1,7 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <router-view v-slot="{ Component }">
+    <transition name="left-fade" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
 </template>
-<script>
-import './assets/scss/index.scss'
-export default {
-  name: 'App',
-  created () {
-  }
-}
-</script>

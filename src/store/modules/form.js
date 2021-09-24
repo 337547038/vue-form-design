@@ -1,7 +1,6 @@
 export default {
   state: {
     controlAttr: {},
-    tableHeadCheck: true,
     activeKey: ''
   },
   mutations: {
@@ -13,9 +12,6 @@ export default {
     setControlAttr(state, obj) {
       // console.log(obj)
       state.controlAttr = obj
-    },
-    tableHeadCheck(state, bool) {
-      state.tableHeadCheck = bool
     },
     setActiveKey(state, key) {
       state.activeKey = key

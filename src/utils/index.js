@@ -3,7 +3,7 @@ export function evil(fn) {
   return new Fn('return ' + fn)()
 }
 
-export function jsonStringify(obj) {
+/*export function jsonStringify(obj) {
   return JSON.stringify(obj, function (key, val) {
     if (typeof val === 'function') {
       return val + ''
@@ -19,7 +19,7 @@ export function jsonParse(string) {
     }
     return v
   })
-}
+}*/
 
 export function obj2string(o) {
   var r = []
@@ -28,7 +28,7 @@ export function obj2string(o) {
   }
   if (typeof o === 'object') {
     if (!o.sort) {
-      for (let i in o) {
+      for (const i in o) {
         r.push(i + ':' + obj2string(o[i]))
       }
       if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {

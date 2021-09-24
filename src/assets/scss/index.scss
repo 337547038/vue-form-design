@@ -1,4 +1,4 @@
-html, body, div, span, ul, li, i {margin: 0;padding: 0;}
+html, body, div, span, ul, li, i,h3 {margin: 0;padding: 0;}
 ul, li {list-style: none}
 body {font-size: 14px; font-family: "Microsoft YaHei UI"}
 $mainColor: #66b1ff;
@@ -7,66 +7,7 @@ $mainColor: #66b1ff;
 ::-webkit-scrollbar {width: 8px;height: 8px;position: relative;z-index: 100}
 ::-webkit-scrollbar-thumb {background-color: #babdc2;background-clip: padding-box;min-height: 28px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 2px;}
 ::-webkit-scrollbar-corner {background: #e7e9f4}
-.main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0 300px 0 250px;
-  .main-tools {line-height: 45px;border-bottom: 2px solid #e4e7ed;text-align: right;
-    a {color: $mainColor;margin-right: 10px;
-      i {padding-right: 5px}
-    }
-  }
-  .empty-tips {position: absolute;text-align: center;width: 300px;font-size: 20px;top: 200px;left: 50%;margin-left: -150px;color: #ccc;
-  }
-  .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 68px);overflow-y: auto;overflow-x: hidden;
-    .form-list {height: 600px;padding: 10px;
-      > div {border: 1px dashed #ddd;margin: 2px;position: relative;padding: 5px;}
-    }
-    .ghost {
-      background: #F56C6C;
-      border: 2px solid #F56C6C;
-      outline-width: 0;
-      height: 3px;
-      box-sizing: border-box;
-      font-size: 0;
-      content: '';
-      overflow: hidden;
-      padding: 0;
-    }
-    .ak-form-item {margin-bottom: 0;
-      &.active {border: 3px solid $mainColor;position: relative}
-      &:hover {border-color: $mainColor;background: #ecf5ff}
-    }
-    .tips-unit{line-height: 38px}
-    .drag-control {
-      .item-control {position: absolute;right: 0;bottom: 0;z-index: 2; display: flex;align-items: center;height: 24px;background: $mainColor;
-        i {width: 24px;height: 24px;color: #fff;display: flex;align-items: center;justify-content: center;cursor: pointer}
-      }
-      .drag-move {position: absolute;left: 0;top: 0;z-index: 2;width: 24px;height: 24px;background: $mainColor;color: #fff;text-align: center;line-height: 24px;cursor: move}
-    }
-    .drag-list {min-height: 40px;}
-    .form-row {display: flex;
-      .form-col {background: #fff;border: 1px dashed #ddd;margin: 2px;}
-    }
-    .child-table {
-      .drag-list {min-height: 80px;align-items: stretch;border: 1px dashed #ddd;margin: 2px;overflow-x: auto;white-space: nowrap;
-        > div {display: inline-block}
-        .ghost {height: auto;width: 3px;}
-      }
-    }
-    .form-tabs {
-      .form-list {min-height: 100px;height: auto}
-    }
-    .form-row, .child-table, .form-tabs {
-      &:hover {border-color: #e6a23c;background: #fdf6ec}
-      > .drag-control {
-        i, .drag-move {background: #e6a23c}
-      }
-      &.active {border: 3px solid #e6a23c;position: relative;
-        .field-type {display: block}
-      }
-      .field-type {position: absolute;right: 0;top: 0;color: $mainColor;display: none}
-    }
-    .tag-table {position: absolute;right: 0;top: 0;font-size: 12px;background: $mainColor;color: #fff}
-  }
-}
+// 左侧栏
 .components-list {height: 100vh;width: 250px;padding: 8px 0;position: fixed;overflow-y: auto;
   .title {padding: 8px 12px;}
   ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
@@ -75,62 +16,82 @@ $mainColor: #66b1ff;
       &:hover {
         color: $mainColor;border: 1px dashed $mainColor;cursor: move;
       }
+      &.title {padding: 0 10px}
     }
+  }
+}
+// 框架
+.main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0 300px 0 250px;overflow: hidden;
+  .empty-tips {position: absolute;text-align: center;width: 300px;font-size: 20px;top: 200px;left: 50%;margin-left: -150px;color: #ccc;
+  }
+  .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 68px);overflow-y: auto;overflow-x: hidden;}
+}
+// 中间按钮工具
+.main-tools {line-height: 38px;border-bottom: 2px solid #e4e7ed;text-align: right;
+  button {color: $mainColor;margin-right: 10px;
+    i {padding-right: 5px}
+  }
+}
+.design-form {height: 100%;padding: 10px;box-sizing: border-box;
+  > div {height: 100%}
+  .ghost {
+    background: #F56C6C;
+    border: 2px solid #F56C6C;
+    outline-width: 0;
+    height: 3px;
+    box-sizing: border-box;
+    font-size: 0;
+    content: '';
+    overflow: hidden;
+    padding: 0;
+    width: 100%;
+  }
+  .group {border: 1px dashed #ddd;margin: 2px;padding: 5px;position: relative;width: 100%;
+    &.active {border: 3px solid $mainColor;position: relative;
+      > .drag-control {display: block}
+      > .tooltip {display: block;}
+    }
+    &:hover {border-color: $mainColor;background: #ecf5ff}
+    > div {margin-bottom: 0}
+  }
+  .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0}
+  .drag-control {display: none;
+    .item-control {position: absolute;right: 0;bottom: 0;z-index: 2; display: flex;align-items: center;height: 24px;background: $mainColor;
+      i {width: 24px;height: 24px;color: #fff;display: flex;align-items: center;justify-content: center;cursor: pointer}
+    }
+    .drag-move {position: absolute;left: 0;top: 0;z-index: 2;width: 24px;height: 24px;background: $mainColor;color: #fff;text-align: center;line-height: 24px;cursor: move}
+  }
+  .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;display: flex;flex-wrap: wrap;align-content: flex-start}
+  // 格珊
+  .form-row {
+    .form-col {
+      &.active-col {border: 3px solid $mainColor;position: relative;
+        > .drag-control {display: block;}
+        > .tooltip {display: block;}
+      }
+    }
+  }
+  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px}
+  .form-tabs {
+    .drag {min-height: 80px;}
+  }
+  .form-table {
+    .drag {border: 0;display: flex;overflow-x: auto;white-space: nowrap;padding: 0;
+      > div {min-width: 150px}
+    }
+    .el-form-item {display: block}
   }
 }
 .sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;
-  .padding {padding-bottom: 20px;
-    .tabs-content {padding: 0 20px;}
+  .form {
+    .el-form-item {margin-bottom: 10px;}
   }
-  .ak-form-item {margin-bottom: 10px;
-    .ak-form-label {width: auto}
-  }
-  .flex {display: flex;align-items: center;margin-bottom: 10px;
-    > div {margin-right: 3px;}
-    .icon-del {margin-left: 5px;cursor: pointer}
-  }
-  .set-option {padding-top: 10px;
-    .item {display: flex;align-items: center;margin-bottom: 10px;
-      > div {margin-right: 3px;}
-      .icon-del {margin-left: 5px;cursor: pointer}
-    }
-  }
-  .required {display: flex;align-items: center;
-    div {flex: 2;margin-left: 5px}
-  }
-  .padding-top {padding-top: 10px}
-  h3 {font-size: 14px;}
+  h3 {font-size: 14px;font-weight: 700;margin-bottom: 10px}
+  .el-tabs__nav-wrap {padding: 0 10px}
+  .el-tabs__content {padding: 0 10px}
+  .icon-del {cursor: pointer}
 }
-.ak-tabs {
-  .tabs-nav {height: 47px;display: flex;align-items: center;justify-content: space-between;}
-  .tabs-tab {text-align: center;flex: 2;border-bottom: 2px solid #e4e7ed;height: 47px;line-height: 47px;cursor: pointer;
-    &.active {border-color: $mainColor}
-  }
+#editJson {height: 400px;width: 100%;}
+.json-dialog{
+  .el-dialog__body{padding: 0 20px}
 }
-.ak-form {
-  .tabs-nav {margin-bottom: 15px}
-}
-.add-form {
-  .child-table {margin-bottom: 20px;
-    .ak-table {margin-bottom: 10px;
-      .ak-form-item {margin: 0}
-      .ak-form-label {display: none}
-      .icon-del {cursor: pointer}
-    }
-  }
-  .form-row {display: flex;
-/*    .form-col {}*/
-  }
-  .child-table {
-    .ak-form-tips {top: 10px;left: auto;right: 0}
-  }
-}
-.detail-form {
-  .child-table {margin-bottom: 20px;}
-  .form-row {display: flex;
-    /*.form-col {flex: 2}*/
-  }
-}
-.submit-button {text-align: center;padding-top: 20px;}
-#editJson {height: 100%;width: 100%;}
-@import "components/index";

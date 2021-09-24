@@ -1,34 +1,30 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 
-Vue.use(Router)
-// console.log('router')
+// 开启历史模式
+// vue2中使用 mode: history 实现
+const routerHistory = createWebHistory();
 
-export const defaultRouterMap = [
-  {
-    path: '/',
-    name: 'index',
-    component: () => import('@/views/index')
+const router = createRouter({
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return {top: 0}
+    }
   },
-  {
-    path: '/design',
-    name: 'design',
-    component: () => import('@/views/design')
-  },
-  {
-    path: '/form',
-    name: 'form',
-    component: () => import('@/views/form')
-  },
-  {
-    path: '/list',
-    name: 'list',
-    component: () => import('@/views/list')
-  }
-]
-
-export default new Router({
-  // mode: 'history',
-  routes: defaultRouterMap,
-  base: process.env.BASE_URL
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/',
+      name: 'index',
+      component: () => import('../views/index/index.vue')
+    },
+    {
+      path: '/design',
+      name: 'design',
+      component: () => import('../views/design/index.vue')
+    }
+  ]
 })
+
+export default router

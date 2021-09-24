@@ -1,33 +1,13 @@
-# Vue自定义表单设计器
+# Vue 3 + Vite
 
-## 项目结构
-```txt
-public
-  ├─assets 静态资源文件
-  └─index.html // 模板页面
-src
-  ├─assets // api文件
-    └─scss // 样式文件
-  ├─packages // 组件资源包
-  ├─router // 路由配置
-  ├─store // 状态管理
-  ├─utils // 工具类
-  └─views // 页面
-      ├─design // 表单设计页面
-      ├─form // 表单数据添加,修改,预览页
-      ├─list // 数据列表页
-      └─index // 页面入口，表单列表页
-```
 
-### 演示地址
-https://337547038.github.io/vue-form-design/
+#input 前后缀
+#动态数据时接口类型get/post
+#增加问号帮助信息
+#select设置默认值
+选择输入列
+表单栅格
 
-## 部署
-``` bash
-1、本地开发
- npm install
- npm run serve
- 
-2、打包
-npm run build
-```
+
+
+http://cdn.kcz66.com/k-form-design.html

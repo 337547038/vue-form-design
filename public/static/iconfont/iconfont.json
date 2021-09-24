@@ -6,6 +6,69 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "145454",
+      "name": "图片",
+      "font_class": "image",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "646357",
+      "name": "卡片",
+      "font_class": "card",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "737945",
+      "name": "help",
+      "font_class": "help",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "1467412",
+      "name": "table",
+      "font_class": "table",
+      "unicode": "e6a9",
+      "unicode_decimal": 59049
+    },
+    {
+      "icon_id": "13253956",
+      "name": "component",
+      "font_class": "component",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "15196938",
+      "name": "11.符号-级联选择",
+      "font_class": "link",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "16880964",
+      "name": "cascader",
+      "font_class": "cascader",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "17374561",
+      "name": "计数器",
+      "font_class": "number",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "19657932",
+      "name": "标题",
+      "font_class": "title",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
       "icon_id": "8017649",
       "name": "bootstrap_tabs",
       "font_class": "tabs",
@@ -46,13 +109,6 @@
       "font_class": "vue",
       "unicode": "e69a",
       "unicode_decimal": 59034
-    },
-    {
-      "icon_id": "1262212",
-      "name": "table",
-      "font_class": "childTable",
-      "unicode": "e713",
-      "unicode_decimal": 59155
     },
     {
       "icon_id": "20905073",

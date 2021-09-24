@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2578019 */
-  src: url('iconfont.woff2?t=1623376424857') format('woff2'),
-       url('iconfont.woff?t=1623376424857') format('woff'),
-       url('iconfont.ttf?t=1623376424857') format('truetype');
+  src: url('iconfont.woff2?t=1632469979105') format('woff2'),
+       url('iconfont.woff?t=1632469979105') format('woff'),
+       url('iconfont.ttf?t=1632469979105') format('truetype');
 }
 
 .iconfont,[class*="icon-"] {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-image:before {
+  content: "\e63e";
+}
+
+.icon-card:before {
+  content: "\e622";
+}
+
+.icon-help:before {
+  content: "\e61c";
+}
+
+.icon-table:before {
+  content: "\e6a9";
+}
+
+.icon-component:before {
+  content: "\e620";
+}
+
+.icon-link:before {
+  content: "\e623";
+}
+
+.icon-cascader:before {
+  content: "\e624";
+}
+
+.icon-number:before {
+  content: "\e647";
+}
+
+.icon-title:before {
+  content: "\e61d";
 }
 
 .icon-tabs:before {
@@ -35,10 +71,6 @@
 
 .icon-vue:before {
   content: "\e69a";
-}
-
-.icon-childTable:before {
-  content: "\e713";
 }
 
 .icon-switch:before {
