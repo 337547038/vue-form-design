@@ -188,11 +188,10 @@
 import {reactive, toRefs, computed} from 'vue'
 import {useStore} from 'vuex'
 import Draggable from 'vuedraggable'
-import Render from './render'
 
 export default {
   name: "formGroup",
-  components: {Draggable, Render},
+  components: {Draggable},
   props: {
     data: {
       type: Object,

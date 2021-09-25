@@ -45,7 +45,18 @@
           </template>
           <template v-else-if="controlData.type">
             <el-form-item label="字段标识">
-              <el-input v-model="controlData.name" placeholder="字段唯一标识，对应数据库"></el-input>
+              <el-select
+                  v-if="dataSourceList&&dataSourceList.length>0"
+                  v-model="controlData.name"
+                  @change="dataSourceChange">
+                <el-option
+                    v-for="item in dataSourceList"
+                    :key="item.COLUMN_NAME"
+                    :label="item.COLUMN_COMMENT||item.COLUMN_NAME"
+                    :value="item.COLUMN_NAME">
+                </el-option>
+              </el-select>
+              <el-input v-model="controlData.name" placeholder="字段唯一标识，对应数据库" v-else></el-input>
             </el-form-item>
             <el-form-item label="显示标题">
               <el-input v-model="controlData.item.label" placeholder="显示的label标签名称"></el-input>
@@ -84,14 +95,14 @@
             </el-form-item>
             <el-form-item label="操作属性">
               <el-checkbox
-                v-model="controlData.control.multiple"
-                label="多选"
-                v-if="controlData.type==='select'"
-                @change="selectMultipleChange">
+                  v-model="controlData.control.multiple"
+                  label="多选"
+                  v-if="controlData.type==='select'"
+                  @change="selectMultipleChange">
               </el-checkbox>
               <el-checkbox
-                v-model="controlData.control.disabled"
-                label="禁用">
+                  v-model="controlData.control.disabled"
+                  label="禁用">
               </el-checkbox>
             </el-form-item>
             <div v-if="showOptionType(controlData.type)">
@@ -100,8 +111,8 @@
                 <el-tab-pane label="固定选项" name="fixed">
                   <div v-if="controlData.type!=='cascader'">
                     <el-form-item
-                      v-for="(item,index) in controlData.options"
-                      :key="index">
+                        v-for="(item,index) in controlData.options"
+                        :key="index">
                       <el-col :span="10">
                         <el-input placeholder="选项标签" v-model="item.label"></el-input>
                       </el-col>
@@ -122,8 +133,8 @@
                   </el-radio-group>
                   <el-form-item>
                     <el-input
-                      v-model="controlData.optionsSourceFun"
-                      :placeholder="controlData.optionsSource?'方法函数名':'数据源接口URL'">
+                        v-model="controlData.optionsSourceFun"
+                        :placeholder="controlData.optionsSource?'方法函数名':'数据源接口URL'">
                       <template #prepend v-if="!controlData.optionsSource">
                         <el-select v-model="controlData.optionsRequest" style="width:80px">
                           <el-option label="get" value="get"></el-option>
@@ -140,14 +151,14 @@
               <el-form-item>
                 <el-checkbox @change="requiredChange">必填</el-checkbox>
                 <el-input
-                  placeholder="自定义必填错误提示"
-                  v-model="controlData.rules[0].message"
-                  v-if="controlData.rules&&controlData.rules[0]"></el-input>
+                    placeholder="自定义必填错误提示"
+                    v-model="controlData.rules[0].message"
+                    v-if="controlData.rules&&controlData.rules[0]"></el-input>
               </el-form-item>
               <div v-if="controlData.type==='input'||controlData.type==='password'">
-<!--                <el-form-item v-for="item in controlData.rules" :key="item.message">
-                  <el-select></el-select>
-                </el-form-item>-->
+                <!--                <el-form-item v-for="item in controlData.rules" :key="item.message">
+                                  <el-select></el-select>
+                                </el-form-item>-->
                 <el-form-item>
                   <el-button @click="addRules">编辑校验规则</el-button>
                 </el-form-item>
@@ -163,21 +174,21 @@
       <el-tab-pane label="表单属性" name="second">
         <el-form size="mini" class="form">
           <el-form-item
-            v-for="(item,index) in formAttr"
-            :label="item.label"
-            :key="index">
+              v-for="(item,index) in formAttr"
+              :label="item.label"
+              :key="index">
             <el-select v-if="item.type==='select'" v-model="formConfig[item.value]">
               <el-option
-                :label="opt.label"
-                v-for="opt in item.options"
-                :key="opt.label"
-                :value="opt.value">
+                  :label="opt.label"
+                  v-for="opt in item.options"
+                  :key="opt.label"
+                  :value="opt.value">
               </el-option>
             </el-select>
             <el-input
-              v-else
-              v-model="formConfig[item.value]"
-              :placeholder="item.placeholder">
+                v-else
+                v-model="formConfig[item.value]"
+                :placeholder="item.placeholder">
             </el-input>
           </el-form-item>
         </el-form>
@@ -189,7 +200,8 @@
 <script>
 import {reactive, toRefs, ref, computed, nextTick, onUnmounted} from 'vue'
 import {useStore} from 'vuex'
-import jsbeautify from 'js-beautify'
+import {useRoute} from 'vue-router'
+import {getFiled} from "@/api"
 
 export default {
   name: 'formControlAttr',
@@ -198,22 +210,39 @@ export default {
   },
   emits: ['openDialog'],
   setup(props, {emit}) {
+    const store = useStore()
+    const router = useRoute()
+    const dataSource = router.query.dataSource
     const state = reactive({
       formAttr: [
         {label: '表单名称', value: 'name'},
         {label: '表单标签宽度', value: 'labelWidth'},
-        {label: '表单样式名称', value: 'className'},
+        {label: '表单样式名称', value: 'class'},
         {
           label: '组件尺寸', value: 'size', type: 'select', options: [
+            {label: 'default', value: ''},
             {label: 'medium', value: 'medium'},
             {label: 'small', value: 'small'},
             {label: 'mini', value: 'mini'}
           ]
         }
       ],
-      // attrDialog: false
+      dataSourceList: []
     })
-    const store = useStore()
+
+    if (dataSource) {
+      // 根据选定数据源获取表单字段
+      getFiled(dataSource)
+          .then(res => {
+            if (res.data.code === 200) {
+              state.dataSourceList = res.data.data
+            }
+            state.loading = false
+          })
+          .catch(res => {
+            console.log(res)
+          })
+    }
     const showOptionType = type => {
       return ['radio', 'select', 'checkbox', 'cascader'].indexOf(type) !== -1
     }
@@ -302,6 +331,13 @@ export default {
         Object.assign(controlData.value.rules, result)
       })
     }
+    // 选择字段标识时，同时修改显示标题
+    const dataSourceChange = val => {
+      const current = state.dataSourceList.find(item => {
+        return item.COLUMN_NAME === val
+      })
+      controlData.value.item.label = current.COLUMN_COMMENT || current.COLUMN_NAME
+    }
     return {
       ...toRefs(state),
       controlData,
@@ -312,7 +348,8 @@ export default {
       selectMultipleChange,
       showVerify,
       requiredChange,
-      addRules
+      addRules,
+      dataSourceChange
     }
   }
 }

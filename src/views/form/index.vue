@@ -1,84 +1,49 @@
-<!-- Created by 337547038 表单提交 -->
 <template>
-  <div style="margin: 30px">
-    <h1>表单数据提交/修改/详情</h1>
-    <form-design
-      :data="data"
-      ref="auform"
-      :form-type="formType"
-      :remoteFunc="remoteFunc">
-    </form-design>
-    <div class="submit-button" v-if="submitShow">
-      <ak-button @click="submit" type="primary">提交表单</ak-button>
-    </div>
+  <div>
+    <el-table :data="tableData" border style="width: 100%" v-loading="loading">
+      <el-table-column prop="formName" label="表单名称"/>
+      <el-table-column prop="tableName" label="数据表名"/>
+      <el-table-column label="操作">
+        <template #default="scope">
+          <router-link :to="{path:'/design',query:{dataSource:scope.row.tableName,id:scope.row.id }}">
+            <el-button size="small" type="primary">修改</el-button>
+          </router-link>
+          <el-button size="small" type="primary" style="margin-left: 10px">搜索设置</el-button>
+          <el-button size="small" type="primary">列表设置</el-button>
+          <el-button size="small" type="primary">添加数据</el-button>
+          <el-button size="small" type="primary">查看</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import FormDesign from '../design/components/formDesign'
-import {evil} from '@/utils'
+import {reactive, toRefs} from 'vue'
+import {getList} from "@/api"
 
 export default {
-  name: 'formSubmit',
-  data() {
-    return {
-      data: {},
-      remoteFunc: {
-        /* radioFunc(resolve) {
-          const obj = [
-            {label: '111', value: '111'},
-            {label: '222', value: '22'}
-          ]
-          resolve(obj)
-        } */
-      },
-      formType: 1,
-      submitShow: false
-    }
-  },
-  components: {FormDesign},
-  created() {
-    const query = this.$route.query
-    let key = 'formDesign'
-    if (query.type === 'preview') {
-      key = 'preview'
-    }
-    this.data = evil(window.localStorage.getItem(key)) || []
-    if (query.id) {
-      // 编辑时，模拟请求数据
-      setTimeout(() => {
-        const value = JSON.parse(window.localStorage.getItem('formData'))
-        this.$refs.auform.setValue(value)
-      }, 500)
-    }
-    this.readOnly = query.detail === 'detail'
-    if (query.detail !== 'detail' && query.type !== 'preview') {
-      this.submitShow = true
-    }
-    if (query.detail === 'detail') {
-      // 表单详情页展示模式
-      this.formType = 2
-    }
-  },
-  methods: {
-    submit() {
-      this.$refs.auform.validate()
+  name: "form",
+  props: {},
+  setup() {
+    const state = reactive({
+      tableData: [],
+      loading: false
+    })
+    getList('designform')
         .then(res => {
-          console.log('通过验证')
-          console.log(res)
-          // 将数据保存在storage
-          window.localStorage.setItem('formData', JSON.stringify(res))
-          this.$msg('提交成功')
-          this.$router.push({path: 'list', query: {id: '111'}})
+          if (res.data.code === 200) {
+            state.tableData = res.data.data
+          }
+          state.loading = false
         })
         .catch(res => {
-          console.log('不通过')
+          state.loading = false
           console.log(res)
         })
+    return {
+      ...toRefs(state)
     }
-  },
-  computed: {},
-  mounted() {
   }
 }
 </script>
