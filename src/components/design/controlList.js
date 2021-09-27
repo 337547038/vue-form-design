@@ -129,7 +129,7 @@ export default [
         control: {
           value: ''
         },
-        template: []
+        template: 'headTools'
       },
       {
         type: 'upload',

@@ -161,8 +161,8 @@
               class="avatar-uploader">
               <i class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
-            <component :is="element" v-if="element.type==='component'" />
-            <div v-if="element.type==='component'" v-html="element.template"></div>
+            <component :is="element.template" v-if="element.type==='component'" />
+<!--            <div v-if="element.type==='component'" v-html="element.template"></div>-->
             <div
               v-bind="element.control"
               v-if="element.type==='txt'"
