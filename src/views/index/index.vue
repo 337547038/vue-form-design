@@ -10,11 +10,11 @@
       </router-link>
     </div>
     <el-dialog
-      v-model="visible"
-      title="选择数据源"
-      width="600px"
-      custom-class="source-dialog"
-      :append-to-body="true">
+        v-model="visible"
+        title="选择数据源"
+        width="600px"
+        custom-class="source-dialog"
+        :append-to-body="true">
       <el-table :data="tableData" border style="width: 100%" v-loading="loading">
         <el-table-column prop="title" label="名称"/>
         <el-table-column prop="name" label="数据表名"/>
@@ -46,16 +46,16 @@ export default {
       state.visible = true
       state.loading = true
       getList('datasource')
-        .then(res => {
-          if (res.data.code === 200) {
-            state.tableData = res.data.data
-          }
-          state.loading = false
-        })
-        .catch(res => {
-          state.loading = false
-          console.log(res)
-        })
+          .then(res => {
+            if (res.data.code === 200) {
+              state.tableData = res.data.data
+            }
+            state.loading = false
+          })
+          .catch(res => {
+            state.loading = false
+            console.log(res)
+          })
     }
     return {
       chooseSource,

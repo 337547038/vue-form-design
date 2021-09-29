@@ -20,7 +20,10 @@
                 v-for="(item,index) in element.columns"
                 :label="item.label"
                 :key="index">
-                <form-group :data="item" data-type="not-nested"></form-group>
+                <form-group
+                  :data="item"
+                  data-type="not-nested"
+                  :type="type"></form-group>
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -30,13 +33,18 @@
             class="title"
             :class="[element.className]"
             v-bind="element.control"
-            v-html="element.control.value">
+            v-html="element.control.modelValue">
           </div>
         </template>
         <template v-else-if="element.type==='table'">
-          <div class="form-table">
-            <form-group :data="element" data-type="not-nested"></form-group>
+          <div class="form-table" v-if="type===2">
+            <form-group
+              :data="element"
+              data-type="not-nested"
+              :type="type">
+            </form-group>
           </div>
+          <form-table v-else :data="element"/>
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -47,7 +55,11 @@
               v-for="(col,index) in element.columns"
               :key="index"
               @click.stop="groupClick(col,'gridChild')">
-              <form-group :data="col" data-type="not-nested"></form-group>
+              <form-group
+                :data="col"
+                data-type="not-nested"
+                :type="type">
+              </form-group>
               <div class="drag-control">
                 <div class="item-control">
                   <i class="icon-del" @click.stop="click('delGridChild',index,element.columns)"></i>
@@ -58,9 +70,9 @@
         </template>
         <template v-else-if="element.type==='card'">
           <el-collapse model-value="1">
-            <el-collapse-item :title="getLabel(element)" name="1">
+            <el-collapse-item :title="element.item.label" name="1">
               <template #title v-if="element.help">
-                {{ getLabel(element) }}
+                {{ element.item.label }}
                 <el-tooltip placement="top">
                   <template #content>
                     <span v-html="element.help"></span>
@@ -68,109 +80,14 @@
                   <i class="icon-help"></i>
                 </el-tooltip>
               </template>
-              <form-group :data="element"></form-group>
+              <form-group :data="element" :type="type"></form-group>
             </el-collapse-item>
           </el-collapse>
         </template>
         <template v-else>
-          <el-form-item
-            v-bind="element.item"
-            :prop="element.name"
-            :class="element.className"
-            :label="getLabel(element)">
-            <template #label v-if="element.help">
-              {{ getLabel(element) }}
-              <el-tooltip placement="top">
-                <template #content>
-                  <span v-html="element.help"></span>
-                </template>
-                <i class="icon-help"></i>
-              </el-tooltip>
-            </template>
-            <el-input
-              v-model="element.control.value"
-              v-bind="element.control"
-              :type="element.type==='password'?'password':''"
-              v-if="element.type==='input'||element.type==='password'">
-              <template v-slot:[key] v-for="(te,key) in element.slot">
-                {{ te }}
-              </template>
-            </el-input>
-            <el-input
-              v-model="element.control.value"
-              v-bind="element.control"
-              type="textarea"
-              v-if="element.type==='textarea'">
-            </el-input>
-            <el-radio-group
-              v-bind="element.control"
-              v-model="element.control.value"
-              v-if="element.type==='radio'">
-              <el-radio
-                :key="index"
-                :label="item.value"
-                v-for="(item,index) in element.options">
-                {{ item.label }}
-              </el-radio>
-            </el-radio-group>
-            <el-checkbox-group
-              v-bind="element.control"
-              v-model="element.control.value"
-              v-if="element.type==='checkbox'">
-              <el-checkbox
-                v-for="(item,index) in element.options"
-                :key="index"
-                :label="item.value">
-              </el-checkbox>
-            </el-checkbox-group>
-            <el-select
-              v-if="element.type==='select'"
-              v-bind="element.control"
-              v-model="element.control.value">
-              <el-option
-                v-for="item in element.options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-            <el-date-picker
-              v-if="element.type==='datePicker'"
-              type="date"
-              v-bind="element.control"
-              v-model="element.control.value">
-            </el-date-picker>
-            <el-switch
-              v-if="element.type==='switch'"
-              v-bind="element.control"
-              v-model="element.control.value">
-            </el-switch>
-            <el-input-number
-              v-if="element.type==='number'"
-              v-model="element.control.value"
-              v-bind="element.control">
-            </el-input-number>
-            <el-cascader
-              v-if="element.type==='cascader'"
-              v-model="element.control.value"
-              v-bind="element.control"
-              :options="element.options">
-            </el-cascader>
-            <el-upload
-              v-if="element.type==='upload'"
-              class="avatar-uploader">
-              <i class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-            <component :is="element.template" v-if="element.type==='component'" />
-<!--            <div v-if="element.type==='component'" v-html="element.template"></div>-->
-            <div
-              v-bind="element.control"
-              v-if="element.type==='txt'"
-              v-html="element.control.value">
-            </div>
-          </el-form-item>
+          <form-item :element="element" :type="type"></form-item>
         </template>
-        <div class="drag-control">
+        <div class="drag-control" v-if="type===2">
           <div class="item-control">
             <i class="icon-plus" @click.stop="click('gridAdd',index,element)" v-if="gridAdd" title="添加列"></i>
             <i class="icon-clone" @click.stop="click('clone',index,element)" v-if="clone" title="克隆"></i>
@@ -178,7 +95,7 @@
           </div>
           <div class="drag-move icon-move"></div>
         </div>
-        <div class="tooltip">{{ element.name }}</div>
+        <div class="tooltip" v-if="type===2">{{ element.name }}</div>
       </div>
     </template>
   </draggable>
@@ -188,17 +105,20 @@
 import {reactive, toRefs, computed} from 'vue'
 import {useStore} from 'vuex'
 import Draggable from 'vuedraggable'
+import FormItem from './item.vue'
+import FormTable from './formTable.vue'
 
 export default {
   name: "formGroup",
-  components: {Draggable},
+  components: {Draggable, FormItem, FormTable},
   props: {
     data: {
       type: Object,
       default: () => {
         return {}
       }
-    }
+    },
+    type: Number // 1新增；2设计；3查看
   },
   setup(props) {
     const store = useStore()
@@ -210,7 +130,7 @@ export default {
       return store.state.form.activeKey
     })
     const indexType = type => {
-      const controlType = ['grid', 'table', 'tabs', 'title']
+      const controlType = ['grid', 'table', 'tabs']
       return controlType.indexOf(type) === -1
     }
     // 删除或复制
@@ -264,13 +184,9 @@ export default {
           rules: []
         }
       }
-      // 输入框时添加前后缀参数
-      if (obj.type === 'input') {
-        Object.assign(objectOther, {slot: {}})
-      }
       dataList[newIndex] = Object.assign({
         name: obj.type + key,
-      }, objectOther, obj)
+      }, obj, objectOther)
       store.commit('setActiveKey', obj.type + key)
       store.commit('setControlAttr', dataList[newIndex])
       // grid时显示添加列按钮
@@ -279,29 +195,16 @@ export default {
     }
     // 点击激活当前
     const groupClick = (item, type) => {
-      // console.log(item)
       if (type === 'gridChild') {
         if (!item.name) {
           item.name = 'gridChild' + new Date().getTime().toString()
         }
         item.type = type
       }
-      // state.activeKey = item.name; // 当前激活
       store.commit('setActiveKey', item.name)
       store.commit('setControlAttr', item)
       state.gridAdd = item.type === 'grid'
       state.clone = indexType(item.type)
-    }
-    const getLabel = ele => {
-      if (ele.item) {
-        if (ele.item.showLabel) {
-          return ''
-        } else {
-          return ele.item.label
-        }
-      } else {
-        return ''
-      }
     }
     const getFormItemStyle = ele => {
       if (ele.item && ele.item.span) {
@@ -314,7 +217,6 @@ export default {
       ...toRefs(state),
       groupClick,
       activeKey,
-      getLabel,
       getFormItemStyle
     }
   }
