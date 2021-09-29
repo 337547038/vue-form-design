@@ -1,14 +1,20 @@
 const selectOption = [
   {
-    label: 'option1', value: 'option1'
+    label: 'label1', value: 'value1'
   },
   {
-    label: 'option2', value: 'option2'
+    label: 'label2', value: 'value2'
   },
   {
-    label: 'option3', value: 'option3'
+    label: 'label3', value: 'value3'
   }
 ]
+const config = {
+  type: 'fixed', // 选项类型 fixed固定选项；async动态选项
+  source: 0, // 0数据，1方法函数
+  request: 'get', // 请求类型
+  sourceFun: '' // 方法名或请求url
+}
 export default [
   {
     title: '基础字段',
@@ -18,15 +24,16 @@ export default [
         label: '单行文本',
         icon: 'input',
         control: {
-          value: ''
-        }
+          modelValue: ''
+        },
+        slot: {}
       },
       {
         type: 'textarea',
         label: '多行文本',
         icon: 'textarea',
         control: {
-          value: ''
+          modelValue: ''
         }
       },
       {
@@ -34,38 +41,39 @@ export default [
         label: '单选框组',
         icon: 'radio',
         control: {
-          value: ''
+          modelValue: ''
         },
-        options: selectOption
+        options: selectOption,
+        config: config
       },
       {
         type: 'checkbox',
         label: '多选框组',
         icon: 'checkbox',
         control: {
-          value: []
+          modelValue: []
         },
-        options: selectOption
+        options: selectOption,
+        config: config
       },
       {
         type: 'select',
         label: '下拉选择框',
         icon: 'select',
         control: {
-          value: [],
+          modelValue: [],
           appendToBody: true
         },
         options: selectOption,
+        config: config
       },
       {
         type: 'datePicker',
         label: '日期选择器',
         icon: 'date',
         control: {
-          value: '',
-          type: 'date',
-          readonly: true,
-          appendToBody: true
+          modelValue: '',
+          type: 'date'
         }
       },
       {
@@ -73,7 +81,7 @@ export default [
         label: '开关',
         icon: 'switch',
         control: {
-          value: false
+          modelValue: false
         }
       },
       {
@@ -81,7 +89,7 @@ export default [
         label: '计数器',
         icon: 'number',
         control: {
-          value: ''
+          modelValue: ''
         }
       },
       {
@@ -89,7 +97,7 @@ export default [
         label: '文字',
         icon: 'text',
         control: {
-          value: ''
+          modelValue: ''
         }
       },
       {
@@ -97,7 +105,7 @@ export default [
         label: '标题',
         icon: 'title',
         control: {
-          value: '标题'
+          modelValue: '标题'
         }
       }
     ]
@@ -111,23 +119,27 @@ export default [
         icon: 'table',
         list: [],
         tableData: [],
-        control: {}
+        control: {
+          border: true
+        },
+        config: {}
       },
       {
         type: 'cascader',
         label: '级联选择器',
         icon: 'cascader',
         control: {
-          value: []
+          modelValue: []
         },
-        options: []
+        options: [],
+        config: config
       },
       {
         type: 'component',
         label: '自定义组件',
         icon: 'component',
         control: {
-          value: ''
+          modelValue: ''
         },
         template: []
       },
@@ -168,14 +180,16 @@ export default [
             list: []
           }
         ],
-        control: {}
+        control: {},
+        item: {}
       },
       {
         type: 'card',
         label: '卡片布局',
         icon: 'card',
         list: [],
-        control: {}
+        control: {},
+        item: {}
       }
     ]
   }

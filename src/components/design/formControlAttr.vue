@@ -8,11 +8,77 @@
           <el-form-item label="自定义Class">
             <el-input v-model="controlData.className" placeholder="样式类名"></el-input>
           </el-form-item>
+          <el-form-item label="字段标识" v-if="showHide(['grid', 'tabs', 'card','title','gridChild','tableColumn'])">
+            <el-select
+              v-if="dataSourceList&&dataSourceList.length>0"
+              v-model="controlData.name"
+              @change="dataSourceChange">
+              <el-option
+                v-for="item in dataSourceList"
+                :key="item.COLUMN_NAME"
+                :label="item.COLUMN_COMMENT||item.COLUMN_NAME"
+                :value="item.COLUMN_NAME">
+              </el-option>
+            </el-select>
+            <el-input v-model="controlData.name" placeholder="字段唯一标识，对应数据库" v-else></el-input>
+          </el-form-item>
+          <template v-if="showHide(['table','grid','tabs','title','gridChild'])">
+            <el-form-item label="显示标题">
+              <el-input v-model="controlData.item.label" placeholder="显示的label标签名称"></el-input>
+            </el-form-item>
+            <el-form-item label="隐藏标签">
+              <el-switch v-model="controlData.item.showLabel"></el-switch>
+            </el-form-item>
+            <el-form-item label="帮助信息">
+              <el-input v-model="controlData.help"></el-input>
+            </el-form-item>
+          </template>
+          <el-form-item label="表单栅格" v-if="showHide(['table','grid','gridChild'])">
+            <el-input v-model="controlData.item.span" placeholder="表单区域栅格宽"></el-input>
+          </el-form-item>
+          <el-form-item label="占位内容" v-if="showHide(['input','textarea','select','date','number'],true)">
+            <el-input v-model="controlData.control.placeholder" placeholder="placeholder"></el-input>
+          </el-form-item>
+          <el-form-item label="默认值" v-if="showHide(['txt'],true)">
+            <el-input v-model="controlData.control.modelValue" placeholder="支持html" type="textarea"></el-input>
+          </el-form-item>
+          <el-form-item label="设为密码" v-if="showHide(['input','password'],true)">
+            <el-select v-model="controlData.type">
+              <el-option value="input" label="文本"></el-option>
+              <el-option value="password" label="密码"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="文本域高度" v-if="showHide(['textarea'],true)">
+            <el-input v-model="controlData.control.rows" placeholder="输入框行数"></el-input>
+          </el-form-item>
+          <div v-if="showHide(['input'],true)">
+            <el-form-item label="前缀">
+              <el-input v-model="controlData.slot.prepend"></el-input>
+            </el-form-item>
+            <el-form-item label="后缀">
+              <el-input v-model="controlData.slot.append"></el-input>
+            </el-form-item>
+          </div>
+          <el-form-item
+            label="操作属性"
+            v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader','upload'],true)">
+            <el-checkbox
+              v-model="controlData.control.multiple"
+              label="多选"
+              v-if="showHide(['select'],true)"
+              @change="selectMultipleChange">
+            </el-checkbox>
+            <el-checkbox
+              v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader','upload'],true)"
+              v-model="controlData.control.disabled"
+              label="禁用">
+            </el-checkbox>
+          </el-form-item>
           <template v-if="controlData.type==='grid'"></template>
           <template v-if="controlData.type==='card'"></template>
           <template v-else-if="controlData.type==='title'">
             <el-form-item label="标题">
-              <el-input v-model="controlData.control.value"></el-input>
+              <el-input v-model="controlData.control.modelValue"></el-input>
             </el-form-item>
           </template>
           <template v-else-if="controlData.type==='gridChild'">
@@ -29,7 +95,12 @@
               <el-input v-model.number="controlData.attr.pull"></el-input>
             </el-form-item>
           </template>
-          <template v-else-if="controlData.type==='table'"></template>
+          <template v-else-if="controlData.type==='table'">
+            <el-form-item label="添加列">
+              <el-checkbox @change="tableColumnAdd($event)" v-model="columnIndex">序号列</el-checkbox>
+              <el-checkbox @change="tableColumnAdd($event,1)" v-model="columnOperate">操作列</el-checkbox>
+            </el-form-item>
+          </template>
           <template v-else-if="controlData.type==='tabs'">
             <h3>标签配置项</h3>
             <el-form-item v-for="(item,index) in controlData.columns" :key="item.label">
@@ -43,129 +114,63 @@
               <el-button @click="addSelectOption('tabs')">增加标签</el-button>
             </el-form-item>
           </template>
-          <template v-else-if="controlData.type">
-            <el-form-item label="字段标识">
-              <el-select
-                  v-if="dataSourceList&&dataSourceList.length>0"
-                  v-model="controlData.name"
-                  @change="dataSourceChange">
-                <el-option
-                    v-for="item in dataSourceList"
-                    :key="item.COLUMN_NAME"
-                    :label="item.COLUMN_COMMENT||item.COLUMN_NAME"
-                    :value="item.COLUMN_NAME">
-                </el-option>
-              </el-select>
-              <el-input v-model="controlData.name" placeholder="字段唯一标识，对应数据库" v-else></el-input>
-            </el-form-item>
-            <el-form-item label="显示标题">
-              <el-input v-model="controlData.item.label" placeholder="显示的label标签名称"></el-input>
-            </el-form-item>
-            <el-form-item label="表单栅格">
-              <el-input v-model="controlData.item.span" placeholder="表单区域栅格宽"></el-input>
-            </el-form-item>
-            <el-form-item label="占位内容">
-              <el-input v-model="controlData.control.placeholder" placeholder="placeholder"></el-input>
-            </el-form-item>
-            <el-form-item label="默认值" v-if="controlData.type==='txt'">
-              <el-input v-model="controlData.control.value" placeholder="支持html" type="textarea"></el-input>
-            </el-form-item>
-            <el-form-item label="设为密码" v-if="controlData.type==='input'||controlData.type==='password'">
-              <el-select v-model="controlData.type">
-                <el-option value="input" label="文本"></el-option>
-                <el-option value="password" label="密码"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="文本域高度" v-if="controlData.type==='textarea'">
-              <el-input v-model="controlData.control.rows" placeholder="输入框行数"></el-input>
-            </el-form-item>
-            <el-form-item label="隐藏标签">
-              <el-switch v-model="controlData.item.showLabel"></el-switch>
-            </el-form-item>
-            <div v-if="controlData.type==='input'">
-              <el-form-item label="前缀">
-                <el-input v-model="controlData.slot.prepend"></el-input>
-              </el-form-item>
-              <el-form-item label="后缀">
-                <el-input v-model="controlData.slot.append"></el-input>
-              </el-form-item>
-            </div>
-            <el-form-item label="帮助信息">
-              <el-input v-model="controlData.help"></el-input>
-            </el-form-item>
-            <el-form-item label="操作属性">
-              <el-checkbox
-                  v-model="controlData.control.multiple"
-                  label="多选"
-                  v-if="controlData.type==='select'"
-                  @change="selectMultipleChange">
-              </el-checkbox>
-              <el-checkbox
-                  v-model="controlData.control.disabled"
-                  label="禁用">
-              </el-checkbox>
-            </el-form-item>
-            <div v-if="showOptionType(controlData.type)">
-              <h3>选项配置</h3>
-              <el-tabs v-model="controlData.optionsType">
-                <el-tab-pane label="固定选项" name="fixed">
-                  <div v-if="controlData.type!=='cascader'">
-                    <el-form-item
-                        v-for="(item,index) in controlData.options"
-                        :key="index">
-                      <el-col :span="10">
-                        <el-input placeholder="选项标签" v-model="item.label"></el-input>
-                      </el-col>
-                      <el-col :span="10" :offset="1">
-                        <el-input placeholder="选项值" v-model="item.value"></el-input>
-                      </el-col>
-                      <el-col :span="2" :offset="1"><i class="icon-del" @click="delSelectOption(index)"></i></el-col>
-                    </el-form-item>
-                  </div>
-                  <el-form-item>
-                    <el-button @click="addSelectOption">新增</el-button>
+          <div v-if="showHide(['radio', 'select', 'checkbox', 'cascader'],true)">
+            <h3>选项配置</h3>
+            <el-tabs v-model="controlData.config.type">
+              <el-tab-pane label="固定选项" name="fixed">
+                <div v-if="controlData.type!=='cascader'">
+                  <el-form-item
+                    v-for="(item,index) in controlData.options"
+                    :key="index">
+                    <el-col :span="10">
+                      <el-input placeholder="选项标签" v-model="item.label"></el-input>
+                    </el-col>
+                    <el-col :span="10" :offset="1">
+                      <el-input placeholder="选项值" v-model="item.value"></el-input>
+                    </el-col>
+                    <el-col :span="2" :offset="1"><i class="icon-del" @click="delSelectOption(index)"></i></el-col>
                   </el-form-item>
-                </el-tab-pane>
-                <el-tab-pane label="动态选项" name="async">
-                  <el-radio-group v-model="controlData.optionsSource">
-                    <el-radio :label="0">数据源</el-radio>
-                    <el-radio :label="1">方法函数</el-radio>
-                  </el-radio-group>
-                  <el-form-item>
-                    <el-input
-                        v-model="controlData.optionsSourceFun"
-                        :placeholder="controlData.optionsSource?'方法函数名':'数据源接口URL'">
-                      <template #prepend v-if="!controlData.optionsSource">
-                        <el-select v-model="controlData.optionsRequest" style="width:80px">
-                          <el-option label="get" value="get"></el-option>
-                          <el-option label="post" value="post"></el-option>
-                        </el-select>
-                      </template>
-                    </el-input>
-                  </el-form-item>
-                </el-tab-pane>
-              </el-tabs>
-            </div>
-            <template v-if="showVerify(controlData.type)">
-              <h3>校验设置</h3>
-              <el-form-item>
-                <el-checkbox @change="requiredChange">必填</el-checkbox>
-                <el-input
-                    placeholder="自定义必填错误提示"
-                    v-model="controlData.rules[0].message"
-                    v-if="controlData.rules&&controlData.rules[0]"></el-input>
-              </el-form-item>
-              <div v-if="controlData.type==='input'||controlData.type==='password'">
-                <!--                <el-form-item v-for="item in controlData.rules" :key="item.message">
-                                  <el-select></el-select>
-                                </el-form-item>-->
+                </div>
                 <el-form-item>
-                  <el-button @click="addRules">编辑校验规则</el-button>
+                  <el-button @click="addSelectOption">新增</el-button>
                 </el-form-item>
-              </div>
-            </template>
+              </el-tab-pane>
+              <el-tab-pane label="动态选项" name="async">
+                <el-radio-group v-model="controlData.config.source">
+                  <el-radio :label="0">数据源</el-radio>
+                  <el-radio :label="1">方法函数</el-radio>
+                </el-radio-group>
+                <el-form-item>
+                  <el-input
+                    v-model="controlData.config.sourceFun"
+                    :placeholder="controlData.config.source?'方法函数名':'数据源接口URL'">
+                    <template #prepend v-if="!controlData.config.source">
+                      <el-select v-model="controlData.config.request" style="width:80px">
+                        <el-option label="get" value="get"></el-option>
+                        <el-option label="post" value="post"></el-option>
+                      </el-select>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+          <template v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn'])">
+            <h3>校验设置</h3>
+            <el-form-item>
+              <el-checkbox @change="requiredChange">必填</el-checkbox>
+              <el-input
+                placeholder="自定义必填错误提示"
+                v-model="controlData.rules[0].message"
+                v-if="controlData.rules&&controlData.rules[0]"></el-input>
+            </el-form-item>
+            <div v-if="controlData.type==='input'||controlData.type==='password'">
+              <el-form-item>
+                <el-button @click="addRules">编辑校验规则</el-button>
+              </el-form-item>
+            </div>
           </template>
-          <div v-show="Object.keys(controlData).length!==0">
+          <div v-if="showHide(['grid','card','gridChild'])">
             <h3>其他属性</h3>
             <el-button size="mini" @click="openAttrDialog">添加属性</el-button>
           </div>
@@ -174,21 +179,21 @@
       <el-tab-pane label="表单属性" name="second">
         <el-form size="mini" class="form">
           <el-form-item
-              v-for="(item,index) in formAttr"
-              :label="item.label"
-              :key="index">
+            v-for="(item,index) in formAttr"
+            :label="item.label"
+            :key="index">
             <el-select v-if="item.type==='select'" v-model="formConfig[item.value]">
               <el-option
-                  :label="opt.label"
-                  v-for="opt in item.options"
-                  :key="opt.label"
-                  :value="opt.value">
+                :label="opt.label"
+                v-for="opt in item.options"
+                :key="opt.label"
+                :value="opt.value">
               </el-option>
             </el-select>
             <el-input
-                v-else
-                v-model="formConfig[item.value]"
-                :placeholder="item.placeholder">
+              v-else
+              v-model="formConfig[item.value]"
+              :placeholder="item.placeholder">
             </el-input>
           </el-form-item>
         </el-form>
@@ -233,28 +238,18 @@ export default {
     if (dataSource) {
       // 根据选定数据源获取表单字段
       getFiled(dataSource)
-          .then(res => {
-            if (res.data.code === 200) {
-              state.dataSourceList = res.data.data
-            }
-            state.loading = false
-          })
-          .catch(res => {
-            console.log(res)
-          })
-    }
-    const showOptionType = type => {
-      return ['radio', 'select', 'checkbox', 'cascader'].indexOf(type) !== -1
+        .then(res => {
+          if (res.data.code === 200) {
+            state.dataSourceList = res.data.data
+          }
+          state.loading = false
+        })
+        .catch(res => {
+          console.log(res)
+        })
     }
     const controlData = computed(() => {
-      // 添加optionsType选项
-      const attr = store.state.form.controlAttr
-      // 有下拉选项的添加参数
-      if (showOptionType(attr.type)) {
-        return Object.assign(attr, {optionsType: 'fixed', optionsSource: 0, optionsRequest: 'get'})
-      } else {
-        return attr
-      }
+      return store.state.form.controlAttr
     })
     // 多选固定选项删除
     const delSelectOption = (index, type) => {
@@ -262,7 +257,7 @@ export default {
         // console.log(index)
         controlData.value.columns.splice(index, 1)
       } else {
-        controlData.value.control.options.splice(index, 1)
+        controlData.value.options.splice(index, 1)
       }
     }
     // 多选固定选项增加
@@ -277,7 +272,7 @@ export default {
             list: []
           })
         } else {
-          controlData.value.control.options.push({
+          controlData.value.options.push({
             label: '',
             value: ''
           })
@@ -292,8 +287,10 @@ export default {
       }
       emit('openDialog', editData, result => {
         if (controlData.value.type === 'cascader') {
-          Object.assign(controlData.value.options, result)
+          // Object.assign(controlData.value.options, result)
+          controlData.value.options = result
         } else {
+          controlData.value.control = {}
           Object.assign(controlData.value.control, result)
         }
       })
@@ -302,16 +299,11 @@ export default {
     const selectMultipleChange = val => {
       if (val) {
         // 多选，将值改为数组
-        controlData.value.control.value = []
+        controlData.value.control.modelValue = []
       } else {
         // 单选
-        controlData.value.control.value = ''
+        controlData.value.control.modelValue = ''
       }
-    }
-    // 显示校验的控件
-    const showVerify = type => {
-      const show = ['input', 'password', 'textarea', 'radio', 'checkbox', 'select', 'date', 'number', 'upload', 'cascader']
-      return show.indexOf(type) !== -1
     }
     // 必填校验
     const requiredChange = val => {
@@ -338,18 +330,82 @@ export default {
       })
       controlData.value.item.label = current.COLUMN_COMMENT || current.COLUMN_NAME
     }
+    // 根据不同类型判断是否显示当前属性
+    const showHide = (type, show) => {
+      // show=true 条件成立显示，false符合条件隐藏
+      if ((type && type.length === 0) || Object.keys(controlData.value).length === 0) {
+        return false
+      }
+      const index = type.indexOf(controlData.value.type)
+      return show ? index !== -1 : index === -1
+    }
+    // 子表时添加序号和操作列
+    const tableColumnAdd = (val, type) => {
+      const item = {
+        name: '',
+        type: 'tableColumn',
+        typeColumn: type ? 'operate' : 'index', // 用来判断是序号列还是操作列
+        item: {
+          label: type ? '操作' : '序号'
+        },
+        control: {
+          type: type ? '' : 'index'
+        }
+      }
+      if (val) {
+        if (type) {
+          // 操作列
+          controlData.value.list.push(item)
+        } else {
+          // 序号列
+          controlData.value.list.unshift(item)
+        }
+      } else {
+        if (type) {
+          // 操作列
+          controlData.value.list.splice(controlData.value.list.length - 1, 1)
+        } else {
+          // 序号列
+          controlData.value.list.splice(0, 1)
+        }
+      }
+    }
+    // 返回是否勾选了序号和操作列
+    const getColumnCheck = type => {
+
+    }
+    // 是否显示序号列
+    const columnIndex = computed(() => {
+      const list = controlData.value && controlData.value.list
+      if (list.length > 0) {
+        return list[0].typeColumn === 'index'
+      } else {
+        return false
+      }
+    })
+    // 是否显示操作列
+    const columnOperate = computed(() => {
+      const list = controlData.value && controlData.value.list
+      if (list.length > 0) {
+        return list[list.length - 1].typeColumn === 'operate'
+      } else {
+        return false
+      }
+    })
     return {
       ...toRefs(state),
       controlData,
       delSelectOption,
       addSelectOption,
       openAttrDialog,
-      showOptionType,
       selectMultipleChange,
-      showVerify,
       requiredChange,
       addRules,
-      dataSourceChange
+      dataSourceChange,
+      showHide,
+      tableColumnAdd,
+      columnIndex,
+      columnOperate
     }
   }
 }

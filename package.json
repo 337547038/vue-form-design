@@ -10,6 +10,7 @@
     "axios": "^0.21.1",
     "element-plus": "^1.1.0-beta.15",
     "js-beautify": "^1.14.0",
+    "monaco-editor": "^0.28.1",
     "sass": "^1.39.0",
     "vue": "^3.2.6",
     "vue-router": "^4.0.11",
@@ -21,6 +22,7 @@
     "@vue/compiler-sfc": "^3.2.6",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^7.17.0",
-    "vite": "^2.5.4"
+    "vite": "^2.5.4",
+    "vite-plugin-monaco-editor": "^1.0.5"
   }
 }

@@ -82,13 +82,6 @@ app.get('/getOptions', function (req, res) {
   const sql = `select * from options where type=${type}`
   console.log(sql)
   db.query(sql, (err, results) => {
-    /* if (err) {
-      return res.json(noData)
-    }
-    res.json({
-      code: 200,
-      data: results
-    }) */
     getResult(err, results, res)
   })
 })

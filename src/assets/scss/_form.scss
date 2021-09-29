@@ -24,7 +24,44 @@
     i {padding-right: 5px}
   }
 }
-.design-form {height: 100%;padding: 10px;box-sizing: border-box;
+.add-form {height: 100%;padding: 10px;box-sizing: border-box;
+  // 格珊
+  .form-row {
+    .form-col {
+      &.active-col {border: 3px solid $mainColor;position: relative;
+        > .drag-control {display: block;}
+        > .tooltip {display: block;}
+      }
+    }
+  }
+  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px}
+  .form-tabs {
+    .drag {min-height: 80px;}
+  }
+  .form-table {
+    .drag {border: 0;display: flex;overflow-x: auto;white-space: nowrap;padding: 0;flex-wrap: nowrap;
+      > div {min-width: 150px;width: auto}
+    }
+    .el-form-item {display: block}
+  }
+  .table-btn{padding-top: 10px}
+}
+.sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;
+  .form {
+    .el-form-item {margin-bottom: 10px;}
+  }
+  h3 {font-size: 14px;font-weight: 700;margin-bottom: 10px}
+  .el-tabs__nav-wrap {padding: 0 10px}
+  .el-tabs__content {padding: 0 10px}
+  .icon-del {cursor: pointer}
+}
+#editJson {width: 100%;height: calc(100vh - 65px)}
+.json-dialog {background: #1e1e1e;
+  .el-drawer__body {padding: 0}
+  .el-drawer__header{padding: 0;margin: 0;}
+  .dialog-footer{text-align: center}
+}
+.design-form {
   > div {height: 100%}
   .ghost {
     background: #F56C6C;
@@ -54,36 +91,4 @@
     .drag-move {position: absolute;left: 0;top: 0;z-index: 2;width: 24px;height: 24px;background: $mainColor;color: #fff;text-align: center;line-height: 24px;cursor: move}
   }
   .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;display: flex;flex-wrap: wrap;align-content: flex-start}
-  // 格珊
-  .form-row {
-    .form-col {
-      &.active-col {border: 3px solid $mainColor;position: relative;
-        > .drag-control {display: block;}
-        > .tooltip {display: block;}
-      }
-    }
-  }
-  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px}
-  .form-tabs {
-    .drag {min-height: 80px;}
-  }
-  .form-table {
-    .drag {border: 0;display: flex;overflow-x: auto;white-space: nowrap;padding: 0;
-      > div {min-width: 150px}
-    }
-    .el-form-item {display: block}
-  }
-}
-.sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;
-  .form {
-    .el-form-item {margin-bottom: 10px;}
-  }
-  h3 {font-size: 14px;font-weight: 700;margin-bottom: 10px}
-  .el-tabs__nav-wrap {padding: 0 10px}
-  .el-tabs__content {padding: 0 10px}
-  .icon-del {cursor: pointer}
-}
-#editJson {height: 400px;width: 100%;}
-.json-dialog{
-  .el-dialog__body{padding: 0 20px}
 }
