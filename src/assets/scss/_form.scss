@@ -45,6 +45,10 @@
     .el-form-item {display: block}
   }
   .table-btn{padding-top: 10px}
+  .form-table-add{
+    .el-form-item__label{display: none}
+    .el-form-item{margin: 0}
+  }
 }
 .sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;
   .form {

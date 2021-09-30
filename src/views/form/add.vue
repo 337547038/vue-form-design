@@ -13,6 +13,7 @@ import {reactive, toRefs, provide, ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {getDesignFormRow} from '@/api'
 import {evil} from "@/utils"
+import testCom from "@/views/test.vue"
 
 export default {
   name: "add",
@@ -24,11 +25,14 @@ export default {
     const id = route.query.id
     const state = reactive({
       loading: false,
-      formData: {}
+      formData: {},
+      ab: ''
     })
     // 注入选项方法获取值
     const optionsValue = ref([{label: "选项1", value: '1'}])
     provide("getCheckbox", optionsValue)
+    // 注入自定义组件
+    provide('componentName', testCom)
     // 获取表单设计数据
     if (id) {
       state.loading = true

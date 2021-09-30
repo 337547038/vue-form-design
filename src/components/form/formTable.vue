@@ -1,6 +1,6 @@
 <!-- Created by 337547038 on 2021/9/29. -->
 <template>
-  <div class="form-table">
+  <div class="form-table form-table-add">
     <el-table
       :class="[data.className]"
       :data="data.tableData"
@@ -10,21 +10,42 @@
         :key="index"
         :prop="item.name"
         :label="item.item.label"
-        :v-bind="item.control"
         :width="item.item.span">
+        <template #default="scope">
+          <div v-if="type===3">{{ getText(scope.row[item.name]) }}</div>
+          <template v-else>
+            <span v-if="item.typeColumn==='index'">{{ scope.$index + 1 }}</span>
+            <el-button v-else-if="item.typeColumn==='operate'" type="text" @click="delColumn(scope.$index)">删除
+            </el-button>
+            <form-item :element="item" :type="type" v-else></form-item>
+          </template>
+        </template>
+        <template #header="scope" v-if="item.help">
+          {{ scope.column.label }}
+          <el-tooltip placement="top">
+            <template #content>
+              <span v-html="item.help"></span>
+            </template>
+            <i class="icon-help"></i>
+          </el-tooltip>
+        </template>
       </el-table-column>
     </el-table>
-    <div class="table-btn">
+    <div class="table-btn" v-if="type===1">
       <el-button size="mini" @click="addColumn">增加</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import FormItem from './item.vue'
+
 export default {
   name: "formTable",
+  components: {FormItem},
   props: {
-    data: Object
+    data: Object,
+    type: Number // 1新增；2设计；3查看
   },
   setup(props) {
     const addColumn = () => {
@@ -36,8 +57,21 @@ export default {
       })
       props.data.tableData.push(temp)
     }
+    const getText = (text) => {
+      if (typeof text === 'string') {
+        return text
+      } else {
+        return text && text.toString()
+      }
+    }
+    const delColumn = index => {
+      console.log(index)
+      props.data.tableData.splice(index, 1)
+    }
     return {
-      addColumn
+      addColumn,
+      delColumn,
+      getText
     }
   }
 }
