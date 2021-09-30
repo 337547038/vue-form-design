@@ -26,7 +26,7 @@
             <el-form-item label="显示标题">
               <el-input v-model="controlData.item.label" placeholder="显示的label标签名称"></el-input>
             </el-form-item>
-            <el-form-item label="隐藏标签">
+            <el-form-item label="隐藏标签" v-if="showHide(['card'])">
               <el-switch v-model="controlData.item.showLabel"></el-switch>
             </el-form-item>
             <el-form-item label="帮助信息">

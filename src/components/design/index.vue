@@ -47,7 +47,7 @@ import {obj2string, evil} from '@/utils'
 import {saveDesignForm, getDesignFormRow} from '@/api'
 import {ElMessage} from 'element-plus'
 import {useRoute} from 'vue-router'
-import * as monaco from 'monaco-editor'
+// import * as monaco from 'monaco-editor'
 
 export default {
   name: 'designIndex',
