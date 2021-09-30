@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.0
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- 主机： 127.0.0.1
--- 生成日期： 2021-09-25 17:36:43
--- 服务器版本： 10.4.18-MariaDB
--- PHP 版本： 7.4.16
+-- 生成日期： 2021-09-30 08:15:34
+-- 服务器版本： 10.4.20-MariaDB
+-- PHP 版本： 8.0.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -62,7 +62,10 @@ CREATE TABLE `designform` (
 INSERT INTO `designform` (`id`, `content`, `formName`, `search`, `list`, `tableName`) VALUES
 (1, 'opt={list:[{name:\"input1632553198365\",item:{label:\"单行文本\",showLabel:false},rules:[],slot:{},type:\"input\",control:{value:\"\"}},{name:\"input1632555868688\",item:{label:\"单行文本\",showLabel:false},rules:[],slot:{},type:\"input\",control:{value:\"\"}}],config:{labelWidth:\"\",class:\"\",size:\"medium\",name:\"form1632553174751\"}}', 'form1632553174751', '', '', ''),
 (2, 'opt={list:[{name:\"input1632554099636\",item:{label:\"单行文本\",showLabel:false},rules:[],slot:{},type:\"input\",control:{value:\"\"}},{name:\"input1632554094950\",item:{label:\"单行文本\",showLabel:false},rules:[],slot:{},type:\"input\",control:{value:\"\"}}],config:{labelWidth:\"\",class:\"a12b\",size:\"\",name:\"form1632554066721\"}}', 'form1632554066721', '', '', ''),
-(3, 'opt={list:[{name:\"radio\",item:{label:\"单选测试\",showLabel:false},rules:[],slot:{},type:\"input\",control:{value:\"\"}},{name:\"title\",item:{label:\"标题\",showLabel:false},rules:[],type:\"textarea\",control:{value:\"\"}},{name:\"select1632576644822\",item:{label:\"下拉选择框\",showLabel:false},rules:[],type:\"select\",control:{value:\"\",appendToBody:true},options:[{label:\"option1\",value:\"option1\"},{label:\"option2\",value:\"option2\"},{label:\"option3\",value:\"option3\"}],optionsType:\"fixed\",optionsSource:0,optionsRequest:\"get\"}],config:{labelWidth:\"\",class:\"\",size:\"medium\",name:\"form1632576523565\"}}', 'form1632576523565', '', '', 'form1');
+(3, 'opt={list:[{name:\"table1632819017975\",type:\"table\",list:[{name:\"input1632819366872\",item:{label:\"单行文本\",showLabel:false,span:\"60\"},rules:[],type:\"input\",control:{modelValue:\"\"},slot:{}},{name:\"input1632819361003\",item:{label:\"单行文本\",showLabel:false},rules:[],type:\"input\",control:{modelValue:\"\"},slot:{}},{name:\"radio1632820232120\",item:{label:\"单选框组\",showLabel:false},rules:[],type:\"radio\",control:{modelValue:\"\"},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"select1632820244472\",item:{label:\"下拉选择框\",showLabel:false},rules:[],type:\"select\",control:{modelValue:\"\",appendToBody:true},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"switch1632820330442\",item:{label:\"开关\",showLabel:false},rules:[],type:\"switch\",control:{modelValue:false}},{name:\"checkbox1632820240190\",item:{label:\"多选框组\",showLabel:false},rules:[],type:\"checkbox\",control:{modelValue:[]},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"datePicker1632820246776\",item:{label:\"日期选择器\",showLabel:false},rules:[],type:\"datePicker\",control:{modelValue:\"\",type:\"date\"}}],tableData:[],control:{border:true},className:\"tableCls\"}],config:{labelWidth:\"100px\",class:\"\",size:\"medium\",name:\"form1632576523565\"}}', 'form1632576523565', '', '', 'form1'),
+(4, 'opt={list:[{name:\"input1632885590594\",item:{label:\"单行文本\",showLabel:false},rules:[],type:\"input\",control:{modelValue:\"\"},slot:{}},{name:\"textarea1632885606280\",item:{label:\"多行文本\",showLabel:false},rules:[],type:\"textarea\",control:{modelValue:\"\",disabled:false,placeholder:\"\"},help:\"\"},{name:\"radio1632885636132\",item:{label:\"单选框组\",showLabel:false},rules:[],type:\"radio\",control:{modelValue:\"\"},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"async\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"checkbox1632885649787\",item:{label:\"多选框组\",showLabel:false},rules:[],type:\"checkbox\",control:{modelValue:[],disabled:false},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"select1632885664641\",item:{label:\"下拉选择框\",showLabel:false},rules:[],type:\"select\",control:{modelValue:\"\",appendToBody:true,multiple:false,disabled:false},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"datePicker1632885680227\",item:{label:\"日期选择器\",showLabel:false},rules:[],type:\"datePicker\",control:{modelValue:\"\",type:\"date\"}},{name:\"switch1632885697832\",item:{label:\"开关\",showLabel:false},rules:[],type:\"switch\",control:{modelValue:false,disabled:false}},{name:\"number1632885748016\",item:{label:\"计数器\",showLabel:false},rules:[],type:\"number\",control:{}},{name:\"txt1632885766134\",item:{label:\"文字\",showLabel:false},rules:[],type:\"txt\",control:{modelValue:\"\"}}],config:{labelWidth:\"\",class:\"\",size:\"medium\",name:\"form1632885385332\"}}', 'form1632885385332', '', '', ''),
+(5, 'opt={list:[{name:\"title1632885940917\",type:\"title\",control:{modelValue:\"标题\"},help:\"1\"},{name:\"input1632885590594\",item:{label:\"单行文本\",showLabel:false},rules:[],type:\"input\",control:{modelValue:\"\"},slot:{}},{name:\"textarea1632885606280\",item:{label:\"多行文本\",showLabel:false},rules:[],type:\"textarea\",control:{modelValue:\"\",disabled:false,placeholder:\"\"},help:\"\"},{name:\"radio1632885636132\",item:{label:\"单选框组\",showLabel:false},rules:[],type:\"radio\",control:{modelValue:\"\"},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"async\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"checkbox1632885649787\",item:{label:\"多选框组\",showLabel:false},rules:[],type:\"checkbox\",control:{modelValue:[],disabled:false},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"select1632885664641\",item:{label:\"下拉选择框\",showLabel:false},rules:[],type:\"select\",control:{modelValue:\"\",appendToBody:true,multiple:false,disabled:false},options:[{label:\"label1\",value:\"value1\"},{label:\"label2\",value:\"value2\"},{label:\"label3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"}},{name:\"datePicker1632885680227\",item:{label:\"日期选择器\",showLabel:false},rules:[],type:\"datePicker\",control:{modelValue:\"\",type:\"date\"}},{name:\"switch1632885697832\",item:{label:\"开关\",showLabel:false},rules:[],type:\"switch\",control:{modelValue:false,disabled:false}},{name:\"number1632885748016\",item:{label:\"计数器\",showLabel:false},rules:[],type:\"number\",control:{}},{name:\"txt1632885766134\",item:{label:\"文字\",showLabel:false},rules:[],type:\"txt\",control:{modelValue:\"\"}}],config:{labelWidth:\"\",class:\"\",size:\"medium\",name:\"form1632885385332\"}}', 'form1632885385332', '', '', ''),
+(6, 'opt = {\n  list: [{\n    name: \"component1632964662520\",\n    type: \"component\",\n    control: {\n      modelValue: \"\"\n    },\n    component:\'\',\n    template: \"componentName\",\n    item: {\n      label: \"自定义组件\",\n      showLabel: false\n    },\n    rules: []\n  }],\n  config: {\n    labelWidth: \"\",\n    class: \"\",\n    size: \"medium\",\n    name: \"form1632895666078\"\n  }\n}', 'form1632895666078', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -72,7 +75,7 @@ INSERT INTO `designform` (`id`, `content`, `formName`, `search`, `list`, `tableN
 
 CREATE TABLE `form1` (
   `id` int(50) NOT NULL,
-  `title` varchar(50) NOT NULL COMMENT '标题',
+  `title` varchar(50) NOT NULL COMMENT '单行文本',
   `date` date NOT NULL,
   `user` varchar(50) NOT NULL COMMENT '用户名',
   `password` varchar(50) NOT NULL COMMENT '密码',
@@ -82,7 +85,9 @@ CREATE TABLE `form1` (
   `cascader` varchar(50) NOT NULL COMMENT '级联',
   `select` varchar(50) NOT NULL COMMENT '下拉选择',
   `textarea` text NOT NULL COMMENT '文本框',
-  `switch` tinyint(1) NOT NULL COMMENT '开关'
+  `switch` varchar(2) NOT NULL COMMENT '开关',
+  `txt` varchar(50) NOT NULL COMMENT '文本',
+  `upload` varchar(50) NOT NULL COMMENT '图片文件'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='测试表1';
 
 -- --------------------------------------------------------
@@ -107,8 +112,23 @@ CREATE TABLE `options` (
   `id` int(50) NOT NULL,
   `label` varchar(50) NOT NULL,
   `value` varchar(50) NOT NULL,
-  `type` int(2) NOT NULL COMMENT '0:radio,1:checkbox;2:select'
+  `type` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='模拟提供远程选项数据';
+
+--
+-- 转存表中的数据 `options`
+--
+
+INSERT INTO `options` (`id`, `label`, `value`, `type`) VALUES
+(1, '男', '0', 0),
+(2, '女', '1', 0),
+(3, '玩游戏', '1', 1),
+(4, '看电影', '2', 1),
+(5, '网购', '3', 1),
+(6, '蓝球', '4', 1),
+(7, '羽毛球', '5', 1),
+(8, '唱歌', '6', 1),
+(9, '看书', '7', 1);
 
 --
 -- 转储表的索引
@@ -158,7 +178,7 @@ ALTER TABLE `datasource`
 -- 使用表AUTO_INCREMENT `designform`
 --
 ALTER TABLE `designform`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- 使用表AUTO_INCREMENT `form1`
@@ -176,7 +196,7 @@ ALTER TABLE `form2`
 -- 使用表AUTO_INCREMENT `options`
 --
 ALTER TABLE `options`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

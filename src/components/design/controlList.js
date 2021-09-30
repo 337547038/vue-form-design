@@ -93,6 +93,16 @@ export default [
         }
       },
       {
+        type: 'cascader',
+        label: '级联选择器',
+        icon: 'cascader',
+        control: {
+          modelValue: []
+        },
+        options: [],
+        config: config
+      },
+      {
         type: 'txt',
         label: '文字',
         icon: 'text',
@@ -125,23 +135,14 @@ export default [
         config: {}
       },
       {
-        type: 'cascader',
-        label: '级联选择器',
-        icon: 'cascader',
-        control: {
-          modelValue: []
-        },
-        options: [],
-        config: config
-      },
-      {
         type: 'component',
         label: '自定义组件',
         icon: 'component',
         control: {
           modelValue: ''
         },
-        template: 'headTools'
+        template: '', // 组件模板名称
+        component: '' // 根据template注入的组件
       },
       {
         type: 'upload',

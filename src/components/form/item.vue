@@ -88,8 +88,11 @@
       class="avatar-uploader">
       <i class="el-icon-plus avatar-uploader-icon"></i>
     </el-upload>
-    <component :is="element" v-if="element.type==='component'" />
-    <div v-if="element.type==='component'" v-html="element.template"></div>
+    <component
+      :is="element.component"
+      v-model="element.control.modelValue"
+      v-bind="element.control"
+      v-if="element.type==='component'" />
     <div
       v-bind="element.control"
       v-if="element.type==='txt'"
@@ -104,17 +107,18 @@ import {toRefs, inject, onMounted} from 'vue'
 
 export default {
   name: "item",
+  components: {},
   props: {
     element: Object,
     type: Number // 1新增；2设计；3查看
   },
   setup(props) {
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
+    const config = toRefs(props.element.config)
     const getValue = field => {
       return config[field] && config[field].value
     }
     // props.type===1 为表单添加页时才拉取动态或方法数据
-    const config = toRefs(props.element.config)
     if (getValue('type') === 'async' && getValue('source') === 1 && props.type === 1 && getValue('sourceFun')) {
       props.element.options = inject(getValue('sourceFun'), [])
     }
@@ -134,6 +138,10 @@ export default {
             console.log(res)
           })
       }
+    }
+    // 自定义组件注入
+    if (props.element.type === 'component' && props.element.template) {
+      props.element.component = inject(props.element.template, '')
     }
     const getLabel = ele => {
       if (ele.item) {

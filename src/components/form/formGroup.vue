@@ -44,7 +44,7 @@
               :type="type">
             </form-group>
           </div>
-          <form-table v-else :data="element"/>
+          <form-table v-else :data="element" :type="type"/>
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
