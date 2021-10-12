@@ -25,8 +25,7 @@ export default {
     const id = route.query.id
     const state = reactive({
       loading: false,
-      formData: {},
-      ab: ''
+      formData: {}
     })
     // 注入选项方法获取值
     const optionsValue = ref([{label: "选项1", value: '1'}])

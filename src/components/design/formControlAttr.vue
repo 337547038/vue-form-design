@@ -73,6 +73,19 @@
               v-model="controlData.control.disabled"
               label="禁用">
             </el-checkbox>
+            <el-checkbox
+              v-model="controlData.changeLinks"
+              label="联动">
+            </el-checkbox>
+          </el-form-item>
+          <el-form-item label="联动条件">
+            <el-col :span="9">
+              <el-input placeholder="标识名称" v-model="controlData.linkKey" @change="changeLink"></el-input>
+            </el-col>
+            <el-col :span="2" :offset="1">=</el-col>
+            <el-col :span="9" :offset="1">
+              <el-input placeholder="关联值" v-model="controlData.linkValue" @change="changeLink"></el-input>
+            </el-col>
           </el-form-item>
           <template v-if="controlData.type==='grid'"></template>
           <template v-if="controlData.type==='card'"></template>
@@ -155,7 +168,8 @@
               </el-tab-pane>
             </el-tabs>
           </div>
-          <template v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn'])">
+          <template
+            v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn','component'])">
             <h3>校验设置</h3>
             <el-form-item>
               <el-checkbox @change="requiredChange">必填</el-checkbox>
@@ -164,7 +178,7 @@
                 v-model="controlData.rules[0].message"
                 v-if="controlData.rules&&controlData.rules[0]"></el-input>
             </el-form-item>
-            <div v-if="controlData.type==='input'||controlData.type==='password'">
+            <div v-if="showHide(['input','password'],true)">
               <el-form-item>
                 <el-button @click="addRules">编辑校验规则</el-button>
               </el-form-item>
@@ -211,7 +225,8 @@ import {getFiled} from "@/api"
 export default {
   name: 'formControlAttr',
   props: {
-    formConfig: Object
+    formConfig: Object,
+    linkageValue: Object
   },
   emits: ['openDialog'],
   setup(props, {emit}) {
@@ -370,10 +385,6 @@ export default {
         }
       }
     }
-    // 返回是否勾选了序号和操作列
-    const getColumnCheck = type => {
-
-    }
     // 是否显示序号列
     const columnIndex = computed(() => {
       const list = controlData.value && controlData.value.list
@@ -392,6 +403,13 @@ export default {
         return false
       }
     })
+    // 关联事件
+    const changeLink = () => {
+      if (controlData.value.linkKey && controlData.value.linkValue) {
+        // 更新
+        props.linkageValue[controlData.value.linkKey] = controlData.value.linkValue
+      }
+    }
     return {
       ...toRefs(state),
       controlData,
@@ -405,7 +423,8 @@ export default {
       showHide,
       tableColumnAdd,
       columnIndex,
-      columnOperate
+      columnOperate,
+      changeLink
     }
   }
 }

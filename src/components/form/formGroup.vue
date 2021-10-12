@@ -12,7 +12,8 @@
         class="group"
         :class="{['group-'+element.type]:true,active:activeKey===element.name}"
         :style="getFormItemStyle(element)"
-        @click.stop="groupClick(element)">
+        @click.stop="groupClick(element)"
+        v-show="linksShow(element)">
         <template v-if="element.type==='tabs'">
           <div class="form-tabs">
             <el-tabs v-bind="element.control" :class="[element.className]">
@@ -44,7 +45,7 @@
               :type="type">
             </form-group>
           </div>
-          <form-table v-else :data="element" :type="type"/>
+          <form-table v-else :data="element" :type="type" />
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -102,7 +103,7 @@
 </template>
 
 <script>
-import {reactive, toRefs, computed} from 'vue'
+import {reactive, toRefs, computed, provide} from 'vue'
 import {useStore} from 'vuex'
 import Draggable from 'vuedraggable'
 import FormItem from './item.vue'
@@ -211,13 +212,28 @@ export default {
         return {width: ele.item.span / 24 * 100 + '%'}
       }
     }
+    // 联动事件，设置为主关联主体发生改变时
+    provide('changeLinks', obj => {
+      // 修改联动值
+      props.data.linkageValue[obj.name] = obj.value
+    })
+    const linksShow = el => {
+      // 当前项设置了关联条件
+      if (el.linkKey && el.linkValue && props.type !== 2) {
+        if (props.data.linkageValue[el.linkKey] !== el.linkValue) {
+          return false
+        }
+      }
+      return true
+    }
     return {
       click,
       draggableAdd,
       ...toRefs(state),
       groupClick,
       activeKey,
-      getFormItemStyle
+      getFormItemStyle,
+      linksShow
     }
   }
 }

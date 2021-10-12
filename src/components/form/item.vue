@@ -103,7 +103,7 @@
 
 <script>
 import axios from "@/utils/request"
-import {toRefs, inject, onMounted} from 'vue'
+import {toRefs, inject, onMounted, watch} from 'vue'
 
 export default {
   name: "item",
@@ -157,6 +157,13 @@ export default {
     onMounted(() => {
       getAxiosOptions()
     })
+    // 关联值时，监听值变化抛出事件
+    if (props.element.changeLinks) {
+      const changeLinks = inject('changeLinks', '')
+      watch(() => props.element.control.modelValue, val => {
+        changeLinks && changeLinks({name: props.element.name, value: val})
+      })
+    }
     return {
       getLabel
     }
