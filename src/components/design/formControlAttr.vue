@@ -26,7 +26,7 @@
             <el-form-item label="显示标题">
               <el-input v-model="controlData.item.label" placeholder="显示的label标签名称"></el-input>
             </el-form-item>
-            <el-form-item label="隐藏标签">
+            <el-form-item label="隐藏标签" v-if="showHide(['card'])">
               <el-switch v-model="controlData.item.showLabel"></el-switch>
             </el-form-item>
             <el-form-item label="帮助信息">
@@ -87,14 +87,14 @@
               <el-input placeholder="关联值" v-model="controlData.linkValue" @change="changeLink"></el-input>
             </el-col>
           </el-form-item>
-          <template v-if="controlData.type==='grid'"></template>
-          <template v-if="controlData.type==='card'"></template>
-          <template v-else-if="controlData.type==='title'">
+          <template v-if="showHide('grid',true)"></template>
+          <template v-if="showHide('card',true)"></template>
+          <template v-if="showHide('title',true)">
             <el-form-item label="标题">
               <el-input v-model="controlData.control.modelValue"></el-input>
             </el-form-item>
           </template>
-          <template v-else-if="controlData.type==='gridChild'">
+          <template v-if="showHide('gridChild',true)">
             <el-form-item label="栅格占据的列数">
               <el-input v-model.number="controlData.attr.span"></el-input>
             </el-form-item>
@@ -108,13 +108,13 @@
               <el-input v-model.number="controlData.attr.pull"></el-input>
             </el-form-item>
           </template>
-          <template v-else-if="controlData.type==='table'">
+          <template v-if="showHide('table',true)">
             <el-form-item label="添加列">
               <el-checkbox @change="tableColumnAdd($event)" v-model="columnIndex">序号列</el-checkbox>
               <el-checkbox @change="tableColumnAdd($event,1)" v-model="columnOperate">操作列</el-checkbox>
             </el-form-item>
           </template>
-          <template v-else-if="controlData.type==='tabs'">
+          <template v-if="showHide('tabs',true)">
             <h3>标签配置项</h3>
             <el-form-item v-for="(item,index) in controlData.columns" :key="item.label">
               <el-col :span="12">
@@ -125,6 +125,11 @@
             </el-form-item>
             <el-form-item>
               <el-button @click="addSelectOption('tabs')">增加标签</el-button>
+            </el-form-item>
+          </template>
+          <template v-if="showHide('component',true)">
+            <el-form-item label="组件名">
+              <el-input v-model="controlData.template" placeholder="import进来的组件名称"></el-input>
             </el-form-item>
           </template>
           <div v-if="showHide(['radio', 'select', 'checkbox', 'cascader'],true)">

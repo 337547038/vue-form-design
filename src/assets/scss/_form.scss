@@ -45,10 +45,12 @@
     .el-form-item {display: block}
   }
   .table-btn{padding-top: 10px}
+  .el-collapse-item__content{padding-bottom:5px }
   .form-table-add{
     .el-form-item__label{display: none}
     .el-form-item{margin: 0}
   }
+  .gray{color: #999}
 }
 .sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;
   .form {
@@ -79,7 +81,7 @@
     padding: 0;
     width: 100%;
   }
-  .group {border: 1px dashed #ddd;margin: 2px;padding: 5px;position: relative;width: 100%;
+  .group {border: 1px dashed #ddd;margin: 2px;padding: 5px;position: relative;width: 100%;min-height: 50px;
     &.active {border: 3px solid $mainColor;position: relative;
       > .drag-control {display: block}
       > .tooltip {display: block;}

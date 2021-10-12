@@ -92,7 +92,11 @@
       :is="element.component"
       v-model="element.control.modelValue"
       v-bind="element.control"
-      v-if="element.type==='component'" />
+      v-if="element.type==='component'&&type!==2"/>
+    <!-- 表单设计模式下显示提示-->
+    <div v-if="element.type==='component'&&type===2" class="gray">请使用provide注入组件如：provide('{{ element.template }}',
+      import进来的组件)
+    </div>
     <div
       v-bind="element.control"
       v-if="element.type==='txt'"
@@ -114,9 +118,10 @@ export default {
   },
   setup(props) {
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-    const config = toRefs(props.element.config)
+    // const config = toRefs(props.element.config)
+    const config = props.element.config && toRefs(props.element.config)
     const getValue = field => {
-      return config[field] && config[field].value
+      return config && config[field] && config[field].value
     }
     // props.type===1 为表单添加页时才拉取动态或方法数据
     if (getValue('type') === 'async' && getValue('source') === 1 && props.type === 1 && getValue('sourceFun')) {
