@@ -23,10 +23,11 @@ export default [
         type: 'input',
         label: '单行文本',
         icon: 'input',
-        control: {
+        control: { // 组件所有属性
           modelValue: ''
         },
-        slot: {}
+        slot: {}, // 组件的slot，仅在input输入框时才有
+        config: {} // 其他配置信息
       },
       {
         type: 'textarea',
@@ -34,7 +35,8 @@ export default [
         icon: 'textarea',
         control: {
           modelValue: ''
-        }
+        },
+        config: {}
       },
       {
         type: 'radio',
@@ -43,7 +45,7 @@ export default [
         control: {
           modelValue: ''
         },
-        options: selectOption,
+        options: selectOption, // 下拉选项数据集合
         config: config
       },
       {
@@ -74,7 +76,8 @@ export default [
         control: {
           modelValue: '',
           type: 'date'
-        }
+        },
+        config: {}
       },
       {
         type: 'switch',
@@ -82,7 +85,8 @@ export default [
         icon: 'switch',
         control: {
           modelValue: false
-        }
+        },
+        config: {}
       },
       {
         type: 'number',
@@ -90,7 +94,8 @@ export default [
         icon: 'number',
         control: {
           modelValue: ''
-        }
+        },
+        config: {}
       },
       {
         type: 'cascader',
@@ -108,7 +113,8 @@ export default [
         icon: 'text',
         control: {
           modelValue: ''
-        }
+        },
+        config: {}
       },
       {
         type: 'title',
@@ -116,7 +122,8 @@ export default [
         icon: 'title',
         control: {
           modelValue: '标题'
-        }
+        },
+        config: {}
       }
     ]
   },
@@ -128,7 +135,7 @@ export default [
         label: '子表',
         icon: 'table',
         list: [],
-        tableData: [],
+        tableData: [], // 子表表格列表数据集合
         control: {
           border: true
         },
@@ -141,6 +148,7 @@ export default [
         control: {
           modelValue: ''
         },
+        config: {},
         template: '', // 组件模板名称
         component: '' // 根据template注入的组件
       },
@@ -148,7 +156,8 @@ export default [
         type: 'upload',
         label: '图片',
         icon: 'image',
-        control: {}
+        control: {},
+        config: {}
       }
     ]
   },
@@ -159,7 +168,7 @@ export default [
         type: 'grid',
         label: '格栅布局',
         icon: 'grid',
-        columns: [
+        columns: [ // 格栅列数据
           {
             attr: {span: 12},
             list: []
@@ -169,7 +178,8 @@ export default [
             list: []
           }
         ],
-        control: {}
+        control: {},
+        config: {}
       },
       {
         type: 'tabs',
@@ -182,7 +192,7 @@ export default [
           }
         ],
         control: {},
-        item: {}
+        config: {}
       },
       {
         type: 'card',
@@ -190,7 +200,8 @@ export default [
         icon: 'card',
         list: [],
         control: {},
-        item: {}
+        config: {},
+        item: {} // label标题相关
       }
     ]
   }

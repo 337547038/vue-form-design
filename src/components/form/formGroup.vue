@@ -23,8 +23,8 @@
                 :key="index">
                 <form-group
                   :data="item"
-                  data-type="not-nested"
-                  :type="type"></form-group>
+                  data-type="not-nested">
+                </form-group>
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -41,11 +41,10 @@
           <div class="form-table" v-if="type===2">
             <form-group
               :data="element"
-              data-type="not-nested"
-              :type="type">
+              data-type="not-nested">
             </form-group>
           </div>
-          <form-table v-else :data="element" :type="type" />
+          <form-table v-else :data="element" />
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -58,8 +57,7 @@
               @click.stop="groupClick(col,'gridChild')">
               <form-group
                 :data="col"
-                data-type="not-nested"
-                :type="type">
+                data-type="not-nested">
               </form-group>
               <div class="drag-control">
                 <div class="item-control">
@@ -81,12 +79,12 @@
                   <i class="icon-help"></i>
                 </el-tooltip>
               </template>
-              <form-group :data="element" :type="type"></form-group>
+              <form-group :data="element"></form-group>
             </el-collapse-item>
           </el-collapse>
         </template>
         <template v-else>
-          <form-item :element="element" :type="type"></form-item>
+          <form-item :element="element"></form-item>
         </template>
         <div class="drag-control" v-if="type===2">
           <div class="item-control">
@@ -103,7 +101,7 @@
 </template>
 
 <script>
-import {reactive, toRefs, computed, provide} from 'vue'
+import {reactive, toRefs, computed, inject} from 'vue'
 import {useStore} from 'vuex'
 import Draggable from 'vuedraggable'
 import FormItem from './item.vue'
@@ -118,14 +116,15 @@ export default {
       default: () => {
         return {}
       }
-    },
-    type: Number // 1新增；2设计；3查看
+    }
   },
   setup(props) {
+    const injectData = inject('statusType', {})
     const store = useStore()
     const state = reactive({
       clone: true,
-      gridAdd: false
+      gridAdd: false,
+      type: injectData.type
     })
     const activeKey = computed(() => {
       return store.state.form.activeKey
@@ -212,15 +211,20 @@ export default {
         return {width: ele.item.span / 24 * 100 + '%'}
       }
     }
-    // 联动事件，设置为主关联主体发生改变时
-    provide('changeLinks', obj => {
-      // 修改联动值
-      props.data.linkageValue[obj.name] = obj.value
+    // 提取关联主体的值，当list改变时linkageValue会改变
+    const linkageValue = computed(() => {
+      const obj = {}
+      props.data.list.forEach(item => {
+        if (item.config.changeLinks) {
+          obj[item.name] = item.control.modelValue
+        }
+      })
+      return obj
     })
     const linksShow = el => {
       // 当前项设置了关联条件
-      if (el.linkKey && el.linkValue && props.type !== 2) {
-        if (props.data.linkageValue[el.linkKey] !== el.linkValue) {
+      if (el.config.linkKey && el.config.linkValue && state.type !== 2) {
+        if (linkageValue.value[el.config.linkKey] !== el.config.linkValue) {
           return false
         }
       }

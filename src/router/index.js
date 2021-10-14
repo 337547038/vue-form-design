@@ -2,7 +2,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 // 开启历史模式
 // vue2中使用 mode: history 实现
-const routerHistory = createWebHistory();
+// const routerHistory = createWebHistory()
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
@@ -38,6 +38,11 @@ const router = createRouter({
       path: '/list',
       name: 'list',
       component: () => import('../views/list/index.vue')
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/test.vue')
     }
   ]
 })

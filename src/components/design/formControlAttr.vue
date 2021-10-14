@@ -34,7 +34,7 @@
             </el-form-item>
           </template>
           <el-form-item label="表单栅格" v-if="showHide(['table','grid','gridChild'])">
-            <el-input v-model="controlData.item.span" placeholder="表单区域栅格宽"></el-input>
+            <el-input v-model="controlData.config.span" placeholder="表单区域栅格宽"></el-input>
           </el-form-item>
           <el-form-item label="占位内容" v-if="showHide(['input','textarea','select','date','number'],true)">
             <el-input v-model="controlData.control.placeholder" placeholder="placeholder"></el-input>
@@ -74,17 +74,21 @@
               label="禁用">
             </el-checkbox>
             <el-checkbox
-              v-model="controlData.changeLinks"
+              v-model="controlData.config.changeLinks"
               label="联动">
             </el-checkbox>
+            <el-checkbox
+              v-model="controlData.config.editDisabled"
+              label="禁用编辑">
+            </el-checkbox>
           </el-form-item>
-          <el-form-item label="联动条件">
+          <el-form-item label="联动条件" v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader'],true)">
             <el-col :span="9">
-              <el-input placeholder="标识名称" v-model="controlData.linkKey" @change="changeLink"></el-input>
+              <el-input placeholder="标识名称" v-model="controlData.config.linkKey"></el-input>
             </el-col>
             <el-col :span="2" :offset="1">=</el-col>
             <el-col :span="9" :offset="1">
-              <el-input placeholder="关联值" v-model="controlData.linkValue" @change="changeLink"></el-input>
+              <el-input placeholder="关联值" v-model="controlData.config.linkValue"></el-input>
             </el-col>
           </el-form-item>
           <template v-if="showHide('grid',true)"></template>
@@ -408,13 +412,6 @@ export default {
         return false
       }
     })
-    // 关联事件
-    const changeLink = () => {
-      if (controlData.value.linkKey && controlData.value.linkValue) {
-        // 更新
-        props.linkageValue[controlData.value.linkKey] = controlData.value.linkValue
-      }
-    }
     return {
       ...toRefs(state),
       controlData,
@@ -428,8 +425,7 @@ export default {
       showHide,
       tableColumnAdd,
       columnIndex,
-      columnOperate,
-      changeLink
+      columnOperate
     }
   }
 }

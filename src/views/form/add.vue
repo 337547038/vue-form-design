@@ -1,7 +1,7 @@
 <!-- Created by 337547038 on 2021/9/26. -->
 <template>
   <div v-loading="loading">
-    <design-form :formData="formData">
+    <design-form :formData="formData" ref="formName">
     </design-form>
     <el-button type="primary" @click="submit">提交</el-button>
   </div>
@@ -19,7 +19,7 @@ export default {
   name: "add",
   props: {},
   components: {designForm},
-  setup() {
+  setup(props) {
     const route = useRoute()
     const dataSource = route.query.dataSource
     const id = route.query.id
@@ -43,12 +43,22 @@ export default {
           state.loading = false
         })
     }
+    const formName=ref()
     const submit = () => {
-
+      formName.value.validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!00!')
+          return false
+        }
+      })
     }
     return {
       ...toRefs(state),
-      submit
+      submit,
+      formName
     }
   }
 }

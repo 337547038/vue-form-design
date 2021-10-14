@@ -4,6 +4,7 @@
     v-bind="element.item"
     :prop="element.name"
     :class="element.className"
+    :rules="element.rules&&element.rules.length>0?element.rules:{}"
     :label="getLabel(element)">
     <template #label v-if="element.help">
       {{ getLabel(element) }}
@@ -17,6 +18,7 @@
     <el-input
       v-model="element.control.modelValue"
       v-bind="element.control"
+      :disabled="editDisabled"
       :type="element.type==='password'?'password':''"
       v-if="element.type==='input'||element.type==='password'">
       <template v-slot:[key] v-for="(te,key) in element.slot">
@@ -26,11 +28,13 @@
     <el-input
       v-model="element.control.modelValue"
       v-bind="element.control"
+      :disabled="editDisabled"
       type="textarea"
       v-if="element.type==='textarea'">
     </el-input>
     <el-radio-group
       v-bind="element.control"
+      :disabled="editDisabled"
       v-model="element.control.modelValue"
       v-if="element.type==='radio'">
       <el-radio
@@ -42,6 +46,7 @@
     </el-radio-group>
     <el-checkbox-group
       v-bind="element.control"
+      :disabled="editDisabled"
       v-model="element.control.modelValue"
       v-if="element.type==='checkbox'">
       <el-checkbox
@@ -54,6 +59,7 @@
     <el-select
       v-if="element.type==='select'"
       v-bind="element.control"
+      :disabled="editDisabled"
       v-model="element.control.modelValue">
       <el-option
         v-for="item in element.options"
@@ -65,26 +71,32 @@
     <el-date-picker
       v-if="element.type==='datePicker'"
       v-bind="element.control"
+      :disabled="editDisabled"
       v-model="element.control.modelValue">
     </el-date-picker>
     <el-switch
       v-if="element.type==='switch'"
       v-bind="element.control"
+      :disabled="editDisabled"
       v-model="element.control.modelValue">
     </el-switch>
     <el-input-number
       v-if="element.type==='number'"
       v-model="element.control.modelValue"
-      v-bind="element.control">
+      v-bind="element.control"
+      :disabled="editDisabled">
     </el-input-number>
     <el-cascader
       v-if="element.type==='cascader'"
       v-model="element.control.modelValue"
       v-bind="element.control"
+      :disabled="editDisabled"
       :options="element.options">
     </el-cascader>
     <el-upload
       v-if="element.type==='upload'"
+      v-bind="element.control"
+      :disabled="editDisabled"
       class="avatar-uploader">
       <i class="el-icon-plus avatar-uploader-icon"></i>
     </el-upload>
@@ -92,7 +104,8 @@
       :is="element.component"
       v-model="element.control.modelValue"
       v-bind="element.control"
-      v-if="element.type==='component'&&type!==2"/>
+      :disabled="editDisabled"
+      v-if="element.type==='component'&&type!==2" />
     <!-- 表单设计模式下显示提示-->
     <div v-if="element.type==='component'&&type===2" class="gray">请使用provide注入组件如：provide('{{ element.template }}',
       import进来的组件)
@@ -107,18 +120,20 @@
 
 <script>
 import axios from "@/utils/request"
-import {toRefs, inject, onMounted, watch} from 'vue'
+import {toRefs, inject, onMounted, computed, reactive, watch} from 'vue'
 
 export default {
   name: "item",
   components: {},
   props: {
-    element: Object,
-    type: Number // 1新增；2设计；3查看
+    element: Object
   },
   setup(props) {
+    const injectData = inject('statusType', {})
+    const state = reactive({
+      type: injectData.type
+    })
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-    // const config = toRefs(props.element.config)
     const config = props.element.config && toRefs(props.element.config)
     const getValue = field => {
       return config && config[field] && config[field].value
@@ -159,18 +174,26 @@ export default {
         return ''
       }
     }
+    // 控制编辑模式下是否可用
+    const editDisabled = computed(() => {
+      if (injectData.type === 1 && injectData.isEdit && props.element.config && props.element.config.editDisabled) {
+        // 新增模式 编辑模式
+        return true
+      }
+      return props.element.control.disabled
+    })
+    // 为改变事件提供方法
+    const changeEvent = inject('controlChange', '')
+    watch(() => props.element.control.modelValue, val => {
+      changeEvent && changeEvent({key: props.element.name, value: val})
+    })
     onMounted(() => {
       getAxiosOptions()
     })
-    // 关联值时，监听值变化抛出事件
-    if (props.element.changeLinks) {
-      const changeLinks = inject('changeLinks', '')
-      watch(() => props.element.control.modelValue, val => {
-        changeLinks && changeLinks({name: props.element.name, value: val})
-      })
-    }
     return {
-      getLabel
+      getLabel,
+      editDisabled,
+      ...toRefs(state)
     }
   }
 }

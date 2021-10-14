@@ -10,7 +10,6 @@
     </div>
     <form-control-attr
       :formConfig="formData.config"
-      :linkageValue="formData.linkageValue"
       @openDialog="dialogOpen" />
     <el-drawer
       v-model="visibleDialog"
@@ -41,7 +40,7 @@ import headTools from './headTools.vue'
 import formControl from './formControl.vue'
 import formDesign from '../form/index.vue'
 import formControlAttr from './formControlAttr.vue'
-import {ref, reactive, toRefs, nextTick, onUnmounted} from 'vue'
+import {ref, reactive, toRefs, nextTick, onUnmounted, computed} from 'vue'
 import {useStore} from 'vuex'
 import jsbeautify from 'js-beautify'
 import {obj2string, evil} from '@/utils'
@@ -64,8 +63,7 @@ export default {
           class: '',
           size: 'medium',
           name: 'form' + new Date().getTime()
-        },
-        linkageValue:{}
+        }
       },
       visibleDialog: false,
       sourceDialog: '',
