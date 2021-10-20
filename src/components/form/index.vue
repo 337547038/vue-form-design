@@ -6,7 +6,7 @@
     :model="model"
     class="add-form"
     :class="{'design-form':type===2,'detail-form':type===3}">
-    <form-group :data="formData" />
+    <form-group :data="formData"/>
   </el-form>
 </template>
 
@@ -40,6 +40,7 @@ export default {
       }
       return obj
     })
+    provide('formModel', model) // 给form-group提供联动条件设置
     // 表单检验方法
     const ruleForm = ref()
     const validate = valid2 => {

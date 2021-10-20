@@ -26,6 +26,7 @@ export default {
         {icon: 'del', label: '清空'},
         {icon: 'eye', label: '预览'},
         {icon: 'json', label: '生成脚本预览'},
+        {icon: 'vue', label: '导出vue文件'},
         {icon: 'save', label: '保存'}
       ]
     })

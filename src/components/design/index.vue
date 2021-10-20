@@ -33,6 +33,7 @@
         </el-button>
       </div>
     </el-drawer>
+    <vue-File ref="vueFileEl"></vue-File>
   </div>
 </template>
 <script>
@@ -47,11 +48,12 @@ import {obj2string, evil} from '@/utils'
 import {saveDesignForm, getDesignFormRow} from '@/api'
 import {ElMessage} from 'element-plus'
 import {useRoute} from 'vue-router'
+import vueFile from "./vueFile.vue"
 // import * as monaco from 'monaco-editor'
 
 export default {
   name: 'designIndex',
-  components: {headTools, formControl, formDesign, formControlAttr},
+  components: {headTools, formControl, formDesign, formControlAttr,vueFile},
   setup(props, {emit}) {
     const store = useStore()
     const router = useRoute()
@@ -72,6 +74,7 @@ export default {
       loading: false,
       drawerDirection: 'rtl' // 默认右边弹出
     })
+    const vueFileEl=ref()
     const id = router.query.id
     if (id) {
       // 获取初始表单数据
@@ -105,6 +108,9 @@ export default {
         case 'save':
           dialogConfirm('save')
           state.sourceDialog = '' // 清空下防意外
+          break
+        case 'vue':
+          vueFileEl.value.open(state.formData)
           break
       }
     }
@@ -211,7 +217,8 @@ export default {
       dialogConfirm,
       dialogOpen,
       drawerBeforeClose,
-      dialogCancel
+      dialogCancel,
+      vueFileEl
     }
   }
 }

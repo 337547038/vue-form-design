@@ -105,7 +105,7 @@
       v-model="element.control.modelValue"
       v-bind="element.control"
       :disabled="editDisabled"
-      v-if="element.type==='component'&&type!==2" />
+      v-if="element.type==='component'&&type!==2"/>
     <!-- 表单设计模式下显示提示-->
     <div v-if="element.type==='component'&&type===2" class="gray">请使用provide注入组件如：provide('{{ element.template }}',
       import进来的组件)
@@ -131,27 +131,40 @@ export default {
   setup(props) {
     const injectData = inject('statusType', {})
     const state = reactive({
-      type: injectData.type
+      type: injectData.type,
+      config: props.element.config,
+      // getResultFun: 'if(res.data.code===200){callback(res.data.data)}'
     })
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-    const config = props.element.config && toRefs(props.element.config)
-    const getValue = field => {
-      return config && config[field] && config[field].value
-    }
     // props.type===1 为表单添加页时才拉取动态或方法数据
-    if (getValue('type') === 'async' && getValue('source') === 1 && props.type === 1 && getValue('sourceFun')) {
-      props.element.options = inject(getValue('sourceFun'), [])
+    const config = state.config
+    if (config.type === 'async' && config.source === 1 && state.type === 1 && config.sourceFun) {
+      props.element.options = inject(config.sourceFun, [])
     }
     // 使用动态选项ajax请求获取options数据项
+    const getRes = (res, callback) => {
+      /*if (res.data.code === 200) {
+        callback(res.data.data)
+      }*/
+      eval(config.getResultFun)
+    }
     const getAxiosOptions = () => {
-      if (getValue('type') === 'async' && getValue('source') === 0 && props.type === 1) {
+      if (config.type === 'async' && config.source === 0 && state.type === 1) {
         // 当前控件为动态获取数据
         // request.get('url',data)
-        axios[getValue('request')](getValue('sourceFun'), '')
+        axios[config.request](config.sourceFun, '')
           .then(res => {
-            if (res.data.code === 200) {
-              // 请求成功
-              props.element.options = res.data.data
+            if (config.getResultFun) {
+              // 使用指定的方法提取结果
+              getRes(res, data => {
+                props.element.options = data
+              })
+            } else {
+              // 默认方法提取结果
+              if (res.data.code === 200) {
+                // 请求成功
+                props.element.options = res.data.data
+              }
             }
           })
           .catch(res => {

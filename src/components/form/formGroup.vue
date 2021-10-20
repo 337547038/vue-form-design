@@ -44,7 +44,7 @@
               data-type="not-nested">
             </form-group>
           </div>
-          <form-table v-else :data="element" />
+          <form-table v-else :data="element"/>
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -211,19 +211,10 @@ export default {
         return {width: ele.item.span / 24 * 100 + '%'}
       }
     }
-    // 提取关联主体的值，当list改变时linkageValue会改变
-    const linkageValue = computed(() => {
-      const obj = {}
-      props.data.list.forEach(item => {
-        if (item.config.changeLinks) {
-          obj[item.name] = item.control.modelValue
-        }
-      })
-      return obj
-    })
+    const linkageValue = inject('formModel', '')
     const linksShow = el => {
-      // 当前项设置了关联条件
-      if (el.config.linkKey && el.config.linkValue && state.type !== 2) {
+      // 当前项设置了关联条件，当关联主体的值等于当前组件设定的值时
+      if (linkageValue && el.config && el.config.linkKey && el.config.linkValue && state.type !== 2) {
         if (linkageValue.value[el.config.linkKey] !== el.config.linkValue) {
           return false
         }

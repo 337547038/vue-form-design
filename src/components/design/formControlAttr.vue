@@ -16,7 +16,7 @@
               <el-option
                 v-for="item in dataSourceList"
                 :key="item.COLUMN_NAME"
-                :label="item.COLUMN_COMMENT||item.COLUMN_NAME"
+                :label="`${item.COLUMN_COMMENT||item.COLUMN_NAME}(${item.COLUMN_NAME})`"
                 :value="item.COLUMN_NAME">
               </el-option>
             </el-select>
@@ -74,15 +74,13 @@
               label="禁用">
             </el-checkbox>
             <el-checkbox
-              v-model="controlData.config.changeLinks"
-              label="联动">
-            </el-checkbox>
-            <el-checkbox
               v-model="controlData.config.editDisabled"
               label="禁用编辑">
             </el-checkbox>
           </el-form-item>
-          <el-form-item label="联动条件" v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader'],true)">
+          <el-form-item
+            label="联动条件"
+            v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader'],true)">
             <el-col :span="9">
               <el-input placeholder="标识名称" v-model="controlData.config.linkKey"></el-input>
             </el-col>
@@ -173,6 +171,9 @@
                       </el-select>
                     </template>
                   </el-input>
+                </el-form-item>
+                <el-form-item v-if="controlData.config.source===0">
+                  <el-input :rows="4" type="textarea" v-model="controlData.config.getResultFun" placeholder="获取结果方法如：if(res.data.code===200){callback(res.data.data)}"></el-input>
                 </el-form-item>
               </el-tab-pane>
             </el-tabs>
