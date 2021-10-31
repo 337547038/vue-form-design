@@ -1,23 +1,20 @@
 <template>
   <div>
     <el-form ref="formel" :model="model">
-      <el-form-item label="性别选择" :rules="{}">
-        <el-select v-model="model.value">
-          <el-option label="a" value="a"></el-option>
-          <el-option label="b" value="b"></el-option>
-          <el-option label="c" value="c"></el-option>
-        </el-select>
+      <el-form-item :rules="rules" prop="value" label="校验">
+        <el-input v-model="model.value"></el-input>
       </el-form-item>
-      <el-form-item label="checkbox" :rules="{}" prop="checkList">
-        <el-checkbox-group v-model="model.checkList">
-          <el-checkbox label="Option A"/>
-          <el-checkbox label="Option B"/>
-          <el-checkbox label="Option C"/>
-          <el-checkbox label="disabled" disabled/>
-          <el-checkbox label="selected and disabled" disabled/>
-        </el-checkbox-group>
-      </el-form-item>
+      <el-table :data="tableData">
+        <el-table-column v-for="item in tableList" :key="item" :label="item.label">
+          <template #default="scope">
+            <el-form-item :rules="rules" :prop="`checkList.${scope.$index}.${item.prop}`">
+              <el-input v-model="scope.row[item.prop]"></el-input>
+            </el-form-item>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-button @click="submit">submit</el-button>
+      <el-button @click="submitTable">table add</el-button>
     </el-form>
   </div>
 </template>
@@ -34,7 +31,19 @@ export default {
       model: {
         value: [],
         checkList: []
-      }
+      },
+      tableList: [
+        {label: '序号', prop: 'index'},
+        {label: '标题', prop: 'title'}
+      ],
+      tableData: [],
+      rules: [
+        {
+          required: true,
+          message: '不能为空',
+          trigger: 'change'
+        }
+      ]
     })
     const change = val => {
       emit('update:modelValue', val)
@@ -51,11 +60,15 @@ export default {
         }
       })
     }
+    const submitTable = () => {
+      state.tableData.push({index: '', title: ''})
+    }
     return {
       ...toRefs(state),
       change,
       submit,
-      formel
+      formel,
+      submitTable
     }
   }
 
