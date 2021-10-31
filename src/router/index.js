@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router'
-
+import docsRoutesList from 'virtual:generated-pages'
 // 开启历史模式
 // vue2中使用 mode: history 实现
 // const routerHistory = createWebHistory()
@@ -22,27 +22,40 @@ const router = createRouter({
     {
       path: '/design',
       name: 'design',
-      component: () => import('../views/design/index.vue')
+      component: () => import('../views/designForm/designForm.vue')
+    },
+    {
+      path: '/designTable',
+      name: 'designTable',
+      component: () => import('../views/designForm/designTable.vue')
     },
     {
       path: '/form',
       name: 'form',
-      component: () => import('../views/form/index.vue')
-    },
-    {
-      path: '/add',
-      name: 'formAdd',
-      component: () => import('../views/form/add.vue')
+      component: () => import('../views/designForm/form.vue')
     },
     {
       path: '/list',
       name: 'list',
-      component: () => import('../views/list/index.vue')
+      component: () => import('../views/designForm/list.vue')
+    },
+    {
+      path: '/formList',
+      name: 'formList',
+      component: () => import('../views/formList/index.vue')
     },
     {
       path: '/test',
       name: 'test',
       component: () => import('../views/test.vue')
+    },
+    {
+      name: 'docs',
+      path: '/docs',
+      component: () => import('../docs/components/layout.vue'),
+      children: [
+        ...docsRoutesList
+      ]
     }
   ]
 })

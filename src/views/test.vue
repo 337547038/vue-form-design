@@ -1,39 +1,64 @@
 <template>
   <div>
-    <div class="sn Lfll Lmr20">订单编号：
-      <el-button
-        class="copy-btn"
-        @click="copyData">
-        copy
-      </el-button>
-    </div>
+    <el-form ref="formel" :model="model">
+      <el-form-item label="性别选择" :rules="{}">
+        <el-select v-model="model.value">
+          <el-option label="a" value="a"></el-option>
+          <el-option label="b" value="b"></el-option>
+          <el-option label="c" value="c"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="checkbox" :rules="{}" prop="checkList">
+        <el-checkbox-group v-model="model.checkList">
+          <el-checkbox label="Option A"/>
+          <el-checkbox label="Option B"/>
+          <el-checkbox label="Option C"/>
+          <el-checkbox label="disabled" disabled/>
+          <el-checkbox label="selected and disabled" disabled/>
+        </el-checkbox-group>
+      </el-form-item>
+      <el-button @click="submit">submit</el-button>
+    </el-form>
   </div>
 </template>
 
 <script>
 import {reactive, toRefs, ref} from 'vue'
-import Clipboard from 'clipboard'
+// import Clipboard from 'clipboard'
 
 export default {
-  setup() {
-    const copyData = () => {
-      const clipboard = new Clipboard(".copy-btn", {
-        text: () => {
-          return 'text1414'
+  emits: ['update:modelValue'],
+  setup(props, {emit}) {
+    const state = reactive({
+      value: [],
+      model: {
+        value: [],
+        checkList: []
+      }
+    })
+    const change = val => {
+      emit('update:modelValue', val)
+    }
+    const formel = ref()
+    const submit = () => {
+      formel.value.validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!00!')
+          return false
         }
       })
-      clipboard.on('success', function () {
-        console.log('ok')
-      })
-      clipboard.on('error', function () {
-        console.log("复制失败")
-      })
-      console.log(clipboard)
     }
     return {
-      copyData
+      ...toRefs(state),
+      change,
+      submit,
+      formel
     }
   }
 
 }
+
 </script>

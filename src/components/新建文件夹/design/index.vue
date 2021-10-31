@@ -5,12 +5,12 @@
       <headTools @click="headToolClick"></headTools>
       <div class="empty-tips" v-if="formData.list.length===0">从左侧拖拽来添加字段</div>
       <div class="main-form" v-loading="loading">
-        <form-design :form-data="formData" :type="2" />
+        <form-design :form-data="formData" :type="2"/>
       </div>
     </div>
     <form-control-attr
       :formConfig="formData.config"
-      @openDialog="dialogOpen" />
+      @openDialog="dialogOpen"/>
     <el-drawer
       v-model="visibleDialog"
       size="60%"
@@ -34,6 +34,24 @@
       </div>
     </el-drawer>
     <vue-File ref="vueFileEl"></vue-File>
+    <el-dialog v-model="previewVisible" title="预览" :fullscreen="true">
+      <form-design :form-data="formDataPreview" :type="1" ref="previewForm"/>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button
+            size="small"
+            type="primary"
+            @click="previewSubmit">
+            提交
+          </el-button>
+          <el-button
+            size="small"
+            @click="previewVisible=false">
+            取消
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -43,17 +61,14 @@ import formDesign from '../form/index.vue'
 import formControlAttr from './formControlAttr.vue'
 import {ref, reactive, toRefs, nextTick, onUnmounted, computed} from 'vue'
 import {useStore} from 'vuex'
-import jsbeautify from 'js-beautify'
-import {obj2string, evil} from '@/utils'
 import {saveDesignForm, getDesignFormRow} from '@/api'
 import {ElMessage} from 'element-plus'
 import {useRoute} from 'vue-router'
 import vueFile from "./vueFile.vue"
-// import * as monaco from 'monaco-editor'
 
 export default {
   name: 'designIndex',
-  components: {headTools, formControl, formDesign, formControlAttr,vueFile},
+  components: {headTools, formControl, formDesign, formControlAttr, vueFile},
   setup(props, {emit}) {
     const store = useStore()
     const router = useRoute()
@@ -72,9 +87,11 @@ export default {
       editor: {},
       dialogConfirmBtn: '确定',
       loading: false,
-      drawerDirection: 'rtl' // 默认右边弹出
+      drawerDirection: 'rtl', // 默认右边弹出
+      formDataPreview: {},
+      previewVisible: false // 预览窗口
     })
-    const vueFileEl=ref()
+    const vueFileEl = ref()
     const id = router.query.id
     if (id) {
       // 获取初始表单数据
@@ -82,7 +99,7 @@ export default {
       getDesignFormRow(id)
         .then(res => {
           if (res.data.code === 200) {
-            state.formData = evil(res.data.data[0].content)
+            state.formData = JSON.parse(res.data.data[0].content)
           }
           state.loading = false
         })
@@ -99,6 +116,9 @@ export default {
           store.commit('setControlAttr', {})
           break
         case 'eye':
+          // 打开预览窗口
+          state.formDataPreview = JSON.parse(JSON.stringify(state.formData))
+          state.previewVisible = true
           break
         case 'json':
           // 生成脚本预览
@@ -119,15 +139,16 @@ export default {
       // 保存至后端服务并更新当前数据
       if (source === 'save') {
         // 点击工具栏直接保存
-        val = 'opt=' + obj2string(state.formData)
+        // val = 'opt=' + obj2string(state.formData)
+        val = JSON.stringify(state.formData)
       } else {
         val = state.editor.getValue()
       }
       if (state.sourceDialog) {
         // 右侧栏弹窗，回调
-        state.sourceDialog(evil(val))
+        state.sourceDialog(JSON.parse(val))
       } else {
-        state.formData = evil(val)
+        state.formData = JSON.parse(val)
         if (state.formData.list.length === 0) {
           ElMessage.error('保存失败，请先添加表单字段')
           return
@@ -169,11 +190,7 @@ export default {
       state.drawerDirection = source ? 'ltr' : 'rtl'
       state.sourceDialog = source // 打开窗口来源回调
       state.visibleDialog = true
-      const beautifyOpt = {
-        indent_size: '2',
-        brace_style: 'end-expand'
-      }
-      const editData = jsbeautify('opt=' + obj2string(obj), beautifyOpt)
+      const editData = JSON.stringify(obj, null, 2)
       nextTick(() => {
         const editor = ace.edit('editJson')
         editor.setOptions({
@@ -183,17 +200,10 @@ export default {
         })
         editor.setFontSize(14)
         editor.setShowPrintMargin(false)
-        editor.session.setMode('ace/mode/javascript')
+        editor.session.setMode('ace/mode/json')
         editor.setTheme("ace/theme/tomorrow_night")
         editor.setValue(editData)
         state.editor = editor
-        // monaco getValue会卡死
-        /*state.editor = monaco.editor.create(document.getElementById("editJson"), {
-          value: editData,
-          language: "javascript",
-          automaticLayout: true,
-          theme: 'vs-dark'
-        })*/
       })
     }
     const drawerBeforeClose = done => {
@@ -207,10 +217,24 @@ export default {
     onUnmounted(() => {
       if (Object.keys(state.editor).length !== 0) {
         //state.editor.dispose()
-        state.aceEditor.destroy()
-        state.aceEditor.container.remove()
+        state.editor.destroy()
+        state.editor.container.remove()
       }
     })
+    // 预览窗口提交测试
+    const previewForm = ref()
+    const previewSubmit = () => {
+      console.log(previewForm)
+      console.log('previewForm')
+      previewForm.value.validate((valid) => {
+        if (valid) {
+          alert('校验通过')
+        } else {
+          alert('校验不通过')
+          return false
+        }
+      })
+    }
     return {
       ...toRefs(state),
       headToolClick,
@@ -218,7 +242,9 @@ export default {
       dialogOpen,
       drawerBeforeClose,
       dialogCancel,
-      vueFileEl
+      vueFileEl,
+      previewForm,
+      previewSubmit
     }
   }
 }

@@ -38,13 +38,13 @@
           </div>
         </template>
         <template v-else-if="element.type==='table'">
-          <div class="form-table" v-if="type===2">
+          <div class="form-table" v-if="type===4">
             <form-group
               :data="element"
               data-type="not-nested">
             </form-group>
           </div>
-          <form-table v-else :data="element"/>
+          <form-table v-else :data="element" :type="type"/>
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -86,7 +86,7 @@
         <template v-else>
           <form-item :element="element"></form-item>
         </template>
-        <div class="drag-control" v-if="type===2">
+        <div class="drag-control" v-if="type===4">
           <div class="item-control">
             <i class="icon-plus" @click.stop="click('gridAdd',index,element)" v-if="gridAdd" title="添加列"></i>
             <i class="icon-clone" @click.stop="click('clone',index,element)" v-if="clone" title="克隆"></i>
@@ -94,7 +94,7 @@
           </div>
           <div class="drag-move icon-move"></div>
         </div>
-        <div class="tooltip" v-if="type===2">{{ element.name }}</div>
+        <div class="tooltip" v-if="type===4">{{ element.name }}</div>
       </div>
     </template>
   </draggable>
@@ -104,8 +104,8 @@
 import {reactive, toRefs, computed, inject} from 'vue'
 import {useStore} from 'vuex'
 import Draggable from 'vuedraggable'
-import FormItem from './item.vue'
-import FormTable from './formTable.vue'
+import FormItem from './formItem.vue'
+import FormTable from './childTable.vue'
 
 export default {
   name: "formGroup",
@@ -171,6 +171,7 @@ export default {
       delete obj.label
       delete obj.icon
       let objectOther = {}
+      let isInput = {}
       if (!indexType(obj.type)) {
         // 不显示复制
         objectOther = {}
@@ -183,10 +184,16 @@ export default {
           },
           rules: []
         }
+        if (obj.type === 'input' || obj.type === 'textarea' || obj.type === 'component') {
+          // 单行或多行文本时，添加自定义快速校验字段
+          isInput = {
+            customRules: [] // 经过转换后追加到rules里
+          }
+        }
       }
       dataList[newIndex] = Object.assign({
         name: obj.type + key,
-      }, obj, objectOther)
+      }, obj, objectOther, isInput)
       store.commit('setActiveKey', obj.type + key)
       store.commit('setControlAttr', dataList[newIndex])
       // grid时显示添加列按钮
@@ -195,6 +202,10 @@ export default {
     }
     // 点击激活当前
     const groupClick = (item, type) => {
+      // 设计模式下才执行
+      if (state.type !== 4) {
+        return
+      }
       if (type === 'gridChild') {
         if (!item.name) {
           item.name = 'gridChild' + new Date().getTime().toString()
@@ -206,15 +217,17 @@ export default {
       state.gridAdd = item.type === 'grid'
       state.clone = indexType(item.type)
     }
+    // 返回栅格宽度
     const getFormItemStyle = ele => {
-      if (ele.item && ele.item.span) {
-        return {width: ele.item.span / 24 * 100 + '%'}
+      if (ele.config && ele.config.span) {
+        return {width: ele.config.span / 24 * 100 + '%'}
       }
     }
     const linkageValue = inject('formModel', '')
+    // 根据关联条件显示隐藏当前项
     const linksShow = el => {
       // 当前项设置了关联条件，当关联主体的值等于当前组件设定的值时
-      if (linkageValue && el.config && el.config.linkKey && el.config.linkValue && state.type !== 2) {
+      if (linkageValue && el.config && el.config.linkKey && el.config.linkValue && state.type !== 4) {
         if (linkageValue.value[el.config.linkKey] !== el.config.linkValue) {
           return false
         }

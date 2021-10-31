@@ -87,26 +87,26 @@ app.get('/getOptions', function (req, res) {
 })
 // 新增/编辑自定义设计表单
 app.post('/saveDesignForm', function (req, res) {
-  const content = req.body.content // 设计完成的表单json数据字符串
+  const formData = req.body.formData // 设计完成的表单json数据字符串
   const formName = req.body.formName // 表单名称
-  const tableName = req.body.dataSource || '' // 数据源表名
+  const dataTableName = req.body.dataTableName || '' // 数据源表名
   const formId = req.body.id // id
-  let params = [content, formName, tableName]
-  let sql = `insert into designform (content,formName,tableName) value (?,?,?)`
+  let params = [formData, formName, dataTableName]
+  let sql = `insert into designform (formData,formName,dataTableName) value (?,?,?)`
   let message = '新增成功'
   if (formId) {
     let set = ''
-    if (content) {
+    if (formData) {
       // 修改表单设计
-      set = 'content=?,formName=?'
-    } else if (req.body.search) {
+      set = 'formData=?,formName=?'
+    } else if (req.body.searchData) {
       // 修改列表查询设置
-      set = 'search=?'
-      params = [req.body.search]
-    } else if (req.body.list) {
+      set = 'searchData=?'
+      params = [req.body.searchData]
+    } else if (req.body.tableData) {
       // 修改表格设置
-      set = 'list=?'
-      params = [req.body.list]
+      set = 'tableData=?'
+      params = [req.body.tableData]
     }
     sql = `update designform set ${set} where id=${formId}`
     message = '修改成功'

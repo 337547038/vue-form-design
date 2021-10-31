@@ -30,7 +30,7 @@
               <el-switch v-model="controlData.item.showLabel"></el-switch>
             </el-form-item>
             <el-form-item label="帮助信息">
-              <el-input v-model="controlData.help"></el-input>
+              <el-input v-model="controlData.config.help"></el-input>
             </el-form-item>
           </template>
           <el-form-item label="表单栅格" v-if="showHide(['table','grid','gridChild'])">
@@ -89,14 +89,14 @@
               <el-input placeholder="关联值" v-model="controlData.config.linkValue"></el-input>
             </el-col>
           </el-form-item>
-          <template v-if="showHide('grid',true)"></template>
-          <template v-if="showHide('card',true)"></template>
-          <template v-if="showHide('title',true)">
+          <template v-if="showHide(['grid'],true)"></template>
+          <template v-if="showHide(['card'],true)"></template>
+          <template v-if="showHide(['title'],true)">
             <el-form-item label="标题">
               <el-input v-model="controlData.control.modelValue"></el-input>
             </el-form-item>
           </template>
-          <template v-if="showHide('gridChild',true)">
+          <template v-if="showHide(['gridChild'],true)">
             <el-form-item label="栅格占据的列数">
               <el-input v-model.number="controlData.attr.span"></el-input>
             </el-form-item>
@@ -110,13 +110,13 @@
               <el-input v-model.number="controlData.attr.pull"></el-input>
             </el-form-item>
           </template>
-          <template v-if="showHide('table',true)">
+          <template v-if="showHide(['table'],true)">
             <el-form-item label="添加列">
               <el-checkbox @change="tableColumnAdd($event)" v-model="columnIndex">序号列</el-checkbox>
               <el-checkbox @change="tableColumnAdd($event,1)" v-model="columnOperate">操作列</el-checkbox>
             </el-form-item>
           </template>
-          <template v-if="showHide('tabs',true)">
+          <template v-if="showHide(['tabs'],true)">
             <h3>标签配置项</h3>
             <el-form-item v-for="(item,index) in controlData.columns" :key="item.label">
               <el-col :span="12">
@@ -129,7 +129,7 @@
               <el-button @click="addSelectOption('tabs')">增加标签</el-button>
             </el-form-item>
           </template>
-          <template v-if="showHide('component',true)">
+          <template v-if="showHide(['component'],true)">
             <el-form-item label="组件名">
               <el-input v-model="controlData.template" placeholder="import进来的组件名称"></el-input>
             </el-form-item>
@@ -172,27 +172,56 @@
                     </template>
                   </el-input>
                 </el-form-item>
-                <el-form-item v-if="controlData.config.source===0">
-                  <el-input :rows="4" type="textarea" v-model="controlData.config.getResultFun" placeholder="获取结果方法如：if(res.data.code===200){callback(res.data.data)}"></el-input>
-                </el-form-item>
+                <!--                <el-form-item v-if="controlData.config.source===0">
+                                  <el-input :rows="4" type="textarea" v-model="controlData.config.getResultFun"
+                                            placeholder="获取结果方法如：if(res.data.code===200){callback(res.data.data)}"></el-input>
+                                </el-form-item>-->
               </el-tab-pane>
             </el-tabs>
           </div>
           <template
-            v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn','component'])">
+            v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn'])&&!searchDesign">
             <h3>校验设置</h3>
-            <el-form-item>
-              <el-checkbox @change="requiredChange">必填</el-checkbox>
+            <div v-if="showHide(['input','password','component'],true)">
+              <el-form-item v-for="(item,index) in controlData.customRules" :key="item.type">
+                <el-input
+                  v-model="item.message"
+                  placeholder="校验提示信息">
+                  <template #prepend>
+                    <el-select v-model="item.type" style="width: 80px">
+                      <el-option
+                        v-for="list in customRulesList"
+                        :key="list.type"
+                        :label="list.label"
+                        :value="list.type"></el-option>
+                    </el-select>
+                  </template>
+                  <template #append>
+                    <el-button icon="icon-del" @click="delAddRules(index)"></el-button>
+                  </template>
+                </el-input>
+                <!--                <el-select v-model="item.trigger" placeholder="触发方式">
+                                  <el-option label="change" value="change"></el-option>
+                                  <el-option label="blur" value="blur"></el-option>
+                                </el-select>-->
+                <el-input placeholder="正则表达式" v-model="item.rules" v-if="item.type==='rules'"></el-input>
+                <el-input placeholder="方法名称" v-model="item.methods" v-if="item.type==='methods'"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="addRulesFast">快速添加</el-button>
+                <el-button @click="addRules">编辑校验规则</el-button>
+              </el-form-item>
+            </div>
+            <el-form-item v-else>
+              <el-checkbox
+                :modelValue="checkboxRequired"
+                @change="requiredChange">必填
+              </el-checkbox>
               <el-input
                 placeholder="自定义必填错误提示"
                 v-model="controlData.rules[0].message"
                 v-if="controlData.rules&&controlData.rules[0]"></el-input>
             </el-form-item>
-            <div v-if="showHide(['input','password'],true)">
-              <el-form-item>
-                <el-button @click="addRules">编辑校验规则</el-button>
-              </el-form-item>
-            </div>
           </template>
           <div v-if="showHide(['grid','card','gridChild'])">
             <h3>其他属性</h3>
@@ -206,7 +235,9 @@
             v-for="(item,index) in formAttr"
             :label="item.label"
             :key="index">
-            <el-select v-if="item.type==='select'" v-model="formConfig[item.value]">
+            <el-select
+              v-if="item.type==='select'"
+              v-model="formConfig[item.value]">
               <el-option
                 :label="opt.label"
                 v-for="opt in item.options"
@@ -234,6 +265,7 @@ import {getFiled} from "@/api"
 
 export default {
   name: 'formControlAttr',
+  components: {},
   props: {
     formConfig: Object,
     linkageValue: Object
@@ -241,8 +273,8 @@ export default {
   emits: ['openDialog'],
   setup(props, {emit}) {
     const store = useStore()
-    const router = useRoute()
-    const dataSource = router.query.dataSource
+    const route = useRoute()
+    const dataSource = route.query.dataSource
     const state = reactive({
       formAttr: [
         {label: '表单名称', value: 'name'},
@@ -257,7 +289,50 @@ export default {
           ]
         }
       ],
-      dataSourceList: []
+      dataSourceList: [],
+      customRulesList: [
+        {
+          type: 'required',
+          label: '必填'
+        },
+        {
+          type: 'mobile',
+          label: '手机号码'
+        },
+        {
+          type: 'tel',
+          label: '固话'
+        },
+        {
+          type: 'phone',
+          label: '固话或手机'
+        },
+        {
+          type: 'email',
+          label: '邮箱'
+        },
+        {
+          type: 'int',
+          label: '正整数'
+        },
+        {
+          type: 'number',
+          label: '数字'
+        },
+        {
+          type: 'card',
+          label: '身份证'
+        },
+        {
+          type: 'rules',
+          label: '自定义正则'
+        },
+        {
+          type: 'methods',
+          label: '自定义方法'
+        }
+      ], // 自定义校验规则
+      searchDesign: route.query.type === 'search'
     })
 
     if (dataSource) {
@@ -336,7 +411,7 @@ export default {
         controlData.value.rules.push({
           required: true,
           message: '必填项',
-          trigger: 'blur'
+          trigger: 'change'
         })
       } else {
         controlData.value.rules.splice(0, 1)
@@ -375,7 +450,8 @@ export default {
         },
         control: {
           type: type ? '' : 'index'
-        }
+        },
+        config: {}
       }
       if (val) {
         if (type) {
@@ -398,21 +474,37 @@ export default {
     // 是否显示序号列
     const columnIndex = computed(() => {
       const list = controlData.value && controlData.value.list
-      if (list.length > 0) {
+      if (list && list.length > 0) {
         return list[0].typeColumn === 'index'
-      } else {
-        return false
       }
+      return false
     })
     // 是否显示操作列
     const columnOperate = computed(() => {
       const list = controlData.value && controlData.value.list
-      if (list.length > 0) {
+      if (list && list.length > 0) {
         return list[list.length - 1].typeColumn === 'operate'
       } else {
         return false
       }
     })
+    // 校验规则必填勾选设置，存在校验规则时勾选
+    const checkboxRequired = computed(() => {
+      const val = controlData.value && controlData.value.rules
+      return val && val.length > 0
+    })
+    // 快速添加一条校验规则
+    const addRulesFast = () => {
+      controlData.value.customRules && controlData.value.customRules.push({
+        type: 'required',
+        message: '',
+        trigger: 'blur'
+      })
+    }
+    // 删除一条校验规则
+    const delAddRules = index => {
+      controlData.value.customRules && controlData.value.customRules.splice(index, 1)
+    }
     return {
       ...toRefs(state),
       controlData,
@@ -426,7 +518,10 @@ export default {
       showHide,
       tableColumnAdd,
       columnIndex,
-      columnOperate
+      columnOperate,
+      checkboxRequired,
+      addRulesFast,
+      delAddRules
     }
   }
 }

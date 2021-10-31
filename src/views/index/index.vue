@@ -5,7 +5,7 @@
         <el-button type="primary">创建表单</el-button>
       </router-link>
       <el-button type="primary" @click="chooseSource">已有数据源创建表单</el-button>
-      <router-link to="/form">
+      <router-link to="/formList">
         <el-button type="primary">表单列表</el-button>
       </router-link>
     </div>

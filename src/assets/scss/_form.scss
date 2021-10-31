@@ -11,6 +11,7 @@
       &.title {padding: 0 10px}
     }
   }
+  .content {margin-left: 12px}
 }
 // 框架
 .main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0 300px 0 250px;overflow: hidden;
@@ -34,7 +35,7 @@
       }
     }
   }
-  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px}
+  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px;margin-bottom: 22px}
   .form-tabs {
     .drag {min-height: 80px;}
   }
@@ -44,13 +45,16 @@
     }
     .el-form-item {display: block}
   }
-  .table-btn{padding-top: 10px}
-  .el-collapse-item__content{padding-bottom:5px }
-  .form-table-add{
-    .el-form-item__label{display: none}
-    .el-form-item{margin: 0}
+  .table-btn {padding-top: 10px}
+  .el-collapse-item__content {padding-bottom: 5px }
+  .form-table-add {
+    .el-form-item__label {display: none}
+    .el-form-item {margin: 0}
+    .el-table .cell {overflow: inherit;
+      .el-form-item__error {padding-top: 0}
+    }
   }
-  .gray{color: #999}
+  .gray {color: #999}
 }
 .sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;
   .form {
@@ -61,11 +65,15 @@
   .el-tabs__content {padding: 0 10px}
   .icon-del {cursor: pointer}
 }
-#editJson {width: 100%;height: calc(100vh - 65px)}
+#editJson, #editJsonCopy {width: 100%;height: calc(100vh - 65px)}
+#editJsonCopy {height: calc(100vh - 350px)}
 .json-dialog {background: #1e1e1e;
   .el-drawer__body {padding: 0}
-  .el-drawer__header{padding: 0;margin: 0;}
-  .dialog-footer{text-align: center}
+  .el-drawer__header {padding: 0;margin: 0;}
+  .dialog-footer {text-align: center;padding-top: 5px;}
+}
+.export-dialog {
+  .el-dialog__body {padding: 0 20px}
 }
 .design-form {
   > div {height: 100%}
@@ -97,4 +105,15 @@
     .drag-move {position: absolute;left: 0;top: 0;z-index: 2;width: 24px;height: 24px;background: $mainColor;color: #fff;text-align: center;line-height: 24px;cursor: move}
   }
   .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;display: flex;flex-wrap: wrap;align-content: flex-start}
+}
+/*表格设计*/
+.design-table {
+  .components-list {
+    .content {padding: 0 12px;
+      > div {display: flex;flex-wrap: wrap;justify-content: flex-start;
+        label {margin: 0 10px 8px 0 !important;}
+      }
+    }
+  }
+  .main-table {padding: 0 20px;}
 }

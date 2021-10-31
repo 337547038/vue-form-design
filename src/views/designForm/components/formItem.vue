@@ -4,20 +4,20 @@
     v-bind="element.item"
     :prop="element.name"
     :class="element.className"
-    :rules="element.rules&&element.rules.length>0?element.rules:{}"
+    :rules="element.rules&&element.rules.length>0?element.rules: undefined "
     :label="getLabel(element)">
-    <template #label v-if="element.help">
+    <template #label v-if="element.config.help">
       {{ getLabel(element) }}
       <el-tooltip placement="top">
         <template #content>
-          <span v-html="element.help"></span>
+          <span v-html="element.config.help"></span>
         </template>
         <i class="icon-help"></i>
       </el-tooltip>
     </template>
     <el-input
-      v-model="element.control.modelValue"
       v-bind="element.control"
+      v-model="value"
       :disabled="editDisabled"
       :type="element.type==='password'?'password':''"
       v-if="element.type==='input'||element.type==='password'">
@@ -26,8 +26,8 @@
       </template>
     </el-input>
     <el-input
-      v-model="element.control.modelValue"
       v-bind="element.control"
+      v-model="value"
       :disabled="editDisabled"
       type="textarea"
       v-if="element.type==='textarea'">
@@ -35,7 +35,7 @@
     <el-radio-group
       v-bind="element.control"
       :disabled="editDisabled"
-      v-model="element.control.modelValue"
+      v-model="value"
       v-if="element.type==='radio'">
       <el-radio
         :key="index"
@@ -47,7 +47,7 @@
     <el-checkbox-group
       v-bind="element.control"
       :disabled="editDisabled"
-      v-model="element.control.modelValue"
+      v-model="value"
       v-if="element.type==='checkbox'">
       <el-checkbox
         v-for="(item,index) in element.options"
@@ -60,7 +60,7 @@
       v-if="element.type==='select'"
       v-bind="element.control"
       :disabled="editDisabled"
-      v-model="element.control.modelValue">
+      v-model="value">
       <el-option
         v-for="item in element.options"
         :key="item.value"
@@ -72,24 +72,24 @@
       v-if="element.type==='datePicker'"
       v-bind="element.control"
       :disabled="editDisabled"
-      v-model="element.control.modelValue">
+      v-model="value">
     </el-date-picker>
     <el-switch
       v-if="element.type==='switch'"
       v-bind="element.control"
       :disabled="editDisabled"
-      v-model="element.control.modelValue">
+      v-model="value">
     </el-switch>
     <el-input-number
       v-if="element.type==='number'"
-      v-model="element.control.modelValue"
       v-bind="element.control"
+      v-model="value"
       :disabled="editDisabled">
     </el-input-number>
     <el-cascader
       v-if="element.type==='cascader'"
-      v-model="element.control.modelValue"
       v-bind="element.control"
+      v-model="value"
       :disabled="editDisabled"
       :options="element.options">
     </el-cascader>
@@ -102,37 +102,42 @@
     </el-upload>
     <component
       :is="element.component"
-      v-model="element.control.modelValue"
       v-bind="element.control"
+      v-model="value"
       :disabled="editDisabled"
-      v-if="element.type==='component'&&type!==2"/>
+      v-if="element.type==='component'&&type!==4"/>
     <!-- 表单设计模式下显示提示-->
-    <div v-if="element.type==='component'&&type===2" class="gray">请使用provide注入组件如：provide('{{ element.template }}',
+    <div v-if="element.type==='component'&&element.component===''" class="gray">
+      请使用provide注入组件如：provide('{{ element.template }}',
       import进来的组件)
     </div>
     <div
       v-bind="element.control"
       v-if="element.type==='txt'"
-      v-html="element.control.modelValue">
+      v-html="value">
     </div>
   </el-form-item>
 </template>
 
 <script>
 import axios from "@/utils/request"
-import {toRefs, inject, onMounted, computed, reactive, watch} from 'vue'
+import {toRefs, inject, onMounted, computed, reactive, watch, ref} from 'vue'
 
 export default {
   name: "item",
   components: {},
   props: {
-    element: Object
+    element: Object,
+    modelValue: null,// 子表时值
+    tProps: String  // 子表时的form-item的prop值，用于子表校验用
   },
-  setup(props) {
+  emits: ['update:modelValue'],
+  setup(props, {emit}) {
     const injectData = inject('statusType', {})
     const state = reactive({
       type: injectData.type,
       config: props.element.config,
+      value: props.tProps ? ref(props.modelValue) : ref(props.element.control.modelValue)  // 子表时使用tValue的值
       // getResultFun: 'if(res.data.code===200){callback(res.data.data)}'
     })
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
@@ -141,12 +146,49 @@ export default {
     if (config.type === 'async' && config.source === 1 && state.type === 1 && config.sourceFun) {
       props.element.options = inject(config.sourceFun, [])
     }
-    // 使用动态选项ajax请求获取options数据项
-    const getRes = (res, callback) => {
-      /*if (res.data.code === 200) {
-        callback(res.data.data)
-      }*/
-      eval(config.getResultFun)
+    // 处理自定义校验规则，将customRules转换后追加到rules里 ,新增模式才处理，查看和设计模式不处理
+    if (props.element.customRules && state.type === 1) {
+      const rules = {
+        mobile: /^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9])[0-9]{8}$/, // 手机
+        tel: /^0\d{2,3}-\d{7,8}$/, // 电话
+        phone: /^((0\d{2,3}(-?)\d{7,8})|(1[3456789]\d{9}))$/, // 固话和手机
+        email: /^[a-z0-9A-Z._%-]+@([a-z0-9A-Z-]+\.)+[a-zA-Z]{2,4}$/, //邮箱
+        int: /^[0-9]*[1-9][0-9]*$/, // 正整数
+        number: /^\d+(\.\d+)?$/, //数字带小数
+        card: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/ // 身份证
+      }
+      // 获取校验方法 父级使用provide方法注入
+      // const validatorMethods = inject('validatorMethods', {})
+      props.element.customRules.forEach(item => {
+        if (!item.message) {
+          return
+        }
+        let hasRule = false
+        props.element.rules.forEach(r => {
+          if (item.message === r.message && item.trigger === r.trigger) {
+            hasRule = true // 以提示语作为判断条件
+          }
+        })
+        if (!hasRule) {
+          let obj = {}
+          if (item.type === 'required') {
+            obj = {required: true}
+          } else if (item.type === 'rules') {
+            // 自定义表达式
+            obj = {pattern: item.rules}
+          } else if (item.type === 'methods') {
+            // 方法时
+            obj = {validator: inject(item.methods, {})}
+          } else if (item.type && rules[item.type]) {
+            obj = {pattern: rules[item.type]}
+          }
+          // 这里判断下防某些条件下重复push的可能或存重复校验类型
+          props.element.rules.push(Object.assign({
+            message: item.message,
+            trigger: item.trigger || 'blur'
+          }, obj))
+        }
+      })
     }
     const getAxiosOptions = () => {
       if (config.type === 'async' && config.source === 0 && state.type === 1) {
@@ -154,17 +196,10 @@ export default {
         // request.get('url',data)
         axios[config.request](config.sourceFun, '')
           .then(res => {
-            if (config.getResultFun) {
-              // 使用指定的方法提取结果
-              getRes(res, data => {
-                props.element.options = data
-              })
-            } else {
-              // 默认方法提取结果
-              if (res.data.code === 200) {
-                // 请求成功
-                props.element.options = res.data.data
-              }
+            // todo 这里接口应该统一返回固定格式
+            if (res.data.code === 200) {
+              // 请求成功
+              props.element.options = res.data.data
             }
           })
           .catch(res => {
@@ -197,7 +232,15 @@ export default {
     })
     // 为改变事件提供方法
     const changeEvent = inject('controlChange', '')
-    watch(() => props.element.control.modelValue, val => {
+    /*    watch(() => props.element.control.modelValue, val => {
+          changeEvent && changeEvent({key: props.element.name, value: val})
+        })*/
+    watch(() => state.value, val => {
+      if (props.tProps) {
+        emit('update:modelValue', val)
+      } else {
+        props.element.control.modelValue = val
+      }
       changeEvent && changeEvent({key: props.element.name, value: val})
     })
     onMounted(() => {

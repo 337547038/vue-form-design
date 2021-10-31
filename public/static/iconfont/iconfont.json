@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "6244963",
+      "name": "导入",
+      "font_class": "import",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
       "icon_id": "145454",
       "name": "图片",
       "font_class": "image",

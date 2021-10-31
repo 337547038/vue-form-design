@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-table :data="tableData" border style="width: 100%" v-loading="loading">
-      <el-table-column prop="formName" label="表单名称" />
-      <el-table-column prop="tableName" label="数据表名" />
+      <el-table-column prop="formName" label="表单名称"/>
+      <el-table-column prop="dataTableName" label="数据表名"/>
       <el-table-column label="操作">
         <template #default="scope">
           <el-button
@@ -56,23 +56,31 @@ export default {
         case 1:
           router.push({
             path: '/design',
-            query: {dataSource: scope.row.tableName, id: scope.row.id}
+            query: {dataSource: scope.row.dataTableName, id: scope.row.id}
           })
           break
         case 2:
+          router.push({
+            path: '/design',
+            query: {dataSource: scope.row.dataTableName, id: scope.row.id, type: 'search'}
+          })
           break
         case 3:
+          router.push({
+            path: '/designTable',
+            query: {id: scope.row.id}
+          })
           break
         case 4:
           router.push({
-            path: '/add',
-            query: {dataSource: scope.row.tableName, id: scope.row.id}
+            path: '/form',
+            query: {dataSource: scope.row.dataTableName, formId: scope.row.id}
           })
           break
         case 5:
           router.push({
             path: '/list',
-            query: {dataSource: scope.row.tableName}
+            query: {dataSource: scope.row.dataTableName, formId: scope.row.id}
           })
           break
       }
