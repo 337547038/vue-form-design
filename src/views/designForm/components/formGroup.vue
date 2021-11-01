@@ -59,7 +59,7 @@
                 :data="col"
                 data-type="not-nested">
               </form-group>
-              <div class="drag-control">
+              <div class="drag-control" v-if="type===4">
                 <div class="item-control">
                   <i class="icon-del" @click.stop="click('delGridChild',index,element.columns)"></i>
                 </div>

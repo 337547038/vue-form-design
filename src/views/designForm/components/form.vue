@@ -6,8 +6,8 @@
     :model="model"
     class="add-form"
     :class="{'design-form':type===4,'detail-form':type===3||type===2}">
-    <form-group :data="formData"/>
-    <slot/>
+    <form-group :data="formData" />
+    <slot />
   </el-form>
 </template>
 
@@ -36,17 +36,17 @@ export default {
       if (props.formData && props.formData.list) {
         props.formData.list.forEach(item => {
           if (item.type === 'table') {
-            // 子表
-            /*obj[item.name] = []
-            const childObj = {}
-            item.list.forEach(list => {
-              if (list.name) {
-                // 序号和操作列name为空
-                childObj[list.name] = list.control.modelValue
-              }
-            })
-            obj[item.name].push(childObj)*/
             obj[item.name] = item.tableData
+          } else if (item.type === 'grid' || item.type === 'tabs') {
+            item.columns.forEach(col => {
+              col.list.forEach(li => {
+                obj[li.name] = li.control.modelValue
+              })
+            })
+          } else if (item.type === 'card') {
+            item.list.forEach(li => {
+              obj[li.name] = li.control.modelValue
+            })
           } else {
             if (excludeType.indexOf(item.type) === -1) {
               obj[item.name] = item.control.modelValue
