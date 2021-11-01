@@ -2,7 +2,7 @@
   "name": "design-form",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3002",
     "build": "vite build",
     "serve": "vite preview"
   },

@@ -2,9 +2,9 @@
 <template>
   <div class="form-table form-table-add">
     <el-table
+      v-bind="data.control"
       :class="[data.className]"
-      :data="data.tableData"
-      v-bind="data.control">
+      :data="data.tableData">
       <el-table-column
         v-for="(item,index) in data.list"
         :key="index"
@@ -13,24 +13,23 @@
         :width="item.item.span">
         <template #default="scope">
           <div v-if="type===3||type===2">{{ getText(scope.row[item.name]) }}</div>
-          <template v-else>
+          <div v-else>
             <span v-if="item.typeColumn==='index'">{{ scope.$index + 1 }}</span>
             <el-button v-else-if="item.typeColumn==='operate'" type="text" @click="delColumn(scope.$index)">删除
             </el-button>
-
-<!--            <el-form-item
-              v-else
-              :rules="item.rules"
-              :prop="`${data.name}.${scope.$index+1}.${item.name}`">
-              <el-input v-model="scope.row[item.name]"></el-input>
-            </el-form-item>-->
-            <!--            <form-item
-                          :tProps="`data.tableData.${scope.$index}.${item.name}`"
-                          v-model="scope.row[item.name]"
-                          :element="item"
-                          v-else>
-                        </form-item>-->
-          </template>
+            <!--            <el-form-item
+                          v-else
+                          :rules="rules"
+                          :prop="`${data.name}.${scope.$index}.${item.name}`">
+                          <el-input v-model="scope.row[item.name]"></el-input>
+                        </el-form-item>-->
+            <form-item
+              :tProps="`${data.name}.${scope.$index}.${item.name}`"
+              v-model="scope.row[item.name]"
+              :element="item"
+              v-else>
+            </form-item>
+          </div>
         </template>
         <template #header="scope" v-if="item.help">
           {{ scope.column.label }}

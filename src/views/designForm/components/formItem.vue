@@ -2,7 +2,7 @@
 <template>
   <el-form-item
     v-bind="element.item"
-    :prop="element.name"
+    :prop="tProps||element.name"
     :class="element.className"
     :rules="element.rules&&element.rules.length>0?element.rules: undefined "
     :label="getLabel(element)">
@@ -105,7 +105,7 @@
       v-bind="element.control"
       v-model="value"
       :disabled="editDisabled"
-      v-if="element.type==='component'&&type!==4"/>
+      v-if="element.type==='component'&&type!==4" />
     <!-- 表单设计模式下显示提示-->
     <div v-if="element.type==='component'&&element.component===''" class="gray">
       请使用provide注入组件如：provide('{{ element.template }}',
@@ -137,7 +137,7 @@ export default {
     const state = reactive({
       type: injectData.type,
       config: props.element.config,
-      value: props.tProps ? ref(props.modelValue) : ref(props.element.control.modelValue)  // 子表时使用tValue的值
+      value: props.tProps ? props.modelValue : props.element.control.modelValue  // 子表时使用tValue的值
       // getResultFun: 'if(res.data.code===200){callback(res.data.data)}'
     })
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
