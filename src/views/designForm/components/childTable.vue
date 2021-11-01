@@ -50,6 +50,7 @@
 
 <script>
 import FormItem from './formItem.vue'
+import {inject, watchEffect} from 'vue'
 
 export default {
   name: "childTable",
@@ -76,9 +77,15 @@ export default {
       }
     }
     const delColumn = index => {
-      console.log(index)
       props.data.tableData.splice(index, 1)
     }
+    // 执行表单的setValue方法，对组件设值
+    const setValueEvent = inject('setFormValue', '')
+    watchEffect(() => {
+      if (setValueEvent && setValueEvent.value) {
+        props.data.tableData = setValueEvent.value[props.data.name]
+      }
+    })
     return {
       addColumn,
       delColumn,

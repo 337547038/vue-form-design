@@ -105,7 +105,7 @@
       v-bind="element.control"
       v-model="value"
       :disabled="editDisabled"
-      v-if="element.type==='component'&&type!==4" />
+      v-if="element.type==='component'&&type!==4"/>
     <!-- 表单设计模式下显示提示-->
     <div v-if="element.type==='component'&&element.component===''" class="gray">
       请使用provide注入组件如：provide('{{ element.template }}',
@@ -121,7 +121,7 @@
 
 <script>
 import axios from "@/utils/request"
-import {toRefs, inject, onMounted, computed, reactive, watch, ref} from 'vue'
+import {toRefs, inject, onMounted, computed, reactive, watch, ref, watchEffect} from 'vue'
 
 export default {
   name: "item",
@@ -232,9 +232,6 @@ export default {
     })
     // 为改变事件提供方法
     const changeEvent = inject('controlChange', '')
-    /*    watch(() => props.element.control.modelValue, val => {
-          changeEvent && changeEvent({key: props.element.name, value: val})
-        })*/
     watch(() => state.value, val => {
       if (props.tProps) {
         emit('update:modelValue', val)
@@ -242,6 +239,14 @@ export default {
         props.element.control.modelValue = val
       }
       changeEvent && changeEvent({key: props.element.name, value: val})
+    })
+    // 执行表单的setValue方法，对组件设值
+    const setValueEvent = inject('setFormValue', '')
+    watchEffect(() => {
+      // !props.tProps 的这里不单独处理
+      if (setValueEvent && setValueEvent.value && !props.tProps) {
+        state.value = setValueEvent.value[props.element.name]
+      }
     })
     onMounted(() => {
       getAxiosOptions()

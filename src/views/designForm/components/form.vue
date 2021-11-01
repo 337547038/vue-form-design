@@ -6,8 +6,8 @@
     :model="model"
     class="add-form"
     :class="{'design-form':type===4,'detail-form':type===3||type===2}">
-    <form-group :data="formData" />
-    <slot />
+    <form-group :data="formData"/>
+    <slot/>
   </el-form>
 </template>
 
@@ -70,11 +70,17 @@ export default {
     const getValue = () => {
       return model.value
     }
+    const setValueObj = ref()
+    provide('setFormValue', setValueObj)
+    const setValue = obj => {
+      setValueObj.value = obj
+    }
     return {
       model,
       validate,
       ruleForm,
-      getValue
+      getValue,
+      setValue
     }
   }
 }

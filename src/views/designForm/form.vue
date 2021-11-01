@@ -11,15 +11,18 @@
 import designForm from './components/form.vue'
 import {reactive, toRefs, provide, ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {getDesignFormRow} from '@/api'
+import {getDesignFormRow, saveForm, getRowById} from '@/api'
+import {ElMessage} from 'element-plus'
 
 export default {
   name: "add",
   props: {},
   components: {designForm},
   setup(props) {
+    const formName = ref()
     const route = useRoute()
     const dataSource = route.query.dataSource
+    const id = route.query.id
     const formId = route.query.formId
     const state = reactive({
       loading: false,
@@ -43,6 +46,7 @@ export default {
       console.log(key)
       console.log(value)
     })*/
+    const formatString = ['cascader', 'checkbox', 'tableList']
     // 获取表单设计数据
     if (formId) {
       state.loading = true
@@ -54,19 +58,50 @@ export default {
           state.loading = false
         })
     }
-    const formName = ref()
+    // 获取表单数据
+    if (id) {
+      getRowById(id, dataSource)
+        .then(res => {
+          if (res.data.code === 200) {
+            const data = res.data.data[0]
+            // 提交时有些转了格式了，这里恢复
+            formatString.forEach(item => {
+              data[item] = JSON.parse(data[item])
+            })
+            formName.value.setValue(data)
+          }
+        })
+    }
     const submit = () => {
       const formValue = formName.value.getValue()
-      console.log(formValue)
       formName.value.validate((valid) => {
-        console.log(valid)
         if (valid) {
-          alert('submit')
+          saveData(formValue)
         } else {
           console.log('error submit')
           return false
         }
       })
+    }
+
+    // 提交保存数据
+    const saveData = obj => {
+      // 转字符串保存
+      formatString.forEach(item => {
+        obj[item] = JSON.stringify(obj[item])
+      })
+      saveForm(obj, dataSource)
+        .then(res => {
+          if (res.data.code === 200) {
+            ElMessage({
+              message: '保存成功！',
+              type: 'success',
+            })
+            // todo 保存成功后应该要跳转页面
+          } else {
+            ElMessage.error(res.data.message)
+          }
+        })
     }
     return {
       ...toRefs(state),

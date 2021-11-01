@@ -32,3 +32,20 @@ export function getFiled(formId) {
     method: 'get'
   })
 }
+
+// 保存表单新增修改数据
+export function saveForm(data, tableName) {
+  return request({
+    url: '/saveFormList?name=' + tableName,
+    method: 'post',
+    data
+  })
+}
+
+// 根据id返回指定表当前记录
+export function getRowById(id, tableName) {
+  return request({
+    url: `/getRowById?id=${id}&name=${tableName}`,
+    method: 'get'
+  })
+}

@@ -20,7 +20,7 @@ db.connect((err) => {
     console.log('数据库连接成功')
   }
 })
-app.use(bodyParser());
+app.use(bodyParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: true
@@ -125,13 +125,15 @@ app.post('/saveFormList', function (req, res) {
   const sql = `insert into ${table} set ?`
   console.log(sql)
   db.query(sql, body, (err, results) => {
-    /* if (err) {
-      return res.json(noData)
-    }
-    res.json({
-      code: 200,
-      data: results
-    }) */
+    getResult(err, results, res)
+  })
+})
+// 根据id返回指定表的记录
+app.get('/getRowById', function (req, res) {
+  const id = req.query.id
+  const name = req.query.name
+  const sql = `select * from ${name} where id=${id}`
+  db.query(sql, (err, results) => {
     getResult(err, results, res)
   })
 })
