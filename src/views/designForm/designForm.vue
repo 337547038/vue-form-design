@@ -12,12 +12,12 @@
         从左侧拖拽来添加字段
       </div>
       <div class="main-form" v-loading="loading">
-        <form-design :form-data="formData" :type="4"/>
+        <form-design :form-data="formData" :type="4" />
       </div>
     </div>
     <form-control-attr
       :formConfig="formData.config"
-      @openDialog="dialogOpen"/>
+      @openDialog="dialogOpen" />
     <el-drawer
       v-model="visibleDialog"
       size="60%"
@@ -37,7 +37,7 @@
     </el-drawer>
     <vue-File ref="vueFileEl" v-if="!searchDesign"></vue-File>
     <el-dialog v-model="previewVisible" title="预览" :fullscreen="true">
-      <form-design :form-data="formDataPreview" :type="1" ref="previewForm"/>
+      <form-design :form-data="formDataPreview" :type="1" ref="previewForm" />
       <template #footer>
         <div class="dialog-footer">
           <el-button
@@ -82,7 +82,10 @@ export default {
           labelWidth: '',
           class: '',
           size: 'medium',
-          name: 'form' + new Date().getTime()
+          name: 'form' + new Date().getTime(),
+          rulesComm: [
+            {key: 'a', require: true, message: '123'}
+          ]
         }
       },
       visibleDialog: false,

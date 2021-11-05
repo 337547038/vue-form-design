@@ -153,8 +153,6 @@ export default {
         number: /^\d+(\.\d+)?$/, //数字带小数
         card: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/ // 身份证
       }
-      // 获取校验方法 父级使用provide方法注入
-      const validatorMethods = inject('validatorMethods', {})
       props.element.customRules.forEach(item => {
         if (!item.message) {
           return
@@ -166,7 +164,7 @@ export default {
           // 自定义表达式
           obj = {pattern: item.rules}
         } else if (item.type === 'methods') {
-          // 方法时
+          // 方法时 父级使用provide方法注入
           obj = {validator: inject(item.methods, {})}
         } else if (item.type && rules[item.type]) {
           obj = {pattern: rules[item.type]}

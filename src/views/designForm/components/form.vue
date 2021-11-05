@@ -6,8 +6,8 @@
     :model="model"
     class="add-form"
     :class="{'design-form':type===4,'detail-form':type===3||type===2}">
-    <form-group :data="formData"/>
-    <slot/>
+    <form-group :data="formData" />
+    <slot />
   </el-form>
 </template>
 
@@ -31,31 +31,31 @@ export default {
   },
   setup(props) {
     const model = computed(() => {
-      const excludeType = ['title']
       const obj = {}
       if (props.formData && props.formData.list) {
-        props.formData.list.forEach(item => {
-          if (item.type === 'table') {
-            obj[item.name] = item.tableData
-          } else if (item.type === 'grid' || item.type === 'tabs') {
-            item.columns.forEach(col => {
-              col.list.forEach(li => {
-                obj[li.name] = li.control.modelValue
-              })
-            })
-          } else if (item.type === 'card') {
-            item.list.forEach(li => {
-              obj[li.name] = li.control.modelValue
-            })
-          } else {
-            if (excludeType.indexOf(item.type) === -1) {
-              obj[item.name] = item.control.modelValue
-            }
-          }
-        })
+        forEachGetFormModel(props.formData.list, obj)
       }
       return obj
     })
+    // 从表单数据里提取表单所需的model
+    const forEachGetFormModel = (list, obj) => {
+      list.forEach(item => {
+        if (item.type === 'table') {
+          obj[item.name] = item.tableData
+        } else if (item.type === 'grid' || item.type === 'tabs') {
+          item.columns.forEach(col => {
+            forEachGetFormModel(col.list, obj)
+          })
+        } else if (item.type === 'card') {
+          forEachGetFormModel(item.list, obj)
+        } else {
+          const excludeType = ['title']
+          if (excludeType.indexOf(item.type) === -1) {
+            obj[item.name] = item.control.modelValue
+          }
+        }
+      })
+    }
     // 子组件formGroup为递归组件，这里使用provide传参
     provide('statusType', {type: props.type, isEdit: props.isEdit})
     provide('formModel', model) // 给form-group提供联动条件设置
