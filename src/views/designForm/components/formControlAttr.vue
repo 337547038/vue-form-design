@@ -183,6 +183,19 @@
             v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn'])&&!searchDesign">
             <h3>校验设置</h3>
             <div v-if="showHide(['input','password','component'],true)">
+              <el-form-item v-if="formConfig.rulesComm&&formConfig.rulesComm.length>0">
+                <el-select
+                  placeholder="快速选择"
+                  :multiple="true"
+                  v-model="controlData.rulesComm">
+                  <el-option
+                    v-for="item in formConfig.rulesComm"
+                    :label="item.message"
+                    :value="item.key"
+                    :key="item.key">
+                  </el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item v-for="(item,index) in controlData.customRules" :key="item.type">
                 <el-input
                   v-model="item.message"
@@ -200,10 +213,6 @@
                     <el-button icon="icon-del" @click="delAddRules(index)"></el-button>
                   </template>
                 </el-input>
-                <!--                <el-select v-model="item.trigger" placeholder="触发方式">
-                                  <el-option label="change" value="change"></el-option>
-                                  <el-option label="blur" value="blur"></el-option>
-                                </el-select>-->
                 <el-input placeholder="正则表达式" v-model="item.rules" v-if="item.type==='rules'"></el-input>
                 <el-input placeholder="方法名称" v-model="item.methods" v-if="item.type==='methods'"></el-input>
               </el-form-item>
