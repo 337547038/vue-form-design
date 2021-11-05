@@ -7,14 +7,14 @@
     :disabled="disabled||type===2"
     class="add-form"
     :class="{'design-form':type===4,'detail-form':type===3||type===2}">
-    <form-group :data="formData" />
-    <slot />
+    <form-group :data="formData"/>
+    <slot/>
   </el-form>
 </template>
 
 <script>
 import formGroup from "./formGroup.vue"
-import {provide, computed, ref, reactive, toRefs} from 'vue'
+import {provide, computed, ref, reactive, toRefs, watch} from 'vue'
 
 export default {
   name: "formIndex",
@@ -61,6 +61,11 @@ export default {
     // 子组件formGroup为递归组件，这里使用provide传参
     provide('DFStatusType', {type: props.type, isEdit: props.isEdit})
     provide('DFFormModel', model) // 给form-group提供联动条件设置
+    const rulesComm = ref()
+    watch(() => props.formData, data => {
+      rulesComm.value = data.config.rulesComm
+    })
+    provide('DFFormRulesComm', rulesComm) //提供给formItem获取公共部分的校验规则
     // 表单检验方法
     const ruleForm = ref()
     const validate = valid2 => {

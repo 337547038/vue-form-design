@@ -150,7 +150,7 @@ export default {
       props.element.options = inject(config.sourceFun, [])
     }
     // 处理自定义校验规则，将customRules转换后追加到rules里 ,新增模式才处理，查看和设计模式不处理
-    if (props.element.customRules && state.type !== 4) {
+    if (props.element.customRules && state.type === 1) {
       const rules = {
         mobile: /^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9])[0-9]{8}$/, // 手机
         tel: /^0\d{2,3}-\d{7,8}$/, // 电话
@@ -192,6 +192,36 @@ export default {
           }, obj))
         }
       })
+    }
+    // 从公共校验规则里提取，通过key
+    if (props.element.rulesComm && state.type === 1) {
+      const rulesComm = inject('DFFormRulesComm', [])
+      if (rulesComm && rulesComm.value.length > 0) {
+        rulesComm.value.forEach(item => {
+          if (props.element.rulesComm.indexOf(item.key) !== -1) {
+            // 防重复添加
+            let hasRule = false
+            props.element.rules.forEach(r => {
+              if (item.key === r.key) {
+                hasRule = true
+              }
+            })
+            if (!hasRule) {
+              props.element.rules.push(item)
+            }
+          }
+        })
+      }
+    }
+    // 返回是否存在当前校验规则
+    const hsaRules = key => {
+      let has = false
+      props.element.rules.forEach(r => {
+        if (key === r.key) {
+          has = true
+        }
+      })
+      return has
     }
     const getAxiosOptions = () => {
       if (config.type === 'async' && config.source === 0 && state.type !== 4) {
