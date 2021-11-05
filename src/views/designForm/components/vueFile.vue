@@ -99,7 +99,7 @@ export default {
         '' + getHtml.componentProvide + '' +
         '' + getHtml.rulesMethods + '' +
         '    // 表单控件值改变事件\n' +
-        '    /*provide(\'controlChange\', ({key, value}) => {\n' +
+        '    /*provide(\'DFControlChange\', ({key, value}) => {\n' +
         '      console.log(key)\n' +
         '      console.log(value)\n' +
         '    })*/\n' +

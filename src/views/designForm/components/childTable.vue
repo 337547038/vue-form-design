@@ -12,17 +12,11 @@
         :label="item.item.label"
         :width="item.item.span">
         <template #default="scope">
-          <div v-if="type===3||type===2">{{ getText(scope.row[item.name]) }}</div>
+          <span v-if="item.typeColumn==='index'">{{ scope.$index + 1 }}</span>
+          <div v-if="type===3">{{ getText(scope.row[item.name]) }}</div>
           <div v-else>
-            <span v-if="item.typeColumn==='index'">{{ scope.$index + 1 }}</span>
-            <el-button v-else-if="item.typeColumn==='operate'" type="text" @click="delColumn(scope.$index)">删除
+            <el-button v-if="item.typeColumn==='operate'&&type===1" type="text" @click="delColumn(scope.$index)">删除
             </el-button>
-            <!--            <el-form-item
-                          v-else
-                          :rules="rules"
-                          :prop="`${data.name}.${scope.$index}.${item.name}`">
-                          <el-input v-model="scope.row[item.name]"></el-input>
-                        </el-form-item>-->
             <form-item
               :tProps="`${data.name}.${scope.$index}.${item.name}`"
               v-model="scope.row[item.name]"
@@ -80,7 +74,7 @@ export default {
       props.data.tableData.splice(index, 1)
     }
     // 执行表单的setValue方法，对组件设值
-    const setValueEvent = inject('setFormValue', '')
+    const setValueEvent = inject('DFSetFormValue', '')
     watchEffect(() => {
       if (setValueEvent && setValueEvent.value) {
         props.data.tableData = setValueEvent.value[props.data.name]

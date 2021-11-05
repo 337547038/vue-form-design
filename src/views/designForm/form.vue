@@ -1,7 +1,7 @@
 <!-- Created by 337547038 on 通用表单添加修改查看页. -->
 <template>
   <div v-loading="loading">
-    <design-form :formData="formData" ref="formName">
+    <design-form :formData="formData" ref="formName" :type="type">
     </design-form>
     <el-button type="primary" @click="submit">提交</el-button>
   </div>
@@ -11,7 +11,7 @@
 import designForm from './components/form.vue'
 import {reactive, toRefs, provide, ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {getDesignFormRow, saveForm, getRowById} from '@/api'
+import {getDesignFormRow, saveForm, getRowById, editForm} from '@/api'
 import {ElMessage} from 'element-plus'
 
 export default {
@@ -21,12 +21,14 @@ export default {
   setup(props) {
     const formName = ref()
     const route = useRoute()
-    const dataSource = route.query.dataSource
-    const id = route.query.id
-    const formId = route.query.formId
+    const dataSource = route.query.dataSource // 保存在数据的位置表名
+    const id = route.query.id // 当前记录id
+    const formId = route.query.formId // 设计的表单id
+    const type = route.query.type || 1
     const state = reactive({
       loading: false,
-      formData: {}
+      formData: {},
+      type: parseInt(type)
     })
     // 注入选项方法获取值
     /*const optionsValue = ref([{label: "选项1", value: '1'}])
@@ -42,7 +44,7 @@ export default {
       }
     })
     // 表单控件值改变事件
-    provide('controlChange', ({key, value}) => {
+    provide('DFControlChange', ({key, value}) => {
       console.log(key)
       console.log(value)
     })*/
@@ -76,7 +78,12 @@ export default {
       const formValue = formName.value.getValue()
       formName.value.validate((valid) => {
         if (valid) {
-          saveData(formValue)
+          if (id) {
+            // 编辑
+            editData(formValue)
+          } else {
+            saveData(formValue) // 保存
+          }
         } else {
           console.log('error submit')
           return false
@@ -95,6 +102,25 @@ export default {
           if (res.data.code === 200) {
             ElMessage({
               message: '保存成功！',
+              type: 'success',
+            })
+            // todo 保存成功后应该要跳转页面
+          } else {
+            ElMessage.error(res.data.message)
+          }
+        })
+    }
+    // 修改数据
+    const editData = obj => {
+      // 转字符串保存
+      formatString.forEach(item => {
+        obj[item] = JSON.stringify(obj[item])
+      })
+      editForm(obj, dataSource, id)
+        .then(res => {
+          if (res.data.code === 200) {
+            ElMessage({
+              message: '修改成功！',
               type: 'success',
             })
             // todo 保存成功后应该要跳转页面

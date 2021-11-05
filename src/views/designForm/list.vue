@@ -2,8 +2,13 @@
 <template>
   <div>
     <table-list
+      ref="tableListEl"
       :searchData="searchData"
-      :tableData="tableData">
+      :tableData="tableData"
+      :beforeRequest="beforeRequest">
+<!--      <template #DFSearchForm>
+        <el-button @click="onSubmit">确定</el-button>
+      </template>-->
     </table-list>
   </div>
 </template>
@@ -11,7 +16,7 @@
 <script>
 import tableList from './components/list.vue'
 import {useRoute} from 'vue-router'
-import {reactive, toRefs} from 'vue'
+import {reactive, toRefs, ref} from 'vue'
 import {getDesignFormRow} from '@/api'
 
 export default {
@@ -21,6 +26,7 @@ export default {
   setup() {
     const route = useRoute()
     const formId = route.query.formId // 根据表单id获取筛选设置、表格设置
+    const tableListEl = ref()
     const state = reactive({
       loading: false,
       tableData: {
@@ -40,8 +46,19 @@ export default {
           }
         })
     }
+    const beforeRequest = obj => {
+      obj.ok = '2'
+      return obj
+    }
+    const onSubmit = () => {
+      tableListEl.value.searchClick()
+
+    }
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      beforeRequest,
+      onSubmit,
+      tableListEl
     }
   }
 }

@@ -4,6 +4,7 @@
     v-bind="formData.config"
     ref="ruleForm"
     :model="model"
+    :disabled="disabled||type===2"
     class="add-form"
     :class="{'design-form':type===4,'detail-form':type===3||type===2}">
     <form-group :data="formData"/>
@@ -13,21 +14,22 @@
 
 <script>
 import formGroup from "./formGroup.vue"
-import {provide, computed, ref} from 'vue'
+import {provide, computed, ref, reactive, toRefs} from 'vue'
 
 export default {
   name: "formIndex",
   components: {formGroup},
   props: {
     formData: Object,
-    type: {// 1新增；2查看；3查看（表单模式）； 4设计
+    type: {// 1新增；2查看（表单模式） ；3查看； 4设计
       type: Number,
       default: 1
     },
     isEdit: { // 编辑状态，type=1新增模式下有编辑状态，主要用于控制编辑模式下某些字段的禁用状态，即可新增但不能修改
       type: Boolean,
       default: false
-    }
+    },
+    disabled: Boolean // 可用于在提交表单是禁用，防重复提交
   },
   setup(props) {
     const model = computed(() => {
@@ -56,9 +58,10 @@ export default {
       }
       return obj
     })
+    const state = reactive({})
     // 子组件formGroup为递归组件，这里使用provide传参
-    provide('statusType', {type: props.type, isEdit: props.isEdit})
-    provide('formModel', model) // 给form-group提供联动条件设置
+    provide('DFStatusType', {type: props.type, isEdit: props.isEdit})
+    provide('DFFormModel', model) // 给form-group提供联动条件设置
     // 表单检验方法
     const ruleForm = ref()
     const validate = valid2 => {
@@ -67,11 +70,25 @@ export default {
       })
     }
     // 提供一个取值的方法
-    const getValue = () => {
-      return model.value
+    const getValue = bool => {
+      // bool=true时只返回不为空的值
+      if (bool) {
+        const obj = {}
+        for (const key in model.value) {
+          if (model.value.hasOwnProperty(key)) {
+            const val = model.value[key]
+            if (val !== '' && (val && val.length > 0)) {
+              obj[key] = val
+            }
+          }
+        }
+        return obj
+      } else {
+        return model.value
+      }
     }
     const setValueObj = ref()
-    provide('setFormValue', setValueObj)
+    provide('DFSetFormValue', setValueObj)
     const setValue = obj => {
       setValueObj.value = obj
     }

@@ -42,6 +42,15 @@ export function saveForm(data, tableName) {
   })
 }
 
+// 修改保存
+export function editForm(data, tableName, id) {
+  return request({
+    url: `/editFormList?name=${tableName}&id=${id}`,
+    method: 'post',
+    data
+  })
+}
+
 // 根据id返回指定表当前记录
 export function getRowById(id, tableName) {
   return request({

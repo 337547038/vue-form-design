@@ -48,7 +48,7 @@ const getResult = (err, results, res, message) => {
     return res.json({
       code: 100,
       data: [],
-      message: '失败'
+      message: err
     })
   }
   res.json({
@@ -125,6 +125,24 @@ app.post('/saveFormList', function (req, res) {
   const sql = `insert into ${table} set ?`
   console.log(sql)
   db.query(sql, body, (err, results) => {
+    getResult(err, results, res)
+  })
+})
+// 修改表单记录
+app.post('/editFormList', function (req, res) {
+  const table = req.query.name
+  const id = req.query.id
+  const body = req.body
+  const set = []
+  const params = []
+  for (const key in body) {
+    set.push(`${key}=?`)
+    params.push(body[key].toString())
+  }
+  const sql = `update ${table} set ${set.join(',')} where id=${id}`
+  console.log(sql)
+  console.log(params)
+  db.query(sql, params, (err, results) => {
     getResult(err, results, res)
   })
 })

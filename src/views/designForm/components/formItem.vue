@@ -15,107 +15,110 @@
         <i class="icon-help"></i>
       </el-tooltip>
     </template>
-    <el-input
-      v-bind="element.control"
-      v-model="value"
-      :disabled="editDisabled"
-      :type="element.type==='password'?'password':''"
-      v-if="element.type==='input'||element.type==='password'">
-      <template v-slot:[key] v-for="(te,key) in element.slot">
-        {{ te }}
-      </template>
-    </el-input>
-    <el-input
-      v-bind="element.control"
-      v-model="value"
-      :disabled="editDisabled"
-      type="textarea"
-      v-if="element.type==='textarea'">
-    </el-input>
-    <el-radio-group
-      v-bind="element.control"
-      :disabled="editDisabled"
-      v-model="value"
-      v-if="element.type==='radio'">
-      <el-radio
-        :key="index"
-        :label="item.value"
-        v-for="(item,index) in element.options">
-        {{ item.label }}
-      </el-radio>
-    </el-radio-group>
-    <el-checkbox-group
-      v-bind="element.control"
-      :disabled="editDisabled"
-      v-model="value"
-      v-if="element.type==='checkbox'">
-      <el-checkbox
-        v-for="(item,index) in element.options"
-        :key="index"
-        :value="item.value"
-        :label="item.label">
-      </el-checkbox>
-    </el-checkbox-group>
-    <el-select
-      v-if="element.type==='select'"
-      v-bind="element.control"
-      :disabled="editDisabled"
-      v-model="value">
-      <el-option
-        v-for="item in element.options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
-      </el-option>
-    </el-select>
-    <el-date-picker
-      v-if="element.type==='datePicker'"
-      v-bind="element.control"
-      :disabled="editDisabled"
-      v-model="value">
-    </el-date-picker>
-    <el-switch
-      v-if="element.type==='switch'"
-      v-bind="element.control"
-      :disabled="editDisabled"
-      v-model="value">
-    </el-switch>
-    <el-input-number
-      v-if="element.type==='number'"
-      v-bind="element.control"
-      v-model="value"
-      :disabled="editDisabled">
-    </el-input-number>
-    <el-cascader
-      v-if="element.type==='cascader'"
-      v-bind="element.control"
-      v-model="value"
-      :disabled="editDisabled"
-      :options="element.options">
-    </el-cascader>
-    <el-upload
-      v-if="element.type==='upload'"
-      v-bind="element.control"
-      :disabled="editDisabled"
-      class="avatar-uploader">
-      <i class="el-icon-plus avatar-uploader-icon"></i>
-    </el-upload>
-    <component
-      :is="element.component"
-      v-bind="element.control"
-      v-model="value"
-      :disabled="editDisabled"
-      v-if="element.type==='component'&&type!==4"/>
-    <!-- 表单设计模式下显示提示-->
-    <div v-if="element.type==='component'&&element.component===''" class="gray">
-      请使用provide注入组件如：provide('{{ element.template }}',
-      import进来的组件)
-    </div>
-    <div
-      v-bind="element.control"
-      v-if="element.type==='txt'"
-      v-html="value">
-    </div>
+    <div class="form-value" v-if="type===3" v-html="value"></div>
+    <template v-else>
+      <el-input
+        v-bind="element.control"
+        v-model="value"
+        :disabled="editDisabled"
+        :type="element.type==='password'?'password':''"
+        v-if="element.type==='input'||element.type==='password'">
+        <template v-slot:[key] v-for="(te,key) in element.slot">
+          {{ te }}
+        </template>
+      </el-input>
+      <el-input
+        v-bind="element.control"
+        v-model="value"
+        :disabled="editDisabled"
+        type="textarea"
+        v-if="element.type==='textarea'">
+      </el-input>
+      <el-radio-group
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value"
+        v-if="element.type==='radio'">
+        <el-radio
+          :key="index"
+          :label="item.value"
+          v-for="(item,index) in element.options">
+          {{ item.label }}
+        </el-radio>
+      </el-radio-group>
+      <el-checkbox-group
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value"
+        v-if="element.type==='checkbox'">
+        <el-checkbox
+          v-for="(item,index) in element.options"
+          :key="index"
+          :value="item.value"
+          :label="item.label">
+        </el-checkbox>
+      </el-checkbox-group>
+      <el-select
+        v-if="element.type==='select'"
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value">
+        <el-option
+          v-for="item in element.options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-date-picker
+        v-if="element.type==='datePicker'"
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value">
+      </el-date-picker>
+      <el-switch
+        v-if="element.type==='switch'"
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value">
+      </el-switch>
+      <el-input-number
+        v-if="element.type==='number'"
+        v-bind="element.control"
+        v-model="value"
+        :disabled="editDisabled">
+      </el-input-number>
+      <el-cascader
+        v-if="element.type==='cascader'"
+        v-bind="element.control"
+        v-model="value"
+        :disabled="editDisabled"
+        :options="element.options">
+      </el-cascader>
+      <el-upload
+        v-if="element.type==='upload'"
+        v-bind="element.control"
+        :disabled="editDisabled"
+        class="avatar-uploader">
+        <i class="el-icon-plus avatar-uploader-icon"></i>
+      </el-upload>
+      <component
+        :is="element.component"
+        v-bind="element.control"
+        v-model="value"
+        :disabled="editDisabled"
+        v-if="element.type==='component'&&type!==4"/>
+      <!-- 表单设计模式下显示提示-->
+      <div v-if="element.type==='component'&&element.component===''" class="gray">
+        请使用provide注入组件如：provide('{{ element.template }}',
+        import进来的组件)
+      </div>
+      <div
+        v-bind="element.control"
+        v-if="element.type==='txt'"
+        v-html="value">
+      </div>
+    </template>
   </el-form-item>
 </template>
 
@@ -133,7 +136,7 @@ export default {
   },
   emits: ['update:modelValue'],
   setup(props, {emit}) {
-    const injectData = inject('statusType', {})
+    const injectData = inject('DFStatusType', {})
     const state = reactive({
       type: injectData.type,
       config: props.element.config,
@@ -141,13 +144,13 @@ export default {
       // getResultFun: 'if(res.data.code===200){callback(res.data.data)}'
     })
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-    // props.type===1 为表单添加页时才拉取动态或方法数据
+    // props.type===4 为表单设计时不拉取数据
     const config = state.config
-    if (config.type === 'async' && config.source === 1 && state.type === 1 && config.sourceFun) {
+    if (config.type === 'async' && config.source === 1 && state.type !== 4 && config.sourceFun) {
       props.element.options = inject(config.sourceFun, [])
     }
     // 处理自定义校验规则，将customRules转换后追加到rules里 ,新增模式才处理，查看和设计模式不处理
-    if (props.element.customRules && state.type === 1) {
+    if (props.element.customRules && state.type !== 4) {
       const rules = {
         mobile: /^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9])[0-9]{8}$/, // 手机
         tel: /^0\d{2,3}-\d{7,8}$/, // 电话
@@ -191,7 +194,7 @@ export default {
       })
     }
     const getAxiosOptions = () => {
-      if (config.type === 'async' && config.source === 0 && state.type === 1) {
+      if (config.type === 'async' && config.source === 0 && state.type !== 4) {
         // 当前控件为动态获取数据
         // request.get('url',data)
         axios[config.request](config.sourceFun, '')
@@ -231,7 +234,7 @@ export default {
       return props.element.control.disabled
     })
     // 为改变事件提供方法
-    const changeEvent = inject('controlChange', '')
+    const changeEvent = inject('DFControlChange', '')
     watch(() => state.value, val => {
       if (props.tProps) {
         emit('update:modelValue', val)
@@ -241,7 +244,7 @@ export default {
       changeEvent && changeEvent({key: props.element.name, value: val})
     })
     // 执行表单的setValue方法，对组件设值
-    const setValueEvent = inject('setFormValue', '')
+    const setValueEvent = inject('DFSetFormValue', '')
     watchEffect(() => {
       // !props.tProps 的这里不单独处理
       if (setValueEvent && setValueEvent.value && !props.tProps) {

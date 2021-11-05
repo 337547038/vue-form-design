@@ -123,7 +123,7 @@ export default {
       getDesignFormRow(state.queryId)
         .then(res => {
           if (res.data.code === 200) {
-            filterFiled(res.data.data[0].formData) // 获取表单数据，从表单里提取可选择的表头字段
+            filterFiled(JSON.parse(res.data.data[0].formData)) // 获取表单数据，从表单里提取可选择的表头字段
             state.tableData = JSON.parse(res.data.data[0].tableData)
             // 将表头数据在左则对应选中
             state.tableData.columns.forEach(item => {
@@ -132,11 +132,16 @@ export default {
           }
         })
     }
+    const excludeType = ['txt', 'title', 'table', 'component', 'upload']
     const filterFiled = obj => {
-      const result = JSON.parse(obj)
-      const excludeType = ['txt', 'title', 'table', 'grid', 'tabs', 'card']
-      result.list.forEach(item => {
-        if (excludeType.indexOf(item.type) === -1) {
+      obj.list.forEach(item => {
+        if (item.type === 'grid' || item.type === 'tabs') {
+          item.columns.forEach(col => {
+            filterFiled(col)
+          })
+        } else if (item.type === 'card') {
+          filterFiled(item)
+        } else if (excludeType.indexOf(item.type) === -1) {
           state.filedList.push({
             prop: item.name,
             label: item.item.label,

@@ -44,7 +44,7 @@
               data-type="not-nested">
             </form-group>
           </div>
-          <form-table v-else :data="element" :type="type"/>
+          <child-table v-else :data="element" :type="type"/>
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -105,11 +105,11 @@ import {reactive, toRefs, computed, inject} from 'vue'
 import {useStore} from 'vuex'
 import Draggable from 'vuedraggable'
 import FormItem from './formItem.vue'
-import FormTable from './childTable.vue'
+import ChildTable from './childTable.vue'
 
 export default {
   name: "formGroup",
-  components: {Draggable, FormItem, FormTable},
+  components: {Draggable, FormItem, ChildTable},
   props: {
     data: {
       type: Object,
@@ -119,7 +119,7 @@ export default {
     }
   },
   setup(props) {
-    const injectData = inject('statusType', {})
+    const injectData = inject('DFStatusType', {})
     const store = useStore()
     const state = reactive({
       clone: true,
@@ -223,7 +223,7 @@ export default {
         return {width: ele.config.span / 24 * 100 + '%'}
       }
     }
-    const linkageValue = inject('formModel', '')
+    const linkageValue = inject('DFFormModel', '')
     // 根据关联条件显示隐藏当前项
     const linksShow = el => {
       // 当前项设置了关联条件，当关联主体的值等于当前组件设定的值时

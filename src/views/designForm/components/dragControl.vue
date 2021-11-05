@@ -21,7 +21,7 @@
       <div class="title">已有表单字段</div>
       <div class="content">
         <el-checkbox
-          v-for="item in formData"
+          v-for="item in formDataList"
           :key="item.name"
           :checked="getCheckbox(item.name)"
           @change="selectChange(item,$event)">
@@ -82,11 +82,32 @@ export default {
       })
       return bool
     }
+    // 从表单数据提取筛选可选字段
+    const formDataList = computed(() => {
+      const obj = []
+      forEachGetData(props.formData, obj)
+      return obj
+    })
+    const exclude = ['txt', 'title', 'table', 'component', 'upload']
+    const forEachGetData = (data, obj) => {
+      data.forEach(item => {
+        if (item.type === 'grid' || item.type === 'tabs') {
+          item.columns.forEach(col => {
+            forEachGetData(col.list, obj)
+          })
+        } else if (item.type === 'card') {
+          forEachGetData(item.list, obj)
+        } else if (exclude.indexOf(item.type) === -1) {
+          obj.push(item)
+        }
+      })
+    }
     return {
       controlList,
       selectChange,
       getCheckbox,
-      ...toRefs(state)
+      ...toRefs(state),
+      formDataList
     }
   }
 }
