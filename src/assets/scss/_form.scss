@@ -20,8 +20,8 @@
   .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 68px);overflow-y: auto;overflow-x: hidden;}
 }
 // 中间按钮工具
-.main-tools {line-height: 38px;border-bottom: 2px solid #e4e7ed;text-align: right;
-  button {color: $mainColor;margin-right: 10px;
+.main-tools {line-height: 38px;border-bottom: 2px solid #e4e7ed;text-align: right;margin-right: 10px;
+  button {color: $mainColor;
     i {padding-right: 5px}
   }
 }
@@ -41,8 +41,8 @@
   }
   .group-card {
     .el-collapse {border: 0}
-    .el-collapse-item__header{font-weight: 700;border-bottom: 1px solid #ddd;margin-bottom: 20px}
-    .el-collapse-item__wrap{border: 0}
+    .el-collapse-item__header {font-weight: 700;border-bottom: 1px solid #ddd;margin-bottom: 20px}
+    .el-collapse-item__wrap {border: 0}
   }
   .form-table {margin-bottom: 22px;
     .drag {border: 0;display: flex;overflow-x: auto;white-space: nowrap;padding: 0;flex-wrap: nowrap;
@@ -60,6 +60,7 @@
     }
   }
   .gray {color: #999}
+  > .drag{border: 0!important;}
 }
 .sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;
   .form {
@@ -80,7 +81,7 @@
 .export-dialog {
   .el-dialog__body {padding: 0 20px}
 }
-.design-form {
+.design-form {height: calc(100vh - 70px);
   > div {height: 100%}
   .ghost {
     background: #F56C6C;
@@ -121,4 +122,7 @@
     }
   }
   .main-table {padding: 0 20px;}
+}
+.table-list-comm {
+  .table-main {margin-bottom: 20px}
 }

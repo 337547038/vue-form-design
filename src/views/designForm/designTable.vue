@@ -2,7 +2,7 @@
 <template>
   <div class="container design-table" v-loading="loading">
     <div class="components-list">
-      <template v-if="queryId">
+      <template v-if="filedList&&filedList.length>0">
         <div class="title">可选字段</div>
         <div class="content">
           <el-checkbox-group v-model="checkboxGroup" size="small">
@@ -35,8 +35,30 @@
     <div class="main-body">
       <headTools @click="headToolClick" type="2"></headTools>
       <div class="main-form main-table">
-        <p>点击表头可拖动改变顺序</p>
-        <main-table :tableData="tableData" :is-design="true"></main-table>
+        <p style="padding: 10px 0">点击表头可拖动改变顺序</p>
+        <el-table
+          :data="dataList"
+          v-bind="tableData.config"
+          ref="tableEl">
+          <template v-for="item in tableData.columns" :key="item.prop||item.label">
+            <el-table-column v-bind="item">
+              <template #header="scope" v-if="item.help">
+                {{ scope.column.label }}
+                <el-tooltip placement="top">
+                  <template #content>
+                    <span v-html="item.help"></span>
+                  </template>
+                  <i class="icon-help"></i>
+                </el-tooltip>
+              </template>
+              <template #default v-if="item.type!=='index'">
+                <el-checkbox v-if="item.type==='selection'"></el-checkbox>
+                <span v-else-if="item.prop==='__control'">删除</span>
+                <span v-else>测试数据</span>
+              </template>
+            </el-table-column>
+          </template>
+        </el-table>
       </div>
     </div>
     <div class="sidebar-tools">
@@ -84,25 +106,26 @@
 <script>
 import headTools from "./components/headTools.vue"
 import {saveDesignForm, getDesignFormRow} from '@/api'
-import {reactive, toRefs, ref, computed, nextTick, onUnmounted, onMounted} from 'vue'
+import {reactive, toRefs, ref, computed, nextTick, onUnmounted, onMounted, getCurrentInstance} from 'vue'
 import {useRoute} from 'vue-router'
-import mainTable from './components/table.vue'
 import vueFile from "./components/vueFile.vue"
-import {aceEdit} from "./components/aceEdit"
+import {aceEdit, localStorage} from "./components/comm"
 import {ElMessage} from 'element-plus'
+import Sortable from 'sortablejs'
 
 export default {
   name: "list",
   props: {},
-  components: {headTools, mainTable, vueFile},
+  components: {headTools, vueFile},
   setup() {
     const route = useRoute()
+    const {ctx} = getCurrentInstance()
     const vueFileEl = ref()
     const state = reactive({
       filedList: [], // 可选字段
       otherFiled: [
-        {label: '勾选框', prop: '__selection'},
-        {label: '序号', prop: '__index'},
+        {label: '勾选', prop: '__selection', type: 'selection'},
+        {label: '序号', prop: '__index', type: 'index'},
         {label: '操作', prop: '__control'}
       ],
       checkboxGroup: [], // 左则已勾选的值
@@ -113,25 +136,11 @@ export default {
       editor: {},
       visibleDialog: false,
       loading: false,
-      queryId: '',
+      queryId: route.query.id,
       selectCheck: '', // 属于选择的值
-      editIndex: '' // 当前编辑的属于在数组的位置
+      editIndex: '', // 当前编辑的属于在数组的位置
+      dataList: [{}] // 表格行数据
     })
-    // 根据id获取表单可选字段
-    state.queryId = route.query.id
-    if (state.queryId) {
-      getDesignFormRow(state.queryId)
-        .then(res => {
-          if (res.data.code === 200) {
-            filterFiled(JSON.parse(res.data.data[0].formData)) // 获取表单数据，从表单里提取可选择的表头字段
-            state.tableData = JSON.parse(res.data.data[0].tableData)
-            // 将表头数据在左则对应选中
-            state.tableData.columns.forEach(item => {
-              state.checkboxGroup.push(item.label)
-            })
-          }
-        })
-    }
     const excludeType = ['txt', 'title', 'table', 'component', 'upload']
     const filterFiled = obj => {
       obj.list.forEach(item => {
@@ -210,6 +219,11 @@ export default {
     }
     // 保存数据，将数据保存到服务端
     const saveData = () => {
+      if (!state.queryId) {
+        localStorage('tableData', state.tableData)
+        ElMessage.info('数据已暂存在localStorage')
+        return
+      }
       state.loading = true
       const prams = {
         tableData: JSON.stringify(state.tableData),
@@ -252,6 +266,50 @@ export default {
       // 打开编辑窗口
       dialogOpen(obj)
     }
+    const columnDrop = () => {
+      // const wrapperTr = document.querySelector('.el-table__header-wrapper tr')
+      const wrapperTr = ctx.$el.querySelector('.el-table__header-wrapper tr')
+      Sortable.create(wrapperTr, {
+        animation: 180,
+        delay: 0,
+        onEnd: evt => {
+          const oldItem = state.tableData.columns[evt.oldIndex]
+          state.tableData.columns.splice(evt.oldIndex, 1)
+          state.tableData.columns.splice(evt.newIndex, 0, oldItem)
+        }
+      })
+    }
+    // 根据id获取表单可选字段
+    if (state.queryId) {
+      getDesignFormRow(state.queryId)
+        .then(res => {
+          if (res.data.code === 200) {
+            filterFiled(JSON.parse(res.data.data[0].formData)) // 获取表单数据，从表单里提取可选择的表头字段
+            state.tableData = JSON.parse(res.data.data[0].tableData)
+            // 将表头数据在左则对应选中
+            state.tableData.columns.forEach(item => {
+              state.checkboxGroup.push(item.label)
+            })
+          }
+        })
+    } else {
+      // 尝试从local中读取
+      const storage = localStorage()
+      if (storage) {
+        if (storage.tableData) {
+          state.tableData = storage.tableData
+        }
+        if (storage.formData) {
+          console.log(storage.formData)
+          filterFiled(storage.formData)
+        }
+      }
+    }
+    onMounted(() => {
+      nextTick(() => {
+        columnDrop()
+      })
+    })
     onUnmounted(() => {
       if (Object.keys(state.editor).length !== 0) {
         state.editor.destroy()

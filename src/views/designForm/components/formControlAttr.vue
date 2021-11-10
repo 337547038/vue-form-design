@@ -283,7 +283,7 @@ export default {
   setup(props, {emit}) {
     const store = useStore()
     const route = useRoute()
-    const dataSource = route.query.dataSource
+    const dataSource = route.query.formName
     const state = reactive({
       formAttr: [
         {label: '表单名称', value: 'name'},

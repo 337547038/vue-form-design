@@ -24,7 +24,7 @@
 import {reactive, toRefs, nextTick} from 'vue'
 import Clipboard from 'clipboard'
 import {ElMessage} from 'element-plus'
-import {aceEdit} from "./aceEdit.js"
+import {aceEdit} from "./comm.js"
 
 export default {
   name: "vueFile",

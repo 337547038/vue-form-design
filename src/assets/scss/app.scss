@@ -1,5 +1,5 @@
 @charset "UTF-8";
-html, body, div, span, ul, li, i,h3 {margin: 0;padding: 0;}
+html, body, div, span, ul, li, i, h3, p {margin: 0;padding: 0;}
 ul, li {list-style: none}
 body {font-size: 14px; font-family: "Microsoft YaHei UI"}
 $mainColor: #66b1ff;
@@ -8,5 +8,4 @@ $mainColor: #66b1ff;
 ::-webkit-scrollbar {width: 8px;height: 8px;position: relative;z-index: 100}
 ::-webkit-scrollbar-thumb {background-color: #babdc2;background-clip: padding-box;min-height: 28px;-webkit-border-radius: 2px;-moz-border-radius: 2px;border-radius: 2px;}
 ::-webkit-scrollbar-corner {background: #e7e9f4}
-
-@import 'form','demo';
+@import 'form', 'demo';

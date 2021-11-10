@@ -25,6 +25,15 @@ export function getList(tableName) {
   })
 }
 
+// 返回指定表所有数据
+export function getTableList(tableName, data) {
+  return request({
+    url: '/list?name=' + tableName,
+    method: 'get',
+    data
+  })
+}
+
 // 返回选定数据源表相关字段
 export function getFiled(formId) {
   return request({
@@ -55,6 +64,14 @@ export function editForm(data, tableName, id) {
 export function getRowById(id, tableName) {
   return request({
     url: `/getRowById?id=${id}&name=${tableName}`,
+    method: 'get'
+  })
+}
+
+// 根据id和表名删除指定记录
+export function delById(tableName, id) {
+  return request({
+    url: `/delById?id=${id}&name=${tableName}`,
     method: 'get'
   })
 }

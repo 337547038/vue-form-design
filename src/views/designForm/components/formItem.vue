@@ -107,7 +107,7 @@
         v-bind="element.control"
         v-model="value"
         :disabled="editDisabled"
-        v-if="element.type==='component'&&type!==4"/>
+        v-if="element.type==='component'&&type!==4" />
       <!-- 表单设计模式下显示提示-->
       <div v-if="element.type==='component'&&element.component===''" class="gray">
         请使用provide注入组件如：provide('{{ element.template }}',
@@ -125,6 +125,7 @@
 <script>
 import axios from "@/utils/request"
 import {toRefs, inject, onMounted, computed, reactive, watch, ref, watchEffect} from 'vue'
+import md5 from 'md5'
 
 export default {
   name: "item",
@@ -226,18 +227,25 @@ export default {
     const getAxiosOptions = () => {
       if (config.type === 'async' && config.source === 0 && state.type !== 4) {
         // 当前控件为动态获取数据
-        // request.get('url',data)
-        axios[config.request](config.sourceFun, '')
-          .then(res => {
-            // todo 这里接口应该统一返回固定格式
-            if (res.data.code === 200) {
-              // 请求成功
-              props.element.options = res.data.data
-            }
-          })
-          .catch(res => {
-            console.log(res)
-          })
+        const key = 'option_fun_' + md5(config.sourceFun)
+        const storage = window.sessionStorage.getItem(key)
+        if (storage) {
+          props.element.options = JSON.parse(storage)
+        } else {
+          // request.get('url',data)
+          axios[config.request](config.sourceFun, '')
+            .then(res => {
+              // todo 这里接口应该统一返回固定格式
+              if (res.data.code === 200) {
+                // 请求成功
+                props.element.options = res.data.data
+                window.sessionStorage.setItem(key, JSON.stringify(res.data.data)) //缓存，例如子表添加时不用每添加一行就请求一次
+              }
+            })
+            .catch(res => {
+              console.log(res)
+            })
+        }
       }
     }
     // 自定义组件注入

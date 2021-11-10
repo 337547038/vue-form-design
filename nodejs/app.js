@@ -136,8 +136,10 @@ app.post('/editFormList', function (req, res) {
   const set = []
   const params = []
   for (const key in body) {
-    set.push(`${key}=?`)
-    params.push(body[key].toString())
+    if (body.hasOwnProperty(key)) {
+      set.push(`${key}=?`)
+      params.push(body[key].toString())
+    }
   }
   const sql = `update ${table} set ${set.join(',')} where id=${id}`
   console.log(sql)
@@ -159,6 +161,15 @@ app.get('/getRowById', function (req, res) {
 app.get('/getDesignFormRow', function (req, res) {
   const id = req.query.id
   const sql = `select * from designform where id=${id}`
+  db.query(sql, (err, results) => {
+    getResult(err, results, res)
+  })
+})
+//删除
+app.get('/delById', function (req, res) {
+  const id = req.query.id
+  const name = req.query.name
+  const sql = `DELETE FROM ${name} where id=${id}`
   db.query(sql, (err, results) => {
     getResult(err, results, res)
   })

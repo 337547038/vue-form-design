@@ -29,7 +29,7 @@ export default {
   setup(props, {emit}) {
     const route = useRoute()
     // 表格设计 没有id时不能保存
-    const saveDisabled = props.type === '2' && !route.query.id
+    // const saveDisabled = props.type === '2' && !route.query.id
     // 筛选查找模式下不显示
     const vueDisabled = route.query.type === 'search'
     const state = reactive({
@@ -39,7 +39,7 @@ export default {
         {icon: 'json', label: '生成脚本预览'},
         {icon: 'vue', label: '导出vue文件', disabled: vueDisabled},
         {icon: 'import', label: '导入Json'},
-        {icon: 'save', label: '保存', disabled: saveDisabled}
+        {icon: 'save', label: '保存'}
       ]
     })
     const btnList = computed(() => {

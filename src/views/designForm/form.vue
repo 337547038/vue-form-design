@@ -1,6 +1,7 @@
 <!-- Created by 337547038 on 通用表单添加修改查看页. -->
 <template>
-  <div v-loading="loading">
+  <div v-loading="loading" class="add-form-demo">
+    <h3>新增/编辑/查看数据</h3>
     <design-form :formData="formData" ref="formName" :type="type">
     </design-form>
     <el-button type="primary" @click="submit">提交</el-button>
@@ -21,7 +22,7 @@ export default {
   setup(props) {
     const formName = ref()
     const route = useRoute()
-    const dataSource = route.query.dataSource // 保存在数据的位置表名
+    const dataSource = route.query.formName // 保存在数据的位置表名
     const id = route.query.id // 当前记录id
     const formId = route.query.formId // 设计的表单id
     const type = route.query.type || 1
@@ -48,7 +49,6 @@ export default {
       console.log(key)
       console.log(value)
     })*/
-    const formatString = ['cascader', 'checkbox', 'tableList']
     // 获取表单设计数据
     if (formId) {
       state.loading = true
@@ -67,9 +67,7 @@ export default {
           if (res.data.code === 200) {
             const data = res.data.data[0]
             // 提交时有些转了格式了，这里恢复
-            formatString.forEach(item => {
-              data[item] = JSON.parse(data[item])
-            })
+            formatData(data, 0)
             formName.value.setValue(data)
           }
         })
@@ -94,9 +92,7 @@ export default {
     // 提交保存数据
     const saveData = obj => {
       // 转字符串保存
-      formatString.forEach(item => {
-        obj[item] = JSON.stringify(obj[item])
-      })
+      formatData(obj, 1)
       saveForm(obj, dataSource)
         .then(res => {
           if (res.data.code === 200) {
@@ -113,9 +109,7 @@ export default {
     // 修改数据
     const editData = obj => {
       // 转字符串保存
-      formatString.forEach(item => {
-        obj[item] = JSON.stringify(obj[item])
-      })
+      formatData(obj, 1)
       editForm(obj, dataSource, id)
         .then(res => {
           if (res.data.code === 200) {
@@ -128,6 +122,17 @@ export default {
             ElMessage.error(res.data.message)
           }
         })
+    }
+    // 示例数据类型问题，这里做下转换
+    const formatData = (data, type) => {
+      const formatString = ['cascader', 'checkbox', 'tableList'] // 需要转换的提交字段
+      formatString.forEach(item => {
+        if (type === 0) {
+          data[item] = JSON.parse(data[item])
+        } else if (type === 1) {
+          data[item] = JSON.stringify(data[item])
+        }
+      })
     }
     return {
       ...toRefs(state),

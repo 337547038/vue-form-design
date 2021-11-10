@@ -3,7 +3,7 @@ import docsRoutesList from 'virtual:generated-pages'
 // 开启历史模式
 // vue2中使用 mode: history 实现
 // const routerHistory = createWebHistory()
-
+console.log(docsRoutesList)
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -43,11 +43,6 @@ const router = createRouter({
       path: '/formList',
       name: 'formList',
       component: () => import('../views/formList/index.vue')
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/test.vue')
     },
     {
       name: 'docs',

@@ -58,7 +58,11 @@ export default {
       const temp = {}
       props.data.list.forEach(item => {
         if (item.name) {
-          temp[item.name] = ''
+          if (item.type === 'checkbox') {
+            temp[item.name] = []
+          } else {
+            temp[item.name] = ''
+          }
         }
       })
       props.data.tableData.push(JSON.parse(JSON.stringify(temp)))

@@ -13,9 +13,10 @@ export default defineConfig({
     Pages({ // 添加文档使用路由
       pagesDir: [
         {dir: "src/docs", baseRoute: "docs"},
+        // {dir: "src/views", baseRoute: ""},
       ],
-      extensions: ['md']
-      // exclude: ['**/components/*.vue']
+      extensions: ['md','vue'],
+      exclude: ['**/components/*.vue']
     })
     /*按需导入
     Components({

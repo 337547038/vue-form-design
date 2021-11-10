@@ -67,14 +67,14 @@ import {saveDesignForm, getDesignFormRow} from '@/api'
 import {ElMessage} from 'element-plus'
 import {useRoute} from 'vue-router'
 import vueFile from "./components/vueFile.vue"
-import {aceEdit} from "./components/aceEdit.js"
+import {aceEdit, localStorage} from "./components/comm.js"
 
 export default {
   name: 'designIndex',
   components: {headTools, formControl, formDesign, formControlAttr, vueFile},
   setup(props, {emit}) {
     const store = useStore()
-    const route = useRoute()
+    const query = useRoute().query
     const state = reactive({
       formData: {
         list: [],
@@ -83,9 +83,7 @@ export default {
           class: '',
           size: 'medium',
           name: 'form' + new Date().getTime(),
-          rulesComm: [
-            {key: 'a', require: true, message: '123'}
-          ]
+          rulesComm: []
         }
       },
       visibleDialog: false,
@@ -95,11 +93,12 @@ export default {
       drawerDirection: 'rtl', // 默认右边弹出
       formDataPreview: {},
       previewVisible: false, // 预览窗口
-      searchDesign: route.query.type === 'search', // 是否为筛选设计
+      searchDesign: query.type === 'search', // 是否为筛选设计
       formDataList: [] // 筛选模式下提供给左则快速选择已有表单字段
     })
     const vueFileEl = ref()
-    const id = route.query.id
+    const id = query.id // 当前记录保存的id
+    const formName = query.formName // 使用的是哪个表单数据源
     if (id) {
       // 获取初始表单数据
       state.loading = true
@@ -121,6 +120,24 @@ export default {
           console.log(res)
           state.loading = false
         })
+    }
+    if (!id && !formName) {
+      // 没保存到数据库时
+      const storage = localStorage()
+      if (storage) {
+        if (state.searchDesign) {
+          if (storage.searchData) {
+            state.formData = storage.searchData
+          }
+          if (storage.formData) {
+            state.formDataList = storage.formData.list
+          }
+        } else {
+          if (storage.formData) {
+            state.formData = storage.formData
+          }
+        }
+      }
     }
     const headToolClick = type => {
       state.sourceDialog = '' // 清空下防意外
@@ -164,37 +181,46 @@ export default {
     }
     // 将数据保存在服务端
     const saveData = () => {
-      let prams = {
-        formData: JSON.stringify(state.formData),
-        id: route.query.id, // 修改时，当前记录id
-        formName: state.formData.config.name, // 表单名称，用于在显示所有已创建的表单列表里显示
-        dataTableName: route.query.dataSource // 表同上
-      }
-      if (state.searchDesign) {
-        // 提交不同的字段
-        prams = {
-          searchData: JSON.stringify(state.formData),
-          id: route.query.id
+      const formData = JSON.stringify(state.formData)
+      const dataType = state.searchDesign ? 'searchData' : 'formData'
+      if (!formName) {
+        // 不提交保存，条件不全 。暂存在session代设计筛选和表格时提供支持
+        localStorage(dataType, state.formData)
+        ElMessage.info('数据已暂存在localStorage')
+      } else {
+        let prams = {
+          formData: formData,
+          id: query.id, // 修改时，当前记录id
+          formName: state.formData.config.name, // 表单名称，用于在显示所有已创建的表单列表里显示
+          dataTableName: formName // 表同上
         }
-      }
-      state.loading = true
-      saveDesignForm(prams)
-        .then(res => {
-          if (res.data.code === 200) {
-            ElMessage({
-              message: '保存成功！',
-              type: 'success',
-            })
-            // todo 保存成功后应该要跳转页面
-          } else {
-            ElMessage.error(res.data.message)
+        if (state.searchDesign) {
+          // 提交不同的字段
+          prams = {
+            searchData: formData,
+            id: query.id
           }
-          state.loading = false
-        })
-        .catch(res => {
-          ElMessage.error('保存异常')
-          state.loading = false
-        })
+        }
+        state.loading = true
+        saveDesignForm(prams)
+          .then(res => {
+            if (res.data.code === 200) {
+              ElMessage({
+                message: '保存成功！',
+                type: 'success',
+              })
+              // todo 保存成功后应该要跳转页面
+            } else {
+              ElMessage.error(res.data.message)
+            }
+            state.loading = false
+          })
+          .catch(res => {
+            localStorage(dataType, state.formData)
+            ElMessage.info('请求异常，数据已暂存在localStorage')
+            state.loading = false
+          })
+      }
       // 清空右侧栏信息
       store.commit('setActiveKey', '')
       store.commit('setControlAttr', {})
@@ -217,13 +243,6 @@ export default {
       state.visibleDialog = false
       state.sourceDialog = ''
     }
-    onUnmounted(() => {
-      if (Object.keys(state.editor).length !== 0) {
-        //state.editor.dispose()
-        state.editor.destroy()
-        state.editor.container.remove()
-      }
-    })
     // 预览窗口提交测试
     const previewForm = ref()
     const previewSubmit = () => {
@@ -236,6 +255,13 @@ export default {
         }
       })
     }
+    onUnmounted(() => {
+      if (Object.keys(state.editor).length !== 0) {
+        //state.editor.dispose()
+        state.editor.destroy()
+        state.editor.container.remove()
+      }
+    })
     return {
       ...toRefs(state),
       headToolClick,

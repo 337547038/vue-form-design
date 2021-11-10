@@ -19,10 +19,33 @@
     </div>
     <slot></slot>
     <div class="table-main">
-      <main-table
-        :tableData="tableData"
-        :data="dataList">
-      </main-table>
+      <slot name="DFTable"></slot>
+      <el-table
+        v-if="!$slots.DFTable"
+        :data="tableDataList"
+        v-bind="tableData.config"
+        ref="tableEl">
+        <template v-for="item in tableData.columns" :key="item.prop||item.label">
+          <el-table-column v-bind="item">
+            <template #header="scope" v-if="item.help">
+              {{ scope.column.label }}
+              <el-tooltip placement="top">
+                <template #content>
+                  <span v-html="item.help"></span>
+                </template>
+                <i class="icon-help"></i>
+              </el-tooltip>
+            </template>
+            <template #default="scope" v-if="$slots[item.prop]">
+              <slot
+                :name="item.prop"
+                :row="scope.row"
+                :$index="scope.$index">
+              </slot>
+            </template>
+          </el-table-column>
+        </template>
+      </el-table>
     </div>
     <div class="table-page" v-if="showPage">
       <el-pagination
@@ -40,7 +63,6 @@
 
 <script>
 import designForm from './form.vue'
-import mainTable from './table.vue'
 import {reactive, toRefs, ref, onMounted} from 'vue'
 import {useRoute} from 'vue-router'
 
@@ -55,19 +77,21 @@ export default {
       type: Boolean,
       default: true
     },
-    autoLoad: { // onMounted后自动加载数据，当列表存在默认筛选条件时，可能存在searchData的数据还没请求回来，此时加载可以关掉自动加载，改为手当searchData请求完后再加载
+    autoLoad: { // onMounted后自动加载数据，当列表存在默认筛选条件时，可能存在searchData的数据还没请求回来，此时加载可以关掉自动加载，改为手当searchData请求完后再加载，避免重复加载请求
       type: Boolean,
       default: true
     },
-    requestUrl: Function // 请求的api
+    requestUrl: Function, // 请求的api
+    tableList:Array // 当requestUrl没传时，表格行数据使用传入的
   },
-  components: {mainTable, designForm},
+  components: {designForm},
   setup(props) {
-    // const route = useRoute()
+    const route = useRoute()
     const designForm = ref()
+    const tableEl = ref()
     const state = reactive({
       loading: false,
-      dataList: [], // 表格行数据
+      tableDataList: props.tableList, // 表格行数据
       currentPage: 1,
       pageSize: 20,
       total: 0
@@ -83,15 +107,16 @@ export default {
       if (props.beforeRequest) {
         formValue = props.beforeRequest(formValue || {})
       }
-      console.log(formValue)
-      console.log('请求数据')
-      props.requestUrl && props.requestUrl(formValue)
+      /*console.log(formValue)
+      console.log('请求数据')*/
+      props.requestUrl && props.requestUrl(route.query.formName, formValue)
         .then(res => {
-          let result = res.data
+          let result = res.data.data
           if (props.afterResponse) {
             result = props.afterResponse(result)
           }
-          console.log(result)
+          /*console.log(result)*/
+          state.tableDataList = result
           state.loading = false
         })
         .catch(res => {
@@ -121,7 +146,8 @@ export default {
       handleCurrentChange,
       getListData,
       searchClear,
-      designForm
+      designForm,
+      tableEl
     }
   }
 }
