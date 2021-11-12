@@ -164,8 +164,8 @@ export default {
       // 获取校验方法 父级使用provide方法注入
       // const validatorMethods = inject('validatorMethods', {})
       props.element.customRules.forEach(item => {
-        if (!item.message) {
-          return
+        if (!item.message && item.type !== 'methods') {
+          return // 方法时允许提示信息为空
         }
         let hasRule = false
         props.element.rules.forEach(r => {
@@ -187,10 +187,13 @@ export default {
             obj = {pattern: rules[item.type]}
           }
           // 这里判断下防某些条件下重复push的可能或存重复校验类型
+          let message = {message: item.message}
+          if (!item.message) { // 当使用validator校验时，如果存在message字段则不能使用 callback(new Error('xxxxx'));的提示
+            message = {}
+          }
           props.element.rules.push(Object.assign({
-            message: item.message,
             trigger: item.trigger || 'blur'
-          }, obj))
+          }, obj, message))
         }
       })
     }

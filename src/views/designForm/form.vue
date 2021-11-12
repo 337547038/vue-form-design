@@ -59,8 +59,12 @@ export default {
           }
           state.loading = false
         })
+        .catch(res => {
+          state.loading = false
+          throw new Error("获取表单设计数据失败")
+        })
     }
-    // 获取表单数据
+    // 获取表单数据，修改时获取初始值
     if (id) {
       getRowById(id, dataSource)
         .then(res => {
@@ -126,9 +130,12 @@ export default {
     // 示例数据类型问题，这里做下转换
     const formatData = (data, type) => {
       const formatString = ['cascader', 'checkbox', 'tableList'] // 需要转换的提交字段
+      console.log(data)
       formatString.forEach(item => {
         if (type === 0) {
-          data[item] = JSON.parse(data[item])
+          if (data[item]) {
+            data[item] = JSON.parse(data[item])
+          }
         } else if (type === 1) {
           data[item] = JSON.stringify(data[item])
         }

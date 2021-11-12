@@ -61,7 +61,7 @@ export default {
     // 子组件formGroup为递归组件，这里使用provide传参
     provide('DFStatusType', {type: props.type, isEdit: props.isEdit})
     provide('DFFormModel', model) // 给form-group提供联动条件设置
-    const rulesComm = ref()
+    const rulesComm = ref(props.formData.config.rulesComm)
     watch(() => props.formData, data => {
       rulesComm.value = data.config.rulesComm
     })

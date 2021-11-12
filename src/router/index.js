@@ -45,6 +45,16 @@ const router = createRouter({
       component: () => import('../views/formList/index.vue')
     },
     {
+      path: '/export/form',
+      name: 'exportForm',
+      component: () => import('../views/export/form.vue')
+    },
+    {
+      path: '/export/list',
+      name: 'exportList',
+      component: () => import('../views/export/list.vue')
+    },
+    {
       name: 'docs',
       path: '/docs',
       component: () => import('../docs/components/layout.vue'),

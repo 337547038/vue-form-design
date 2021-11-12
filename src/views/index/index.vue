@@ -9,6 +9,11 @@
         利于二次开发
       </p>
     </div>
+    <div class="docs">
+      <router-link to="/docs">
+        <el-button type="success">使用文档</el-button>
+      </router-link>
+    </div>
     <div class="btn">
       <div class="title">
         <h3>开始使用</h3>

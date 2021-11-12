@@ -144,6 +144,7 @@ export default {
       switch (type) {
         case 'del':
           state.formData.list = []
+          state.formData.config.rulesComm = []
           store.commit('setActiveKey', '')
           store.commit('setControlAttr', {})
           break

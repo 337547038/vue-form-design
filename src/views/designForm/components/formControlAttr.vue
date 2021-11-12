@@ -260,6 +260,9 @@
               :placeholder="item.placeholder">
             </el-input>
           </el-form-item>
+          <el-form-item>
+            <el-button @click="rulesCommClick">编辑全局校验规则</el-button>
+          </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -514,6 +517,12 @@ export default {
     const delAddRules = index => {
       controlData.value.customRules && controlData.value.customRules.splice(index, 1)
     }
+    // 添加编辑全局校验规则
+    const rulesCommClick = () => {
+      emit('openDialog', props.formConfig.rulesComm, result => {
+        Object.assign(props.formConfig.rulesComm, result)
+      })
+    }
     return {
       ...toRefs(state),
       controlData,
@@ -530,7 +539,8 @@ export default {
       columnOperate,
       checkboxRequired,
       addRulesFast,
-      delAddRules
+      delAddRules,
+      rulesCommClick
     }
   }
 }

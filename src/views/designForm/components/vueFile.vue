@@ -44,7 +44,7 @@ export default {
       obj && obj.list.forEach(item => {
         if (item.type === 'component') {
           // 自定义组件
-          importComponent += `    // todo ${item.item.label}\nimport ${item.template} form "@/xxxxxxx.vue"\n`
+          importComponent += `    // todo ${item.item.label}\nimport ${item.template} from "@/xxxxxxx.vue"\n`
           componentProvide += `    // todo ${item.item.label}自定义组件\n    provide("${item.template}", ${item.template})\n`
         }
         if (item.customRules && item.customRules.length > 0) {
@@ -76,23 +76,21 @@ export default {
       const getHtml = getObjHtml(obj)
       const html = '<template>\n' +
         '  <div>\n' +
-        '    <design-form :formData="formData" ref="formName">\n' +
-        '    </design-form>\n' +
+        '    <ak-form-design :formData="formData" ref="formName">\n' +
+        '    </ak-form-design>\n' +
         '    <el-button type="primary" @click="submit">提交</el-button>\n' +
         '  </div>\n' +
         '</template>' +
         '<script>\n' +
-        'import designForm from \'@/components/form/index.vue\'\n' +
         'import {reactive, toRefs, provide, ref} from \'vue\'\n' +
         '' + getHtml.importComponent + '' +
         '\n' +
         'export default {\n' +
         '  name: "addForm",\n' +
         '  props: {},\n' +
-        '  components: {designForm},\n' +
+        '  components: {},\n' +
         '  setup(props) {\n' +
         '    const state = reactive({\n' +
-        '      loading: false,\n' +
         '      formData: ' + JSON.stringify(obj) + '\n' +
         '    })\n' +
         '' + getHtml.sourceFun + '' +
@@ -130,7 +128,63 @@ export default {
     // 打开弹窗，导出表格数据
     const openTable = obj => {
       state.visible = true
-      const html = '0000'
+      const html = '<template>\n' +
+        '  <div class="form-list-page">\n' +
+        '    <h3>列表数据</h3>\n' +
+        '    <ak-table-list\n' +
+        '      ref="tableListEl"\n' +
+        '      :searchData="searchData"\n' +
+        '      :tableData="tableData"\n' +
+        '      :requestUrl="requestUrl">\n' +
+        '      <template #__control="scope">\n' +
+        '        <el-button type="text" @click="btnClick(scope.row.id,\'show\')">查看</el-button>\n' +
+        '        <el-button type="text" @click="btnClick(scope.row.id,\'edit\')">编辑</el-button>\n' +
+        '        <el-button type="text" @click="btnClick(scope.row.id,\'del\')">删除</el-button>\n' +
+        '      </template>\n' +
+        '    </ak-table-list>\n' +
+        '  </div>\n' +
+        '</template>\n' +
+        '\n' +
+        '<script>\n' +
+        'import {useRoute, useRouter} from \'vue-router\'\n' +
+        'import {reactive, toRefs, ref} from \'vue\'\n' +
+        '\n' +
+        'export default {\n' +
+        '  name: "list",\n' +
+        '  props: {},\n' +
+        '  components: {},\n' +
+        '  setup() {\n' +
+        '    const route = useRoute()\n' +
+        '    const router = useRouter()\n' +
+        '    const tableListEl = ref()\n' +
+        '    const state = reactive({\n' +
+        '      tableData: ' + JSON.stringify(obj) + ',\n' +
+        '      searchData: {}, // 筛选表单\n' +
+        '      requestUrl: \'\' // 数据列表接口\n' +
+        '    })\n' +
+        '    const onSubmit = () => {\n' +
+        '      tableListEl.value.searchClick()\n' +
+        '    }\n' +
+        '    const btnClick = (id, type) => {\n' +
+        '      switch (type) {\n' +
+        '        case \'show\':\n' +
+        '          break\n' +
+        '        case \'edit\':\n' +
+        '          break\n' +
+        '        case \'del\':\n' +
+        '          // tableListEl.value.getListData() // 调用组件内部方法重新拉数据\n' +
+        '          break\n' +
+        '      }\n' +
+        '    }\n' +
+        '    return {\n' +
+        '      ...toRefs(state),\n' +
+        '      onSubmit,\n' +
+        '      tableListEl,\n' +
+        '      btnClick\n' +
+        '    }\n' +
+        '  }\n' +
+        '}\n' +
+        '<\/script>\n'
       nextTick(() => {
         state.editor = aceEdit(html, 'editJsonCopy', 'html')
       })

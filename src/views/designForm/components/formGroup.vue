@@ -44,7 +44,7 @@
               data-type="not-nested">
             </form-group>
           </div>
-          <child-table v-else :data="element" :type="type"/>
+          <child-table v-else :data="element" :type="type" />
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -135,6 +135,9 @@ export default {
     }
     // 删除或复制
     const click = (type, index, item) => {
+      if (state.type !== 4) {
+        return // 非设计模式
+      }
       if (type === 'clone') {
         console.log(item)
         const key = item.type + new Date().getTime().toString()
@@ -155,6 +158,9 @@ export default {
       }
     }
     const draggableAdd = evt => {
+      if (state.type !== 4) {
+        return // 非设计模式
+      }
       const newIndex = evt.newIndex
       const key = new Date().getTime().toString()
       const dataList = props.data.list
