@@ -59,7 +59,11 @@ export default {
         },
         {
           title: '使用手册',
-          children: []
+          children: [
+            {title: '页面介绍', to: '/docs/useInfo'},
+            {title: '数据绑定', to: '/docs/useBind'},
+            {title: '表单校验', to: '/docs/useVerify'}
+          ]
         }
       ]
     })

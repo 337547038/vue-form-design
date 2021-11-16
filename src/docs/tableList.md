@@ -29,7 +29,7 @@
 |----------|--------|
 |DFSearchForm  |筛选表单slot,可自定义按钮和添加自定条件字段|
 |DFTable       |自定义表格，即不使用组件内置的|
-|default       |位于筛选表单和表单间的slot，可用于存放添加删除数据的按钮|
+|default       |位于筛选表单和表单间的slot，可用于存放添加删除数据的按钮或其他操作|
 |-             |columns对应的props|
 
 ### tableData
