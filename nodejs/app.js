@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const mysql = require('mysql')
+const path = require('path')
+const multer = require('multer')
 // 这里配置连接池以链接数据库
 const db = mysql.createConnection({
   host: 'localhost',
@@ -174,3 +176,6 @@ app.get('/delById', function (req, res) {
     getResult(err, results, res)
   })
 })
+// 文件图片上传
+const multerUpload = require('./upload')
+app.use('/upload', multerUpload)

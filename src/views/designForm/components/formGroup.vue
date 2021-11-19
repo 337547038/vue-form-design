@@ -233,10 +233,36 @@ export default {
     // 根据关联条件显示隐藏当前项
     const linksShow = el => {
       // 当前项设置了关联条件，当关联主体的值等于当前组件设定的值时
-      if (linkageValue && el.config && el.config.linkKey && el.config.linkValue && state.type !== 4) {
-        if (linkageValue.value[el.config.linkKey] !== el.config.linkValue) {
+      if (!el.config || !linkageValue) {
+        return true
+      }
+      const key = el.config.linkKey
+      const value = el.config.linkValue
+      if (key && value && state.type !== 4) {
+        /*if (linkageValue.value[el.config.linkKey] !== el.config.linkValue) {
           return false
+        }*/
+        //　多个条件时key和value分别使用,和&隔开，
+        // 带有&分隔时，需要符合所有条件；否则符合其中一个条件即可
+        const keySplit = key.split(/,|&/)
+        const valueSplit = value.split(/,|&/)
+        const hasAndSpit = key.indexOf('&') !== -1 || value.indexOf('&') !== -1// 存在&分隔
+        let pass = false
+        for (let i = 0; i < keySplit.length; i++) {
+          if (hasAndSpit) {
+            pass = true
+            if (linkageValue.value[keySplit[i]] !== valueSplit[i]) {
+              pass = false
+              break
+            }
+          } else {
+            if (linkageValue.value[keySplit[i]] === valueSplit[i]) {
+              pass = true
+              break
+            }
+          }
         }
+        return pass
       }
       return true
     }

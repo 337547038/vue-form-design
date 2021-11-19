@@ -156,7 +156,9 @@ export default [
         type: 'upload',
         label: '图片',
         icon: 'image',
-        control: {},
+        control: {
+          modelValue: []
+        },
         config: {}
       }
     ]

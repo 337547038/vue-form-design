@@ -200,13 +200,19 @@ export default {
 ```
 
 ## 联动事件
-文本输入框的联动条件`radio=0`，则在控件单选框组`radio`的值为`0`时显示
+文本输入框的联动条件`radio=1`，则在控件单选框组`radio`的值为`1`时显示。
+
+多个条件时使用`,`或`&`分隔开，当分隔符中存在`&`时，条件为`and`关系，同时符合时才显示；否则条件为`or`关系，符合其中之一时显示。
+
+
+
 
 ```vue demo
 <template>
   <div>
     <ak-form-design :formData="formData" ref="formName">
     </ak-form-design>
+    <el-button type="primary" @click="submit">提交</el-button>
   </div>
 </template><script>
 import {reactive, toRefs, provide, ref} from 'vue'
@@ -217,15 +223,29 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"radio","type":"radio","control":{"modelValue":"0"},"options":[{"label":"显示","value":"0"},{"label":"隐藏","value":"1"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":"","linkKey":"","linkValue":""},"item":{"label":"单选框组","showLabel":false},"rules":[]},{"name":"input1636699089261","type":"input","control":{"modelValue":""},"slot":{},"config":{"linkKey":"radio","linkValue":"0"},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[],"rulesComm":[]}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1636607042495","rulesComm":[]}}
+      formData: {"list":[{"name":"radio","type":"radio","control":{"modelValue":""},"options":[{"label":"label1","value":"1"},{"label":"label2","value":"2"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"单选框组","showLabel":false},"rules":[]},{"name":"select","type":"select","control":{"modelValue":"","appendToBody":true},"options":[{"label":"label1","value":"1"},{"label":"label2","value":"2"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"下拉选择框","showLabel":false},"rules":[]},{"name":"input1637189604237","type":"input","control":{"modelValue":"","placeholder":"单选或下拉为label1时显示"},"slot":{},"config":{"linkKey":"radio,select","linkValue":"1,1"},"item":{"label":"单行文本1","showLabel":false},"rules":[],"customRules":[]},{"name":"input1637198443468","type":"input","control":{"modelValue":"","placeholder":"单选和下拉为label1时显示"},"slot":{},"config":{"linkKey":"radio&select","linkValue":"1,1"},"item":{"label":"单行文本2","showLabel":false},"rules":[],"customRules":[]}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1637189568724","rulesComm":[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {
       console.log(key)
       console.log(value)
     })*/
+    const formName=ref()
+    const submit = () => {
+      formName.value.validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          alert('submit')
+        } else {
+          console.log('error submit')
+          return false
+        }
+      })
+    }
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      submit,
+      formName
     }
   }
 }

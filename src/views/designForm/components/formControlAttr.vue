@@ -179,6 +179,27 @@
               </el-tab-pane>
             </el-tabs>
           </div>
+          <template v-if="showHide(['upload'],true)">
+            <el-form-item label="上传地址">
+              <el-input v-model="controlData.control.action" placeholder="图片上传地址"></el-input>
+            </el-form-item>
+            <el-form-item label="文件字段名">
+              <el-input v-model="controlData.control.name" placeholder="上传的文件字段名"></el-input>
+            </el-form-item>
+            <el-form-item label="列表类型">
+              <el-select v-model="controlData.control.listType">
+                <el-option value="text"></el-option>
+                <el-option value="picture"></el-option>
+                <el-option value="picture-card"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="提示文字">
+              <el-input v-model="controlData.config.tip" placeholder="提示说明文字"></el-input>
+            </el-form-item>
+            <el-form-item label="按钮文本">
+              <el-input v-model="controlData.config.btnText" placeholder="上传按钮文本"></el-input>
+            </el-form-item>
+          </template>
           <template
             v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn'])&&!searchDesign">
             <h3>校验设置</h3>

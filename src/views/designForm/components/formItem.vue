@@ -96,11 +96,23 @@
         :options="element.options">
       </el-cascader>
       <el-upload
+        class="upload-style"
         v-if="element.type==='upload'"
         v-bind="element.control"
         :disabled="editDisabled"
-        class="avatar-uploader">
-        <i class="el-icon-plus avatar-uploader-icon"></i>
+        :class="{limit:element.limit<=element.modelValue&&element.modelValue.length}"
+        :on-success="uploadSuccess"
+        :on-remove="uploadRemove">
+        <el-button
+          type="primary"
+          v-if="element.config.btnText">{{ element.config.btnText }}
+        </el-button>
+        <i class="icon-plus" v-else></i>
+        <template #tip v-if="element.config.tip">
+          <div class="el-upload__tip">
+            {{ element.config.tip }}
+          </div>
+        </template>
       </el-upload>
       <component
         :is="element.component"
@@ -286,18 +298,40 @@ export default {
     })
     // 执行表单的setValue方法，对组件设值
     const setValueEvent = inject('DFSetFormValue', '')
-    watchEffect(() => {
+    watch(() => setValueEvent.value, () => {
       // !props.tProps 的这里不单独处理
       if (setValueEvent && setValueEvent.value && !props.tProps) {
         state.value = setValueEvent.value[props.element.name]
+        // 上传默认值需要使用fileList参数
+        if (props.element.type === 'upload') {
+          props.element.control.fileList = JSON.parse(JSON.stringify(state.value))
+        }
       }
     })
+    // 图片上传
+    const uploadSuccess = file => {
+      console.log(file)
+      props.element.control.modelValue.push({
+        name: file.fileName,
+        url: file.path
+      })
+    }
+    // 删除上传图片
+    const uploadRemove = file => {
+      props.element.control.modelValue.forEach((item, index) => {
+        if (item.url === file.url) {
+          props.element.control.modelValue.splice(index, 1)
+        }
+      })
+    }
     onMounted(() => {
       getAxiosOptions()
     })
     return {
       getLabel,
       editDisabled,
+      uploadSuccess,
+      uploadRemove,
       ...toRefs(state)
     }
   }
