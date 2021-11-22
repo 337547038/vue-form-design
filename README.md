@@ -10,6 +10,10 @@
 
 利于二次开发
 
+### 演示地址
+https://337547038.github.io/vue-form-design/
+
+### 目录结构
 ```text
 nodejs // 模拟后端提供数据接口支持
 public
