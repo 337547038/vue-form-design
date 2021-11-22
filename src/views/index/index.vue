@@ -2,7 +2,7 @@
   <div class="index-page">
     <div class="intro">
       <h3>基于 Vue3 的可视化表单设计器</h3>
-      <p>使用基于 Vue 2.0 的桌面端组件库 Elemnet-Plus ，使用广泛，扩展方便<br>
+      <p>使用基于 Vue 3.0 的桌面端组件库 Elemnet-Plus ，使用广泛，扩展方便<br>
         通过可视化的操作，快速完成表单页面的创<br>
         提供功能强大的各种组件，可适用在各种复杂的场景中<br>
         丰富的API接口，方便快速的生成表单，验证和获取表单数据<br>
