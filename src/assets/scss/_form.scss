@@ -60,7 +60,7 @@
     }
   }
   .gray {color: #999}
-  > .drag{border: 0!important;}
+  > .drag {border: 0 !important;}
 }
 .sidebar-tools {height: 100vh;width: 300px;position: fixed;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;
   .form {
@@ -127,4 +127,14 @@
   .table-main {margin-bottom: 20px}
 }
 /*图片文件上传*/
-.upload-style{}
+.upload-style {
+  .limit {
+    .el-upload {display: none}
+    // 超出limit时不显示上传按钮
+  }
+  .el-upload-list__item-preview {display: none !important;}
+  // 不显示点击放大按钮
+  .el-upload--picture {
+    .icon-plus {font-size: 28px;display: flex;align-items: center;justify-content: center;color: #8c939d;width: 148px;height: 148px;border: 1px dashed #d9d9d9;border-radius: 6px;cursor: pointer;overflow: hidden;background: #fbfdff}
+  }
+}

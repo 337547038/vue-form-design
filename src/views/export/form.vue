@@ -13,16 +13,21 @@ export default {
   props: {},
   components: {},
   setup(props) {
+    const uploadError = (err, file, fileList) => {
+      console.log('错误异常处理')
+      console.log(err, file, fileList)
+    }
     const state = reactive({
       formData: {
         "list": [{
-          "name": "upload1637303912996",
+          "name": "upload",
           "type": "upload",
           "control": {
             "modelValue": [],
             "action": "http://localhost:3001/upload/single",
             "listType": "picture-card",
-            "limit": 2
+            "limit": 2,
+            onError: uploadError
           },
           "config": {"tip": "一些上传提示文案", "btnText": ""},
           "item": {"label": "图片", "showLabel": false},
@@ -40,22 +45,22 @@ export default {
       formName.value.validate((valid) => {
         console.log(valid)
         if (valid) {
-          alert('submit')
+          alert(formName.value.getValue())
         } else {
           console.log('error submit')
           return false
         }
       })
     }
-
+    //　模拟设置初始值
     setTimeout(() => {
       formName.value.setValue({
-        upload1637303912996: [{
+        upload: [{
           name: 'food.jpeg',
           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
         }]
       })
-    }, 5000)
+    }, 1000)
 
     return {
       ...toRefs(state),

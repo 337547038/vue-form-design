@@ -100,9 +100,10 @@
         v-if="element.type==='upload'"
         v-bind="element.control"
         :disabled="editDisabled"
-        :class="{limit:element.limit<=element.modelValue&&element.modelValue.length}"
+        :class="{limit:element.control.limit<=element.control.modelValue.length}"
         :on-success="uploadSuccess"
-        :on-remove="uploadRemove">
+        :on-remove="uploadRemove"
+        :on-error="uploadError">
         <el-button
           type="primary"
           v-if="element.config.btnText">{{ element.config.btnText }}
@@ -136,8 +137,9 @@
 
 <script>
 import axios from "@/utils/request"
-import {toRefs, inject, onMounted, computed, reactive, watch, ref, watchEffect} from 'vue'
+import {toRefs, inject, onMounted, computed, reactive, watch} from 'vue'
 import md5 from 'md5'
+import {ElMessage} from 'element-plus'
 
 export default {
   name: "item",
@@ -309,20 +311,28 @@ export default {
       }
     })
     // 图片上传
-    const uploadSuccess = file => {
+    const uploadSuccess = (response, file, fileList) => {
       console.log(file)
       props.element.control.modelValue.push({
         name: file.fileName,
         url: file.path
       })
+      props.element.control.onSuccess && props.element.control.onSuccess(response, file, fileList)
     }
     // 删除上传图片
-    const uploadRemove = file => {
+    const uploadRemove = (file, fileList) => {
       props.element.control.modelValue.forEach((item, index) => {
         if (item.url === file.url) {
           props.element.control.modelValue.splice(index, 1)
         }
       })
+      props.element.control.onRemove && props.element.control.onRemove(file, fileList)
+    }
+    // 上传错误
+    const uploadError = (err, file, fileList) => {
+      console.log('uploadError')
+      ElMessage.error(file.name + '上传失败')
+      props.element.control.onError && props.element.control.onError(err, file, fileList)
     }
     onMounted(() => {
       getAxiosOptions()
@@ -332,6 +342,7 @@ export default {
       editDisabled,
       uploadSuccess,
       uploadRemove,
+      uploadError,
       ...toRefs(state)
     }
   }
