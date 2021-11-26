@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHistory, createWebHashHistory} from 'vue-router'
 import docsRoutesList from 'virtual:generated-pages'
 // 开启历史模式
 // vue2中使用 mode: history 实现
@@ -12,7 +12,8 @@ const router = createRouter({
       return {top: 0}
     }
   },
-  history: createWebHistory(),
+  // history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
