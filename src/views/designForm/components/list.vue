@@ -29,12 +29,7 @@
           <el-table-column v-bind="item">
             <template #header="scope" v-if="item.help">
               {{ scope.column.label }}
-              <el-tooltip placement="top">
-                <template #content>
-                  <span v-html="item.help"></span>
-                </template>
-                <i class="icon-help"></i>
-              </el-tooltip>
+              <Tooltip :content="item.help"></Tooltip>
             </template>
             <template #default="scope" v-if="$slots[item.prop]">
               <slot
@@ -65,6 +60,7 @@
 import designForm from './form.vue'
 import {reactive, toRefs, ref, onMounted} from 'vue'
 import {useRoute} from 'vue-router'
+import Tooltip from './tooltip.vue'
 
 export default {
   name: "tableList",
@@ -82,9 +78,9 @@ export default {
       default: true
     },
     requestUrl: Function, // 请求的api
-    tableList:Array // 当requestUrl没传时，表格行数据使用传入的
+    tableList: Array // 当requestUrl没传时，表格行数据使用传入的
   },
-  components: {designForm},
+  components: {designForm, Tooltip},
   setup(props) {
     const route = useRoute()
     const designForm = ref()

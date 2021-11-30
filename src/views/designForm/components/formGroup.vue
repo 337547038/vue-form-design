@@ -33,8 +33,9 @@
           <div
             class="title"
             :class="[element.className]"
-            v-bind="element.control"
-            v-html="element.control.modelValue">
+            v-bind="element.control">
+            <span v-html="element.control.modelValue"></span>
+            <Tooltips :content="element.help" v-if="element.help"></Tooltips>
           </div>
         </template>
         <template v-else-if="element.type==='table'">
@@ -72,12 +73,7 @@
             <el-collapse-item :title="element.item.label" name="1">
               <template #title v-if="element.help">
                 {{ element.item.label }}
-                <el-tooltip placement="top">
-                  <template #content>
-                    <span v-html="element.help"></span>
-                  </template>
-                  <i class="icon-help"></i>
-                </el-tooltip>
+                <Tooltips :content="element.help"></Tooltips>
               </template>
               <form-group :data="element"></form-group>
             </el-collapse-item>
@@ -106,10 +102,10 @@ import {useStore} from 'vuex'
 import Draggable from 'vuedraggable'
 import FormItem from './formItem.vue'
 import ChildTable from './childTable.vue'
-
+import Tooltips from './tooltip.vue'
 export default {
   name: "formGroup",
-  components: {Draggable, FormItem, ChildTable},
+  components: {Draggable, FormItem, ChildTable,Tooltips},
   props: {
     data: {
       type: Object,

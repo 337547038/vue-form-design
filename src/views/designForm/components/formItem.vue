@@ -8,12 +8,7 @@
     :label="getLabel(element)">
     <template #label v-if="element.config.help">
       {{ getLabel(element) }}
-      <el-tooltip placement="top">
-        <template #content>
-          <span v-html="element.config.help"></span>
-        </template>
-        <i class="icon-help"></i>
-      </el-tooltip>
+      <Tooltip :content="element.config.help"></Tooltip>
     </template>
     <div class="form-value" v-if="type===3" v-html="value"></div>
     <template v-else>
@@ -140,10 +135,11 @@ import axios from "@/utils/request"
 import {toRefs, inject, onMounted, computed, reactive, watch} from 'vue'
 import md5 from 'md5'
 import {ElMessage} from 'element-plus'
+import Tooltip from './tooltip.vue'
 
 export default {
   name: "item",
-  components: {},
+  components: {Tooltip},
   props: {
     element: Object,
     modelValue: null,// 子表时值
