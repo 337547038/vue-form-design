@@ -27,12 +27,7 @@
         </template>
         <template #header="scope" v-if="item.help">
           {{ scope.column.label }}
-          <el-tooltip placement="top">
-            <template #content>
-              <span v-html="item.help"></span>
-            </template>
-            <i class="icon-help"></i>
-          </el-tooltip>
+          <Tooltip :content="item.help"></Tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -45,10 +40,11 @@
 <script>
 import FormItem from './formItem.vue'
 import {inject, watchEffect} from 'vue'
+import Tooltip from './tooltip.vue'
 
 export default {
   name: "childTable",
-  components: {FormItem},
+  components: {FormItem, Tooltip},
   props: {
     data: Object,
     type: Number
