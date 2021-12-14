@@ -267,7 +267,7 @@ export default {
     // 根据表单设置不显示指定字段
     const linksIf = el => {
       // 如果当前字段的name值存在于表单数据的vIf中，则不显示
-      const vIf = props.data.config.vIf
+      const vIf = props.data.config && props.data.config.vIf
       if (vIf && vIf.length > 0) {
         return vIf.indexOf(el.name) === -1 // 存在时返回false隐藏
       }
