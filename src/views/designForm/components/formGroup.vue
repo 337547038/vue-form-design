@@ -13,7 +13,8 @@
         :class="{['group-'+element.type]:true,active:activeKey===element.name}"
         :style="getFormItemStyle(element)"
         @click.stop="groupClick(element)"
-        v-show="linksShow(element)">
+        v-show="linksShow(element)"
+        v-if="linksIf(element)">
         <template v-if="element.type==='tabs'">
           <div class="form-tabs">
             <el-tabs v-bind="element.control" :class="[element.className]">
@@ -103,9 +104,10 @@ import Draggable from 'vuedraggable'
 import FormItem from './formItem.vue'
 import ChildTable from './childTable.vue'
 import Tooltips from './tooltip.vue'
+
 export default {
   name: "formGroup",
-  components: {Draggable, FormItem, ChildTable,Tooltips},
+  components: {Draggable, FormItem, ChildTable, Tooltips},
   props: {
     data: {
       type: Object,
@@ -262,6 +264,15 @@ export default {
       }
       return true
     }
+    // 根据表单设置不显示指定字段
+    const linksIf = el => {
+      // 如果当前字段的name值存在于表单数据的vIf中，则不显示
+      const vIf = props.data.config.vIf
+      if (vIf && vIf.length > 0) {
+        return vIf.indexOf(el.name) === -1 // 存在时返回false隐藏
+      }
+      return true
+    }
     return {
       click,
       draggableAdd,
@@ -269,7 +280,8 @@ export default {
       groupClick,
       activeKey,
       getFormItemStyle,
-      linksShow
+      linksShow,
+      linksIf
     }
   }
 }

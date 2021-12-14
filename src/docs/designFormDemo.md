@@ -149,7 +149,8 @@ export default {
 ```
 
 ## 表单控件选项数据
- 选项数据获取方法适用于单选、多选、下拉、联级。
+
+选项数据获取方法适用于单选、多选、下拉、联级。
 
 ```vue demo
 <template>
@@ -200,12 +201,10 @@ export default {
 ```
 
 ## 联动事件
+
 文本输入框的联动条件`radio=1`，则在控件单选框组`radio`的值为`1`时显示。
 
 多个条件时使用`,`或`&`分隔开，当分隔符中存在`&`时，条件为`and`关系，同时符合时才显示；否则条件为`or`关系，符合其中之一时显示。
-
-
-
 
 ```vue demo
 <template>
@@ -252,7 +251,79 @@ export default {
 </script>
 ```
 
+## 外部条件控制字段隐藏与显示
+
+当同一个表单应用于不同场景时，不同场景中需对个别字段进行隐藏处理，可将对应字段的值填写在表单的`vIf`中
+
+```vue demo
+<template>
+  <div>
+    <ak-form-design :formData="formData" ref="formName">
+    </ak-form-design>
+    <el-button type="primary" @click="submit">提交</el-button>
+  </div>
+</template>
+<script>
+import {reactive, toRefs, provide, ref} from 'vue'
+
+export default {
+  name: "addForm",
+  props: {},
+  components: {},
+  setup(props) {
+    const state = reactive({
+      formData: {
+        "list": [{
+          "name": "input1",
+          "type": "input",
+          "control": {"modelValue": ""},
+          "slot": {},
+          "config": {},
+          "item": {"label": "单行文本1", "showLabel": false},
+          "rules": [],
+          "customRules": []
+        }, {
+          "name": "input2",
+          "type": "input",
+          "control": {"modelValue": ""},
+          "slot": {},
+          "config": {},
+          "item": {"label": "单行文本2", "showLabel": false},
+          "rules": [],
+          "customRules": []
+        }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1637303910371", "rulesComm": [],"vIf":["input1"]}
+      }
+    })
+    // 表单控件值改变事件
+    /*provide('DFControlChange', ({key, value}) => {
+      console.log(key)
+      console.log(value)
+    })*/
+    const formName = ref()
+    const submit = () => {
+      formName.value.validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          alert('submit')
+        } else {
+          console.log('error submit')
+          return false
+        }
+      })
+    }
+    return {
+      ...toRefs(state),
+      submit,
+      formName
+    }
+  }
+}
+</script>
+
+```
+
 ## 表单取值/设值
+
 使用`getValue()`方法获取表单的值，`getValue(true)`带参数为`true`时只提取非空值
 
 使用`setValue(obj)`对表单设置初始值
@@ -375,7 +446,7 @@ export default {
 
 ## 高级字段-自定义组件
 
- 演示弹窗选择后将所选值回填到输入框，自定义的组件需要`update:modelValue`事件，否则获取不到表单的值
+演示弹窗选择后将所选值回填到输入框，自定义的组件需要`update:modelValue`事件，否则获取不到表单的值
 
 ```vue demo
 <template>

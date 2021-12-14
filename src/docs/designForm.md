@@ -84,7 +84,8 @@ formData = {
         "message": "必填项",
         "trigger": "blur"
       }
-    ]
+    ],
+    "vIf":[] // 用于隐藏list中指定的字段，当字段的name值存在于vIf中时使用vif方式隐藏
   }
 }
 ```
