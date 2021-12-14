@@ -397,6 +397,104 @@ export default {
 
 ```
 
+## 对单选多选下拉快速设置Options选项值
+
+选项为动态数据时，除了选择数据源和方法函数外，还可使用`setOptions(obj)`对表单选项数据设置选项值
+
+```vue demo
+<template>
+  <div>
+    <ak-form-design :formData="formData" ref="formName">
+    </ak-form-design>
+    <el-button type="primary" @click="setValue">设Options值</el-button>
+  </div>
+</template>
+<script>
+import {reactive, toRefs, provide, ref} from 'vue'
+
+export default {
+  name: "addForm",
+  props: {},
+  components: {},
+  setup(props) {
+    const state = reactive({
+      formData: {
+        "list": [
+          {
+            "name": "radio1",
+            "type": "radio",
+            "control": {
+              "modelValue": ""
+            },
+            "options": [
+              {
+                "label": "label1",
+                "value": "value1"
+              },
+              {
+                "label": "label2",
+                "value": "value2"
+              },
+              {
+                "label": "label3",
+                "value": "value3"
+              }
+            ],
+            "config": {
+              "type": "async",
+              "source": 1,
+              "request": "get",
+              "sourceFun": "abc"
+            },
+            "item": {
+              "label": "单选框组",
+              "showLabel": false
+            },
+            "rules": []
+          }, {
+            "name": "select1",
+            "type": "select",
+            "control": {"modelValue": "", "appendToBody": true},
+            "options": [],
+            "config": {"type": "fixed", "source": 0, "request": "get", "sourceFun": ""},
+            "item": {"label": "下拉选择框", "showLabel": false},
+            "rules": []
+          }, {
+            "name": "select2",
+            "type": "select",
+            "control": {"modelValue": "", "appendToBody": true},
+            "options": [],
+            "config": {"type": "fixed", "source": 0, "request": "get", "sourceFun": ""},
+            "item": {"label": "下拉选择框", "showLabel": false},
+            "rules": []
+          }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1636607042495", "rulesComm": []}
+      }
+    })
+    // 表单控件值改变事件
+    /*provide('DFControlChange', ({key, value}) => {
+      console.log(key)
+      console.log(value)
+    })*/
+    const formName = ref()
+    const setValue = () => {
+      formName.value.setOptions({
+        radio1: [{"label": "单选测试", "value": "value3"}],
+        select1: [{"label": "下拉测试", "value": "value3"}],
+        select2: [{"label": "下拉测试2", "value": "value3"},{"label": "下拉测试21", "value": "value31"}],
+      })
+    }
+    return {
+      ...toRefs(state),
+      setValue,
+      formName
+    }
+  }
+}
+</script>
+
+
+```
+
 ## 高级字段-子表
 
 ```vue demo

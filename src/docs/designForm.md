@@ -18,6 +18,7 @@
 |validate  |表单校验方法|
 |getValue  |用于获取表单的值|
 |setValue  |对表单设置初始值|
+|setOptions|对表单选择项快速设置|
 
 ### Provide
 |方法|说明|

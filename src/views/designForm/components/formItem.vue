@@ -306,6 +306,14 @@ export default {
         }
       }
     })
+    // 对单选多选select设置options
+    const setOptionsEvent = inject('DFSetFormOptions', '')
+    watch(() => setOptionsEvent.value, () => {
+      // !props.tProps 的这里不单独处理
+      if (setOptionsEvent && setOptionsEvent.value && !props.tProps) {
+        props.element.options = setOptionsEvent.value[props.element.name]
+      }
+    })
     // 图片上传
     const uploadSuccess = (response, file, fileList) => {
       console.log(file)
