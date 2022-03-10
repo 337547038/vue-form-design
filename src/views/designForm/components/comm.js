@@ -1,4 +1,8 @@
-export const aceEdit = (data, id = 'editJson', type = 'json') => {
+import {EDITTYPE} from '@/utils'
+
+export const aceEdit = (data, id, type) => {
+  id = id || 'editJson'
+  type = type || EDITTYPE
   const editor = ace.edit(id)
   editor.setOptions({
     enableBasicAutocompletion: true,
@@ -12,6 +16,7 @@ export const aceEdit = (data, id = 'editJson', type = 'json') => {
   editor.setValue(data)
   return editor
 }
+/*
 export const localStorage = (dataType, value) => {
   const key = 'df_form_design_table_data'
   let storage = window.localStorage.getItem(key)
@@ -30,3 +35,4 @@ export const localStorage = (dataType, value) => {
     return storage
   }
 }
+*/

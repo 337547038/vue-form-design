@@ -109,9 +109,10 @@ import {saveDesignForm, getDesignFormRow} from '@/api'
 import {reactive, toRefs, ref, computed, nextTick, onUnmounted, onMounted, getCurrentInstance} from 'vue'
 import {useRoute} from 'vue-router'
 import vueFile from "./components/vueFile.vue"
-import {aceEdit, localStorage} from "./components/comm"
+import {aceEdit} from "./components/comm"
 import {ElMessage} from 'element-plus'
 import Sortable from 'sortablejs'
+import {objToStringify, stringToObj, localStorage} from '@/utils'
 
 export default {
   name: "list",
@@ -154,7 +155,7 @@ export default {
           state.filedList.push({
             prop: item.name,
             label: item.item.label,
-            help: item.config.help
+            help: item.config.help || ''
           })
         }
       })
@@ -201,21 +202,26 @@ export default {
     // 打开
     const dialogOpen = obj => {
       state.visibleDialog = true
-      const editData = JSON.stringify(obj, null, 2)
+      const editData = objToStringify(obj, true)
       nextTick(() => {
         state.editor = aceEdit(editData)
       })
     }
     const dialogConfirm = () => {
-      // 将当前数据更新至state.tableData
-      if (state.editIndex !== '') {
-        // 表示编辑单个属性
-        state.tableData.columns[state.editIndex] = JSON.parse(state.editor.getValue())
-        state.editIndex = '' // 清空
-      } else {
-        state.tableData = JSON.parse(state.editor.getValue())
+      try {
+        // 将当前数据更新至state.tableData
+        if (state.editIndex !== '') {
+          // 表示编辑单个属性
+          state.tableData.columns[state.editIndex] = stringToObj(state.editor.getValue())
+          state.editIndex = '' // 清空
+        } else {
+          state.tableData = stringToObj(state.editor.getValue())
+        }
+        state.visibleDialog = false
+      } catch (res) {
+        // console.log(res.message)
+        ElMessage.error(res.message)
       }
-      state.visibleDialog = false
     }
     // 保存数据，将数据保存到服务端
     const saveData = () => {
@@ -226,7 +232,7 @@ export default {
       }
       state.loading = true
       const prams = {
-        tableData: JSON.stringify(state.tableData),
+        tableData: objToStringify(state.tableData),
         id: state.queryId // 修改时，当前记录id
       }
       saveDesignForm(prams)
@@ -284,8 +290,8 @@ export default {
       getDesignFormRow(state.queryId)
         .then(res => {
           if (res.data.code === 200) {
-            filterFiled(JSON.parse(res.data.data[0].formData)) // 获取表单数据，从表单里提取可选择的表头字段
-            state.tableData = JSON.parse(res.data.data[0].tableData)
+            filterFiled(stringToObj(res.data.data[0].formData)) // 获取表单数据，从表单里提取可选择的表头字段
+            state.tableData = stringToObj(res.data.data[0].tableData)
             // 将表头数据在左则对应选中
             state.tableData.columns.forEach(item => {
               state.checkboxGroup.push(item.label)

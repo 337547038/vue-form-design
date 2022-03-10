@@ -32,7 +32,7 @@
 |default  |-|
 
 ### formData
-
+代码编辑输入框可支持`json`或`javascript`，初始使用时可通过修改`/src/utils/index.js`里的`EDITTYPE`的值
 ```javascript
 formData = {
   "list": [ // 表单数据

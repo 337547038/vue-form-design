@@ -14,6 +14,7 @@ import {reactive, toRefs, provide, ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {getDesignFormRow, saveForm, getRowById, editForm} from '@/api'
 import {ElMessage} from 'element-plus'
+import {stringToObj} from '@/utils'
 
 export default {
   name: "add",
@@ -55,7 +56,7 @@ export default {
       getDesignFormRow(formId)
         .then(res => {
           if (res.data.code === 200) {
-            state.formData = JSON.parse(res.data.data[0].formData)
+            state.formData = stringToObj(res.data.data[0].formData)
           }
           state.loading = false
         })

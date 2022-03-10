@@ -24,7 +24,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {reactive, toRefs, ref} from 'vue'
 import {getDesignFormRow, getTableList, delById} from '@/api'
 import {ElMessage} from 'element-plus'
-
+import {stringToObj} from '@/utils'
 export default {
   name: "list",
   props: {},
@@ -54,9 +54,9 @@ export default {
               ElMessage.info('请先设置表格列数据')
               return
             }
-            state.tableData = JSON.parse(result.tableData)
+            state.tableData = stringToObj(result.tableData)
             if (result.searchData) {
-              state.searchData = JSON.parse(result.searchData)
+              state.searchData = stringToObj(result.searchData)
             }
           }
         })

@@ -13,6 +13,7 @@
 用于学习研究，欢迎交流，QQ/微信:337547038
 
 # 目录结构
+
 ```text
 nodejs // 模拟后端提供数据接口支持
 public
@@ -32,16 +33,26 @@ src
    ├─formList // 示例演示
    └─index  // 示例演示
 ```
+
 # 快速上手
-  进入项目安装依赖包 
+
+进入项目安装依赖包
+
 ```text
 npm install
 npm run dev
 ```
+
 使用nodejs模拟接口时要进入nodejs目录，需要配置好数据库
+
 ```text
 npm install
 node app.js
 ```
+
 浏览器进入 http://localhost:3000 开始创建表单
 ![](@/docs/img/img1.png)
+
+# 代码编辑支持json或javascript
+
+代码编辑输入框可支持`json`或`javascript`，初始使用时可通过修改`/src/utils/index.js`里的`EDITTYPE`的值

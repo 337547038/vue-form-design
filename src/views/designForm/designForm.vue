@@ -12,12 +12,12 @@
         从左侧拖拽来添加字段
       </div>
       <div class="main-form" v-loading="loading">
-        <form-design :form-data="formData" :type="4" />
+        <form-design :form-data="formData" :type="4"/>
       </div>
     </div>
     <form-control-attr
       :formConfig="formData.config"
-      @openDialog="dialogOpen" />
+      @openDialog="dialogOpen"/>
     <el-drawer
       v-model="visibleDialog"
       size="60%"
@@ -37,7 +37,7 @@
     </el-drawer>
     <vue-File ref="vueFileEl" v-if="!searchDesign"></vue-File>
     <el-dialog v-model="previewVisible" title="预览" :fullscreen="true">
-      <form-design :form-data="formDataPreview" :type="1" ref="previewForm" />
+      <form-design :form-data="formDataPreview" :type="1" ref="previewForm"/>
       <template #footer>
         <div class="dialog-footer">
           <el-button
@@ -67,7 +67,8 @@ import {saveDesignForm, getDesignFormRow} from '@/api'
 import {ElMessage} from 'element-plus'
 import {useRoute} from 'vue-router'
 import vueFile from "./components/vueFile.vue"
-import {aceEdit, localStorage} from "./components/comm.js"
+import {aceEdit} from "./components/comm.js"
+import {objToStringify, stringToObj, localStorage} from '@/utils'
 
 export default {
   name: 'designIndex',
@@ -108,10 +109,10 @@ export default {
             if (state.searchDesign) {
               // 筛选设计时取不同的数据
               const sD = res.data.data[0].searchData
-              state.formData = sD ? JSON.parse(sD) : []
-              state.formDataList = JSON.parse(res.data.data[0].formData).list
+              state.formData = sD ? objToStringify(sD) : []
+              state.formDataList = objToStringify(res.data.data[0].formData).list
             } else {
-              state.formData = JSON.parse(res.data.data[0].formData)
+              state.formData = objToStringify(res.data.data[0].formData)
             }
           }
           state.loading = false
@@ -122,7 +123,7 @@ export default {
         })
     }
     if (!id && !formName) {
-      // 没保存到数据库时
+      // 没保存到数据库时，从本地取值
       const storage = localStorage()
       if (storage) {
         if (state.searchDesign) {
@@ -150,7 +151,7 @@ export default {
           break
         case 'eye':
           // 打开预览窗口
-          state.formDataPreview = JSON.parse(JSON.stringify(state.formData))
+          state.formDataPreview = stringToObj(objToStringify(state.formData))
           state.previewVisible = true
           break
         case 'json':
@@ -171,18 +172,23 @@ export default {
     // 弹窗确认
     const dialogConfirm = () => {
       // 生成脚本预览和导入json，都是将编辑器内容更新至state.formData
-      const val = JSON.parse(state.editor.getValue())
-      if (state.sourceDialog) {
-        // 这里是编辑当前项的其它属性或校验
-        state.sourceDialog(val)
-      } else {
-        state.formData = val
+      try {
+        const val = stringToObj(state.editor.getValue())
+        if (state.sourceDialog) {
+          // 这里是编辑当前项的其它属性或校验
+          state.sourceDialog(val)
+        } else {
+          state.formData = val
+        }
+        state.visibleDialog = false
+      } catch (res) {
+        // console.log(res.message)
+        ElMessage.error(res.message)
       }
-      state.visibleDialog = false
     }
     // 将数据保存在服务端
     const saveData = () => {
-      const formData = JSON.stringify(state.formData)
+      const formData = objToStringify(state.formData)
       const dataType = state.searchDesign ? 'searchData' : 'formData'
       if (!formName) {
         // 不提交保存，条件不全 。暂存在session代设计筛选和表格时提供支持
@@ -231,7 +237,7 @@ export default {
       state.drawerDirection = source ? 'ltr' : 'rtl'
       state.sourceDialog = source // 打开窗口来源回调
       state.visibleDialog = true
-      const editData = JSON.stringify(obj, null, 2)
+      const editData = objToStringify(obj, true)
       nextTick(() => {
         state.editor = aceEdit(editData)
       })
