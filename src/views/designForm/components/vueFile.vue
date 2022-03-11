@@ -25,6 +25,7 @@ import {reactive, toRefs, nextTick} from 'vue'
 import Clipboard from 'clipboard'
 import {ElMessage} from 'element-plus'
 import {aceEdit} from "./comm.js"
+import {objToStringify} from "@/utils"
 
 export default {
   name: "vueFile",
@@ -91,7 +92,7 @@ export default {
         '  components: {},\n' +
         '  setup(props) {\n' +
         '    const state = reactive({\n' +
-        '      formData: ' + JSON.stringify(obj) + '\n' +
+        '      formData: ' + objToStringify(obj) + '\n' +
         '    })\n' +
         '' + getHtml.sourceFun + '' +
         '' + getHtml.componentProvide + '' +
