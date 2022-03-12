@@ -151,6 +151,7 @@ export default {
           break
         case 'eye':
           // 打开预览窗口
+          // 预览窗口目前获取不到get[formname]ControlByName这值，因两个表单重名了，获取到了也是设计表单的值，并不是当前表单
           state.formDataPreview = stringToObj(objToStringify(state.formData))
           state.previewVisible = true
           break

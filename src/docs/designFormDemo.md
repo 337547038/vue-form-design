@@ -495,6 +495,74 @@ export default {
 
 ```
 
+## 控件绑定事件，可同时获取当前表单其他项的值
+
+通过`生成脚本预览`或`添加属性`代码编辑窗口对表单组件绑定事件，同时可使用全局`get[formName]ControlByName`方法获取当前表单其他控件的配置项数据（`formName`为当前表单`config.name`的值，本示例为`form1647008531927`，因此在控件中添加的方法名为`getform1647008531927ControlByName`）
+
+```vue demo
+<template>
+  <div>
+    <ak-form-design :formData="formData" ref="formName">
+    </ak-form-design>
+    <el-button type="primary" @click="submit">提交</el-button>
+  </div>
+</template><script>
+import {reactive, toRefs, provide, ref} from 'vue'
+
+export default {
+  name: "addForm",
+  props: {},
+  components: {},
+  setup(props) {
+    const state = reactive({
+      formData: {list:[{name:"password",type:"input",control:{modelValue:""},slot:{},config:{},item:{label:"密码",showLabel:false},rules:[],customRules:[{type:"required",message:"请输入密码",trigger:"blur"}]},{name:"password2",type:"input",control:{modelValue:""},slot:{},config:{},item:{label:"确认密码",showLabel:false},rules:[{validator:(rule, value, callback) =>
+            {
+              // 获取密码的值
+              const control = getform1647008531927ControlByName('password')
+              console.log(control)
+              if (value === '')
+              {
+                callback(new Error('请输入密码'))
+              }
+              else if (value !== control.control.modelValue)
+              {
+                callback(new Error("两次密码不一样"))
+              }
+              else
+              {
+                callback()
+              }
+
+            },trigger:"change"}],customRules:[]}],config:{labelWidth:"",class:"",size:"medium",name:"form1647008531927",rulesComm:[]}}
+    })
+    // 表单控件值改变事件
+    /*provide('DFControlChange', ({key, value}) => {
+      console.log(key)
+      console.log(value)
+    })*/
+    const formName=ref()
+    const submit = () => {
+      formName.value.validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          alert('submit')
+        } else {
+          console.log('error submit')
+          return false
+        }
+      })
+    }
+    return {
+      ...toRefs(state),
+      submit,
+      formName
+    }
+  }
+}
+</script>
+
+```
+
 ## 高级字段-子表
 
 ```vue demo

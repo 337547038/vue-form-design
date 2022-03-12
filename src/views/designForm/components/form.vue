@@ -7,8 +7,8 @@
     :disabled="disabled||type===2"
     class="add-form"
     :class="{'design-form':type===4,'detail-form':type===3||type===2}">
-    <form-group :data="formData" />
-    <slot />
+    <form-group :data="formData"/>
+    <slot/>
   </el-form>
 </template>
 
@@ -32,6 +32,27 @@ export default {
     disabled: Boolean // 可用于在提交表单是禁用，防重复提交
   },
   setup(props) {
+    // 为在编辑代码框里的事件提供获取当前表单其他项的配置信息
+    const setWindowEvent = () => {
+      if (props.formData && props.formData.list) {
+        const formName = props.formData.config.name
+        const eventName = `get${formName}ControlByName`
+        if (formName && !window[eventName]) {
+          window[eventName] = (name) => {
+            for (let i = 0; i < props.formData.list.length; i++) {
+              if (props.formData.list[i].name === name) {
+                return props.formData.list[i]
+              }
+            }
+          }
+        }
+      }
+    }
+    watch(() => props.formData, () => {
+      setWindowEvent()
+    })
+    setWindowEvent()
+    // 设置全局事件结束
     const model = computed(() => {
       const obj = {}
       if (props.formData && props.formData.list) {

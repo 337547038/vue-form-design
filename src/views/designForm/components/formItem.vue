@@ -115,7 +115,7 @@
         v-bind="element.control"
         v-model="value"
         :disabled="editDisabled"
-        v-if="element.type==='component'&&type!==4" />
+        v-if="element.type==='component'&&type!==4"/>
       <!-- 表单设计模式下显示提示-->
       <div v-if="element.type==='component'&&element.component===''" class="gray">
         请使用provide注入组件如：provide('{{ element.template }}',
@@ -153,6 +153,9 @@ export default {
       config: props.element.config,
       value: props.tProps ? props.modelValue : props.element.control.modelValue  // 子表时使用tValue的值
       // getResultFun: 'if(res.data.code===200){callback(res.data.data)}'
+    })
+    watch(() => props.element.control.modelValue, (val) => {
+      state.value = val
     })
     // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
     // props.type===4 为表单设计时不拉取数据
