@@ -33,11 +33,12 @@ export default {
   },
   setup(props) {
     // 为在编辑代码框里的事件提供获取当前表单其他项的配置信息
-    const setWindowEvent = () => {
+    let timer = 0
+    const setWindowEvent = (bool) => {
       if (props.formData && props.formData.list) {
         const formName = props.formData.config.name
         const eventName = `get${formName}ControlByName`
-        if (formName && !window[eventName]) {
+        if (formName && (!window[eventName] || bool)) {
           window[eventName] = (name) => {
             for (let i = 0; i < props.formData.list.length; i++) {
               if (props.formData.list[i].name === name) {
@@ -49,7 +50,10 @@ export default {
       }
     }
     watch(() => props.formData, () => {
-      setWindowEvent()
+      if (timer < 1) {
+        setWindowEvent() // 简单判断下，这里不是每次都更新
+      }
+      timer++
     })
     setWindowEvent()
     // 设置全局事件结束
@@ -90,6 +94,7 @@ export default {
     // 表单检验方法
     const ruleForm = ref()
     const validate = valid2 => {
+      setWindowEvent(true)
       ruleForm.value.validate(valid => {
         valid2(valid)
       })
