@@ -14,7 +14,7 @@
 
 <script>
 import formGroup from "./formGroup.vue"
-import {provide, computed, ref, reactive, toRefs, watch} from 'vue'
+import {provide, computed, ref, reactive, toRefs, watch, onUnmounted} from 'vue'
 
 export default {
   name: "formIndex",
@@ -34,11 +34,12 @@ export default {
   setup(props) {
     // 为在编辑代码框里的事件提供获取当前表单其他项的配置信息
     let timer = 0
+    let eventName = ''
     const setWindowEvent = (bool) => {
       if (props.formData && props.formData.list) {
         const formName = props.formData.config.name
-        const eventName = `get${formName}ControlByName`
-        if (formName && (!window[eventName] || bool)) {
+        eventName = `get${formName}ControlByName`
+        if (formName && (!window[eventName] || !bool)) {
           window[eventName] = (name) => {
             for (let i = 0; i < props.formData.list.length; i++) {
               if (props.formData.list[i].name === name) {
@@ -50,7 +51,7 @@ export default {
       }
     }
     watch(() => props.formData, () => {
-      if (timer < 1) {
+      if (timer < 2) {
         setWindowEvent() // 简单判断下，这里不是每次都更新
       }
       timer++
@@ -94,7 +95,6 @@ export default {
     // 表单检验方法
     const ruleForm = ref()
     const validate = valid2 => {
-      setWindowEvent(true)
       ruleForm.value.validate(valid => {
         valid2(valid)
       })
@@ -127,13 +127,19 @@ export default {
     const setOptions = obj => {
       setOptionsObj.value = obj
     }
+    onUnmounted(() => {
+      if (eventName) {
+        window[eventName] = ''
+      }
+    })
     return {
       model,
       validate,
       ruleForm,
       getValue,
       setValue,
-      setOptions
+      setOptions,
+      setWindowEvent
     }
   }
 }

@@ -151,7 +151,11 @@ export default {
           break
         case 'eye':
           // 打开预览窗口
-          state.formDataPreview = stringToObj(objToStringify(state.formData))
+          let stringPreview = objToStringify(state.formData) // 防止预览窗口数据修改影响
+          const formName = state.formData.config.name // 修改下表单名
+          const reg = new RegExp(`${formName}`, 'g')
+          stringPreview = stringPreview.replace(reg, 'preview' + formName)
+          state.formDataPreview = stringToObj(stringPreview)
           state.previewVisible = true
           break
         case 'json':
