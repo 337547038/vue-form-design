@@ -152,10 +152,11 @@ export default {
         case 'eye':
           // 打开预览窗口
           let stringPreview = objToStringify(state.formData) // 防止预览窗口数据修改影响
-          const formName = state.formData.config.name // 修改下表单名
-          const reg = new RegExp(`${formName}`, 'g')
-          stringPreview = stringPreview.replace(reg, 'preview' + formName)
+          const formName = state.formData.config.name
+          const reg = new RegExp(`get${formName}ControlByName`, 'g')
+          stringPreview = stringPreview.replace(reg, `getPreview${formName}ControlByName`)
           state.formDataPreview = stringToObj(stringPreview)
+          state.formDataPreview.config.name = `Preview${formName}` // 修改下表单名
           state.previewVisible = true
           break
         case 'json':
