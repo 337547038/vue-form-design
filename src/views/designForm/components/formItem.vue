@@ -18,9 +18,11 @@
         :disabled="editDisabled"
         :type="element.type==='password'?'password':''"
         v-if="element.type==='input'||element.type==='password'">
-        <template v-slot:[key] v-for="(te,key) in element.slot">
+<!--        <template v-slot:[key] v-for="(te,key) in element.slot">
           {{ te }}
-        </template>
+        </template>-->
+        <template #prepend v-if="element.slot&&element.slot.prepend">{{element.slot.prepend}}</template>
+        <template #append v-if="element.slot&&element.slot.append">{{element.slot.append}}</template>
       </el-input>
       <el-input
         v-bind="element.control"
