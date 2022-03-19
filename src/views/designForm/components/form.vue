@@ -11,10 +11,9 @@
     <slot/>
   </el-form>
 </template>
-
 <script>
 import formGroup from "./formGroup.vue"
-import {provide, computed, ref, reactive, toRefs, watch, onUnmounted} from 'vue'
+import {provide, computed, ref, reactive, toRefs, watch, onUnmounted, onMounted, nextTick} from 'vue'
 
 export default {
   name: "formIndex",
@@ -55,7 +54,8 @@ export default {
         setWindowEvent() // 简单判断下，这里不是每次都更新
       }
       timer++
-    })
+      appendRemoveStyle(true) // 更新样式
+    }, {deep: true})
     setWindowEvent()
     // 设置全局事件结束
     const model = computed(() => {
@@ -127,10 +127,35 @@ export default {
     const setOptions = obj => {
       setOptionsObj.value = obj
     }
+    // 追加移除style样式
+    const appendRemoveStyle = (type) => {
+      const {config, style} = props.formData
+      const styleId = document.getElementById(config.name + 'Style')
+      if (styleId && type) { // 存在时直接修改，不用多次插入
+        styleId.innerText = style
+        return
+      }
+      if (style && type) {
+        const styleEl = document.createElement('style')
+        styleEl.id = config && config.name + 'Style'
+        styleEl.appendChild(document.createTextNode(style))
+        document.head.appendChild(styleEl)
+      }
+      if (!type) {
+        // 移除
+        styleId && styleId.parentNode.removeChild(styleId)
+      }
+    }
+    onMounted(() => {
+      nextTick(() => {
+        appendRemoveStyle(true)
+      })
+    })
     onUnmounted(() => {
       if (eventName) {
         window[eventName] = ''
       }
+      appendRemoveStyle()
     })
     return {
       model,

@@ -283,6 +283,7 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="rulesCommClick">编辑全局校验规则</el-button>
+            <el-button @click="editFormStyle">编辑表单样式</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -301,9 +302,10 @@ export default {
   components: {},
   props: {
     formConfig: Object,
-    linkageValue: Object
+    linkageValue: Object,
+    formStyle: String
   },
-  emits: ['openDialog'],
+  emits: ['openDialog', 'update:formStyle'],
   setup(props, {emit}) {
     const store = useStore()
     const route = useRoute()
@@ -544,6 +546,14 @@ export default {
         Object.assign(props.formConfig.rulesComm, result)
       })
     }
+    // 编辑表单样式
+    const editFormStyle = () => {
+      emit('openDialog', props.formStyle, result => {
+        // console.log(result)
+        // Object.assign(props.formConfig.rulesComm, result)
+        emit('update:formStyle', result)
+      }, 'css')
+    }
     return {
       ...toRefs(state),
       controlData,
@@ -561,7 +571,8 @@ export default {
       checkboxRequired,
       addRulesFast,
       delAddRules,
-      rulesCommClick
+      rulesCommClick,
+      editFormStyle
     }
   }
 }

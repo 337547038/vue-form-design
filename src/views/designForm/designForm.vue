@@ -16,6 +16,7 @@
       </div>
     </div>
     <form-control-attr
+      v-model:formStyle="formData.style"
       :formConfig="formData.config"
       @openDialog="dialogOpen"/>
     <el-drawer
@@ -95,7 +96,8 @@ export default {
       formDataPreview: {},
       previewVisible: false, // 预览窗口
       searchDesign: query.type === 'search', // 是否为筛选设计
-      formDataList: [] // 筛选模式下提供给左则快速选择已有表单字段
+      formDataList: [], // 筛选模式下提供给左则快速选择已有表单字段
+      editCodeType: '' // 编辑代码类型
     })
     const vueFileEl = ref()
     const id = query.id // 当前记录保存的id
@@ -178,7 +180,11 @@ export default {
     const dialogConfirm = () => {
       // 生成脚本预览和导入json，都是将编辑器内容更新至state.formData
       try {
-        const val = stringToObj(state.editor.getValue())
+        const editVal = state.editor.getValue()
+        let val = editVal
+        if (state.editCodeType !== 'css') { // css类型时不需要处理
+          val = stringToObj(editVal)
+        }
         if (state.sourceDialog) {
           // 这里是编辑当前项的其它属性或校验
           state.sourceDialog(val)
@@ -237,14 +243,18 @@ export default {
       store.commit('setActiveKey', '')
       store.commit('setControlAttr', {})
     }
-    const dialogOpen = (obj, source) => {
+    const dialogOpen = (obj, source, codeStyle) => {
       // 编辑属性和校验规则时从左边弹出
       state.drawerDirection = source ? 'ltr' : 'rtl'
       state.sourceDialog = source // 打开窗口来源回调
       state.visibleDialog = true
-      const editData = objToStringify(obj, true)
+      state.editCodeType = codeStyle
+      let editData = objToStringify(obj, true)
+      if (codeStyle === 'css') {
+        editData = obj
+      }
       nextTick(() => {
-        state.editor = aceEdit(editData)
+        state.editor = aceEdit(editData, '', codeStyle)
       })
     }
     const drawerBeforeClose = done => {
