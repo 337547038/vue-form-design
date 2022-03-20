@@ -16,7 +16,11 @@ export function obj2string(o) {
     if (!o.sort) {
       for (const i in o) {
         if (o.hasOwnProperty(i)) {
-          r.push(i + ':' + obj2string(o[i]))
+          let iii = i
+          if (i.indexOf('-') !== -1) {
+            iii = `"${i}"`
+          }
+          r.push(iii + ':' + obj2string(o[i]))
         }
       }
       if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {
