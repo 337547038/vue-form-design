@@ -548,7 +548,7 @@ export default {
     }
     // 编辑表单样式
     const editFormStyle = () => {
-      emit('openDialog', props.formStyle, result => {
+      emit('openDialog', props.formStyle||'', result => {
         // console.log(result)
         // Object.assign(props.formConfig.rulesComm, result)
         emit('update:formStyle', result)
