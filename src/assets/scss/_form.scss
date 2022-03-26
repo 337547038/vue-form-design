@@ -103,7 +103,7 @@
     &:hover {border-color: $mainColor;background: #ecf5ff}
     > div {margin-bottom: 0}
   }
-  .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0}
+  .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0;z-index: 10}
   .drag-control {display: none;
     .item-control {position: absolute;right: 0;bottom: 0;z-index: 2; display: flex;align-items: center;height: 24px;background: $mainColor;
       i {width: 24px;height: 24px;color: #fff;display: flex;align-items: center;justify-content: center;cursor: pointer}

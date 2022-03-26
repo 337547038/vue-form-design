@@ -3,81 +3,30 @@
   <div class="sidebar-tools">
     <el-tabs modelValue="first">
       <el-tab-pane label="字段属性" name="first">
-        <el-form size="mini" class="form">
+        <el-form size="small" class="form">
           <h3>通用属性</h3>
-          <el-form-item label="自定义Class">
-            <el-input v-model="controlData.className" placeholder="样式类名"></el-input>
-          </el-form-item>
-          <el-form-item label="字段标识" v-if="showHide(['grid', 'tabs', 'card','title','gridChild','tableColumn'])">
-            <el-select
-              v-if="dataSourceList&&dataSourceList.length>0"
-              v-model="controlData.name"
-              @change="dataSourceChange">
-              <el-option
-                v-for="item in dataSourceList"
-                :key="item.COLUMN_NAME"
-                :label="`${item.COLUMN_COMMENT||item.COLUMN_NAME}(${item.COLUMN_NAME})`"
-                :value="item.COLUMN_NAME">
-              </el-option>
-            </el-select>
-            <el-input v-model="controlData.name" placeholder="字段唯一标识，对应数据库" v-else></el-input>
-          </el-form-item>
-          <template v-if="showHide(['table','grid','tabs','title','gridChild'])">
-            <el-form-item label="显示标题">
-              <el-input v-model="controlData.item.label" placeholder="显示的label标签名称"></el-input>
-            </el-form-item>
-            <el-form-item label="隐藏标签" v-if="showHide(['card'])">
-              <el-switch v-model="controlData.item.showLabel"></el-switch>
-            </el-form-item>
-            <el-form-item label="帮助信息">
-              <el-input v-model="controlData.config.help"></el-input>
+          <template v-for="(item,index) in attrList" :key="index">
+            <el-form-item :label="item.label">
+              <el-select
+                v-if="item.type==='select'"
+                :placeholder="item.placeholder"
+                v-model="item.value"
+                @change="controlChange(item,$event)">
+                <el-option v-for="(opt,key) in item.dict" :key="opt" :value="opt" :label="key"></el-option>
+              </el-select>
+              <el-switch
+                v-else-if="item.type==='switch'"
+                v-model="item.value"
+                @change="controlChange(item,$event)"></el-switch>
+              <el-input
+                v-else
+                :type="item.inputStyle"
+                v-model="item.value"
+                :placeholder="item.placeholder"
+                @change="controlChange(item,$event)">
+              </el-input>
             </el-form-item>
           </template>
-          <el-form-item label="表单栅格" v-if="showHide(['table','grid','gridChild'])">
-            <el-input v-model="controlData.config.span" placeholder="表单区域栅格宽"></el-input>
-          </el-form-item>
-          <el-form-item label="占位内容" v-if="showHide(['input','textarea','select','date','number'],true)">
-            <el-input v-model="controlData.control.placeholder" placeholder="placeholder"></el-input>
-          </el-form-item>
-          <el-form-item label="默认值" v-if="showHide(['txt'],true)">
-            <el-input v-model="controlData.control.modelValue" placeholder="支持html" type="textarea"></el-input>
-          </el-form-item>
-          <el-form-item label="设为密码" v-if="showHide(['input','password'],true)">
-            <el-select v-model="controlData.type">
-              <el-option value="input" label="文本"></el-option>
-              <el-option value="password" label="密码"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="文本域高度" v-if="showHide(['textarea'],true)">
-            <el-input v-model="controlData.control.rows" placeholder="输入框行数"></el-input>
-          </el-form-item>
-          <div v-if="showHide(['input'],true)">
-            <el-form-item label="前缀">
-              <el-input v-model="controlData.slot.prepend"></el-input>
-            </el-form-item>
-            <el-form-item label="后缀">
-              <el-input v-model="controlData.slot.append"></el-input>
-            </el-form-item>
-          </div>
-          <el-form-item
-            label="操作属性"
-            v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader','upload'],true)">
-            <el-checkbox
-              v-model="controlData.control.multiple"
-              label="多选"
-              v-if="showHide(['select'],true)"
-              @change="selectMultipleChange">
-            </el-checkbox>
-            <el-checkbox
-              v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader','upload'],true)"
-              v-model="controlData.control.disabled"
-              label="禁用">
-            </el-checkbox>
-            <el-checkbox
-              v-model="controlData.config.editDisabled"
-              label="禁用编辑">
-            </el-checkbox>
-          </el-form-item>
           <el-form-item
             label="联动条件"
             v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader'],true)">
@@ -89,33 +38,6 @@
               <el-input placeholder="关联值" v-model="controlData.config.linkValue"></el-input>
             </el-col>
           </el-form-item>
-          <template v-if="showHide(['grid'],true)"></template>
-          <template v-if="showHide(['card'],true)"></template>
-          <template v-if="showHide(['title'],true)">
-            <el-form-item label="标题">
-              <el-input v-model="controlData.control.modelValue"></el-input>
-            </el-form-item>
-          </template>
-          <template v-if="showHide(['gridChild'],true)">
-            <el-form-item label="栅格占据的列数">
-              <el-input v-model.number="controlData.attr.span"></el-input>
-            </el-form-item>
-            <el-form-item label="栅格左侧的间隔格数">
-              <el-input v-model.number="controlData.attr.offset"></el-input>
-            </el-form-item>
-            <el-form-item label="栅格向右移动格数">
-              <el-input v-model.number="controlData.attr.push"></el-input>
-            </el-form-item>
-            <el-form-item label="栅格向左移动格数">
-              <el-input v-model.number="controlData.attr.pull"></el-input>
-            </el-form-item>
-          </template>
-          <template v-if="showHide(['table'],true)">
-            <el-form-item label="添加列">
-              <el-checkbox @change="tableColumnAdd($event)" v-model="columnIndex">序号列</el-checkbox>
-              <el-checkbox @change="tableColumnAdd($event,1)" v-model="columnOperate">操作列</el-checkbox>
-            </el-form-item>
-          </template>
           <template v-if="showHide(['tabs'],true)">
             <h3>标签配置项</h3>
             <el-form-item v-for="(item,index) in controlData.columns" :key="item.label">
@@ -127,11 +49,6 @@
             </el-form-item>
             <el-form-item>
               <el-button @click="addSelectOption('tabs')">增加标签</el-button>
-            </el-form-item>
-          </template>
-          <template v-if="showHide(['component'],true)">
-            <el-form-item label="组件名">
-              <el-input v-model="controlData.template" placeholder="import进来的组件名称"></el-input>
             </el-form-item>
           </template>
           <div v-if="showHide(['radio', 'select', 'checkbox', 'cascader'],true)">
@@ -179,29 +96,8 @@
               </el-tab-pane>
             </el-tabs>
           </div>
-          <template v-if="showHide(['upload'],true)">
-            <el-form-item label="上传地址">
-              <el-input v-model="controlData.control.action" placeholder="图片上传地址"></el-input>
-            </el-form-item>
-            <el-form-item label="文件字段名">
-              <el-input v-model="controlData.control.name" placeholder="上传的文件字段名"></el-input>
-            </el-form-item>
-            <el-form-item label="列表类型">
-              <el-select v-model="controlData.control.listType">
-                <el-option value="text"></el-option>
-                <el-option value="picture"></el-option>
-                <el-option value="picture-card"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="提示文字">
-              <el-input v-model="controlData.config.tip" placeholder="提示说明文字"></el-input>
-            </el-form-item>
-            <el-form-item label="按钮文本">
-              <el-input v-model="controlData.config.btnText" placeholder="上传按钮文本"></el-input>
-            </el-form-item>
-          </template>
           <template
-            v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn'])&&!searchDesign">
+            v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn','divider'])&&!searchDesign">
             <h3>校验设置</h3>
             <div v-if="showHide(['input','password','component'],true)">
               <el-form-item v-if="formConfig.rulesComm&&formConfig.rulesComm.length>0">
@@ -253,14 +149,14 @@
                 v-if="controlData.rules&&controlData.rules[0]"></el-input>
             </el-form-item>
           </template>
-          <div v-if="showHide(['grid','card','gridChild'])">
+          <div v-if="showHide(['grid','card','gridChild','divider'])">
             <h3>其他属性</h3>
-            <el-button size="mini" @click="openAttrDialog">添加属性</el-button>
+            <el-button size="small" @click="openAttrDialog">添加属性</el-button>
           </div>
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="表单属性" name="second">
-        <el-form size="mini" class="form">
+        <el-form size="small" class="form">
           <el-form-item
             v-for="(item,index) in formAttr"
             :label="item.label"
@@ -292,7 +188,7 @@
 </template>
 
 <script>
-import {reactive, toRefs, ref, computed, nextTick, onUnmounted} from 'vue'
+import {reactive, toRefs, ref, computed, nextTick, onUnmounted, watch} from 'vue'
 import {useStore} from 'vuex'
 import {useRoute} from 'vue-router'
 import {getFiled} from "@/api"
@@ -317,14 +213,13 @@ export default {
         {label: '表单样式名称', value: 'class'},
         {
           label: '组件尺寸', value: 'size', type: 'select', options: [
-            {label: 'default', value: ''},
-            {label: 'medium', value: 'medium'},
-            {label: 'small', value: 'small'},
-            {label: 'mini', value: 'mini'}
+            {label: 'large', value: 'large'},
+            {label: 'default', value: 'default'},
+            {label: 'small', value: 'small'}
           ]
         }
       ],
-      dataSourceList: [],
+      dataSourceList: {},
       customRulesList: [
         {
           type: 'required',
@@ -367,7 +262,8 @@ export default {
           label: '自定义方法'
         }
       ], // 自定义校验规则
-      searchDesign: route.query.type === 'search'
+      searchDesign: route.query.type === 'search',
+      attrList: []
     })
 
     if (dataSource) {
@@ -375,7 +271,9 @@ export default {
       getFiled(dataSource)
         .then(res => {
           if (res.data.code === 200) {
-            state.dataSourceList = res.data.data
+            res.data.data.forEach(item => {
+              state.dataSourceList[item.label || item.value] = item.value
+            })
           }
           state.loading = false
         })
@@ -386,6 +284,409 @@ export default {
     const controlData = computed(() => {
       return store.state.form.controlAttr
     })
+    watch(() => controlData.value, (val) => {
+      // console.log('watch ok')
+      if (Object.keys(val).length > 0) {
+        setAttrList()
+      } else {
+        state.attrList = []
+      }
+    })
+    // 设置通用属性
+    const setAttrList = () => {
+      const {control = {}, className = '', type, name, config = {}, item = {}, attr = {}} = controlData.value
+      let columnIndex = false// 是否显示序号列
+      let columnOperate = false// 是否显示操作列
+      if (type === 'table') {
+        // 表格时处理
+        const list = controlData.value && controlData.value.list
+        if (list && list.length > 0) {
+          columnIndex = list[0].typeColumn === 'index'
+        }
+        if (list && list.length > 0) {
+          columnOperate = list[list.length - 1].typeColumn === 'operate'
+        }
+      }
+      state.attrList = [
+        {
+          label: '自定义Class',
+          value: className,
+          placeholder: "样式类名",
+          path: 'className'
+        },
+        {
+          label: '字段标识',
+          value: name,
+          type: Object.keys(state.dataSourceList).length > 0 ? 'select' : 'text',
+          placeholder: "字段唯一标识，对应数据库",
+          dict: state.dataSourceList,
+          path: 'name',
+          vHide: ['grid', 'tabs', 'card', 'title', 'gridChild', 'tableColumn', 'divider'],
+          eventName: 'filedNameKey'
+        },
+        {
+          label: '占位内容',
+          value: control.placeholder,
+          placeholder: 'placeholder',
+          path: 'control.placeholder',
+          vShow: ['input', 'textarea', 'select', 'date', 'number', 'datePicker','tinymce','timePicker']
+        },
+        {
+          label: 'label值',
+          value: item.label,
+          path: 'item.label',
+          vHide: ['table', 'grid', 'tabs', 'title', 'gridChild']
+        },
+        {
+          label: '隐藏label',
+          value: item.showLabel,
+          path: 'item.showLabel',
+          type: 'switch',
+          vHide: ['table', 'grid', 'tabs', 'title', 'gridChild', 'divider', 'card']
+        },
+        {
+          label: '帮助信息',
+          value: config.help,
+          path: 'config.help',
+          vHide: ['table', 'grid', 'tabs', 'title', 'gridChild', 'divider']
+        },
+        {
+          label: '表单栅格',
+          value: config.span,
+          placeholder: '表单区域栅格宽',
+          path: 'config.span',
+          vHide: ['table', 'grid', 'gridChild', 'divider']
+        },
+        {
+          label: '文本值',
+          value: control.modelValue,
+          placeholder: '支持html',
+          path: 'control.modelValue',
+          vShow: ['txt'],
+          inputStyle: 'textarea'
+        },
+        {
+          label: '设为密码',
+          value: type,
+          type: 'select',
+          dict: {'文本': 'input', '密码': 'password'},
+          path: 'type',
+          vShow: ['input', 'password']
+        },
+        {
+          label: '文本域高度',
+          value: control.rows,
+          placeholder: '输入框行数',
+          path: 'control.rows',
+          vShow: ['textarea']
+        },
+        {
+          label: '前缀',
+          value: config.prepend,
+          placeholder: '文本前缀',
+          path: 'config.prepend',
+          vShow: ['input']
+        },
+        {
+          label: '后缀',
+          value: config.append,
+          placeholder: '文本后缀',
+          path: 'config.append',
+          vShow: ['input']
+        },
+        {
+          label: '是否多选',
+          value: control.multiple,
+          path: 'control.multiple',
+          type: 'switch',
+          vShow: ['select'],
+          eventName: 'selectMultiple'
+        },
+        {
+          label: '是否禁用',
+          value: control.disabled,
+          path: 'control.disabled',
+          type: 'switch',
+          vShow: ['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader', 'upload', 'rate']
+        },
+        {
+          label: '是否禁用编辑',
+          value: config.editDisabled,
+          path: 'config.editDisabled',
+          type: 'switch',
+          vShow: ['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader', 'upload']
+        },
+        {
+          label: '标题',
+          value: control.modelValue,
+          path: 'control.modelValue',
+          vShow: ['title']
+        },
+        {
+          label: '占据的列数span',
+          value: attr.span,
+          path: 'attr.span',
+          vShow: ['gridChild'],
+          eventName: 'formatNumber'
+        },
+        {
+          label: '左侧的间隔格数offset',
+          value: attr.offset,
+          path: 'attr.offset',
+          vShow: ['gridChild'],
+          eventName: 'formatNumber'
+        },
+        {
+          label: '向右移动格数push',
+          value: attr.push,
+          path: 'attr.push',
+          vShow: ['gridChild'],
+          eventName: 'formatNumber'
+        },
+        {
+          label: '向左移动格数pull',
+          value: attr.pull,
+          path: 'attr.pull',
+          vShow: ['gridChild'],
+          eventName: 'formatNumber'
+        },
+        {
+          label: '序号列',
+          value: columnIndex,
+          type: 'switch',
+          vShow: ['table'],
+          eventName: 'tableColumn1'
+        },
+        {
+          label: '操作列',
+          value: columnOperate,
+          type: 'switch',
+          vShow: ['table'],
+          eventName: 'tableColumn2'
+        },
+        {
+          label: '组件名',
+          value: config.template,
+          placeholder: "import进来的组件名称",
+          path: 'config.template',
+          vShow: ['component']
+        },
+        {
+          label: '上传地址',
+          value: control.action,
+          placeholder: "图片/文件上传地址",
+          path: 'control.action',
+          vShow: ['upload']
+        },
+        {
+          label: '文件字段名',
+          value: control.name,
+          placeholder: "上传的文件字段名",
+          path: 'control.name',
+          vShow: ['upload']
+        },
+        {
+          label: '列表类型',
+          value: control.listType,
+          type: 'select',
+          dict: {'text': 'text', picture: 'picture', 'picture-card': 'picture-card'},
+          path: 'control.listType',
+          vShow: ['upload']
+        },
+        {
+          label: '提示文字',
+          value: config.tip,
+          placeholder: "提示说明文字",
+          path: 'config.tip',
+          vShow: ['upload']
+        },
+        {
+          label: '按钮文本',
+          value: config.btnText,
+          placeholder: "上传按钮文本",
+          path: 'config.btnText',
+          vShow: ['upload']
+        },
+        {
+          label: 'direction',
+          type: 'select',
+          dict: {horizontal: 'horizontal', vertical: 'vertical'},
+          value: control.direction,
+          path: 'control.direction',
+          vShow: ['divider']
+        },
+        {
+          label: 'border-style',
+          value: control.borderStyle,
+          path: 'control.borderStyle',
+          vShow: ['divider']
+        },
+        {
+          label: 'content-position',
+          type: 'select',
+          dict: {left: 'left', right: 'right', center: 'center'},
+          value: control.contentPosition,
+          path: 'control.contentPosition',
+          vShow: ['divider']
+        },
+        {
+          label: '最小值',
+          value: control.min,
+          path: 'control.min',
+          vShow: ['slider'],
+          eventName: 'formatNumber'
+        },
+        {
+          label: '最大值',
+          value: control.max,
+          path: 'control.max',
+          vShow: ['rate', 'slider'],
+          eventName: 'formatNumber'
+        },
+        {
+          label: '步长',
+          value: control.step,
+          path: 'control.step',
+          vShow: ['slider'],
+          eventName: 'formatNumber'
+        },
+        {
+          label: 'type',
+          value: control.type,
+          path: 'control.type',
+          vShow: ['datePicker'],
+          type: 'select',
+          placeholder: '显示类型',
+          dict: {
+            year: 'year',
+            month: 'month',
+            date: 'date',
+            dates: 'dates',
+            datetime: 'datetime',
+            week: 'week',
+            datetimerange: 'datetimerange',
+            daterange: 'daterange',
+            monthrange: 'monthrange'
+          }
+        },
+        {
+          label: 'format',
+          value: control.format,
+          path: 'control.format',
+          vShow: ['datePicker', 'timePicker'],
+          placeholder: '显示在输入框中的格式'
+        },
+        {
+          label: 'color-format',
+          value: control.colorFormat,
+          path: 'control.colorFormat',
+          type: 'select',
+          placeholder: '写入 v-model 的颜色的格式',
+          dict: {hsl: 'hsl', hsv: 'hsv', hex: 'hex', rgb: 'rgb'},
+          vShow: ['colorPicker']
+        },
+        {
+          label: '文本高度',
+          value: control.height,
+          path: 'control.height',
+          placeholder: '文本高度(修改刷新生效)',
+          vShow: ['tinymce']
+        },
+        {
+          label: '文本宽度',
+          value: control.width,
+          path: 'control.width',
+          placeholder: '文本宽度(修改刷新生效)',
+          vShow: ['tinymce']
+        },
+        {
+          label: '显示模式',
+          value: config.style,
+          path: 'config.style',
+          placeholder: '显示风格(修改刷新生效)',
+          type:'select',
+          dict:{'default':'default',simple:'simple'},
+          vShow: ['tinymce']
+        }
+      ]
+      // 过滤显示对应的值
+      state.attrList = state.attrList.filter(item => {
+        let hasFilter = true
+        if (item.vShow) {
+          hasFilter = item.vShow.indexOf(type) !== -1
+        }
+        if (item.vHide) {
+          hasFilter = item.vHide.indexOf(type) === -1
+        }
+        return hasFilter
+      })
+    }
+    const controlChange = (obj, val) => {
+      /*console.log(obj)
+      console.log(val)*/
+      // select多选属性，
+      switch (obj.eventName) {
+        case 'selectMultiple':
+          if (val) {
+            // 多选，将值改为数组
+            controlData.value.control.modelValue = []
+          } else {
+            // 单选
+            controlData.value.control.modelValue = ''
+          }
+          break
+        case 'tableColumn1':
+          tableColumnAdd(val)
+          break
+        case 'tableColumn2':
+          tableColumnAdd(val, 1)
+          break
+        case 'formatNumber':
+          val = parseInt(val)// 将值转数值
+          break
+        case 'filedNameKey':
+          // 选择字段标识时，同时修改显示标题
+          // 根据value找key
+          for (const key in state.dataSourceList) {
+            if (state.dataSourceList[key] === val) {
+              controlData.value.item.label = key
+              return
+            }
+          }
+          break
+      }
+      obj.path && getPropByPath(controlData.value, obj.path, val)
+    }
+    // 修改指定路径下的值
+    const getPropByPath = (obj, path, val) => {
+      let tempObj = obj
+      const keyArr = path.split('.')
+      let i = 0
+      for (i; i < keyArr.length - 1; i++) {
+        const key = keyArr[i]
+        if (key in tempObj) {
+          tempObj = tempObj[key]
+        } else {
+          throw new Error(`${key} is undefined`)
+          // break
+        }
+      }
+      const key = keyArr[i]
+      const value = tempObj[keyArr[i]]
+      // 检查最后一级是否存在
+      /*if (!(key in tempObj)) {
+        throw new Error(`${key} is undefined`)
+      }*/
+      if (val !== undefined) {
+        tempObj[key] = val
+      }
+      return {
+        obj: tempObj,
+        key: key,
+        value: value
+      }
+    }
+    // 属性设置相关结束
     // 多选固定选项删除
     const delSelectOption = (index, type) => {
       if (type === 'tabs') {
@@ -430,16 +731,6 @@ export default {
         }
       })
     }
-    // select多选属性，
-    const selectMultipleChange = val => {
-      if (val) {
-        // 多选，将值改为数组
-        controlData.value.control.modelValue = []
-      } else {
-        // 单选
-        controlData.value.control.modelValue = ''
-      }
-    }
     // 必填校验
     const requiredChange = val => {
       if (val) {
@@ -459,12 +750,12 @@ export default {
       })
     }
     // 选择字段标识时，同时修改显示标题
-    const dataSourceChange = val => {
+    /*const dataSourceChange = val => {
       const current = state.dataSourceList.find(item => {
         return item.COLUMN_NAME === val
       })
       controlData.value.item.label = current.COLUMN_COMMENT || current.COLUMN_NAME
-    }
+    }*/
     // 根据不同类型判断是否显示当前属性
     const showHide = (type, show) => {
       // show=true 条件成立显示，false符合条件隐藏
@@ -506,23 +797,6 @@ export default {
         }
       }
     }
-    // 是否显示序号列
-    const columnIndex = computed(() => {
-      const list = controlData.value && controlData.value.list
-      if (list && list.length > 0) {
-        return list[0].typeColumn === 'index'
-      }
-      return false
-    })
-    // 是否显示操作列
-    const columnOperate = computed(() => {
-      const list = controlData.value && controlData.value.list
-      if (list && list.length > 0) {
-        return list[list.length - 1].typeColumn === 'operate'
-      } else {
-        return false
-      }
-    })
     // 校验规则必填勾选设置，存在校验规则时勾选
     const checkboxRequired = computed(() => {
       const val = controlData.value && controlData.value.rules
@@ -548,7 +822,7 @@ export default {
     }
     // 编辑表单样式
     const editFormStyle = () => {
-      emit('openDialog', props.formStyle, result => {
+      emit('openDialog', props.formStyle || '', result => {
         // console.log(result)
         // Object.assign(props.formConfig.rulesComm, result)
         emit('update:formStyle', result)
@@ -560,19 +834,17 @@ export default {
       delSelectOption,
       addSelectOption,
       openAttrDialog,
-      selectMultipleChange,
       requiredChange,
       addRules,
-      dataSourceChange,
+      // dataSourceChange,
       showHide,
       tableColumnAdd,
-      columnIndex,
-      columnOperate,
       checkboxRequired,
       addRulesFast,
       delAddRules,
       rulesCommClick,
-      editFormStyle
+      editFormStyle,
+      controlChange
     }
   }
 }

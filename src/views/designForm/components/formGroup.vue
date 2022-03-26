@@ -46,7 +46,7 @@
               data-type="not-nested">
             </form-group>
           </div>
-          <child-table v-else :data="element" :type="type" />
+          <child-table v-else :data="element" :type="type"/>
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -79,6 +79,9 @@
               <form-group :data="element"></form-group>
             </el-collapse-item>
           </el-collapse>
+        </template>
+        <template v-else-if="element.type==='divider'">
+          <el-divider v-bind="element.control">{{ element.item && element.item.label }}</el-divider>
         </template>
         <template v-else>
           <form-item :element="element"></form-item>

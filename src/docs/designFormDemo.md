@@ -639,9 +639,9 @@ export default {
           "name": "component",
           "type": "component",
           "control": {"modelValue": ""},
-          "config": {},
+          "config": {
           "template": "customComponent",
-          "component": "",
+          },
           "item": {"label": "自定义组件", "showLabel": false},
           "rules": [],
           "customRules": [{"type": "required", "message": "必填项", "trigger": "blur"}]

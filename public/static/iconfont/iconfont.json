@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5388006",
+      "name": "树状图_o",
+      "font_class": "tree",
+      "unicode": "ebb3",
+      "unicode_decimal": 60339
+    },
+    {
+      "icon_id": "77110",
+      "name": "时间",
+      "font_class": "time",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "2471358",
+      "name": "富文本框",
+      "font_class": "tinymce",
+      "unicode": "e66f",
+      "unicode_decimal": 58991
+    },
+    {
+      "icon_id": "8687733",
+      "name": "评分",
+      "font_class": "rate",
+      "unicode": "e69d",
+      "unicode_decimal": 59037
+    },
+    {
+      "icon_id": "11121364",
+      "name": "滑块",
+      "font_class": "slider",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "11121454",
+      "name": "分割线",
+      "font_class": "divider",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "22385724",
+      "name": "颜色库",
+      "font_class": "color",
+      "unicode": "ee22",
+      "unicode_decimal": 60962
+    },
+    {
       "icon_id": "6244963",
       "name": "导入",
       "font_class": "import",

@@ -45,8 +45,8 @@ export default {
       obj && obj.list.forEach(item => {
         if (item.type === 'component') {
           // 自定义组件
-          importComponent += `    // todo ${item.item.label}\nimport ${item.template} from "@/xxxxxxx.vue"\n`
-          componentProvide += `    // todo ${item.item.label}自定义组件\n    provide("${item.template}", ${item.template})\n`
+          importComponent += `    // todo ${item.item.label}\nimport ${item.config.template} from "@/xxxxxxx.vue"\n`
+          componentProvide += `    // todo ${item.item.label}自定义组件\n    provide("${item.config.template}", ${item.config.template})\n`
         }
         if (item.customRules && item.customRules.length > 0) {
           // 使用自定义校验方法
