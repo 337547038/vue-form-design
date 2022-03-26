@@ -3,7 +3,7 @@
 .components-list {height: 100vh;width: 250px;padding: 8px 0;position: fixed;overflow-y: auto;
   .title {padding: 8px 12px;}
   ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
-    li {font-size: 12px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
+    li {font-size: 14px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
       i {margin-right: 5px}
       &:hover {
         color: $mainColor;border: 1px dashed $mainColor;cursor: move;
@@ -103,7 +103,7 @@
     &:hover {border-color: $mainColor;background: #ecf5ff}
     > div {margin-bottom: 0}
   }
-  .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0;z-index: 10}
+  .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0;z-index: 5}
   .drag-control {display: none;
     .item-control {position: absolute;right: 0;bottom: 0;z-index: 2; display: flex;align-items: center;height: 24px;background: $mainColor;
       i {width: 24px;height: 24px;color: #fff;display: flex;align-items: center;justify-content: center;cursor: pointer}

@@ -18,7 +18,7 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"input1636622418303","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"textarea1636622419559","type":"textarea","control":{"modelValue":""},"config":{},"item":{"label":"多行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"radio1636622421624","type":"radio","control":{"modelValue":""},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"单选框组","showLabel":false},"rules":[]},{"name":"checkbox1636622423482","type":"checkbox","control":{"modelValue":[]},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"多选框组","showLabel":false},"rules":[]},{"name":"select1636622425534","type":"select","control":{"modelValue":"","appendToBody":true},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"下拉选择框","showLabel":false},"rules":[]},{"name":"datePicker1636622429204","type":"datePicker","control":{"modelValue":"","type":"date"},"config":{},"item":{"label":"日期选择器","showLabel":false},"rules":[]},{"name":"switch1636622430966","type":"switch","control":{"modelValue":false},"config":{},"item":{"label":"开关","showLabel":false},"rules":[]},{"name":"number1636622432914","type":"number","control":{},"config":{},"item":{"label":"计数器","showLabel":false},"rules":[]}],"config":{"labelWidth":"100px","class":"","size":"medium","name":"form1636607042495","rulesComm":[]}}
+      formData: {"list":[{"name":"input1636622418303","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"textarea1636622419559","type":"textarea","control":{"modelValue":""},"config":{},"item":{"label":"多行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"radio1636622421624","type":"radio","control":{"modelValue":""},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"单选框组","showLabel":false},"rules":[]},{"name":"checkbox1636622423482","type":"checkbox","control":{"modelValue":[]},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"多选框组","showLabel":false},"rules":[]},{"name":"select1636622425534","type":"select","control":{"modelValue":"","appendToBody":true},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"下拉选择框","showLabel":false},"rules":[]},{"name":"datePicker1636622429204","type":"datePicker","control":{"modelValue":"","type":"date"},"config":{},"item":{"label":"日期选择器","showLabel":false},"rules":[]},{"name":"switch1636622430966","type":"switch","control":{"modelValue":false},"config":{},"item":{"label":"开关","showLabel":false},"rules":[]},{"name":"number1636622432914","type":"number","control":{},"config":{},"item":{"label":"计数器","showLabel":false},"rules":[]}],"config":{"labelWidth":"100px","class":"","size":"","name":"form1636607042495","rulesComm":[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {
@@ -106,7 +106,7 @@ export default {
         "config": {
           "labelWidth": "100px",
           "class": "",
-          "size": "medium",
+          "size": "",
           "name": "form1636607042495",
           "rulesComm": [{"key": "required", "required": true, "message": "必填项", "trigger": "blur"}]
         }
@@ -168,7 +168,7 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"select1636698720764","type":"select","control":{"modelValue":"","appendToBody":true},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"async","source":1,"request":"get","sourceFun":"getCheckboxFun"},"item":{"label":"下拉选择框","showLabel":false},"rules":[]}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1636607042495","rulesComm":[{"key":"required","required":true,"message":"必填项","trigger":"blur"}]}}
+      formData: {"list":[{"name":"select1636698720764","type":"select","control":{"modelValue":"","appendToBody":true},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"async","source":1,"request":"get","sourceFun":"getCheckboxFun"},"item":{"label":"下拉选择框","showLabel":false},"rules":[]}],"config":{"labelWidth":"","class":"","size":"","name":"form1636607042495","rulesComm":[{"key":"required","required":true,"message":"必填项","trigger":"blur"}]}}
     })
     // todo 下拉选择框获取选项值
     const select1636698720764Option = ref([{label: "选项1", value: '1'}])
@@ -222,7 +222,7 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"radio","type":"radio","control":{"modelValue":""},"options":[{"label":"label1","value":"1"},{"label":"label2","value":"2"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"单选框组","showLabel":false},"rules":[]},{"name":"select","type":"select","control":{"modelValue":"","appendToBody":true},"options":[{"label":"label1","value":"1"},{"label":"label2","value":"2"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"下拉选择框","showLabel":false},"rules":[]},{"name":"input1637189604237","type":"input","control":{"modelValue":"","placeholder":"单选或下拉为label1时显示"},"slot":{},"config":{"linkKey":"radio,select","linkValue":"1,1"},"item":{"label":"单行文本1","showLabel":false},"rules":[],"customRules":[]},{"name":"input1637198443468","type":"input","control":{"modelValue":"","placeholder":"单选和下拉为label1时显示"},"slot":{},"config":{"linkKey":"radio&select","linkValue":"1,1"},"item":{"label":"单行文本2","showLabel":false},"rules":[],"customRules":[]}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1637189568724","rulesComm":[]}}
+      formData: {"list":[{"name":"radio","type":"radio","control":{"modelValue":""},"options":[{"label":"label1","value":"1"},{"label":"label2","value":"2"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"单选框组","showLabel":false},"rules":[]},{"name":"select","type":"select","control":{"modelValue":"","appendToBody":true},"options":[{"label":"label1","value":"1"},{"label":"label2","value":"2"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"下拉选择框","showLabel":false},"rules":[]},{"name":"input1637189604237","type":"input","control":{"modelValue":"","placeholder":"单选或下拉为label1时显示"},"slot":{},"config":{"linkKey":"radio,select","linkValue":"1,1"},"item":{"label":"单行文本1","showLabel":false},"rules":[],"customRules":[]},{"name":"input1637198443468","type":"input","control":{"modelValue":"","placeholder":"单选和下拉为label1时显示"},"slot":{},"config":{"linkKey":"radio&select","linkValue":"1,1"},"item":{"label":"单行文本2","showLabel":false},"rules":[],"customRules":[]}],"config":{"labelWidth":"","class":"","size":"","name":"form1637189568724","rulesComm":[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {
@@ -291,7 +291,7 @@ export default {
           "item": {"label": "单行文本2", "showLabel": false},
           "rules": [],
           "customRules": []
-        }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1637303910371", "rulesComm": [],"vIf":["input1"]}
+        }], "config": {"labelWidth": "", "class": "", "size": "", "name": "form1637303910371", "rulesComm": [],"vIf":["input1"]}
       }
     })
     // 表单控件值改变事件
@@ -367,7 +367,7 @@ export default {
           "config": {"type": "fixed", "source": 0, "request": "get", "sourceFun": ""},
           "item": {"label": "下拉选择框", "showLabel": false},
           "rules": []
-        }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1636607042495", "rulesComm": []}
+        }], "config": {"labelWidth": "", "class": "", "size": "", "name": "form1636607042495", "rulesComm": []}
       }
     })
     // 表单控件值改变事件
@@ -467,7 +467,7 @@ export default {
             "config": {"type": "fixed", "source": 0, "request": "get", "sourceFun": ""},
             "item": {"label": "下拉选择框", "showLabel": false},
             "rules": []
-          }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1636607042495", "rulesComm": []}
+          }], "config": {"labelWidth": "", "class": "", "size": "", "name": "form1636607042495", "rulesComm": []}
       }
     })
     // 表单控件值改变事件
@@ -533,7 +533,7 @@ export default {
                 callback()
               }
 
-            },trigger:"change"}],customRules:[]}],config:{labelWidth:"",class:"",size:"medium",name:"form1647008531927",rulesComm:[]}}
+            },trigger:"change"}],customRules:[]}],config:{labelWidth:"",class:"",size:"",name:"form1647008531927",rulesComm:[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {
@@ -581,7 +581,7 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"table1636703297719","type":"table","list":[{"name":"","type":"tableColumn","typeColumn":"index","item":{"label":"序号"},"control":{"type":"index"},"config":{}},{"name":"user","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"用户名","showLabel":false},"rules":[],"customRules":[]},{"name":"tel","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"手机号","showLabel":false},"rules":[],"customRules":[]},{"name":"","type":"tableColumn","typeColumn":"operate","item":{"label":"操作"},"control":{"type":""},"config":{}}],"tableData":[],"control":{"border":true},"config":{}}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1636607042495","rulesComm":[]}}
+      formData: {"list":[{"name":"table1636703297719","type":"table","list":[{"name":"","type":"tableColumn","typeColumn":"index","item":{"label":"序号"},"control":{"type":"index"},"config":{}},{"name":"user","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"用户名","showLabel":false},"rules":[],"customRules":[]},{"name":"tel","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"手机号","showLabel":false},"rules":[],"customRules":[]},{"name":"","type":"tableColumn","typeColumn":"operate","item":{"label":"操作"},"control":{"type":""},"config":{}}],"tableData":[],"control":{"border":true},"config":{}}],"config":{"labelWidth":"","class":"","size":"","name":"form1636607042495","rulesComm":[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {
@@ -645,7 +645,7 @@ export default {
           "item": {"label": "自定义组件", "showLabel": false},
           "rules": [],
           "customRules": [{"type": "required", "message": "必填项", "trigger": "blur"}]
-        }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1636607042495", "rulesComm": []}
+        }], "config": {"labelWidth": "", "class": "", "size": "", "name": "form1636607042495", "rulesComm": []}
       }
     })
     // todo 自定义组件自定义组件
@@ -716,7 +716,7 @@ export default {
           "config": {"tip": "一些上传提示文案", "btnText": ""},
           "item": {"label": "图片", "showLabel": false},
           "rules": []
-        }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1637303910371", "rulesComm": []}
+        }], "config": {"labelWidth": "", "class": "", "size": "", "name": "form1637303910371", "rulesComm": []}
       }
     })
     // 表单控件值改变事件
@@ -775,7 +775,7 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"input1636709200587","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"grid1636709032830","type":"grid","columns":[{"attr":{"span":11,"offset":"","push":"","pull":""},"list":[{"name":"input1636709035365","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"name":"gridChild1636709053920","type":"gridChild"},{"attr":{"span":11,"offset":1},"list":[{"name":"input1636709037596","type":"input","control":{"modelValue":""},"slot":{},"config":{"span":""},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"name":"gridChild1636709129937","type":"gridChild"}],"control":{},"config":{}}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1636607042495","rulesComm":[]}}
+      formData: {"list":[{"name":"input1636709200587","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"grid1636709032830","type":"grid","columns":[{"attr":{"span":11,"offset":"","push":"","pull":""},"list":[{"name":"input1636709035365","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"name":"gridChild1636709053920","type":"gridChild"},{"attr":{"span":11,"offset":1},"list":[{"name":"input1636709037596","type":"input","control":{"modelValue":""},"slot":{},"config":{"span":""},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"name":"gridChild1636709129937","type":"gridChild"}],"control":{},"config":{}}],"config":{"labelWidth":"","class":"","size":"","name":"form1636607042495","rulesComm":[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {
@@ -822,7 +822,7 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"tabs1636709230727","type":"tabs","columns":[{"label":"标签名称1","list":[{"name":"input1636709254980","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}]},{"label":"标签名称2","list":[{"name":"checkbox1636709258581","type":"checkbox","control":{"modelValue":[]},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"多选框组","showLabel":false},"rules":[]}]}],"control":{},"config":{}}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1636607042495","rulesComm":[]}}
+      formData: {"list":[{"name":"tabs1636709230727","type":"tabs","columns":[{"label":"标签名称1","list":[{"name":"input1636709254980","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}]},{"label":"标签名称2","list":[{"name":"checkbox1636709258581","type":"checkbox","control":{"modelValue":[]},"options":[{"label":"label1","value":"value1"},{"label":"label2","value":"value2"},{"label":"label3","value":"value3"}],"config":{"type":"fixed","source":0,"request":"get","sourceFun":""},"item":{"label":"多选框组","showLabel":false},"rules":[]}]}],"control":{},"config":{}}],"config":{"labelWidth":"","class":"","size":"","name":"form1636607042495","rulesComm":[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {
@@ -869,7 +869,7 @@ export default {
   components: {},
   setup(props) {
     const state = reactive({
-      formData: {"list":[{"name":"card1636709292247","type":"card","list":[{"name":"input1636709299212","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"input1636709297278","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"control":{},"config":{},"item":{"label":"卡片布局","showLabel":false},"rules":[]},{"name":"input1636709305117","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"config":{"labelWidth":"","class":"","size":"medium","name":"form1636607042495","rulesComm":[]}}
+      formData: {"list":[{"name":"card1636709292247","type":"card","list":[{"name":"input1636709299212","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]},{"name":"input1636709297278","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"control":{},"config":{},"item":{"label":"卡片布局","showLabel":false},"rules":[]},{"name":"input1636709305117","type":"input","control":{"modelValue":""},"slot":{},"config":{},"item":{"label":"单行文本","showLabel":false},"rules":[],"customRules":[]}],"config":{"labelWidth":"","class":"","size":"","name":"form1636607042495","rulesComm":[]}}
     })
     // 表单控件值改变事件
     /*provide('DFControlChange', ({key, value}) => {

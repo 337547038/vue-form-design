@@ -83,7 +83,7 @@ export default {
         config: {
           labelWidth: '',
           class: '',
-          size: 'medium',
+          size: 'default',
           name: 'form' + new Date().getTime(),
           rulesComm: []
         }

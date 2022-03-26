@@ -32,7 +32,7 @@ export default {
           "config": {"tip": "一些上传提示文案", "btnText": ""},
           "item": {"label": "图片", "showLabel": false},
           "rules": []
-        }], "config": {"labelWidth": "", "class": "", "size": "medium", "name": "form1637303910371", "rulesComm": []}
+        }], "config": {"labelWidth": "", "class": "", "size": "", "name": "form1637303910371", "rulesComm": []}
       }
     })
     // 表单控件值改变事件

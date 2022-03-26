@@ -407,7 +407,7 @@ export default {
           value: control.disabled,
           path: 'control.disabled',
           type: 'switch',
-          vShow: ['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader', 'upload', 'rate']
+          vShow: ['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader', 'upload', 'rate','tinymce']
         },
         {
           label: '是否禁用编辑',
@@ -589,21 +589,21 @@ export default {
           label: '文本高度',
           value: control.height,
           path: 'control.height',
-          placeholder: '文本高度(修改刷新生效)',
+          placeholder: '文本高度(预览查看效果)',
           vShow: ['tinymce']
         },
         {
           label: '文本宽度',
           value: control.width,
           path: 'control.width',
-          placeholder: '文本宽度(修改刷新生效)',
+          placeholder: '文本宽度(预览查看效果)',
           vShow: ['tinymce']
         },
         {
           label: '显示模式',
           value: config.style,
           path: 'config.style',
-          placeholder: '显示风格(修改刷新生效)',
+          placeholder: '显示风格(预览查看效果)',
           type:'select',
           dict:{'default':'default',simple:'simple'},
           vShow: ['tinymce']

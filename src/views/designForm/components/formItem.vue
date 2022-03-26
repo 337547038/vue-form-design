@@ -127,6 +127,11 @@
         :disabled="editDisabled"
         v-model="value"
         v-if="element.type==='slider'"/>
+      <el-rate
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value"
+        v-if="element.type==='rate'"/>
       <component
         :is="element.config.component"
         v-bind="element.control"
@@ -138,13 +143,17 @@
         请使用provide注入组件如：provide('{{ element.config.template }}',
         import进来的组件)
       </div>
-      <tinymce-edit
-        v-bind="element.control"
-        :config="element.config"
-        :disabled="editDisabled"
-        v-model="value"
-        v-if="element.type==='tinymce'">
-      </tinymce-edit>
+      <template v-if="element.type==='tinymce'">
+        <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
+        <tinymce-edit
+          v-bind="element.control"
+          :config="element.config"
+          :disabled="editDisabled"
+          v-model="value"
+          v-if="type===1||type===2">
+        </tinymce-edit>
+        <img src="./tinymce/img.png" v-if="type===4" style="max-width: 100%;">
+      </template>
       <div
         v-bind="element.control"
         v-if="element.type==='txt'"
@@ -164,7 +173,7 @@ import TinymceEdit from './tinymce/index.vue'
 
 export default {
   name: "item",
-  components: {Tooltip,TinymceEdit},
+  components: {Tooltip, TinymceEdit},
   props: {
     element: Object,
     modelValue: null,// 子表时值
@@ -306,6 +315,9 @@ export default {
     }
     // 控制编辑模式下是否可用
     const editDisabled = computed(() => {
+      if (injectData.type === 2) {
+        return true // 查看模式，为不可编辑状态
+      }
       if (injectData.type === 1 && injectData.isEdit && props.element.config && props.element.config.editDisabled) {
         // 新增模式 编辑模式
         return true

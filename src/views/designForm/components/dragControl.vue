@@ -12,7 +12,7 @@
         <template #item="{element}">
           <li :class="[element.type]">
             <i :class="`icon-${element.icon}`"></i>
-            <span>{{ element.label }}</span>
+            <span :title="element.label">{{ element.label }}</span>
           </li>
         </template>
       </draggable>
