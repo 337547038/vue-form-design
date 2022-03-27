@@ -417,6 +417,24 @@ export default {
           vShow: ['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader', 'upload']
         },
         {
+          label: '添加页隐藏',
+          value: config.disabledAdd,
+          path: 'config.disabledAdd',
+          type: 'switch'
+        },
+        {
+          label: '编辑页隐藏',
+          value: config.disabledEdit,
+          path: 'config.disabledEdit',
+          type: 'switch'
+        },
+        {
+          label: '详情页隐藏',
+          value: config.disabledDetail,
+          path: 'config.disabledDetail',
+          type: 'switch'
+        },
+        {
           label: '标题',
           value: control.modelValue,
           path: 'control.modelValue',
