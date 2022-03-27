@@ -70,7 +70,7 @@ const defaultInit = {
   elementpath: false, // 元素路径是否显示
 
   // content_style: 'p {margin-block-start: 0; margin-block-end: 0; color: #606D81; font-size: 14px;}; table { border: 1px}', // 直接自定义可编辑区域的css样式
-  //content_css: './tinymce/index.css', // 以css文件方式自定义可编辑区域的css样式，css文件需自己创建并引入
+  content_css: false, // 以css文件方式自定义可编辑区域的css样式，css文件需自己创建并引入
 
   paste_data_images: true, // 图片是否可粘贴
   // 允许外界传进来高度和placeholder
