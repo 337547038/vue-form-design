@@ -17,7 +17,7 @@ const upload = multer({
 router.post('/single', upload.single('file'), (req, res) => {
   console.log(req.file)
   res.json({
-    code: '0000',
+    code: 1,
     type: 'single',
     fileName: req.file.originalname,
     path: req.file.path.replace(/\\/g, '/')
@@ -33,7 +33,7 @@ router.post('/multer', upload.array('file'), (req, res) => {
     })
   })
   res.json({
-    code: '0000',
+    code: 1,
     type: 'multer',
     fileList: fileList
   })

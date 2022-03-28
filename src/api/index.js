@@ -75,3 +75,16 @@ export function delById(tableName, id) {
     method: 'get'
   })
 }
+
+// tinymce编辑器图片上传
+export function uploadTinymce(data) {
+  return request({
+    url: '/upload/single',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
