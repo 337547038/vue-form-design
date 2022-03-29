@@ -270,7 +270,7 @@ export default {
     // 根据表单设置不显示指定字段
     const linksIf = obj => {
       const {type, isEdit} = injectData
-      const {config: {disabledAdd, disabledEdit, disabledDetail}} = obj
+      const {config: {disabledAdd, disabledEdit, disabledDetail} = {}} = obj
       if (type === 1) {
         if ((isEdit && disabledEdit) || (!isEdit && disabledAdd)) {
           // 编辑页 || 新增页

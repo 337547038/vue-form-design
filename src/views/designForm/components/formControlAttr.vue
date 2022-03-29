@@ -329,7 +329,7 @@ export default {
           value: control.placeholder,
           placeholder: 'placeholder',
           path: 'control.placeholder',
-          vShow: ['input', 'textarea', 'select', 'date', 'number', 'datePicker','tinymce','timePicker']
+          vShow: ['input', 'textarea', 'select', 'date', 'number', 'datePicker', 'tinymce', 'timePicker']
         },
         {
           label: 'label值',
@@ -407,7 +407,7 @@ export default {
           value: control.disabled,
           path: 'control.disabled',
           type: 'switch',
-          vShow: ['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader', 'upload', 'rate','tinymce']
+          vShow: ['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader', 'upload', 'rate', 'tinymce']
         },
         {
           label: '是否禁用编辑',
@@ -622,8 +622,8 @@ export default {
           value: config.style,
           path: 'config.style',
           placeholder: '显示风格(预览查看效果)',
-          type:'select',
-          dict:{'default':'default',simple:'simple'},
+          type: 'select',
+          dict: {'default': 'default', simple: 'simple'},
           vShow: ['tinymce']
         }
       ]

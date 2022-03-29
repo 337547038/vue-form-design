@@ -1,0 +1,167 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2578019 */
+  src: url('iconfont.woff2?t=1648280812396') format('woff2'),
+       url('iconfont.woff?t=1648280812396') format('woff'),
+       url('iconfont.ttf?t=1648280812396') format('truetype');
+}
+
+.iconfont,[class*="icon-"] {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-tree:before {
+  content: "\ebb3";
+}
+
+.icon-time:before {
+  content: "\e600";
+}
+
+.icon-tinymce:before {
+  content: "\e66f";
+}
+
+.icon-rate:before {
+  content: "\e69d";
+}
+
+.icon-slider:before {
+  content: "\e627";
+}
+
+.icon-divider:before {
+  content: "\e638";
+}
+
+.icon-color:before {
+  content: "\ee22";
+}
+
+.icon-import:before {
+  content: "\e616";
+}
+
+.icon-image:before {
+  content: "\e63e";
+}
+
+.icon-card:before {
+  content: "\e622";
+}
+
+.icon-help:before {
+  content: "\e61c";
+}
+
+.icon-table:before {
+  content: "\e6a9";
+}
+
+.icon-component:before {
+  content: "\e620";
+}
+
+.icon-link:before {
+  content: "\e623";
+}
+
+.icon-cascader:before {
+  content: "\e624";
+}
+
+.icon-number:before {
+  content: "\e647";
+}
+
+.icon-title:before {
+  content: "\e61d";
+}
+
+.icon-tabs:before {
+  content: "\e6d4";
+}
+
+.icon-close:before {
+  content: "\e615";
+}
+
+.icon-plus:before {
+  content: "\e603";
+}
+
+.icon-arrow:before {
+  content: "\e61b";
+}
+
+.icon-check:before {
+  content: "\e6c1";
+}
+
+.icon-vue:before {
+  content: "\e69a";
+}
+
+.icon-switch:before {
+  content: "\e646";
+}
+
+.icon-save:before {
+  content: "\e61f";
+}
+
+.icon-move:before {
+  content: "\e696";
+}
+
+.icon-clone:before {
+  content: "\e692";
+}
+
+.icon-del:before {
+  content: "\e67d";
+}
+
+.icon-eye:before {
+  content: "\e601";
+}
+
+.icon-json:before {
+  content: "\e60e";
+}
+
+.icon-grid:before {
+  content: "\e652";
+}
+
+.icon-text:before {
+  content: "\e621";
+}
+
+.icon-date:before {
+  content: "\e64c";
+}
+
+.icon-input:before {
+  content: "\e629";
+}
+
+.icon-checkbox:before {
+  content: "\e61e";
+}
+
+.icon-textarea:before {
+  content: "\e60a";
+}
+
+.icon-radio:before {
+  content: "\e6b1";
+}
+
+.icon-select:before {
+  content: "\e64d";
+}
+

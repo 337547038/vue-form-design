@@ -253,7 +253,8 @@ export default [
         type: 'divider',
         label: '分割线',
         icon:'divider',
-        control: {}
+        control: {},
+        config: {}
       }
     ]
   }

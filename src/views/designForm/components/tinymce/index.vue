@@ -159,7 +159,7 @@ const imgUploadFn = (blobInfo, success, failure) => {
       }
     })
     .catch(() => {
-      failure('上传出错，服务器开小差了呢')
+      failure('上传出错，示例暂不提供上传接口')
     })
   /*const config = {
     headers: {
