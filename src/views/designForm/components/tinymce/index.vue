@@ -1,13 +1,13 @@
 <template>
-  <Editor v-model="contentValue" :init="myInit"/>
+  <Editor v-model="contentValue" :init="myInit" />
 </template>
 
 <script setup>
-import {onMounted, reactive, toRefs, watch, ref, computed} from 'vue'
+import { onMounted, reactive, toRefs, watch, ref, computed } from 'vue'
 import Editor from '@tinymce/tinymce-vue'
 import tinymce from 'tinymce/tinymce'
 import './importTinymce'
-import {uploadTinymce} from "@/api"
+import { uploadTinymce } from "@/api"
 
 const props = defineProps({
   modelValue: {
@@ -27,6 +27,14 @@ const props = defineProps({
   height: {
     type: String,
     default: '300px'
+  },
+  bloblUrl: {
+    type: String,
+    default: ''
+  },
+  imgUrl: {
+    type: String,
+    default: ''
   },
   config: {
     type: Object,
@@ -84,6 +92,9 @@ const defaultInit = {
   // 图片上传
   "images_upload_handler": (blobInfo, success, failure) => {
     imgUploadFn(blobInfo, success, failure)
+  },
+  file_picker_callback: function (callback, value, meta) {
+    fileUpload(callback, value, meta)
   }
 }
 const simpleInit = {
@@ -152,7 +163,7 @@ const imgUploadFn = (blobInfo, success, failure) => {
   uploadTinymce(params)
     .then(res => {
       if (res.data.code === 1) {
-        success(res.data.path) // 上传成功，在成功函数里填入图片路径
+        success(res.data.url) // 上传成功，在成功函数里填入图片路径
         // console.log('[文件上传]', res.data)
       } else {
         failure('上传失败')
@@ -177,5 +188,37 @@ const imgUploadFn = (blobInfo, success, failure) => {
   }).catch(() => {
     failure('上传出错，服务器开小差了呢')
   })*/
+}
+
+const fileUpload = (callback, value, meta) => {
+  const filetype = '.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4';
+  //后端接收上传文件的地址
+  const upurl = props.bloblUrl
+  //模拟出一个input用于添加本地文件
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', filetype);
+  input.click();
+  input.onchange = function () {
+    const file = this.files[0];
+    const xhr = new XMLHttpRequest();
+    xhr.withCredentials = false;
+    xhr.open('POST', upurl);
+    xhr.onload = function () {
+      if (xhr.status != 200) {
+        failure('HTTP Error: ' + xhr.status);
+        return
+      }
+      const result = JSON.parse(xhr.responseText);
+      if (!result || typeof result.url != 'string') {
+        failure('Invalid JSON: ' + xhr.responseText);
+        return
+      }
+      callback(result.location)
+    };
+    const form = new FormData();
+    form.append('file', file);
+    xhr.send(form);
+  }
 }
 </script>

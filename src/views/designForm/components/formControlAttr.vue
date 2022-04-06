@@ -5,31 +5,34 @@
       <el-tab-pane label="字段属性" name="first">
         <el-form size="small" class="form">
           <h3>通用属性</h3>
-          <template v-for="(item,index) in attrList" :key="index">
+          <template v-for="(item, index) in attrList" :key="index">
             <el-form-item :label="item.label">
               <el-select
-                v-if="item.type==='select'"
+                v-if="item.type === 'select'"
                 :placeholder="item.placeholder"
                 v-model="item.value"
-                @change="controlChange(item,$event)">
-                <el-option v-for="(opt,key) in item.dict" :key="opt" :value="opt" :label="key"></el-option>
+                @change="controlChange(item, $event)"
+              >
+                <el-option v-for="(opt, key) in item.dict" :key="opt" :value="opt" :label="key"></el-option>
               </el-select>
               <el-switch
-                v-else-if="item.type==='switch'"
+                v-else-if="item.type === 'switch'"
                 v-model="item.value"
-                @change="controlChange(item,$event)"></el-switch>
+                @change="controlChange(item, $event)"
+              ></el-switch>
               <el-input
                 v-else
                 :type="item.inputStyle"
                 v-model="item.value"
                 :placeholder="item.placeholder"
-                @change="controlChange(item,$event)">
-              </el-input>
+                @change="controlChange(item, $event)"
+              ></el-input>
             </el-form-item>
           </template>
           <el-form-item
             label="联动条件"
-            v-if="showHide(['input','textarea','radio','checkbox','select','date','switch','number','cascader'],true)">
+            v-if="showHide(['input', 'textarea', 'radio', 'checkbox', 'select', 'date', 'switch', 'number', 'cascader'], true)"
+          >
             <el-col :span="9">
               <el-input placeholder="标识名称" v-model="controlData.config.linkKey"></el-input>
             </el-col>
@@ -38,34 +41,35 @@
               <el-input placeholder="关联值" v-model="controlData.config.linkValue"></el-input>
             </el-col>
           </el-form-item>
-          <template v-if="showHide(['tabs'],true)">
+          <template v-if="showHide(['tabs'], true)">
             <h3>标签配置项</h3>
-            <el-form-item v-for="(item,index) in controlData.columns" :key="item.label">
+            <el-form-item v-for="(item, index) in controlData.columns" :key="item.label">
               <el-col :span="12">
                 <el-input placeholder="标签配置项" v-model="item.label"></el-input>
               </el-col>
               <el-col :span="2" :offset="1">
-                <i class="icon-del" @click="delSelectOption(index,'tabs')"></i></el-col>
+                <i class="icon-del" @click="delSelectOption(index, 'tabs')"></i>
+              </el-col>
             </el-form-item>
             <el-form-item>
               <el-button @click="addSelectOption('tabs')">增加标签</el-button>
             </el-form-item>
           </template>
-          <div v-if="showHide(['radio', 'select', 'checkbox', 'cascader'],true)">
+          <div v-if="showHide(['radio', 'select', 'checkbox', 'cascader'], true)">
             <h3>选项配置</h3>
             <el-tabs v-model="controlData.config.type">
               <el-tab-pane label="固定选项" name="fixed">
-                <div v-if="controlData.type!=='cascader'">
-                  <el-form-item
-                    v-for="(item,index) in controlData.options"
-                    :key="index">
+                <div v-if="controlData.type !== 'cascader'">
+                  <el-form-item v-for="(item, index) in controlData.options" :key="index">
                     <el-col :span="10">
                       <el-input placeholder="选项标签" v-model="item.label"></el-input>
                     </el-col>
                     <el-col :span="10" :offset="1">
                       <el-input placeholder="选项值" v-model="item.value"></el-input>
                     </el-col>
-                    <el-col :span="2" :offset="1"><i class="icon-del" @click="delSelectOption(index)"></i></el-col>
+                    <el-col :span="2" :offset="1">
+                      <i class="icon-del" @click="delSelectOption(index)"></i>
+                    </el-col>
                   </el-form-item>
                 </div>
                 <el-form-item>
@@ -80,7 +84,8 @@
                 <el-form-item>
                   <el-input
                     v-model="controlData.config.sourceFun"
-                    :placeholder="controlData.config.source?'方法函数名':'数据源接口URL'">
+                    :placeholder="controlData.config.source ? '方法函数名' : '数据源接口URL'"
+                  >
                     <template #prepend v-if="!controlData.config.source">
                       <el-select v-model="controlData.config.request" style="width:80px">
                         <el-option label="get" value="get"></el-option>
@@ -92,46 +97,43 @@
                 <!--                <el-form-item v-if="controlData.config.source===0">
                                   <el-input :rows="4" type="textarea" v-model="controlData.config.getResultFun"
                                             placeholder="获取结果方法如：if(res.data.code===200){callback(res.data.data)}"></el-input>
-                                </el-form-item>-->
+                </el-form-item>-->
               </el-tab-pane>
             </el-tabs>
           </div>
           <template
-            v-if="showHide(['txt','title','table','grid','tabs','card','switch','gridChild','tableColumn','divider'])&&!searchDesign">
+            v-if="showHide(['txt', 'title', 'table', 'grid', 'tabs', 'card', 'switch', 'gridChild', 'tableColumn', 'divider']) && !searchDesign"
+          >
             <h3>校验设置</h3>
-            <div v-if="showHide(['input','password','component'],true)">
-              <el-form-item v-if="formConfig.rulesComm&&formConfig.rulesComm.length>0">
-                <el-select
-                  placeholder="快速选择"
-                  :multiple="true"
-                  v-model="controlData.rulesComm">
+            <div v-if="showHide(['input', 'password', 'component'], true)">
+              <el-form-item v-if="formConfig.rulesComm && formConfig.rulesComm.length > 0">
+                <el-select placeholder="快速选择" :multiple="true" v-model="controlData.rulesComm">
                   <el-option
                     v-for="item in formConfig.rulesComm"
                     :label="item.message"
                     :value="item.key"
-                    :key="item.key">
-                  </el-option>
+                    :key="item.key"
+                  ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item v-for="(item,index) in controlData.customRules" :key="item.type">
-                <el-input
-                  v-model="item.message"
-                  placeholder="校验提示信息">
+              <el-form-item v-for="(item, index) in controlData.customRules" :key="item.type">
+                <el-input v-model="item.message" placeholder="校验提示信息">
                   <template #prepend>
                     <el-select v-model="item.type" style="width: 80px">
                       <el-option
                         v-for="list in customRulesList"
                         :key="list.type"
                         :label="list.label"
-                        :value="list.type"></el-option>
+                        :value="list.type"
+                      ></el-option>
                     </el-select>
                   </template>
                   <template #append>
                     <el-button icon="icon-del" @click="delAddRules(index)"></el-button>
                   </template>
                 </el-input>
-                <el-input placeholder="正则表达式" v-model="item.rules" v-if="item.type==='rules'"></el-input>
-                <el-input placeholder="方法名称" v-model="item.methods" v-if="item.type==='methods'"></el-input>
+                <el-input placeholder="正则表达式" v-model="item.rules" v-if="item.type === 'rules'"></el-input>
+                <el-input placeholder="方法名称" v-model="item.methods" v-if="item.type === 'methods'"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button @click="addRulesFast">快速添加</el-button>
@@ -139,17 +141,15 @@
               </el-form-item>
             </div>
             <el-form-item v-else>
-              <el-checkbox
-                :modelValue="checkboxRequired"
-                @change="requiredChange">必填
-              </el-checkbox>
+              <el-checkbox :modelValue="checkboxRequired" @change="requiredChange">必填</el-checkbox>
               <el-input
                 placeholder="自定义必填错误提示"
                 v-model="controlData.rules[0].message"
-                v-if="controlData.rules&&controlData.rules[0]"></el-input>
+                v-if="controlData.rules && controlData.rules[0]"
+              ></el-input>
             </el-form-item>
           </template>
-          <div v-if="showHide(['grid','card','gridChild','divider'])">
+          <div v-if="showHide(['grid', 'card', 'gridChild', 'divider'])">
             <h3>其他属性</h3>
             <el-button size="small" @click="openAttrDialog">添加属性</el-button>
           </div>
@@ -157,25 +157,16 @@
       </el-tab-pane>
       <el-tab-pane label="表单属性" name="second">
         <el-form size="small" class="form">
-          <el-form-item
-            v-for="(item,index) in formAttr"
-            :label="item.label"
-            :key="index">
-            <el-select
-              v-if="item.type==='select'"
-              v-model="formConfig[item.value]">
+          <el-form-item v-for="(item, index) in formAttr" :label="item.label" :key="index">
+            <el-select v-if="item.type === 'select'" v-model="formConfig[item.value]">
               <el-option
                 :label="opt.label"
                 v-for="opt in item.options"
                 :key="opt.label"
-                :value="opt.value">
-              </el-option>
+                :value="opt.value"
+              ></el-option>
             </el-select>
-            <el-input
-              v-else
-              v-model="formConfig[item.value]"
-              :placeholder="item.placeholder">
-            </el-input>
+            <el-input v-else v-model="formConfig[item.value]" :placeholder="item.placeholder"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="rulesCommClick">编辑全局校验规则</el-button>
@@ -188,10 +179,10 @@
 </template>
 
 <script>
-import {reactive, toRefs, ref, computed, nextTick, onUnmounted, watch} from 'vue'
-import {useStore} from 'vuex'
-import {useRoute} from 'vue-router'
-import {getFiled} from "@/api"
+import { reactive, toRefs, ref, computed, nextTick, onUnmounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { getFiled } from "@/api"
 
 export default {
   name: 'formControlAttr',
@@ -202,20 +193,20 @@ export default {
     formStyle: String
   },
   emits: ['openDialog', 'update:formStyle'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const store = useStore()
     const route = useRoute()
     const dataSource = route.query.formName
     const state = reactive({
       formAttr: [
-        {label: '表单名称', value: 'name'},
-        {label: '表单标签宽度', value: 'labelWidth'},
-        {label: '表单样式名称', value: 'class'},
+        { label: '表单名称', value: 'name' },
+        { label: '表单标签宽度', value: 'labelWidth' },
+        { label: '表单样式名称', value: 'class' },
         {
           label: '组件尺寸', value: 'size', type: 'select', options: [
-            {label: 'large', value: 'large'},
-            {label: 'default', value: 'default'},
-            {label: 'small', value: 'small'}
+            { label: 'large', value: 'large' },
+            { label: 'default', value: 'default' },
+            { label: 'small', value: 'small' }
           ]
         }
       ],
@@ -294,7 +285,7 @@ export default {
     })
     // 设置通用属性
     const setAttrList = () => {
-      const {control = {}, className = '', type, name, config = {}, item = {}, attr = {}} = controlData.value
+      const { control = {}, className = '', type, name, config = {}, item = {}, attr = {} } = controlData.value
       let columnIndex = false// 是否显示序号列
       let columnOperate = false// 是否显示操作列
       if (type === 'table') {
@@ -369,7 +360,7 @@ export default {
           label: '设为密码',
           value: type,
           type: 'select',
-          dict: {'文本': 'input', '密码': 'password'},
+          dict: { '文本': 'input', '密码': 'password' },
           path: 'type',
           vShow: ['input', 'password']
         },
@@ -507,7 +498,7 @@ export default {
           label: '列表类型',
           value: control.listType,
           type: 'select',
-          dict: {'text': 'text', picture: 'picture', 'picture-card': 'picture-card'},
+          dict: { 'text': 'text', picture: 'picture', 'picture-card': 'picture-card' },
           path: 'control.listType',
           vShow: ['upload']
         },
@@ -528,7 +519,7 @@ export default {
         {
           label: 'direction',
           type: 'select',
-          dict: {horizontal: 'horizontal', vertical: 'vertical'},
+          dict: { horizontal: 'horizontal', vertical: 'vertical' },
           value: control.direction,
           path: 'control.direction',
           vShow: ['divider']
@@ -542,7 +533,7 @@ export default {
         {
           label: 'content-position',
           type: 'select',
-          dict: {left: 'left', right: 'right', center: 'center'},
+          dict: { left: 'left', right: 'right', center: 'center' },
           value: control.contentPosition,
           path: 'control.contentPosition',
           vShow: ['divider']
@@ -600,7 +591,7 @@ export default {
           path: 'control.colorFormat',
           type: 'select',
           placeholder: '写入 v-model 的颜色的格式',
-          dict: {hsl: 'hsl', hsv: 'hsv', hex: 'hex', rgb: 'rgb'},
+          dict: { hsl: 'hsl', hsv: 'hsv', hex: 'hex', rgb: 'rgb' },
           vShow: ['colorPicker']
         },
         {
@@ -618,12 +609,26 @@ export default {
           vShow: ['tinymce']
         },
         {
+          label: '图片上传地址',
+          value: control.imgUrl,
+          path: 'control.imgUrl',
+          placeholder: '图片上传地址',
+          vShow: ['tinymce']
+        },
+        {
+          label: '附件上传地址',
+          value: control.bloblUrl,
+          path: 'control.bloblUrl',
+          placeholder: '附件上传地址',
+          vShow: ['tinymce']
+        },
+        {
           label: '显示模式',
           value: config.style,
           path: 'config.style',
           placeholder: '显示风格(预览查看效果)',
           type: 'select',
-          dict: {'default': 'default', simple: 'simple'},
+          dict: { 'default': 'default', simple: 'simple' },
           vShow: ['tinymce']
         }
       ]
