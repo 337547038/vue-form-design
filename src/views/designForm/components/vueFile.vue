@@ -81,19 +81,12 @@ export default {
         '    </ak-form-design>\n' +
         '    <el-button type="primary" @click="submit">提交</el-button>\n' +
         '  </div>\n' +
-        '</template>' +
-        '<script>\n' +
-        'import {reactive, toRefs, provide, ref} from \'vue\'\n' +
+        '</template>\n' +
+        '<script setup>\n' +
+        'import {provide, ref} from \'vue\'\n' +
         '' + getHtml.importComponent + '' +
         '\n' +
-        'export default {\n' +
-        '  name: "addForm",\n' +
-        '  props: {},\n' +
-        '  components: {},\n' +
-        '  setup(props) {\n' +
-        '    const state = reactive({\n' +
-        '      formData: ' + objToStringify(obj) + '\n' +
-        '    })\n' +
+        '    const formData = ref(' + objToStringify(obj) + ')\n' +
         '' + getHtml.sourceFun + '' +
         '' + getHtml.componentProvide + '' +
         '' + getHtml.rulesMethods + '' +
@@ -114,13 +107,6 @@ export default {
         '        }\n' +
         '      })\n' +
         '    }\n' +
-        '    return {\n' +
-        '      ...toRefs(state),\n' +
-        '      submit,\n' +
-        '      formName\n' +
-        '    }\n' +
-        '  }\n' +
-        '}\n' +
         '<\/script>'
       nextTick(() => {
         state.editor = aceEdit(html, 'editJsonCopy', 'html')
@@ -146,23 +132,16 @@ export default {
         '  </div>\n' +
         '</template>\n' +
         '\n' +
-        '<script>\n' +
+        '<script setup>\n' +
         'import {useRoute, useRouter} from \'vue-router\'\n' +
-        'import {reactive, toRefs, ref} from \'vue\'\n' +
+        'import {ref} from \'vue\'\n' +
         '\n' +
-        'export default {\n' +
-        '  name: "list",\n' +
-        '  props: {},\n' +
-        '  components: {},\n' +
-        '  setup() {\n' +
         '    const route = useRoute()\n' +
         '    const router = useRouter()\n' +
         '    const tableListEl = ref()\n' +
-        '    const state = reactive({\n' +
-        '      tableData: ' + JSON.stringify(obj) + ',\n' +
-        '      searchData: {}, // 筛选表单\n' +
-        '      requestUrl: \'\' // 数据列表接口\n' +
-        '    })\n' +
+        '    const tableData=ref( ' + JSON.stringify(obj) + ')\n' +
+        '    const searchData=ref({}) // 筛选表单\n' +
+        '    const requestUrl=ref(\'\') // 数据列表接口\n' +
         '    const onSubmit = () => {\n' +
         '      tableListEl.value.searchClick()\n' +
         '    }\n' +
@@ -177,14 +156,6 @@ export default {
         '          break\n' +
         '      }\n' +
         '    }\n' +
-        '    return {\n' +
-        '      ...toRefs(state),\n' +
-        '      onSubmit,\n' +
-        '      tableListEl,\n' +
-        '      btnClick\n' +
-        '    }\n' +
-        '  }\n' +
-        '}\n' +
         '<\/script>\n'
       nextTick(() => {
         state.editor = aceEdit(html, 'editJsonCopy', 'html')
