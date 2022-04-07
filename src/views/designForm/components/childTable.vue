@@ -32,7 +32,7 @@
       </el-table-column>
     </el-table>
     <div class="table-btn" v-if="type===1">
-      <el-button size="mini" @click="addColumn">增加</el-button>
+      <el-button size="small" @click="addColumn">增加</el-button>
     </div>
   </div>
 </template>

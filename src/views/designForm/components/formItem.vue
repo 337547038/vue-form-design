@@ -18,11 +18,11 @@
         :disabled="editDisabled"
         :type="element.type==='password'?'password':''"
         v-if="element.type==='input'||element.type==='password'">
-<!--        <template v-slot:[key] v-for="(te,key) in element.slot">
-          {{ te }}
-        </template>-->
-        <template #prepend v-if="element.slot&&element.slot.prepend">{{element.slot.prepend}}</template>
-        <template #append v-if="element.slot&&element.slot.append">{{element.slot.append}}</template>
+        <!--        <template v-slot:[key] v-for="(te,key) in element.slot">
+                  {{ te }}
+                </template>-->
+        <template #prepend v-if="element.config.prepend">{{ element.config.prepend }}</template>
+        <template #append v-if="element.config.append">{{ element.config.append }}</template>
       </el-input>
       <el-input
         v-bind="element.control"
@@ -73,6 +73,16 @@
         :disabled="editDisabled"
         v-model="value">
       </el-date-picker>
+      <el-time-picker
+        v-if="element.type==='timePicker'"
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value"/>
+      <el-color-picker
+        v-if="element.type==='colorPicker'"
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value"/>
       <el-switch
         v-if="element.type==='switch'"
         v-bind="element.control"
@@ -112,17 +122,38 @@
           </div>
         </template>
       </el-upload>
+      <el-slider
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value"
+        v-if="element.type==='slider'"/>
+      <el-rate
+        v-bind="element.control"
+        :disabled="editDisabled"
+        v-model="value"
+        v-if="element.type==='rate'"/>
       <component
-        :is="element.component"
+        :is="element.config.component"
         v-bind="element.control"
         v-model="value"
         :disabled="editDisabled"
         v-if="element.type==='component'&&type!==4"/>
       <!-- 表单设计模式下显示提示-->
-      <div v-if="element.type==='component'&&element.component===''" class="gray">
-        请使用provide注入组件如：provide('{{ element.template }}',
+      <div v-if="element.type==='component'&&type===4" class="gray">
+        请使用provide注入组件如：provide('{{ element.config.template }}',
         import进来的组件)
       </div>
+      <template v-if="element.type==='tinymce'">
+        <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
+        <tinymce-edit
+          v-bind="element.control"
+          :config="element.config"
+          :disabled="editDisabled"
+          v-model="value"
+          v-if="type===1||type===2">
+        </tinymce-edit>
+        <img src="./tinymce/img.png" v-if="type===4" style="max-width: 100%;">
+      </template>
       <div
         v-bind="element.control"
         v-if="element.type==='txt'"
@@ -138,10 +169,11 @@ import {toRefs, inject, onMounted, computed, reactive, watch} from 'vue'
 import md5 from 'md5'
 import {ElMessage} from 'element-plus'
 import Tooltip from './tooltip.vue'
+import TinymceEdit from './tinymce/index.vue'
 
 export default {
   name: "item",
-  components: {Tooltip},
+  components: {Tooltip, TinymceEdit},
   props: {
     element: Object,
     modelValue: null,// 子表时值
@@ -267,8 +299,8 @@ export default {
       }
     }
     // 自定义组件注入
-    if (props.element.type === 'component' && props.element.template) {
-      props.element.component = inject(props.element.template, '')
+    if (props.element.type === 'component' && props.element.config.template) {
+      props.element.config.component = inject(props.element.config.template, '')
     }
     const getLabel = ele => {
       if (ele.item) {
@@ -283,6 +315,9 @@ export default {
     }
     // 控制编辑模式下是否可用
     const editDisabled = computed(() => {
+      if (injectData.type === 2) {
+        return true // 查看模式，为不可编辑状态
+      }
       if (injectData.type === 1 && injectData.isEdit && props.element.config && props.element.config.editDisabled) {
         // 新增模式 编辑模式
         return true

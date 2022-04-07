@@ -2,7 +2,6 @@
 <template>
   <div class="main-tools">
     <el-button
-      size="mini"
       type="text"
       @click="btnClick(item.icon)"
       v-for="item in btnList"

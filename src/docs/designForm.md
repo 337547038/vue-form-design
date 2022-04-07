@@ -77,7 +77,7 @@ formData = {
   "config": { // 表单配置信息
     "labelWidth": "",
     "class": "",
-    "size": "medium",
+    "size": "",
     "name": "form1636607042495",
     "rulesComm": [ // 表单公共校验方法
       {

@@ -46,7 +46,7 @@
               data-type="not-nested">
             </form-group>
           </div>
-          <child-table v-else :data="element" :type="type" />
+          <child-table v-else :data="element" :type="type"/>
         </template>
         <template v-else-if="element.type==='grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -79,6 +79,9 @@
               <form-group :data="element"></form-group>
             </el-collapse-item>
           </el-collapse>
+        </template>
+        <template v-else-if="element.type==='divider'">
+          <el-divider v-bind="element.control">{{ element.item && element.item.label }}</el-divider>
         </template>
         <template v-else>
           <form-item :element="element"></form-item>
@@ -265,11 +268,24 @@ export default {
       return true
     }
     // 根据表单设置不显示指定字段
-    const linksIf = el => {
+    const linksIf = obj => {
+      const {type, isEdit} = injectData
+      const {config: {disabledAdd, disabledEdit, disabledDetail} = {}} = obj
+      if (type === 1) {
+        if ((isEdit && disabledEdit) || (!isEdit && disabledAdd)) {
+          // 编辑页 || 新增页
+          return false // 不显示
+        }
+      } else if (type === 2 || type === 3) {
+        // 查看
+        if (disabledDetail) {
+          return false
+        }
+      }
       // 如果当前字段的name值存在于表单数据的vIf中，则不显示
       const vIf = props.data.config && props.data.config.vIf
       if (vIf && vIf.length > 0) {
-        return vIf.indexOf(el.name) === -1 // 存在时返回false隐藏
+        return vIf.indexOf(obj.name) === -1 // 存在时返回false隐藏
       }
       return true
     }

@@ -1,33 +1,70 @@
-<!-- Created by 337547038 on 2021/11/18. -->
 <template>
-  <div style="margin: 50px;">
-    <input type="text" v-model="value" v-bind="data"><br><br>
-    <input type="text" v-model="value1" v-bind="data1"><br>
-    <br>
-    <button @click="save">保存</button>
+  <div>
+    <el-button @click="previewVisible=true">1122</el-button>
+    <el-dialog v-model="previewVisible" title="预览" :fullscreen="true">
+      <div>
+        <ak-form-design :formData="formData" ref="formName">
+        </ak-form-design>
+        <el-button type="primary" @click="submit">提交</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
+<script>
+import {reactive, toRefs, provide, ref} from 'vue'
 
-<script setup>
-import {ref} from 'vue'
-import {localStorage} from "../utils"
-
-const value = ref('')
-const value1 = ref('')
-window.fnTest = () => {
-  console.log('fn test')
-}
-
-const data = ref({
-  name: '123',
-  onInput: () => {
-    console.log('ok')
-    fnTest()
+export default {
+  name: "addForm",
+  props: {},
+  components: {},
+  setup(props) {
+    const state = reactive({
+      formData: {},
+      previewVisible: true
+    })
+    setTimeout(() => {
+      state.formData = {
+        list: [{
+          name: "input1648358902208",
+          type: "input",
+          control: {modelValue: ""},
+          config: {disabledAdd: false},
+          item: {label: "单行文本", showLabel: false},
+          rules: [],
+          customRules: []
+        }, {
+          name: "tinymce1648360480166",
+          type: "tinymce",
+          control: {modelValue: ""},
+          config: {},
+          item: {label: "tinymce富文本", showLabel: false},
+          rules: []
+        }], config: {labelWidth: "", class: "", size: "default", name: "form1648300327079", rulesComm: []}
+      }
+    }, 1)
+    // 表单控件值改变事件
+    /*provide('DFControlChange', ({key, value}) => {
+      console.log(key)
+      console.log(value)
+    })*/
+    const formName = ref()
+    const submit = () => {
+      formName.value.validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          alert('submit')
+        } else {
+          console.log('error submit')
+          return false
+        }
+      })
+    }
+    return {
+      ...toRefs(state),
+      submit,
+      formName
+    }
   }
-})
-const data1 = ref()
-data1.value = localStorage().dataList
-const save = () => {
-  localStorage('dataList', data.value)
 }
 </script>

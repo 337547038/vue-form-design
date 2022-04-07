@@ -67,7 +67,15 @@ app.get('/getFiled', function (req, res) {
   const sql = `select COLUMN_NAME,COLUMN_COMMENT from information_schema.COLUMNS where table_name = '${formName}' and table_schema='formdesign'`
   console.log(sql)
   db.query(sql, (err, results) => {
-    getResult(err, results, res)
+    // console.log(results)
+    const temp = []
+    results.forEach(item => {
+      temp.push({
+        label: item.COLUMN_COMMENT,
+        value: item.COLUMN_NAME
+      })
+    })
+    getResult(err, temp, res)
   })
 })
 // 返回所有行

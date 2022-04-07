@@ -87,7 +87,7 @@ export default {
     // 子组件formGroup为递归组件，这里使用provide传参
     provide('DFStatusType', {type: props.type, isEdit: props.isEdit})
     provide('DFFormModel', model) // 给form-group提供联动条件设置
-    const rulesComm = ref(props.formData.config.rulesComm)
+    const rulesComm = ref([])
     watch(() => props.formData, data => {
       rulesComm.value = data.config.rulesComm
     })
@@ -129,7 +129,7 @@ export default {
     }
     // 追加移除style样式
     const appendRemoveStyle = (type) => {
-      const {config, style} = props.formData
+      const {config={}, style} = props.formData
       const styleId = document.getElementById(config.name + 'Style')
       if (styleId && type) { // 存在时直接修改，不用多次插入
         styleId.innerText = style

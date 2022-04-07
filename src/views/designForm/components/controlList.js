@@ -26,7 +26,6 @@ export default [
         control: { // 组件所有属性
           modelValue: ''
         },
-        slot: {}, // 组件的slot，仅在input输入框时才有
         config: {} // 其他配置信息
       },
       {
@@ -80,6 +79,24 @@ export default [
         config: {}
       },
       {
+        type: 'timePicker',
+        label: '时间选择器',
+        icon: 'time',
+        control: {
+          modelValue: ''
+        },
+        config: {}
+      },
+      {
+        type: 'colorPicker',
+        label: '取色器',
+        icon: 'color',
+        control: {
+          modelValue: ''
+        },
+        config: {}
+      },
+      {
         type: 'switch',
         label: '开关',
         icon: 'switch',
@@ -106,6 +123,24 @@ export default [
         },
         options: [],
         config: config
+      },
+      {
+        type: 'rate',
+        label: '评分',
+        icon: 'rate',
+        control: {
+          modelValue: ''
+        },
+        config: {}
+      },
+      {
+        type: 'slider',
+        label: '滑块',
+        icon: 'slider',
+        control: {
+          modelValue: ''
+        },
+        config: {}
       },
       {
         type: 'txt',
@@ -148,16 +183,25 @@ export default [
         control: {
           modelValue: ''
         },
-        config: {},
-        template: '', // 组件模板名称
-        component: '' // 根据template注入的组件
+        config: {}
+        /*template: '', // 组件模板名称
+        component: '' // 根据template注入的组件*/
       },
       {
         type: 'upload',
-        label: '图片',
+        label: '图片/文件',
         icon: 'image',
         control: {
           modelValue: []
+        },
+        config: {}
+      },
+      {
+        type: 'tinymce',
+        label: 'tinymce富文本',
+        icon: 'tinymce',
+        control: {
+          modelValue: ''
         },
         config: {}
       }
@@ -204,6 +248,13 @@ export default [
         control: {},
         config: {},
         item: {} // label标题相关
+      },
+      {
+        type: 'divider',
+        label: '分割线',
+        icon:'divider',
+        control: {},
+        config: {}
       }
     ]
   }

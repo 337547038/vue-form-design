@@ -76,7 +76,7 @@ export default {
         "config": {
           "labelWidth": "",
           "class": "",
-          "size": "medium",
+          "size": "",
           "name": "form1636711196545",
           "rulesComm": []
         }
