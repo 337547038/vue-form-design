@@ -264,7 +264,7 @@ export default {
         })
       }
     }
-    // 返回是否存在当前校验规则
+   /* // 返回是否存在当前校验规则
     const hsaRules = key => {
       let has = false
       props.element.rules.forEach(r => {
@@ -273,7 +273,7 @@ export default {
         }
       })
       return has
-    }
+    }*/
     const getAxiosOptions = () => {
       if (config.type === 'async' && config.source === 0 && state.type !== 4) {
         // 当前控件为动态获取数据

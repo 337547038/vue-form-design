@@ -77,9 +77,9 @@ export function delById(tableName, id) {
 }
 
 // tinymce编辑器图片上传
-export function uploadTinymce(data) {
+export function uploadTinymce(data, url) {
   return request({
-    url: '/upload/single',
+    url: url || '/upload/single',
     method: 'post',
     data,
     headers: {
@@ -87,4 +87,13 @@ export function uploadTinymce(data) {
     }
   })
 }
-
+export function uploadFiledTinymce(data, url) {
+  return request({
+    url: url || '/upload/single',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
