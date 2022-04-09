@@ -43,7 +43,7 @@
           </el-form-item>
           <template v-if="showHide(['tabs'], true)">
             <h3>标签配置项</h3>
-            <el-form-item v-for="(item, index) in controlData.columns" :key="item.label">
+            <el-form-item v-for="(item, index) in controlData.columns" :key="index">
               <el-col :span="12">
                 <el-input placeholder="标签配置项" v-model="item.label"></el-input>
               </el-col>
