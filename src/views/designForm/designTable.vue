@@ -120,7 +120,7 @@ export default {
   components: {headTools, vueFile},
   setup() {
     const route = useRoute()
-    const {ctx} = getCurrentInstance()
+    const {proxy} = getCurrentInstance()
     const vueFileEl = ref()
     const state = reactive({
       filedList: [], // 可选字段
@@ -274,7 +274,7 @@ export default {
     }
     const columnDrop = () => {
       // const wrapperTr = document.querySelector('.el-table__header-wrapper tr')
-      const wrapperTr = ctx.$el.querySelector('.el-table__header-wrapper tr')
+      const wrapperTr = proxy.$el.querySelector('.el-table__header-wrapper tr')
       Sortable.create(wrapperTr, {
         animation: 180,
         delay: 0,
