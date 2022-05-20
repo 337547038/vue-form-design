@@ -174,7 +174,7 @@ export default {
       if (!obj) {
         return
       }
-      const label = obj.label
+      const label = obj.label || obj.item.label || ''
       delete obj.label
       delete obj.icon
       let objectOther = {}
