@@ -8,19 +8,6 @@
   </el-tooltip>
 </template>
 
-<script>
-export default {
-  name: "tooltip",
-  data() {
-    return {}
-  },
-  props: {
-    content: String
-  },
-  components: {},
-  methods: {},
-  computed: {},
-  mounted() {
-  }
-}
+<script lang="ts" setup>
+  withDefaults(defineProps<{ content: string }>(), {})
 </script>

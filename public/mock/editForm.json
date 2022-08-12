@@ -1,0 +1,8 @@
+{
+  "code": 200,
+  "data": {
+    "formData": "{list:[{name:\"input1660211935731\",type:\"input\",control:{modelValue:\"\"},config:{},item:{label:\"单行文本\",showLabel:false}}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1660211919743\"}}",
+    "searchData": "{list:[{name:\"input1660211935731\",type:\"input\",control:{modelValue:\"\"},config:{},item:{label:\"单行文本\",showLabel:false}}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1660211919743\"}}",
+    "tableData": ""
+  }
+}

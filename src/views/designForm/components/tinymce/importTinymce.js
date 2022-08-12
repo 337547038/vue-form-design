@@ -30,7 +30,7 @@ import 'tinymce/plugins/media' // 插入编辑媒体
 import 'tinymce/plugins/nonbreaking' // 插入不间断空格
 import 'tinymce/plugins/pagebreak' // 插入分页符
 import 'tinymce/plugins/paste' // 粘贴插件
-import 'tinymce/plugins/preview'// 预览
+import 'tinymce/plugins/preview' // 预览
 // import 'tinymce/plugins/print'// 打印
 import 'tinymce/plugins/quickbars' // 快速工具栏
 import 'tinymce/plugins/save' // 保存

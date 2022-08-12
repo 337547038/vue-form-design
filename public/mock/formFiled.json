@@ -1,0 +1,25 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "name": "text",
+      "label": "文本框"
+    },
+    {
+      "name": "textarea",
+      "label": "多行文本"
+    },
+    {
+      "name": "radio",
+      "label": "单选框组"
+    },
+    {
+      "name": "checkbox",
+      "label": "多选框组测试"
+    },
+    {
+      "name": "select",
+      "label": "下拉选择框"
+    }
+  ]
+}
