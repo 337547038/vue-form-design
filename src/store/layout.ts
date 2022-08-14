@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { nextTick } from 'vue'
 /*interface Breadcrumb {
   label: string
   to?: string
@@ -17,7 +18,8 @@ export const useLayoutStore = defineStore('layout', {
   state: () => {
     return {
       breadcrumb: [],
-      tabs: tabs
+      tabs: tabs,
+      reloadFlag: true // 用于刷新路由
     }
   },
   // 也可以定义为
@@ -29,6 +31,12 @@ export const useLayoutStore = defineStore('layout', {
     setTabsViews(obj: TabsViews[]) {
       this.tabs = obj
       window.sessionStorage.setItem('tagViews', JSON.stringify(obj))
+    },
+    setReloadRouter() {
+      this.reloadFlag = false
+      nextTick(() => {
+        this.reloadFlag = true
+      })
     }
   }
 })

@@ -38,7 +38,7 @@
 <script lang="ts" setup>
   import controlListData from './controlList'
   import Draggable from 'vuedraggable'
-  import { computed, ref, toRefs } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import { FormData, FormList } from '../types'
 
   const props = withDefaults(
@@ -63,6 +63,13 @@
   const emits = defineEmits<{
     (e: 'update:searchData', value: FormList[]): void
   }>()
+  const newData: any = ref(props.searchData)
+  watch(
+    () => props.searchData,
+    (v) => {
+      newData.value = v
+    }
+  )
   const controlList = computed(() => {
     if (props.searchDesign) {
       // 只返回基础字段
@@ -75,7 +82,6 @@
     return JSON.parse(JSON.stringify(origin))
   }
   // 筛选设计时左则勾选已有表单字段
-  const newData: any = ref(props.searchData)
   const selectChange = (obj: FormList, val: boolean) => {
     if (val) {
       // 勾选时追加

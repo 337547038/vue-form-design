@@ -27,7 +27,7 @@ $mainColor: #66b1ff;
     i {padding-right: 5px}
   }
 }
-.add-form {min-height: 100%;padding: 10px;box-sizing: border-box;
+.add-form {padding: 10px;box-sizing: border-box;
   // 格珊
   .form-row {
     .form-col {
@@ -127,6 +127,12 @@ $mainColor: #66b1ff;
 }
 .table-list-comm {
   .table-main {margin-bottom: 20px}
+  .table-search{
+    form{display: flex;flex-wrap: wrap}
+    .drag{display: flex;flex-wrap: wrap;
+    >div{margin-right: 10px}}
+  }
+  .control-btn{margin-bottom: 10px}
 }
 /*图片文件上传*/
 .upload-style {
@@ -140,3 +146,5 @@ $mainColor: #66b1ff;
     .icon-plus {font-size: 28px;display: flex;align-items: center;justify-content: center;color: #8c939d;width: 148px;height: 148px;border: 1px dashed #d9d9d9;border-radius: 6px;cursor: pointer;overflow: hidden;background: #fbfdff}
   }
 }
+/*分页*/
+.table-page{padding-top: 10px;display: flex;justify-content: flex-end}

@@ -29,8 +29,9 @@
       @click="headClick('fullScreen')"
       title="退出全屏"
       v-if="fullScreen"
-      ><Close
-    /></el-icon>
+    >
+      <Close />
+    </el-icon>
   </el-container>
 </template>
 
@@ -40,11 +41,20 @@
   // import TagViews from './tagViews.vue'
   import Menu from './menu.vue'
   import CommonHeader from './header.vue'
+
   const store = useLayoutStore()
   const isCollapse = ref<boolean>(false)
   const fullScreen = ref<boolean>(false)
-  const reloadFlag = ref<boolean>(true)
+  //const reloadFlag = ref<boolean>(true)
   const navList = ref([])
+  const reloadFlag = computed({
+    get: () => {
+      return store.reloadFlag
+    },
+    set: () => {
+      store.setReloadRouter()
+    }
+  })
   const headClick = (type: string) => {
     if (type === 'collapse') {
       isCollapse.value = !isCollapse.value

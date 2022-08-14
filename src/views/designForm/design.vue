@@ -51,6 +51,37 @@
       </template>
     </el-dialog>
   </div>
+  <el-dialog
+    v-model="dialog.visible"
+    title="选择数据源"
+    width="600px"
+    custom-class="source-dialog"
+    :append-to-body="true"
+    :before-close="dialogClose"
+  >
+    <div style="text-align: right; margin-bottom: 5px">
+      <el-button type="primary" @click="dialogClick()">无数据源创建</el-button>
+    </div>
+    <el-table
+      :data="dialog.tableData"
+      border
+      style="width: 100%"
+      v-loading="dialog.loading"
+    >
+      <el-table-column prop="name" label="名称" />
+      <el-table-column prop="tableName" label="数据表名" />
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button
+            size="small"
+            @click="dialogClick(scope.row.id)"
+            type="primary"
+            >创建表单
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-dialog>
 </template>
 <script setup lang="ts">
   import headTools from './components/headTools.vue'
@@ -58,7 +89,7 @@
   import formDesign from './components/form.vue'
   import formControlAttr from './components/formControlAttr.vue'
   import vueFile from './components/vueFile.vue'
-  import { ref, reactive, nextTick, onUnmounted } from 'vue'
+  import { ref, reactive, nextTick, onUnmounted, watch } from 'vue'
   import { useDesignFormStore } from '@/store/designForm'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
@@ -70,7 +101,6 @@
   const store = useDesignFormStore()
   const router = useRouter()
   const route = useRoute()
-  const query = route.query
   const state = reactive<any>({
     formData: {
       list: [],
@@ -88,14 +118,38 @@
     drawerDirection: 'rtl', // 默认右边弹出
     formDataPreview: {},
     previewVisible: false, // 预览窗口
-    searchDesign: query.type === 'search', // 是否为筛选设计
+    searchDesign: route.query?.type === 'search', // 是否为筛选设计
     formDataList: {}, // 筛选模式下提供给左则快速选择已有表单字段
     formDataTemp: {}
   })
   const vueFileEl = ref()
+  // 选择数据源弹窗
+  const dialog = ref({
+    visible: route.query.new === 'true',
+    loading: true,
+    tableData: []
+  })
+  const dialogClick = (id?: string) => {
+    dialog.value.visible = false
+    router.push({ path: '/designform/design', query: { formId: id } })
+  }
+  const getDialogData = () => {
+    if (route.query.new === 'true') {
+      getRequest('datasource').then((res: any) => {
+        dialog.value.loading = false
+        dialog.value.tableData = res.data.data
+      })
+    }
+  }
+  const dialogClose = (done: any) => {
+    router.push({ path: '/designform/design' })
+    done()
+  }
+  getDialogData()
+  // 数据源弹窗结束
+
   const getInitData = () => {
-    const id = query.id // 当前记录保存的id
-    // const formId = query.formId // 使用的是哪个表单数据源
+    const id = route.query.id // 当前记录保存的id
     if (id) {
       // 获取初始表单数据
       state.loading = true
@@ -193,13 +247,13 @@
   }
   // 将数据保存在服务端
   const saveData = () => {
-    if (query.formId) {
+    if (route.query.formId) {
       const prams = {
         searchData: state.formDataTemp.searchData,
         tableData: state.formDataTemp.tableData,
         formData: objToStringify(state.formData),
-        id: query.id, // 修改时，当前记录id
-        formId: query.formId,
+        id: route.query.id, // 修改时，当前记录id
+        formId: route.query.formId,
         name: state.formData.form.name // 表单名称，用于在显示所有已创建的表单列表里显示
       }
       if (state.searchDesign) {
@@ -216,7 +270,7 @@
               message: '保存成功！',
               type: 'success'
             })
-            router.push({ path: '/designform/list' })
+            router.push({ path: '/designform/formlist' })
           } else {
             ElMessage.error(res.data)
           }
