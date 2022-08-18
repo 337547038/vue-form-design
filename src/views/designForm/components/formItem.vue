@@ -115,18 +115,6 @@
         :options="options"
         v-model="value"
       />
-      <!--      <component
-        :is="config.component"
-        v-bind="control"
-        v-model="value"
-        :disabled="editDisabled"
-        v-if="data.type === 'component' && type !== 4"
-      />
-      &lt;!&ndash; 表单设计模式下显示提示&ndash;&gt;
-      <div v-if="data.type === 'component' && type === 4" class="gray">
-        请使用provide注入组件如：provide('{{ config.template }}',
-        import进来的组件)
-      </div>-->
       <template v-if="data.type === 'tinymce'">
         <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
         <tinymce-edit
@@ -156,7 +144,6 @@
   import Tooltip from './tooltip.vue'
   import TinymceEdit from './tinymce/index.vue'
   import { useDesignFormStore } from '@/store/designForm'
-  import { SetFormOptions, SetFormValue } from '../constants'
   import { FormItem, FormList, RulesComm } from '../types'
 
   const props = withDefaults(
@@ -176,7 +163,7 @@
   })
   const { config, control, options = ref([]) } = toRefs(props.data)
   const value = props.tProps
-    ? toRef(props, 'modelValue')
+    ? ref(props.modelValue)
     : toRef(props.data.control, 'modelValue')
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
   watch(
@@ -326,11 +313,6 @@
     return []
   }
 
-  // 自定义组件注入
-  /*if (props.data.type === 'component' && props.data.config.template) {
-    props.data.config.component = inject(props.data.config.template, '')
-  }*/
-
   // 为改变事件提供方法
   const changeEvent = inject('AKControlChange', '') as any
   watch(
@@ -345,34 +327,34 @@
     }
   )
   // 执行表单的setValue方法，对组件设值
-  /*const setValueEvent = inject(SetFormValue, '')
   watch(
-    () => setValueEvent.value,
-    () => {
+    () => store.formValue,
+    (val: any) => {
       // !props.tProps 的这里不单独处理
-      if (setValueEvent && setValueEvent.value && !props.tProps) {
-        state.value = setValueEvent.value[props.data.name]
+      if (val && !props.tProps && val[props.data.name] !== undefined) {
+        value.value = val[props.data.name]
         // 上传默认值需要使用fileList参数
         if (props.data.type === 'upload') {
-          props.data.control.fileList = JSON.parse(JSON.stringify(state.value))
+          control.value.fileList = JSON.parse(
+            JSON.stringify(val[props.data.name])
+          )
         }
       }
     }
-  )*/
+  )
   // 对单选多选select设置options
-  /*  const setOptionsEvent = inject(SetFormOptions, '')
   watch(
-    () => setOptionsEvent.value,
-    () => {
-      // !props.tProps 的这里不单独处理
-      if (setOptionsEvent && setOptionsEvent.value && !props.tProps) {
-        props.data.options = setOptionsEvent.value[props.data.name]
+    () => store.formOptions,
+    (val: any) => {
+      // 子表内的需要注意下，只有在子表有记录时才生效
+      if (val && val[props.data.name] !== undefined) {
+        options.value = val[props.data.name]
       }
     }
-  )*/
+  )
   // 图片上传
   const uploadSuccess = (response: any, file: any, fileList: any) => {
-    console.log(file)
+    // console.log(file)
     control.value.modelValue.push({
       name: file.fileName,
       url: file.path
@@ -390,7 +372,7 @@
   }
   // 上传错误
   const uploadError = (err: any, file: any, fileList: any) => {
-    console.log('uploadError')
+    // console.log('uploadError')
     ElMessage.error(file.name + '上传失败')
     control.value.onError && control.value.onError(err, file, fileList)
   }

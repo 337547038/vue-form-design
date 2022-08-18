@@ -4,7 +4,7 @@
     <el-table
       v-bind="data.control"
       :class="[data.className]"
-      :data="data.tableData"
+      :data="tableDataNew"
     >
       <el-table-column
         v-for="(item, index) in data.list"
@@ -14,26 +14,24 @@
         :width="item.item.span"
       >
         <template #default="scope">
-          <span v-if="item.typeColumn === 'index'">{{ scope.$index + 1 }}</span>
+          <span v-if="item.type === 'index'">{{ scope.$index + 1 }}</span>
           <div v-if="type === 3">{{ getText(scope.row[item.name]) }}</div>
           <div v-else>
-            <el-button
-              v-if="item.typeColumn === 'operate' && type === 1"
-              link
-              @click="delColumn(scope.$index)"
-              >删除
-            </el-button>
             <form-item
               :tProps="`${data.name}.${scope.$index}.${item.name}`"
               v-model="scope.row[item.name]"
-              :element="item"
-              v-else
+              :data="item"
             />
           </div>
         </template>
         <template #header="scope" v-if="item.help">
           {{ scope.column.label }}
           <Tooltip :content="item.help" />
+        </template>
+      </el-table-column>
+      <el-table-column prop="del" label="操作" v-if="type === 1">
+        <template #default="scope">
+          <el-button link @click="delColumn(scope.$index)">删除 </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -45,49 +43,56 @@
 
 <script setup lang="ts">
   import FormItem from './formItem.vue'
-  import { inject, watchEffect } from 'vue'
+  import { watch, ref } from 'vue'
   import Tooltip from './tooltip.vue'
-  import { SetFormValue } from "@/views/designForm/constants";
-
+  import { useDesignFormStore } from '@/store/designForm'
   const props = withDefaults(
     defineProps<{
-      data: object
+      data: any
       type: number
+      tableData: any
     }>(),
     {
       data: () => {
         return {}
+      },
+      tableData: () => {
+        return []
       }
     }
   )
+  const formStore = useDesignFormStore()
+  const tableDataNew: any = ref(props.tableData)
   const addColumn = () => {
-    const temp = {}
-    props.data.list.forEach((item) => {
-      if (item.name) {
-        if (item.type === 'checkbox') {
-          temp[item.name] = []
-        } else {
-          temp[item.name] = ''
+    const temp: any = {}
+    if (props.data.list) {
+      props.data.list.forEach((item: any) => {
+        if (item.name) {
+          if (item.type === 'checkbox') {
+            temp[item.name] = []
+          } else {
+            temp[item.name] = ''
+          }
         }
-      }
-    })
-    props.data.tableData.push(JSON.parse(JSON.stringify(temp)))
+      })
+      tableDataNew.value.push(JSON.parse(JSON.stringify(temp)))
+    }
   }
-  const getText = (text) => {
+  const getText = (text: any) => {
     if (typeof text === 'string') {
       return text
     } else {
       return text && text.toString()
     }
   }
-  const delColumn = (index) => {
-    props.data.tableData.splice(index, 1)
+  const delColumn = (index: number) => {
+    tableDataNew.value.splice(index, 1)
   }
-  // 执行表单的setValue方法，对组件设值
-  const setValueEvent = inject(SetFormValue, '')
-  watchEffect(() => {
-    if (setValueEvent && setValueEvent.value) {
-      props.data.tableData = setValueEvent.value[props.data.name]
+  // 使用setValue设值
+  watch(
+    () => formStore.formValue,
+    (val: any) => {
+      tableDataNew.value = val[props.data.name]
     }
-  })
+  )
 </script>

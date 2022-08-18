@@ -1,0 +1,301 @@
+<h1 id="接口文档说明">接口文档说明</h1>
+<h2 id="获取可用于创建表单的数据源">1.获取可用于创建表单的数据源</h2>
+<p>接口地址如：http://xxxx.com/api/getdatasource</p>
+<p>请求类型：get/post</p>
+<p>请求参数：无</p>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a> <span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;示例表单&quot;</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>    <span class="fu">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>  <span class="ot">]</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>调用位置截图：<img src="./img/datasource.png" /></p>
+<h2 id="根据表单id接口1-id获取表单提交字段">2.根据表单id(接口1 id)获取表单提交字段</h2>
+<p>接口地址如：http://xxxx.com/api/getformFiled</p>
+<p>请求类型：get/post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;text&quot;</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>      <span class="dt">&quot;label&quot;</span><span class="fu">:</span> <span class="st">&quot;文本框&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;textarea&quot;</span><span class="fu">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>      <span class="dt">&quot;label&quot;</span><span class="fu">:</span> <span class="st">&quot;多行文本&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;radio&quot;</span><span class="fu">,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>      <span class="dt">&quot;label&quot;</span><span class="fu">:</span> <span class="st">&quot;单选框组&quot;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;checkbox&quot;</span><span class="fu">,</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>      <span class="dt">&quot;label&quot;</span><span class="fu">:</span> <span class="st">&quot;多选框组测试&quot;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;select&quot;</span><span class="fu">,</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a>      <span class="dt">&quot;label&quot;</span><span class="fu">:</span> <span class="st">&quot;下拉选择框&quot;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a>    <span class="fu">}</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a>  <span class="ot">]</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>调用位置截图：<img src="./img/formfield.png" /></p>
+<h2 id="新增编辑保存设计的表单">3.新增/编辑保存设计的表单</h2>
+<p>接口地址如：http://xxxx.com/api/saveform</p>
+<p>请求类型：post</p>
+<p>提交参数：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a> <span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;当前记录id，新增时没有&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>    <span class="dt">&quot;formId&quot;</span><span class="fu">:</span> <span class="st">&quot;新增时有，修改可能不传&quot;</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;设计表单的名称&quot;</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>    <span class="dt">&quot;formData&quot;</span><span class="fu">:</span> <span class="st">&quot;设计时生成的字符串数据&quot;</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>    <span class="dt">&quot;searchData&quot;</span><span class="fu">:</span> <span class="st">&quot;列表筛选表单设计字符串数据&quot;</span><span class="fu">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>    <span class="dt">&quot;tableData&quot;</span><span class="fu">:</span> <span class="st">&quot;列表设计字符串数据&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>  <span class="fu">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a> <span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="st">&quot;保存成功&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>调用位置截图：<img src="./img/design.png" /></p>
+<h2 id="根据表单id接口3-id获取创建的表单数据修改已设计的表单">4.根据表单id(接口3 id)获取创建的表单数据（修改已设计的表单）</h2>
+<p>接口地址如：http://xxxx.com/api/getform</p>
+<p>请求类型：get/post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a> <span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a>      <span class="dt">&quot;formData&quot;</span><span class="fu">:</span> <span class="st">&quot;返回接口3提交的数据，为字符串类型&quot;</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a>      <span class="dt">&quot;searchData&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>      <span class="dt">&quot;tableData&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>      <span class="er">//</span> <span class="er">...</span> <span class="er">返回提交保存时所有字段数据</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a>    <span class="fu">}</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a>  <span class="ot">]</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>调用位置截图：<img src="./img/design2.png" /></p>
+<h2 id="根据id删除已设计的表单">5.根据id删除已设计的表单</h2>
+<p>删除接口3新增的数据</p>
+<p>接口地址如：http://xxxx.com/api/delform</p>
+<p>请求类型：get/post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="st">&quot;删除成功&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="已设计表单列表">6.已设计表单列表</h2>
+<p>需支持分页</p>
+<p>接口地址如：http://xxxx.com/api/getformlist</p>
+<p>请求类型:get/post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>  <span class="dt">&quot;pageIndex&quot;</span><span class="fu">:</span> <span class="st">&quot;当前第几页，数字&quot;</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>  <span class="dt">&quot;pageSize&quot;</span><span class="fu">:</span> <span class="st">&quot;每页多少条记录，数字&quot;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true"></a>    <span class="dt">&quot;list&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true"></a>      <span class="fu">{</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true"></a>        <span class="dt">&quot;formId&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true"></a>        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;示例测试&quot;</span><span class="fu">,</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;启用&quot;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true"></a>      <span class="fu">}</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true"></a>    <span class="dt">&quot;pageInfo&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true"></a>      <span class="dt">&quot;total&quot;</span><span class="fu">:</span> <span class="dv">100</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true"></a>    <span class="fu">}</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true"></a>  <span class="fu">}</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="启用或禁用当前记录">6.1 启用或禁用当前记录</h2>
+<h2 id="添加修改表单内容">7.添加/修改表单内容</h2>
+<p>接口地址如：http://xxxx.com/api/saveformcontent</p>
+<p>请求类型:post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>  <span class="dt">&quot;tid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="er">//</span> <span class="er">当前记录id，新增时无</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a>  <span class="dt">&quot;...&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a>  <span class="er">//</span> <span class="er">其他表单设计的所有字段</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="st">&quot;操作成功/操作失败&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="根据id获取表单内容">8.根据id获取表单内容</h2>
+<p>接口地址如：http://xxxx.com/api/getformcontent</p>
+<p>请求类型:post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a>  <span class="dt">&quot;tid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true"></a>    <span class="er">//返回接口7提交的所有字段</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true"></a>  <span class="fu">}</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="删除表单内容批量删除">9.删除表单内容（批量删除）</h2>
+<p>接口地址如：http://xxxx.com/api/delformcontent</p>
+<p>请求类型:get/post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a>  <span class="dt">&quot;tid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="st">&quot;删除成功/失败&quot;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="表单内容列表">10.表单内容列表</h2>
+<p>接口地址如：http://xxxx.com/api/getcontentlist</p>
+<p>请求类型:get/post</p>
+<p>请求参数：</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a>  <span class="dt">&quot;tid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a>  <span class="dt">&quot;pageIndex&quot;</span><span class="fu">:</span> <span class="st">&quot;当前第几页，数字&quot;</span><span class="fu">,</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a>  <span class="dt">&quot;pageSize&quot;</span><span class="fu">:</span> <span class="st">&quot;每页多少条记录，数字&quot;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a>    <span class="dt">&quot;list&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a>      <span class="fu">{</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true"></a>        <span class="dt">&quot;formId&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true"></a>        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;示例测试&quot;</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true"></a>      <span class="fu">}</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true"></a>    <span class="dt">&quot;pageInfo&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true"></a>      <span class="dt">&quot;total&quot;</span><span class="fu">:</span> <span class="dv">100</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true"></a>    <span class="fu">}</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true"></a>  <span class="fu">}</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="提供表单单选多选下拉级联等下拉选项的数据可不提供">11.提供表单单选/多选/下拉/级联等下拉选项的数据（可不提供）</h2>
+<p>接口地址如：http://xxxx.com/api/getoptions?a=x&amp;b=x （仅支持url传参）</p>
+<p>请求类型：get/post</p>
+<p>请求参数：根据实际情况使用url传参</p>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a>      <span class="dt">&quot;label&quot;</span><span class="fu">:</span> <span class="st">&quot;选项1&quot;</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true"></a>    <span class="fu">{</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;2&quot;</span><span class="fu">,</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true"></a>      <span class="dt">&quot;label&quot;</span><span class="fu">:</span> <span class="st">&quot;选项2&quot;</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true"></a>    <span class="fu">}</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true"></a>  <span class="ot">]</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>调用位置截图：<img src="./img/options.png" /></p>
+<h2 id="图片文件上传">12.图片/文件上传</h2>
+<p>接口地址如：http://xxxx.com/api/upload</p>
+<p>请求类型：post</p>
+<p>请求参数：formData数据</p>
+<p>返回结果：</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="dv">200</span><span class="fu">,</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="st">&quot;上传后的图片或文件路径&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+<p>注：为减少不必要的资源浪费，演示时可返回固定示例图片或文件即可</p>
+<h1 id="总结">总结</h1>
+<p>需支持跨域请求</p>
+<p>根据演示示例，可能需要如下数据表</p>
+<h2 id="表1">表1：</h2>
+<p>用于保存已设计好的表单，接口3提交保存到此表；为接口4提供已保存的数据</p>
+<h3 id="表1必需字段">表1必需字段</h3>
+<table>
+<thead>
+<tr class="header">
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td>当前记录id，可为自动生成</td>
+</tr>
+<tr class="even">
+<td>formId</td>
+<td>表单数据源id，即使用了哪个数据源创建的表单，当表单新增数据时根据此id提交到对应的表</td>
+</tr>
+<tr class="odd">
+<td>name</td>
+<td>创建的表单名称</td>
+</tr>
+<tr class="even">
+<td>formData</td>
+<td>设计的表单json字符串数据</td>
+</tr>
+<tr class="odd">
+<td>searchData</td>
+<td>表单列表搜索表单字符串数据</td>
+</tr>
+<tr class="even">
+<td>tableData</td>
+<td>表单列表字符串数据</td>
+</tr>
+</tbody>
+</table>
+<h2 id="表2">表2</h2>
+<p>用作本次演示的数据表，每张表对应一个表单数据。为接口2提供当前所有可供数据录入的字段；为接口1提供可用于设计的表单数据源</p>
+<h2 id="表2演示字段">表2演示字段</h2>
+<table>
+<thead>
+<tr class="header">
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>文本框</td>
+<td>表单提交的字段</td>
+</tr>
+<tr class="even">
+<td>多选框</td>
+<td>同上</td>
+</tr>
+<tr class="odd">
+<td>单选</td>
+<td>同上</td>
+</tr>
+<tr class="even">
+<td>多选</td>
+<td>同上</td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td>可提供所有可设计的字段用于测试</td>
+</tr>
+</tbody>
+</table>

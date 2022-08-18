@@ -14,12 +14,15 @@ export default defineConfig({
     vueJsx({}),
     Pages({
       pagesDir: [
-        { dir: 'src/views', baseRoute: '' }
-        // {dir: "src/views", baseRoute: ""},
+        { dir: 'src/views', baseRoute: '' },
+        { dir: 'src/docs', baseRoute: '/docs' }
       ],
-      /*pagesDir: 'src/views',*/
       extensions: ['md', 'vue'],
-      exclude: ['**/components/*.vue', '**/components/*/*.vue']
+      exclude: [
+        'components/*.vue',
+        '**/components/*.vue',
+        '**/components/*/*.vue'
+      ]
     })
   ],
   resolve: {

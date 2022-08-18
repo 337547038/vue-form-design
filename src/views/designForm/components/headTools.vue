@@ -28,20 +28,23 @@
     (e: 'click', value: string): void
   }>()
   const route = useRoute()
-  // 表格设计 没有id时不能保存
-  // const saveDisabled = props.type === '2' && !route.query.id
   // 筛选查找模式下不显示
   const vueDisabled = route.query.type === 'search'
+  const showSave = computed(() => {
+    // 有formId时显示保存
+    return route.query.formId === undefined
+  })
   const state = reactive({
     list: [
       { icon: 'del', label: '清空' },
-      { icon: 'eye', label: '预览', disabled: props.type === '2' }, // 表格设计时隐藏 todo 参数应该通过url传
+      { icon: 'eye', label: '预览', disabled: props.type === '2' },
       { icon: 'json', label: '生成脚本预览' },
       { icon: 'vue', label: '导出vue文件', disabled: vueDisabled },
       { icon: 'import', label: '导入Json' },
-      { icon: 'save', label: '保存' }
+      { icon: 'save', label: '保存', disabled: showSave.value }
     ]
   })
+
   const btnList = computed(() => {
     return state.list.filter((item) => {
       return !item.disabled

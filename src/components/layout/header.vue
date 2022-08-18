@@ -5,12 +5,12 @@
   </el-icon>
   <el-breadcrumb separator="/" class="breadcrumb">
     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-    <el-breadcrumb-item
-      v-for="(item, index) in breadcrumb"
-      :key="index"
-      :to="{ path: item.path }"
-      >{{ item.label }}</el-breadcrumb-item
-    >
+    <template v-for="(item, index) in breadcrumb" :key="index">
+      <el-breadcrumb-item :to="{ path: item.path }" v-if="item.path">{{
+        item.label
+      }}</el-breadcrumb-item>
+      <el-breadcrumb-item v-else>{{ item.label }}</el-breadcrumb-item>
+    </template>
   </el-breadcrumb>
   <div class="comm-header-tool">
     <el-icon @click="toolClick('refresh')" title="刷新页面"

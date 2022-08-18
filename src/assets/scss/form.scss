@@ -17,7 +17,7 @@ $mainColor: #66b1ff;
 }
 // 框架
 .main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0;overflow: hidden;
-  .empty-tips {position: absolute;text-align: center;width: 300px;font-size: 20px;top: 200px;left: 50%;margin-left: -150px;color: #ccc;
+  .empty-tips {text-align: center;width: 100%;font-size: 20px;top: 100px;color: #ccc;position: relative;
   }
   .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 140px);overflow-y: auto;overflow-x: hidden;}
 }
@@ -83,7 +83,7 @@ $mainColor: #66b1ff;
 .export-dialog {
   .el-dialog__body {padding: 0 20px}
 }
-.design-form {height: calc(100vh - 142px);
+.design-form {height: calc(100vh - 167px);
   > div {height: 100%}
   .ghost {
     background: #F56C6C;

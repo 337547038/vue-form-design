@@ -25,36 +25,37 @@
       id: query.tid
     }
     getRequest('getFormById', prams).then((res) => {
-      console.log(res)
+      // console.log(res)
       const result = res.data.data
       if (result) {
         formData.value = stringToObj(result.formData)
       }
     })
-    if (query.id) {
+    /*if (query.id) {
       // 获取初始值
       const prams = {
         tid: query.tid,
         id: query.id
       }
       getRequest('getFormContent', prams).then((res) => {
-        console.log(res)
+        // console.log(res)
         const result = res.data.data
         if (result) {
           formEl.value.setValue(result)
         }
       })
-    }
+    }*/
   }
   const submit = () => {
     formEl.value.validate((valid: boolean, fields: any) => {
-      console.log(fields)
+      // console.log(fields)
       if (valid) {
         loading.value = true
         const params = {
           tid: query.tid,
           id: query.id,
-          ...formEl.value.getValue()
+          // ...formEl.value.getValue()
+          fields
         }
         // 提交保存表单
         getRequest('saveFormContent', params)

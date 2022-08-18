@@ -1,0 +1,56 @@
+@charset "UTF-8";
+a{text-decoration: none}
+.index-page {padding: 100px 0 0;width: 600px;margin: 0 auto;
+  .intro {line-height: 28px;font-size: 16px;margin-bottom: 30px}
+  .btn {
+    .title {font-size: 16px;margin-bottom: 20px;
+      h4 {font-size: 15px;padding-top: 5px}
+    }
+    .row {margin-bottom: 30px;display: flex;
+      a {display: block;margin-left: 15px;
+        &:first-child {margin-left: 0}
+      }
+    }
+  }
+  .docs {margin-bottom: 20px}
+}
+.form-list-page, .add-form-demo {padding: 20px;
+  h3 {margin-bottom: 20px;}
+}
+//////
+.layout-docs {background: #f7f8fa;display: flex;
+  .sidebar {width: 220px;background: #fff;height: 100vh;overflow-y: auto;overflow-x: hidden;box-shadow: 0 8px 12px #ebedf0;padding-left: 30px;
+    span {padding: 18px 0 5px 0;color: #455a64;font-weight: 700;font-size: 15px;line-height: 28px;display: block}
+    a {display: block;margin: 0;padding: 8px 0 8px 0;color: #455a64;font-size: 14px;transition: color 0.2s;text-decoration: none;
+      &:hover {color: #4fc08d}
+    }
+  }
+  .main-content {flex: 2;padding: 10px 30px 30px;overflow-x: hidden;overflow-y: auto;height: 100vh;
+    .markdownIt-Anchor {display: none}
+    .row {margin-bottom: 15px}
+    h1 {margin-bottom: 30px}
+    h2 {margin-bottom: 20px}
+    h3 {margin-bottom: 10px;}
+    .vuedoc-demo {margin-bottom: 20px;}
+    p {padding: 6px 0}
+    p code, table code { color: #444;
+      background-color: #eeffde;
+      margin: 0 4px;
+      display: inline-block;
+      padding: 3px 7px;
+      border-radius: 3px;
+      font-size: 14px;
+      line-height: 20px;}
+    .vuedoc__code {line-height: 22px;}
+    .vuedoc-demo__footer {
+      &:hover {color: #07c160}
+    }
+    .language-json, .language-javascript, .language-js {margin-bottom: 30px}
+    img {max-width: 100%;display: block}
+  }
+  .vuedoc {
+    > table {width: 100%;border-spacing: 0;border-collapse: collapse;border: 1px solid #eaeefb;margin-bottom: 20px;background: #fff;
+      th, td {border: 1px solid #eaeefb;color: #314659;text-align: left;padding: 10px 15px;}
+    }
+  }
+}

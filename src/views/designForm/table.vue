@@ -161,11 +161,13 @@
       {
         label: '新增',
         key: 'add',
-        type: 'primary'
+        type: 'primary',
+        size: 'small'
       },
       {
         label: '删除',
-        key: 'del'
+        key: 'del',
+        size: 'small'
       }
     ],
     controlBtnGroup: [],

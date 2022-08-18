@@ -113,7 +113,17 @@
                   <el-button @click="addSelectOption">新增</el-button>
                 </el-form-item>
               </el-tab-pane>
-              <el-tab-pane label="动态选项" name="async">
+              <el-tab-pane name="async">
+                <template #label>
+                  <el-tooltip
+                    content="选用动态选项时请删除固定选项数据"
+                    placement="top"
+                  >
+                    <span
+                      >动态选项<el-icon> <QuestionFilled /> </el-icon
+                    ></span>
+                  </el-tooltip>
+                </template>
                 <el-radio-group v-model="controlData.config.source">
                   <el-radio :label="0">数据源</el-radio>
                   <el-radio :label="1"
@@ -283,6 +293,20 @@
               :placeholder="item.placeholder"
             />
           </el-form-item>
+          <el-form-item v-if="!state.isSearch" label="添加提交按钮">
+            <el-input
+              placeholder="添加提交按钮，空不显示"
+              v-model="formBtn.confirm"
+              @change="formBtnChange('confirm', $event)"
+            />
+          </el-form-item>
+          <el-form-item v-if="!state.isSearch" label="添加取消返回按钮">
+            <el-input
+              placeholder="添加取消返回按钮，空不显示"
+              v-model="formBtn.cancel"
+              @change="formBtnChange('cancel', $event)"
+            />
+          </el-form-item>
           <el-form-item>
             <el-button v-if="!state.isSearch" @click="rulesCommClick"
               >编辑全局校验规则
@@ -315,7 +339,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, computed, watch, toRef } from 'vue'
+  import { reactive, computed, watch, toRef, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import { getRequest } from '@/api'
   import { useDesignFormStore } from '@/store/designForm'
@@ -329,8 +353,10 @@
   )
   const emits = defineEmits<{
     (e: 'openDialog', data: any, type?: any): void
+    (e: 'update:formData', data: FormData): void
   }>()
   const formInfo = toRef(props.formData, 'form')
+  const formBtn: any = ref({})
   const store = useDesignFormStore()
   const route = useRoute()
   const state = reactive<any>({
@@ -428,16 +454,16 @@
       attr = {}
     } = controlData.value
     let columnIndex = false // 是否显示序号列
-    let columnOperate = false // 是否显示操作列
+    //let columnOperate = false // 是否显示操作列
     if (type === 'table') {
       // 表格时处理
       const list = controlData.value && controlData.value.list
       if (list && list.length > 0) {
-        columnIndex = list[0].typeColumn === 'index'
+        columnIndex = list[0].type === 'index'
       }
-      if (list && list.length > 0) {
+      /*if (list && list.length > 0) {
         columnOperate = list[list.length - 1].typeColumn === 'operate'
-      }
+      }*/
     }
     state.attrList = [
       {
@@ -514,7 +540,8 @@
         value: config.span,
         placeholder: '表单区域栅格宽',
         path: 'config.span',
-        vHide: ['table', 'grid', 'gridChild', 'divider']
+        vHide: ['table', 'grid', 'gridChild', 'divider'],
+        isNum: true
       },
       {
         label: '文本值',
@@ -538,7 +565,8 @@
         value: control.rows,
         placeholder: '输入框行数',
         path: 'control.rows',
-        vShow: ['textarea']
+        vShow: ['textarea'],
+        isNum: true
       },
       {
         label: '前缀',
@@ -636,28 +664,32 @@
         value: attr.span,
         path: 'attr.span',
         vShow: ['gridChild'],
-        eventName: 'formatNumber'
+        eventName: 'formatNumber',
+        isNum: true
       },
       {
         label: '左侧的间隔格数offset',
         value: attr.offset,
         path: 'attr.offset',
         vShow: ['gridChild'],
-        eventName: 'formatNumber'
+        eventName: 'formatNumber',
+        isNum: true
       },
       {
         label: '向右移动格数push',
         value: attr.push,
         path: 'attr.push',
         vShow: ['gridChild'],
-        eventName: 'formatNumber'
+        eventName: 'formatNumber',
+        isNum: true
       },
       {
         label: '向左移动格数pull',
         value: attr.pull,
         path: 'attr.pull',
         vShow: ['gridChild'],
-        eventName: 'formatNumber'
+        eventName: 'formatNumber',
+        isNum: true
       },
       {
         label: '序号列',
@@ -666,13 +698,13 @@
         vShow: ['table'],
         eventName: 'tableColumn1'
       },
-      {
+      /*{
         label: '操作列',
         value: columnOperate,
         type: 'switch',
         vShow: ['table'],
         eventName: 'tableColumn2'
-      },
+      },*/
       {
         label: '组件名',
         value: config.template,
@@ -747,21 +779,24 @@
         value: control.min,
         path: 'control.min',
         vShow: ['slider'],
-        eventName: 'formatNumber'
+        eventName: 'formatNumber',
+        isNum: true
       },
       {
         label: '最大值',
         value: control.max,
         path: 'control.max',
         vShow: ['rate', 'slider'],
-        eventName: 'formatNumber'
+        eventName: 'formatNumber',
+        isNum: true
       },
       {
         label: '步长',
         value: control.step,
         path: 'control.step',
         vShow: ['slider'],
-        eventName: 'formatNumber'
+        eventName: 'formatNumber',
+        isNum: true
       },
       {
         label: 'type',
@@ -851,7 +886,7 @@
       return hasFilter
     })
   }
-  const controlChange = (obj: any, val: string) => {
+  const controlChange = (obj: any, val: any) => {
     // select多选属性，
     switch (obj.eventName) {
       case 'selectMultiple':
@@ -866,9 +901,9 @@
       case 'tableColumn1':
         tableColumnAdd(val)
         break
-      case 'tableColumn2':
+      /*case 'tableColumn2':
         tableColumnAdd(val, 1)
-        break
+        break*/
       case 'formatNumber':
         // val = parseInt(val) // 将值转数值
         break
@@ -884,10 +919,11 @@
         }
         break
     }
-    obj.path && getPropByPath(controlData.value, obj.path, val)
+    const newVal = obj.isNum ? parseInt(val) : val // 类型为数字时转整数
+    obj.path && getPropByPath(controlData.value, obj.path, newVal)
   }
   // 修改指定路径下的值
-  const getPropByPath = (obj: any, path: string, val: string) => {
+  const getPropByPath = (obj: any, path: string, val: any) => {
     let tempObj = obj
     const keyArr = path.split('.')
     let i = 0
@@ -996,35 +1032,20 @@
     return show ? index !== -1 : index === -1
   }
   // 子表时添加序号和操作列
-  const tableColumnAdd = (val: string, type?: number) => {
+  const tableColumnAdd = (val: string) => {
     const item = {
-      name: '',
-      type: 'tableColumn',
-      typeColumn: type ? 'operate' : 'index', // 用来判断是序号列还是操作列
+      name: 'index',
+      type: 'index',
       item: {
-        label: type ? '操作' : '序号'
+        label: '序号'
       },
-      control: {
-        type: type ? '' : 'index'
-      },
+      control: {},
       config: {}
     }
     if (val) {
-      if (type) {
-        // 操作列
-        controlData.value.list.push(item)
-      } else {
-        // 序号列
-        controlData.value.list.unshift(item)
-      }
+      controlData.value.list.unshift(item)
     } else {
-      if (type) {
-        // 操作列
-        controlData.value.list.splice(controlData.value.list.length - 1, 1)
-      } else {
-        // 序号列
-        controlData.value.list.splice(0, 1)
-      }
+      controlData.value.list.splice(0, 1)
     }
   }
   // 校验规则必填勾选设置，存在校验规则时勾选
@@ -1073,6 +1094,12 @@
           console.log(res)
         })
     }
+  }
+  // 表单按钮处理
+  const formBtnChange = (type: string, val: boolean) => {
+    formBtn[type] = val
+    const newData = Object.assign(props.formData, { submitBtn: formBtn.value })
+    emits('update:formData', newData)
   }
   init()
 </script>

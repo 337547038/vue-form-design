@@ -55,7 +55,12 @@
           <div class="form-table" v-if="state.type === 4">
             <form-group v-model:data="element.list" data-type="not-nested" />
           </div>
-          <child-table v-else :data="element" :type="state.type" />
+          <child-table
+            v-else
+            :data="element"
+            v-model:tableData="element.tableData"
+            :type="state.type"
+          />
         </template>
         <template v-else-if="element.type === 'grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -158,7 +163,7 @@
   watch(
     () => dataList.value,
     () => {
-      console.log('watch') // todo 这里会执行两次
+      // console.log('watch') // todo 这里会执行两次
       emits('update:data', dataList.value)
     },
     { deep: true }
@@ -207,7 +212,7 @@
     const newIndex = evt.newIndex
     const key = new Date().getTime().toString()
     const obj: any = dataList.value[newIndex]
-    console.log(obj)
+    // console.log(obj)
     const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
     if (isNested === 'not-nested' && !indexType(obj.type)) {
       dataList.value.splice(newIndex, 1)
@@ -216,6 +221,7 @@
     if (!obj) {
       return
     }
+    // console.log(obj)
     const label = obj.label || obj.item.label || ''
     delete obj.label
     delete obj.icon
@@ -269,19 +275,15 @@
       return { width: (ele.config.span / 24) * 100 + '%' }
     }
   }
-  const linkageValue: any = store.model
   // 根据关联条件显示隐藏当前项
   const linksShow = (el: FormList) => {
     // 当前项设置了关联条件，当关联主体的值等于当前组件设定的值时
-    if (!el.config || !linkageValue) {
+    if (!el.config || !store.model) {
       return true
     }
     const key = el.config.linkKey
     const value = el.config.linkValue
     if (key && value && state.type !== 4) {
-      /*if (linkageValue.value[el.config.linkKey] !== el.config.linkValue) {
-      return false
-    }*/
       //　多个条件时key和value分别使用,和&隔开，
       // 带有&分隔时，需要符合所有条件；否则符合其中一个条件即可
       const keySplit = key.split(/,|&/)
@@ -291,12 +293,13 @@
       for (let i = 0; i < keySplit.length; i++) {
         if (hasAndSpit) {
           pass = true
-          if (linkageValue.value[keySplit[i]] !== valueSplit[i]) {
+          console.log(keySplit[i])
+          if ((store.model as any)[keySplit[i]] !== valueSplit[i]) {
             pass = false
             break
           }
         } else {
-          if (linkageValue.value[keySplit[i]] === valueSplit[i]) {
+          if ((store.model as any)[keySplit[i]] === valueSplit[i]) {
             pass = true
             break
           }

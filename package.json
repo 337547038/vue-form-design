@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:lib": "vite build --config build.config.ts"
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^4.0.7",

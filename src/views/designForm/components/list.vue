@@ -1,15 +1,15 @@
 <!-- Created by 337547038 on 通用数据表格页. -->
 <template>
   <div class="table-list-comm" v-loading="state.loading">
-    <div class="table-search" v-if="Object.keys(searchData).length">
+    <div class="table-search" v-if="searchData?.list?.length">
       <DesignForm
         :disabled="state.loading"
         :form-data="searchData"
-        ref="designFormEl"
+        ref="searchFormEl"
       >
         <el-button
           type="primary"
-          @click="getListData"
+          @click="getListData(1)"
           :loading="state.loading"
           v-if="searchBtn[0]"
           >{{ searchBtn[0] }}
@@ -93,7 +93,7 @@
   const props = withDefaults(
     defineProps<{
       tableData: object
-      searchData: FormData
+      searchData?: FormData
       beforeRequest?: Function
       afterResponse?: Function
       showPage?: boolean
@@ -119,7 +119,7 @@
   }>()
   const route = useRoute()
   const router = useRouter()
-  const designFormEl = ref()
+  const searchFormEl = ref()
   const tableEl = ref()
   const state = reactive({
     loading: false,
@@ -131,10 +131,16 @@
     selectionChecked: []
   })
   // 筛选查询列表数据
-  const getListData = () => {
+  const getListData = (page?: number) => {
+    if (!props.requestUrl) {
+      return
+    }
+    if (page) {
+      state.currentPage = page
+    }
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
-    let formValue = designFormEl.value?.getValue(true)
+    let formValue = searchFormEl.value?.getValue(true)
     if (typeof props.beforeRequest === 'function') {
       formValue = props.beforeRequest(formValue || {})
     }
@@ -144,6 +150,7 @@
         if (typeof props.afterResponse === 'function') {
           result = props.afterResponse(result)
         }
+        // console.log(result)
         state.tableDataList = result?.list
         state.loading = false
       })
@@ -153,18 +160,18 @@
       })
     state.loading = false
   }
-  // 仅清空筛选输入 todo
+  // 仅清空筛选输入
   const searchClear = () => {
-    designFormEl.value.ruleForm.resetFields() // 这个只是清空了model的值
-    designFormEl.value.setValue(designFormEl.value.getValue()) // 重新将取到的空值对筛选表单赋值
+    searchFormEl.value.resetFields() // 这个只是清空了model的值
+    searchFormEl.value.setValue(searchFormEl.value.getValue()) // 重新将取到的空值对筛选表单赋值
+    getListData(1) // 重新请求数据
   }
   const handleSizeChange = (page: number) => {
     state.pageSize = page
-    getListData()
+    getListData(1)
   }
   const handleCurrentChange = (page: number) => {
-    state.currentPage = page
-    getListData()
+    getListData(page)
   }
   const addOrEdit = (row: any) => {
     router.push({
@@ -185,6 +192,7 @@
       })
   }
   const controlBtnClick = (row: any) => {
+    // 导出vue文件形式，这里的按钮事件是不对的
     if (row.key === 'add') {
       // 跳到新增页
       addOrEdit({})
@@ -207,5 +215,8 @@
   }
   onMounted(() => {
     getListData() // 请求列表数据
+  })
+  defineExpose({
+    getListData
   })
 </script>

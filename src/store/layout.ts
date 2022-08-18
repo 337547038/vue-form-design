@@ -19,7 +19,8 @@ export const useLayoutStore = defineStore('layout', {
     return {
       breadcrumb: [],
       tabs: tabs,
-      reloadFlag: true // 用于刷新路由
+      reloadFlag: true, // 用于刷新路由
+      formMenu: [] // 使用工具创建的表单导航
     }
   },
   // 也可以定义为
@@ -37,6 +38,9 @@ export const useLayoutStore = defineStore('layout', {
       nextTick(() => {
         this.reloadFlag = true
       })
+    },
+    updateFormMenu(obj: any) {
+      this.formMenu = obj
     }
   }
 })

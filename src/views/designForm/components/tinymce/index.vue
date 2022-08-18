@@ -202,7 +202,7 @@
     input.click()
     input.onchange = () => {
       const file = input?.files && input.files[0] //获取文件信息
-      console.log(file)
+      // console.log(file)
       // meta对应于file_picker_types的三种类型
       let attr = {}
       if (meta.filetype === 'file') {

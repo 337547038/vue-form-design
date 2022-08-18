@@ -20,7 +20,7 @@
 
   // const router = useRouter()
   // const route = useRoute()
-  // const store = useLayoutStore()
+  // const layoutStore = useLayoutStore()
 
   withDefaults(
     defineProps<{
@@ -41,6 +41,23 @@
       title: '内容管理',
       icon: 'Document',
       children: []
+    },
+
+    {
+      title: '导出vue测试',
+      icon: 'FolderOpened',
+      children: [
+        {
+          title: '表单测试',
+          icon: 'Document',
+          path: '/export/form'
+        },
+        {
+          title: '列表测试',
+          icon: 'Tickets',
+          path: '/export/list'
+        }
+      ]
     },
     {
       title: '系统工具',
@@ -84,35 +101,30 @@
       store.changeBreadcrumb(temp)
     }*/
   }
-  // 获取创建的表单导航
+  // 获取创建的表单导航，存下storage不用每次刷新请求
   const initForm = () => {
-    getRequest('getFormList', {}).then((res) => {
-      //contentForm.value = res.data.data?.list || []
-      const result = res.data.data?.list
-      let temp: any = []
-      if (result) {
-        result.forEach((item: any) => {
-          temp.push({
-            title: item.name,
-            icon: 'List',
-            path: '/designform/list?tid=' + item.id
+    const sessionList = window.sessionStorage.getItem('formMenuList')
+    if (sessionList) {
+      navList.value[1].children = JSON.parse(sessionList)
+    } else {
+      getRequest('getFormList', {}).then((res) => {
+        //contentForm.value = res.data.data?.list || []
+        const result = res.data.data?.list
+        let temp: any = []
+        if (result) {
+          result.forEach((item: any) => {
+            temp.push({
+              title: item.name,
+              icon: 'List',
+              path: '/designform/list?tid=' + item.id
+            })
           })
-        })
-        navList.value[1].children = temp
-      }
-    })
-  }
-  /*watch(
-    () => route.path,
-    () => {
-      // 根据path从navList里取title，多级时可在当前页面中修改changeBreadcrumb
-      navList.value.forEach((item) => {
-        if (item.path === route.path) {
-          store.changeBreadcrumb([{ label: item.title }])
+          navList.value[1].children = temp
+          window.sessionStorage.setItem('formMenuList', JSON.stringify(temp))
         }
       })
     }
-  )*/
+  }
   onMounted(() => {
     // 将导航信息传给tagViews，根据path匹配出显示的title
     emits('getMenuList', navList.value)

@@ -1,20 +1,34 @@
 <template>
-  <div
-    ><input v-model="value2.a" />
-    <Test :data="value2" />
+  <div class="info">
+    <h3>基于 Vue3 的可视化表单设计器</h3><br />
+    <div
+      >使用基于 Vue 3.0 的桌面端组件库 Elemnet-Plus ，使用广泛，扩展方便<br />
+      通过可视化的操作，快速完成表单页面的创建<br />
+      提供功能强大的各种组件，可适用在各种复杂的场景中<br />
+      丰富的API接口，方便快速的生成表单，验证和获取表单数据<br />
+      利于二次开发<br />
+      用于学习研究，欢迎交流，微信:337547038
+    </div>
+    <div><br /></div>
+    <div>
+      <el-button type="success" @click="$router.push({ path: '/docs' })"
+        >使用文档</el-button
+      >
+      <el-button type="primary" @click="$router.push({ path: '/designform' })"
+        >快速开始</el-button
+      >
+    </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-  import Test from './test.vue'
-  import { ref } from 'vue'
-  const value = ref('')
-  const value2 = ref({
-    a: 'a',
-    b: 'b'
-  })
-  /*import { useAppStore } from '../store/app'
-  const counter = useAppStore()
-  counter.$patch({ count: counter.count + 1, msg: 'ok' })
-  counter.increment()*/
-</script>
+<style scoped lang="scss">
+  .info {
+    padding: 30px !important;
+    font-size: 16px;
+    line-height: 36px;
+    height: calc(100vh - 132px);
+    h3 {
+      padding-top: 10px;
+    }
+  }
+</style>

@@ -10,26 +10,27 @@ import routesPage from '~pages'
 console.log(routesPage)
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    name: '/home',
-    component: () => import('../views/designForm/design.vue')
-  },
-  {
     path: '/test',
     name: '/test',
     component: () => import('../views/test.vue')
-  },
-  {
-    path: '/index',
-    name: '/index',
-    component: () => import('../views/index.vue')
   },
   {
     path: '/layout',
     redirect: '/',
     name: 'layout',
     component: () => import('../components/layout/index.vue'),
-    children: routesPage
+    children: routesPage.filter((item: any) => {
+      return item.name.indexOf('docs') !== 0
+    })
+  },
+  {
+    path: '/docs',
+    redirect: '/docs',
+    name: 'docs',
+    component: () => import('../docs/components/layout.vue'),
+    children: routesPage.filter((item: any) => {
+      return item.name.indexOf('docs') === 0
+    })
   }
 ]
 // console.log(routes)
@@ -42,10 +43,10 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   /*const { path: toPath } = to
-    const { path: fromPath } = from
-    if (toPath === fromPath) {
-      return false
-    }*/
+      const { path: fromPath } = from
+      if (toPath === fromPath) {
+        return false
+      }*/
   //console.log(to)
   //console.log(from)
 })

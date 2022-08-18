@@ -249,7 +249,7 @@ export default [
         type: 'card',
         label: '卡片布局',
         icon: 'card',
-        list: [],// todo
+        list: [],
         control: {},
         config: {},
         item: {} // label标题相关

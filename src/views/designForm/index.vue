@@ -39,14 +39,17 @@
     />
     <div class="main-body">
       <headTools @click="headToolClick" />
-      <div class="empty-tips" v-if="state.formData.list.length === 0">
-        从左侧拖拽来添加字段
-      </div>
       <div class="main-form" v-loading="state.loading">
+        <div class="empty-tips" v-if="state.formData.list.length === 0">
+          从左侧拖拽来添加字段
+        </div>
         <form-design :type="4" :formData="state.formData" />
       </div>
     </div>
-    <form-control-attr :formData="state.formData" @openDialog="dialogOpen" />
+    <form-control-attr
+      v-model:formData="state.formData"
+      @openDialog="dialogOpen"
+    />
     <el-drawer
       v-model="state.visibleDialog"
       size="60%"
@@ -96,7 +99,9 @@
   import { useRoute, useRouter } from 'vue-router'
   import { aceEdit } from './components/comm'
   import { objToStringify, stringToObj } from '@/utils/form'
-  // import { FormList } from './types'
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
   const store = useDesignFormStore()
   const router = useRouter()
@@ -171,7 +176,7 @@
           state.loading = false
         })
         .catch((res) => {
-          console.log(res)
+          // console.log(res)
           ElMessage.info(res.data || '加载异常')
           state.loading = false
         })
@@ -314,7 +319,7 @@
         ElMessage.success('校验通过')
       } else {
         // alert('校验不通过')
-        console.log('error submit!', fields)
+        // console.log('error submit!', fields)
         ElMessage.error('校验不通过')
         return false
       }

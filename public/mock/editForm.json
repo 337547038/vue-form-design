@@ -3,6 +3,6 @@
   "data": {
     "formData": "{list:[{name:\"text\",type:\"input\",control:{modelValue:\"\",placeholder:\"请输入手机号\"},config:{},item:{label:\"文本框\",showLabel:false},customRules:[{type:\"mobile\",message:\"手机号\",trigger:\"blur\"}]},{name:\"select\",type:\"select\",control:{modelValue:\"\",appendToBody:true},options:[{label:\"标签1\",value:\"value1\"},{label:\"标签2\",value:\"value2\"},{label:\"标签3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"},item:{label:\"下拉选择框\",showLabel:false,rules:[{required:true,message:\"必填项\",trigger:\"change\"}]}}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1660398553662\"}}",
     "searchData": "{list:[{name:\"text\",type:\"input\",control:{modelValue:\"\"},config:{},item:{label:\"单行文本\",showLabel:false}},{name:\"text2\",type:\"input\",control:{modelValue:\"\"},config:{},item:{label:\"单行文本\",showLabel:false}}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1660211919743\"}}",
-    "tableData": "{config:{},columns:[{label:\"勾选\",prop:\"__selection\",type:\"selection\",width:\"100px\"},{label:\"序号\",prop:\"__index\",type:\"index\",width:\"100px\"},{prop:\"text\",label:\"文本框\",help:\"\"},{label:\"操作\",prop:\"__control\"}],controlBtn:[{label:\"新增\"}]}"
+    "tableData": "{config:{},columns:[{label:\"勾选\",prop:\"__selection\",type:\"selection\",width:\"100px\"},{label:\"序号\",prop:\"__index\",type:\"index\",width:\"100px\"},{prop:\"text\",label:\"文本框\",help:\"\"},{label:\"操作\",prop:\"__control\"}],controlBtn:[{label:\"新增\",key:\"add\",type:\"primary\"}]}"
   }
 }
