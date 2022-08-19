@@ -11,7 +11,8 @@ export const useDesignFormStore = defineStore('designForm', {
       rulesComm: [], //提供给formItem获取公共部分的校验规则
       hideField: [], // 设置了使用v-if隐藏的字段
       formValue: {}, // 使用setValue设置的值
-      formOptions: [] // 使用setOptions设置下拉值
+      formOptions: [], // 使用setOptions设置下拉值
+      formOptionsDict: [] // 从数据接口里获取dict设置options
     }
   },
   actions: {
@@ -26,6 +27,9 @@ export const useDesignFormStore = defineStore('designForm', {
     },
     setFormOptions(val: any) {
       this.formOptions = val
+    },
+    setFormDict(val: any) {
+      this.formOptionsDict = val
     }
   }
 })

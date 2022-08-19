@@ -84,7 +84,9 @@
       size: 'default',
       name: 'form1660723952800'
     },
-    submitBtn: { confirm: '提交', cancel: '取消' }
+    config:{
+      submitBtn: { confirm: '提交', cancel: '取消' }
+    }
   })
   // 表单控件值改变事件
   /*provide('AKControlChange', ({key, value}) => {
@@ -199,15 +201,17 @@
       size: 'default',
       name: 'form1660725610088'
     },
-    submitBtn: { confirm: '' },
-    rulesComm: [
-      {
-        key: 'required',
-        required: true,
-        message: '使用表单全局通用的必须规则',
-        trigger: 'blur'
-      }
-    ]
+    config:{
+      submitBtn: { confirm: '' },
+      rulesComm: [
+        {
+          key: 'required',
+          required: true,
+          message: '使用表单全局通用的必须规则',
+          trigger: 'blur'
+        }
+      ]
+    }
   })
   // todo 自定义校验方法
   provide('customRules', (rule, value, callback) => {
@@ -275,8 +279,10 @@
       size: 'default',
       name: 'form1660725610088'
     },
-    submitBtn: { confirm: '' },
-    rulesComm: []
+    config:{
+     submitBtn: { confirm: '' },
+     rulesComm: []
+    }
   })
   // todo 下拉选择框获取选项值
   const select1660727982838Option = ref([{ label: '选项1', value: '1' }])
@@ -437,7 +443,9 @@
       size: 'default',
       name: 'form1660789836230'
     },
-    hideField: []
+    config:{
+      hideField: []
+    }
   })
   // 表单控件值改变事件
   /*provide('AKControlChange', ({key, value}) => {

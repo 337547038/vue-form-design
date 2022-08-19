@@ -124,7 +124,11 @@
                     ></span>
                   </el-tooltip>
                 </template>
-                <el-radio-group v-model="controlData.config.source">
+                <el-radio-group
+                  class="option-radio"
+                  v-model="controlData.config.source"
+                  @change="controlData.config.sourceFun = ''"
+                >
                   <el-radio :label="0">数据源</el-radio>
                   <el-radio :label="1"
                     >方法函数
@@ -137,12 +141,23 @@
                       </el-icon>
                     </el-tooltip>
                   </el-radio>
+                  <el-radio :label="2"
+                    >接口字典
+                    <el-tooltip
+                      content="从当前数据接口dict里匹配，可减少请求数，实际项目也不是每个选项都有单独的接口。此设置需要开启表单属性-添加时从获取请求"
+                      placement="top"
+                    >
+                      <el-icon>
+                        <QuestionFilled />
+                      </el-icon>
+                    </el-tooltip>
+                  </el-radio>
                 </el-radio-group>
                 <el-form-item>
                   <el-input
                     v-model="controlData.config.sourceFun"
                     :placeholder="
-                      controlData.config.source ? '方法函数名' : '数据源接口URL'
+                      getOptionPlaceholder(controlData.config.source)
                     "
                   >
                     <template #prepend v-if="!controlData.config.source">
@@ -156,10 +171,6 @@
                     </template>
                   </el-input>
                 </el-form-item>
-                <!--                <el-form-item v-if="controlData.config.source===0">
-                                  <el-input :rows="4" type="textarea" v-model="controlData.config.getResultFun"
-                                            placeholder="获取结果方法如：if(res.data.code===200){callback(res.data.data)}"></el-input>
-                </el-form-item>-->
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -182,14 +193,14 @@
           >
             <h3>校验设置</h3>
             <div v-if="showHide(['input', 'password', 'component'], true)">
-              <el-form-item v-if="formData.rulesComm?.length > 0">
+              <el-form-item v-if="formData.config?.rulesComm?.length > 0">
                 <el-select
                   placeholder="快速选择"
                   :multiple="true"
                   v-model="controlData.rulesComm"
                 >
                   <el-option
-                    v-for="item in formData.rulesComm"
+                    v-for="item in formData.config?.rulesComm"
                     :label="`${item.key}(${item.message})`"
                     :value="item.key"
                     :key="item.key"
@@ -293,18 +304,35 @@
               :placeholder="item.placeholder"
             />
           </el-form-item>
-          <el-form-item v-if="!state.isSearch" label="添加提交按钮">
+          <el-form-item v-if="!state.isSearch" label="提交按钮">
             <el-input
-              placeholder="添加提交按钮，空不显示"
+              placeholder="提交按钮文案，空不显示"
               v-model="formBtn.confirm"
-              @change="formBtnChange('confirm', $event)"
+              @change="formAttChange('confirm', $event)"
             />
           </el-form-item>
-          <el-form-item v-if="!state.isSearch" label="添加取消返回按钮">
+          <el-form-item v-if="!state.isSearch" label="取消返回按钮">
             <el-input
-              placeholder="添加取消返回按钮，空不显示"
+              placeholder="取消返回按钮文案，空不显示"
               v-model="formBtn.cancel"
-              @change="formBtnChange('cancel', $event)"
+              @change="formAttChange('cancel', $event)"
+            />
+          </el-form-item>
+          <el-form-item>
+            <template #label
+              >添加时从获取请求
+              <el-tooltip
+                content="新增表单数据时，从接口获取新增初始数据"
+                placement="top"
+              >
+                <el-icon>
+                  <QuestionFilled />
+                </el-icon>
+              </el-tooltip>
+            </template>
+            <el-switch
+              v-model="addLoad"
+              @change="formAttChange('addLoad', $event)"
             />
           </el-form-item>
           <el-form-item>
@@ -356,7 +384,9 @@
     (e: 'update:formData', data: FormData): void
   }>()
   const formInfo = toRef(props.formData, 'form')
-  const formBtn: any = ref({})
+  const addLoad = ref(props.formData.config?.addLoad)
+
+  const formBtn: any = ref(props.formData.config?.submitBtn || {})
   const store = useDesignFormStore()
   const route = useRoute()
   const state = reactive<any>({
@@ -1071,11 +1101,11 @@
   }
   // 添加编辑全局校验规则
   const rulesCommClick = () => {
-    emits('openDialog', props.formData.rulesComm || [], 'rules')
+    emits('openDialog', props.formData.config?.rulesComm || [], 'rules')
   }
   // 编辑表单样式
   const editFormStyle = () => {
-    emits('openDialog', props.formData.style || '', 'css')
+    emits('openDialog', props.formData.config?.style || '', 'css')
   }
   const init = () => {
     const formId = route.query.formId
@@ -1096,10 +1126,32 @@
     }
   }
   // 表单按钮处理
-  const formBtnChange = (type: string, val: boolean) => {
-    formBtn[type] = val
-    const newData = Object.assign(props.formData, { submitBtn: formBtn.value })
-    emits('update:formData', newData)
+  const formAttChange = (type: string, val: boolean | string) => {
+    console.log(val)
+    let newData = {}
+    if (type === 'addLoad') {
+      newData = {
+        addLoad: val
+      }
+    } else {
+      formBtn[type] = val
+      newData = {
+        submitBtn: formBtn.value
+      }
+    }
+    emits('update:formData', Object.assign(props.formData, { config: newData }))
+  }
+  // 返回选项配置提示
+  const getOptionPlaceholder = (type: number) => {
+    switch (type) {
+      case 0:
+        return '数据源接口URL'
+      case 1:
+        return '方法名称'
+      case 2:
+        return '字典key，默认为字段标识'
+    }
+    return ''
   }
   init()
 </script>

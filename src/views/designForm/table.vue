@@ -33,10 +33,11 @@
         <el-checkbox-group v-model="state.controlBtnGroup" size="small">
           <el-checkbox
             v-for="item in state.controlBtn"
-            :label="item.label"
+            :label="item.key"
             :key="item.prop"
-            @change="btnCheckChange(item, $event)"
-          />
+            @change="btnCheckChange(item)"
+            >{{ item.label }}</el-checkbox
+          >
         </el-checkbox-group>
       </div>
       <div class="title">
@@ -48,7 +49,7 @@
     <div class="main-body">
       <headTools @click="headToolClick" type="2" />
       <div class="main-form main-table">
-        <p style="padding: 10px 0">提示：点击表头可拖动改变顺序</p>
+        <p style="padding: 10px 0">提示：点击表头可拖动改变顺序；</p>
         <div class="control-btn">
           <el-button
             v-for="item in state.tableData?.controlBtn"
@@ -80,7 +81,9 @@
               <template #default v-if="item.type !== 'index'">
                 <el-checkbox v-if="item.type === 'selection'" />
                 <span v-else-if="item.prop === '__control'">编辑 删除</span>
-                <span v-else>测试数据</span>
+                <span v-else @click.stop="rowClick(item)"
+                  >点击单元格可对列个性化设置</span
+                >
               </template>
             </el-table-column>
           </template>
@@ -101,6 +104,50 @@
                 />
               </el-select>
             </el-form-item>
+            <div v-show="Object.keys(state.attrObj).length">
+              <h3>{{ state.attrObj.label }}个性化设置</h3>
+              <el-form-item label="值匹配字典">
+                <el-input
+                  placeholder="字典对应的key"
+                  v-model="state.config.dictKey"
+                  @change="configChange"
+                />
+              </el-form-item>
+              <!--              <el-form-item label="Tag标签显示">
+                <el-switch
+                  v-model="state.config.isTag"
+                  @change="configChange"
+                />
+              </el-form-item>-->
+              <el-form-item
+                v-for="(tag, index) in state.config.tagList"
+                :key="index"
+                class="table-tag"
+              >
+                <el-input
+                  placeholder="值对应的类型"
+                  v-model="tag.value"
+                  @change="configChange"
+                >
+                  <template #append>
+                    <el-select
+                      style="width: 80px"
+                      v-model="tag.type"
+                      @change="configChange"
+                    >
+                      <el-option label="success" value="success" />
+                      <el-option label="info" value="info" />
+                      <el-option label="warning" value="warning" />
+                      <el-option label="danger" value="danger" />
+                    </el-select>
+                  </template>
+                </el-input>
+                <i class="icon-del" @click="delTagOption(index)"></i>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="tagAdd">新增Tag标签显示</el-button>
+              </el-form-item>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="表格属性" name="second">
             请使用生成脚本预览功能，编辑config属性
@@ -183,7 +230,11 @@
     selectCheck: '', // 属于选择的值
     editIndex: '', // 当前编辑的属于在数组的位置
     dataList: [{}], // 表格行数据
-    dataTemp: {} // 暂存接口获取到的数据
+    dataTemp: {}, // 暂存接口获取到的数据
+    attrObj: {}, // 当前选中设置的字段属性
+    config: {
+      tagList: []
+    }
   })
   const excludeType = ['txt', 'title', 'table', 'component', 'upload']
   const filterFiled = (obj) => {
@@ -363,6 +414,26 @@
         }
       })
     }
+  }
+  const rowClick = (column) => {
+    state.attrObj = column
+    state.config = column.config || {}
+  }
+  const delTagOption = (index) => {
+    state.config.tagList.splice(index, 1)
+  }
+  const tagAdd = () => {
+    if (!state.config?.tagList) {
+      state.config.tagList = []
+    }
+    state.config.tagList.push({
+      value: '',
+      type: ''
+    })
+  }
+  const configChange = () => {
+    // 将数据合并
+    Object.assign(state.attrObj, { config: state.config })
   }
   onMounted(() => {
     nextTick(() => {

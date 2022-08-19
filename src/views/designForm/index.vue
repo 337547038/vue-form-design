@@ -234,10 +234,16 @@
       } else {
         if (state.dialogType === 'rules') {
           // 表单属性－编辑全局检验规则
-          state.formData.rulesComm = val
+          if (!state.formData.config) {
+            state.formData.config = {}
+          }
+          state.formData.config.rulesComm = val
         } else if (state.dialogType === 'css') {
           // 表单属性－编辑表单样式
-          state.formData.style = val
+          if (!state.formData.config) {
+            state.formData.config = {}
+          }
+          state.formData.config.style = val
         } else {
           state.formData = val
         }
@@ -317,6 +323,7 @@
       if (valid) {
         // alert('校验通过')
         ElMessage.success('校验通过')
+        console.log(fields)
       } else {
         // alert('校验不通过')
         // console.log('error submit!', fields)

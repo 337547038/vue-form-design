@@ -1,20 +1,20 @@
 <template>
   <div v-loading="loading">
     <design-form :formData="formData" ref="formEl" />
-    <el-button type="primary" @click="submit">提交</el-button>
+    <!--    <el-button type="primary" @click="submit">提交</el-button>-->
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
+  import { useRoute } from 'vue-router'
   import DesignForm from './components/form.vue'
   import { getRequest } from '@/api'
   import { stringToObj } from '@/utils/form'
-  import { ElMessage } from 'element-plus'
+  //import { ElMessage } from 'element-plus'
 
   const route = useRoute()
-  const router = useRouter()
+  // const router = useRouter()
   const formData = ref({ list: [], form: {} })
   const formEl = ref()
   const loading = ref(false)
@@ -31,22 +31,8 @@
         formData.value = stringToObj(result.formData)
       }
     })
-    /*if (query.id) {
-      // 获取初始值
-      const prams = {
-        tid: query.tid,
-        id: query.id
-      }
-      getRequest('getFormContent', prams).then((res) => {
-        // console.log(res)
-        const result = res.data.data
-        if (result) {
-          formEl.value.setValue(result)
-        }
-      })
-    }*/
   }
-  const submit = () => {
+  /*const submit = () => {
     formEl.value.validate((valid: boolean, fields: any) => {
       // console.log(fields)
       if (valid) {
@@ -70,6 +56,6 @@
           })
       }
     })
-  }
+  }*/
   init()
 </script>

@@ -34,8 +34,11 @@ export interface FormList {
 export interface FormData {
   list: FormList[]
   form: any // form所有props
-  rulesComm?: RulesComm[] // 为多个控件添加相关的检验规则
-  style?: string // 表单css样式，相当于scope
-  hideField?: string[] // 使用v-if隐藏的字段，用于交互
-  submitBtn?: any // 用于内部提交的表单按钮
+  config?: {
+    rulesComm?: RulesComm[] // 为多个控件添加相关的检验规则
+    style?: string // 表单css样式，相当于scope
+    hideField?: string[] // 使用v-if隐藏的字段，用于交互
+    submitBtn?: any // 用于内部提交的表单按钮
+    addLoad?: boolean
+  }
 }

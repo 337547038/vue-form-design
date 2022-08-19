@@ -41,27 +41,35 @@
           v-for="item in tableData.columns"
           :key="item.prop || item.label"
         >
-          <el-table-column v-bind="item">
+          <el-table-column v-bind="item" config="">
             <template #header="scope" v-if="item.help">
               {{ scope.column.label }}
               <Tooltip :content="item.help" />
             </template>
-            <template #default="scope" v-if="$slots[item.prop]">
-              <slot :name="item.prop" :row="scope.row" :$index="scope.$index">
-              </slot>
-            </template>
-            <template #default="scope" v-else-if="item.prop === '__control'">
-              <el-button link @click="addOrEdit(scope.row)">编辑</el-button>
-              <el-popconfirm
-                title="确定删除该记录?"
-                confirm-button-text="确认"
-                cancel-button-text="取消"
-                @confirm="delClick(scope.row)"
+            <template #default="scope">
+              <slot
+                :name="item.prop"
+                :row="scope.row"
+                :$index="scope.$index"
+                v-if="$slots[item.prop]"
               >
-                <template #reference>
-                  <el-button size="small" link>删除</el-button>
-                </template>
-              </el-popconfirm>
+              </slot>
+              <template v-else-if="item.config?.dictKey">
+                {{ getDictLabel(scope, item) }}
+              </template>
+              <template v-else-if="item.prop === '__control'">
+                <el-button link @click="addOrEdit(scope.row)">编辑</el-button>
+                <el-popconfirm
+                  title="确定删除该记录?"
+                  confirm-button-text="确认"
+                  cancel-button-text="取消"
+                  @confirm="delClick(scope.row)"
+                >
+                  <template #reference>
+                    <el-button size="small" link>删除</el-button>
+                  </template>
+                </el-popconfirm>
+              </template>
             </template>
           </el-table-column>
         </template>
@@ -212,6 +220,12 @@
   const selectionChange = (row: any) => {
     state.selectionChecked = row
     emits('selectionChange', row)
+  }
+  // 个性化设置
+  const getDictLabel = (scope: any, item: any) => {
+    if (scope.row.$index) {
+      // 表格没数据时也会引用，此时$index，应该是组件ui问题
+    }
   }
   onMounted(() => {
     getListData() // 请求列表数据

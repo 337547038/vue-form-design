@@ -72,6 +72,9 @@ $mainColor: #66b1ff;
   .el-tabs__nav-wrap {padding: 0 10px}
   .el-tabs__content {padding: 0 10px}
   .icon-del {cursor: pointer}
+  .option-radio{
+    >label{margin-right: 8px}
+  }
 }
 #editJson, #editJsonCopy {width: 100%;height: calc(100vh - 65px)}
 #editJsonCopy {height: calc(100vh - 350px)}
@@ -124,6 +127,10 @@ $mainColor: #66b1ff;
     }
   }
   .main-table {padding: 0 20px;}
+  .table-tag{
+    .el-form-item__content{display: flex;
+    >div{flex: 2;margin-right: 5px;}}
+  }
 }
 .table-list-comm {
   .table-main {margin-bottom: 20px}

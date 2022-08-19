@@ -312,7 +312,20 @@
     }
     return []
   }
-
+  // 将{key:value}转[{label:'key',value:'value'}]
+  const formatData = (obj: any) => {
+    if (Object.prototype.toString.call(obj) === '[object Object]') {
+      const temp: any = []
+      for (const key in obj) {
+        temp.push({
+          label: obj[key],
+          value: key
+        })
+      }
+      return temp
+    }
+    return obj
+  }
   // 为改变事件提供方法
   const changeEvent = inject('AKControlChange', '') as any
   watch(
@@ -342,13 +355,26 @@
       }
     }
   )
+  // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
+  watch(
+    () => store.formOptionsDict,
+    (val: any) => {
+      if (val && config.value.source === 2) {
+        const opt = val[config.value.sourceFun] || val[props.data.name]
+        if (opt !== undefined) {
+          options.value = formatData(opt)
+        }
+      }
+    }
+  )
   // 对单选多选select设置options
   watch(
     () => store.formOptions,
     (val: any) => {
+      const opt = val[props.data.name]
       // 子表内的需要注意下，只有在子表有记录时才生效
-      if (val && val[props.data.name] !== undefined) {
-        options.value = val[props.data.name]
+      if (val && opt !== undefined) {
+        options.value = formatData(opt)
       }
     }
   )

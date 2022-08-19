@@ -18,6 +18,8 @@
 | submitUrl     | string/boolean | 表单提交保存接口，类似于`requestUrl`，在配置有表单提交按钮时有效，同时需url参数tid(通用表单提交需要知道提交到哪个表)。适用于导出vue文件 |
 | beforeSubmit  | function       | 表单提交前数据处理，仅在`submitUrl`为`true`时。适用于导出vue文件                                      |
 | afterSubmit   | function       | 表单提交成功处理方法。适用于导出vue文件                                                           |
+| value         | object         | 表单初始值，同setValue                                                                 |
+| options       | object         | 表单选项数据，同setOptions                                                              |
 
 ### Methods
 
@@ -111,9 +113,11 @@ formData = {
       size: "default",
       name: "form1660637148435"
     },
-  rulesComm: [], // 为多个控件添加相关的检验规则
-  style: '', // 表单css样式，相当于scope
-  hideField: [], // 使用v-if隐藏的字段，用于交互
-  submitBtn:{} // 表单按钮
+  config: {
+    rulesComm: [], // 为多个控件添加相关的检验规则
+    style: '', // 表单css样式，相当于scope
+    hideField: [], // 使用v-if隐藏的字段，用于交互
+    submitBtn: {} // 表单按钮
+  }
 }
 ```

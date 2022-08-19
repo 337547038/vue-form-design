@@ -47,6 +47,8 @@
       submitUrl?: string | boolean // 表单数据提交url
       beforeSubmit?: Function // 表单提交前数据处理，仅在submitUrl&submitBtn为true时
       afterSubmit?: Function // 表单提交后，仅在submitUrl&submitBtn为true时
+      value?: { [key: string]: any } // 表单初始值，同setValue
+      options?: { [key: string]: any } // 表单组件选项，同setOptions
     }>(),
     {
       type: 1, // 1新增；2查看（表单模式） ；3查看； 4设计
@@ -67,10 +69,14 @@
   const loading = ref(false)
   const hasLoadData = ref(false) // 用于表示是否已加载过表单数据了
   const confirmBtn = computed(() => {
-    return props.formData.submitBtn?.confirm
+    return props.formData.config?.submitBtn?.confirm
   })
   const cancelBtn = computed(() => {
-    return props.formData.submitBtn?.cancel
+    return props.formData.config?.submitBtn?.cancel
+  })
+  // 添加数据时是否从接口获取初始数据
+  const addLoad = computed(() => {
+    return props.formData.config?.addLoad
   })
 
   let timer = 0
@@ -135,8 +141,8 @@
     state.type = props.type
     state.isEdit = props.isEdit
     state.model = model
-    state.rulesComm = props.formData.rulesComm as []
-    state.hideField = props.formData.hideField as []
+    state.rulesComm = props.formData.config?.rulesComm as []
+    state.hideField = props.formData.config?.hideField as []
   })
   // 表单检验方法
   const ruleForm = ref()
@@ -178,17 +184,17 @@
   }
   // 追加移除style样式
   const appendRemoveStyle = (type?: boolean) => {
-    const { form = {}, style } = props.formData
+    const { form = {}, config = {} } = props.formData
     const styleId: any = document.getElementById(form.name + 'Style')
     if (styleId && type) {
       // 存在时直接修改，不用多次插入
-      styleId.innerText = style
+      styleId.innerText = config.style
       return
     }
-    if (style && type) {
+    if (config.style && type) {
       const styleEl = document.createElement('style')
       styleEl.id = form && form.name + 'Style'
-      styleEl.appendChild(document.createTextNode(style))
+      styleEl.appendChild(document.createTextNode(config.style))
       document.head.appendChild(styleEl)
     }
     if (!type) {
@@ -196,14 +202,15 @@
       styleId && styleId.parentNode.removeChild(styleId)
     }
   }
-  // ------------------------数据处理开始----------------------
+  // ---------数据处理开始，也可以外部请求到数据使用setValue方式（导出vue文件时）-----------
   // 获取表单初始数据，加载条件还需要是接收到的参数id，即编辑状态
+  // 设置了addLoad时，没有id也从接口获取新增时的初始数据或是dict数据
   const getFormData = () => {
     if (
       props.formData?.list?.length &&
       props.requestUrl !== false &&
       hasLoadData.value === false &&
-      route.query.id
+      (route.query.id || addLoad.value)
     ) {
       loading.value = true
       hasLoadData.value = true
@@ -218,10 +225,13 @@
         // console.log(res)
         let result = res.data.data
         if (result) {
+          let value = result.data
           if (typeof props.afterResponse === 'function') {
-            result = props.afterResponse(result)
+            value = props.afterResponse(result.data)
           }
-          setValue(result)
+          setValue(value)
+          // 将dict保存
+          storeForm.setFormDict(result.dict)
         }
         loading.value = false
       })
@@ -269,6 +279,20 @@
     () => props.formData,
     () => {
       getFormData()
+    }
+  )
+  // 表单初始值
+  watch(
+    () => props.value,
+    (v) => {
+      v && setValue(v)
+    }
+  )
+  // 表单options
+  watch(
+    () => props.options,
+    (v) => {
+      v && setOptions(v)
     }
   )
   // ------------------------数据处理结束------------------------
