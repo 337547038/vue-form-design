@@ -12,6 +12,7 @@
           v-for="item in state.btnGroup"
           :key="item.type"
           @click="btnClick(item.type, scope.row)"
+          :disabled="getShow(item, scope.row)"
         >
           {{ item.label }}
         </el-button>
@@ -37,6 +38,7 @@
   import { ElMessage } from 'element-plus'
   import TableList from '../designForm/components/list.vue'
   import { useLayoutStore } from '@/store/layout'
+
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单管理' }])
 
@@ -51,7 +53,14 @@
       columns: [
         { label: '序号', prop: '__index', type: 'index', width: '60px' },
         { prop: 'name', label: '表单名称' },
-        { label: '状态', prop: 'status' },
+        {
+          label: '状态',
+          prop: 'status',
+          config: {
+            tagList: { '1': 'success', '0': 'info' },
+            dictKey: 'status'
+          }
+        },
         { label: '更新时间', prop: 'updateDate' },
         { label: '操作', prop: 'control', width: '340px' }
       ]
@@ -112,5 +121,9 @@
           })
         break
     }
+  }
+  const getShow = (item: any, row: any) => {
+    // 无数据源创建的不能添加数据和查看
+    return [4, 5].includes(item.type) && !row.formId
   }
 </script>

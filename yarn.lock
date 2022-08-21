@@ -475,10 +475,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.45.tgz#2c0fafd78705e7a18b7906b5201a522719dc5190"
   integrity sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==
 
-"@types/web-bluetooth@^0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.14.tgz#94e175b53623384bff1f354cdb3197a8d63cdbe5"
-  integrity sha512-5d2RhCard1nQUC3aHcq/gHzWYO6K0WJmAbjO7mQJgCQKtZpgXxv1rOM6O/dBDhDYYVutk1sciOgNSe+5YyfM8A==
+"@types/web-bluetooth@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.15.tgz#d60330046a6ed8a13b4a53df3813c44942ebdf72"
+  integrity sha512-w7hEHXnPMEZ+4nGKl/KDRVpxkwYxYExuHOYXyzIzCDzEZ9ZCGMAewulr9IqJu2LR4N37fcnb1XVeuZ09qgOxhA==
 
 "@typescript-eslint/eslint-plugin@^5.17.0":
   version "5.30.7"
@@ -620,7 +620,7 @@
     "@vue/babel-plugin-jsx" "^1.1.1"
     hash-sum "^2.0.0"
 
-"@vitejs/plugin-vue@^3.03":
+"@vitejs/plugin-vue@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-3.0.3.tgz#7e3e401ccb30b4380d2279d9849281413f1791ef"
   integrity sha512-U4zNBlz9mg+TA+i+5QPc3N5lQvdUXENZLO2h0Wdzp56gI1MWhqJOv+6R+d4kOzoaSSq6TnGPBdZAXKOe4lXy6g==
@@ -737,7 +737,7 @@
     "@vue/compiler-dom" "3.2.37"
     "@vue/shared" "3.2.37"
 
-"@vue/devtools-api@^6.1.4":
+"@vue/devtools-api@^6.1.4", "@vue/devtools-api@^6.2.1":
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.2.1.tgz#6f2948ff002ec46df01420dfeff91de16c5b4092"
   integrity sha512-OEgAMeQXvCoJ+1x8WyQuVZzFo0wcyCmUR3baRVLmKBo1LmYZWMlRiXlux5jd0fqVJu6PfDbOrZItVqUEzLobeQ==
@@ -790,25 +790,25 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.37.tgz#8e6adc3f2759af52f0e85863dfb0b711ecc5c702"
   integrity sha512-4rSJemR2NQIo9Klm1vabqWjD8rs/ZaJSzMxkMNeJS6lHiUjjUeYFbooN19NgFjztubEKh3WlZUeOLVdbbUWHsw==
 
-"@vueuse/core@^8.7.5":
-  version "8.9.4"
-  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-8.9.4.tgz#c7db40f19390b3c9f4ff9294a30461497f62ec19"
-  integrity sha512-B/Mdj9TK1peFyWaPof+Zf/mP9XuGAngaJZBwPaXBvU3aCTZlx3ltlrFFFyMV4iGBwsjSCeUCgZrtkEj9dS2Y3Q==
+"@vueuse/core@^9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-9.1.0.tgz#f0fb13fd99768c0eb617169a2d2c1cbd5f5a52eb"
+  integrity sha512-BIroqvXEqt826aE9r3K5cox1zobuPuAzdYJ36kouC2TVhlXvFKIILgFVWrpp9HZPwB3aLzasmG3K87q7TSyXZg==
   dependencies:
-    "@types/web-bluetooth" "^0.0.14"
-    "@vueuse/metadata" "8.9.4"
-    "@vueuse/shared" "8.9.4"
+    "@types/web-bluetooth" "^0.0.15"
+    "@vueuse/metadata" "9.1.0"
+    "@vueuse/shared" "9.1.0"
     vue-demi "*"
 
-"@vueuse/metadata@8.9.4":
-  version "8.9.4"
-  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-8.9.4.tgz#a4132db33e4c1b1023636acfa20aa7b37ab3d978"
-  integrity sha512-IwSfzH80bnJMzqhaapqJl9JRIiyQU0zsRGEgnxN6jhq7992cPUJIRfV+JHRIZXjYqbwt07E1gTEp0R0zPJ1aqw==
+"@vueuse/metadata@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-9.1.0.tgz#194d4bd47f7acb91e348c0f436e678ddf7ee235b"
+  integrity sha512-8OEhlog1iaAGTD3LICZ8oBGQdYeMwByvXetOtAOZCJOzyCRSwqwdggTsmVZZ1rkgYIEqgUBk942AsAPwM21s6A==
 
-"@vueuse/shared@8.9.4":
-  version "8.9.4"
-  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-8.9.4.tgz#c9741c30ffb666b50d62f0dd80b76119fd47573e"
-  integrity sha512-wt+T30c4K6dGRMVqPddexEVLa28YwxW5OFIPmzUHICjphfAuBFTTdDoyqREZNDOFJZ44ARH1WWQNCUK8koJ+Ag==
+"@vueuse/shared@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-9.1.0.tgz#d8459a45324f32fb05a2a56ed754637c3d0efaeb"
+  integrity sha512-pB/3njQu4tfJJ78ajELNda0yMG6lKfpToQW7Soe09CprF1k3QuyoNi1tBNvo75wBDJWD+LOnr+c4B5HZ39jY/Q==
   dependencies:
     vue-demi "*"
 
@@ -1273,10 +1273,10 @@ electron-to-chromium@^1.4.188:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.199.tgz#e0384fde79fdda89880e8be58196a9153e04db3b"
   integrity sha512-WIGME0Cs7oob3mxsJwHbeWkH0tYkIE/sjkJ8ML2BYmuRcjhRl/q5kVDXG7W9LOOKwzPU5M0LBlXRq9rlSgnNlg==
 
-element-plus@^2.2.10:
-  version "2.2.12"
-  resolved "https://registry.yarnpkg.com/element-plus/-/element-plus-2.2.12.tgz#b6c4e298e02ba9b904d70daa54def27b2de8c43c"
-  integrity sha512-g/hIHj3b+dND2R3YRvyvCJtJhQvR7lWvXqhJaoxaQmajjNWedoe4rttxG26fOSv9YCC2wN4iFDcJHs70YFNgrA==
+element-plus@^2.2.13:
+  version "2.2.14"
+  resolved "https://registry.yarnpkg.com/element-plus/-/element-plus-2.2.14.tgz#161f2cbf2c12608a570af303f8191c7d7eae725b"
+  integrity sha512-V5Pis0OHhePg1RgVogZrcefaVl8vjVn4Pn9Qsh/t2CbFgjg9kKOYFqf/tuP3ObSXGm3X89hpe0W+nLVAsaFnpw==
   dependencies:
     "@ctrl/tinycolor" "^3.4.1"
     "@element-plus/icons-vue" "^2.0.6"
@@ -1284,7 +1284,7 @@ element-plus@^2.2.10:
     "@popperjs/core" "npm:@sxzz/popperjs-es@^2.11.7"
     "@types/lodash" "^4.14.182"
     "@types/lodash-es" "^4.17.6"
-    "@vueuse/core" "^8.7.5"
+    "@vueuse/core" "^9.1.0"
     async-validator "^4.2.5"
     dayjs "^1.11.3"
     escape-html "^1.0.3"
@@ -2789,12 +2789,12 @@ picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.2, picomatch@^2.3.1:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
 
-pinia@^2.0.16:
-  version "2.0.16"
-  resolved "https://registry.yarnpkg.com/pinia/-/pinia-2.0.16.tgz#0105db595f5f792e17c04692e36807d8ea62f5cc"
-  integrity sha512-9/LMVO+/epny1NBfC77vnps4g3JRezxhhoF1xLUk8mZkUIxVnwfEAIRiAX8mYBTD/KCwZqnDMqXc8w3eU0FQGg==
+pinia@^2.0.18:
+  version "2.0.19"
+  resolved "https://registry.yarnpkg.com/pinia/-/pinia-2.0.19.tgz#1ee8b521ab0fdac16b727151f7761674a04875e1"
+  integrity sha512-Q/UQrmFLDMdlCkLfM5rGw1Ug0A7dy0G7NtBusMQSK+TNjf3CV/pO0RqblNIfuurWl42byTjM6HIemCWOfo8KXA==
   dependencies:
-    "@vue/devtools-api" "^6.1.4"
+    "@vue/devtools-api" "^6.2.1"
     vue-demi "*"
 
 postcss-selector-parser@^6.0.9:
@@ -3383,10 +3383,10 @@ vue-eslint-parser@~7.1.0:
     esquery "^1.0.1"
     lodash "^4.17.15"
 
-vue-router@^4.0.13:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.1.2.tgz#ae08f63c9610afa6bff6743e8f128b7054d4c9f5"
-  integrity sha512-5BP1qXFncVRwgV/XnqzsKApdMjQPqWIpoUBdL1ynz8HyLxIX/UDAx7Ql2BjmA5CXT/p61JfZvkpiFWFpaqcfag==
+vue-router@^4.1.3:
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.1.3.tgz#f8dc7931a2253cc5aa9b740f8b98969d08ca283c"
+  integrity sha512-XvK81bcYglKiayT7/vYAg/f36ExPC4t90R/HIpzrZ5x+17BOWptXLCrEPufGgZeuq68ww4ekSIMBZY1qdUdfjA==
   dependencies:
     "@vue/devtools-api" "^6.1.4"
 

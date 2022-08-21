@@ -28,12 +28,26 @@
 </template>
 <script lang="ts" setup>
   import FormGroup from './formGroup.vue'
-  import { computed, ref, watch, onUnmounted, onMounted, nextTick } from 'vue'
+  import {
+    computed,
+    ref,
+    watch,
+    onUnmounted,
+    onMounted,
+    nextTick,
+    provide
+  } from 'vue'
   import type { FormData, FormList } from '../types'
-  import { useDesignFormStore } from '@/store/designForm'
+  // import { useDesignFormStore } from '@/store/designForm'
   import { getRequest } from '@/api'
   import { useRoute, useRouter } from 'vue-router'
   import { ElMessage } from 'element-plus'
+  import {
+    constFormDict,
+    constFormOtherData,
+    constSetFormOptions,
+    constSetFormValue
+  } from './const'
 
   const props = withDefaults(
     defineProps<{
@@ -65,7 +79,7 @@
   )
   const route = useRoute()
   const router = useRouter()
-  const storeForm = useDesignFormStore()
+  // const storeForm = useDesignFormStore()
   const loading = ref(false)
   const hasLoadData = ref(false) // 用于表示是否已加载过表单数据了
   const confirmBtn = computed(() => {
@@ -137,13 +151,18 @@
     })
   }
   // 子组件formGroup为递归组件
-  storeForm.$patch((state) => {
+  provide(constFormOtherData, {
+    type: props.type,
+    isEdit: props.isEdit,
+    model: model,
+    hideField: props.formData.config?.hideField as []
+  })
+  /*storeForm.$patch((state: any) => {
     state.type = props.type
     state.isEdit = props.isEdit
     state.model = model
-    state.rulesComm = props.formData.config?.rulesComm as []
     state.hideField = props.formData.config?.hideField as []
-  })
+  })*/
   // 表单检验方法
   const ruleForm = ref()
   const validate = (callback: any) => {
@@ -175,12 +194,16 @@
     }
   }
   // 对表单设置初始值
+  const setValueObj = ref({})
+  provide(constSetFormValue, setValueObj)
   const setValue = (obj: { [key: string]: any }) => {
-    storeForm.setFormValue(obj)
+    setValueObj.value = obj
   }
   // 对表单选择项快速设置
+  const setFormOptions = ref({})
+  provide(constSetFormOptions, setFormOptions)
   const setOptions = (obj: { [key: string]: string[] }) => {
-    storeForm.setFormOptions(obj)
+    setFormOptions.value = obj
   }
   // 追加移除style样式
   const appendRemoveStyle = (type?: boolean) => {
@@ -205,6 +228,8 @@
   // ---------数据处理开始，也可以外部请求到数据使用setValue方式（导出vue文件时）-----------
   // 获取表单初始数据，加载条件还需要是接收到的参数id，即编辑状态
   // 设置了addLoad时，没有id也从接口获取新增时的初始数据或是dict数据
+  const resultDict = ref()
+  provide(constFormDict, resultDict)
   const getFormData = () => {
     if (
       props.formData?.list?.length &&
@@ -230,8 +255,10 @@
             value = props.afterResponse(result.data)
           }
           setValue(value)
-          // 将dict保存
-          storeForm.setFormDict(result.dict)
+          // 将dict保存，可用于从接口中设置表单组件options
+          if (result.dict) {
+            resultDict.value = result.dict
+          }
         }
         loading.value = false
       })
@@ -284,14 +311,14 @@
   // 表单初始值
   watch(
     () => props.value,
-    (v) => {
+    (v: any) => {
       v && setValue(v)
     }
   )
   // 表单options
   watch(
     () => props.options,
-    (v) => {
+    (v: any) => {
       v && setOptions(v)
     }
   )

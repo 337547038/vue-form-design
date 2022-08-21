@@ -25,9 +25,10 @@
   import { ElMessage } from 'element-plus'
   import { aceEdit } from './comm'
   import { objToStringify } from '@/utils/form'
+  import { constControlChange } from './const'
 
-  const visible = ref<boolean>(false)
-  const editor = ref<any>()
+  const visible = ref(false)
+  const editor = ref()
   // 根据生成的json提取需要导入的组件，远程方法，检验方法
   const getObjHtml = (obj: any) => {
     let rulesMethods = ''
@@ -107,7 +108,7 @@
     ${getHtml.rulesMethods}
     ${getHtml.sourceFun}
     // 表单控件值改变事件
-    /*provide('AKControlChange', ({key, value}) => {
+    /*provide('${constControlChange}', ({key, value}) => {
       console.log(key)
       console.log(value)
     })*/

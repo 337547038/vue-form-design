@@ -24,8 +24,9 @@ src
 进入项目安装依赖包
 
 ```text
-npm install
-npm run dev
+git clone https://github.com/337547038/vue-form-design.git
+yarn install
+yarn run dev
 ```
 
 

@@ -61,7 +61,8 @@
       title: '使用手册',
       children: [
         { title: '页面介绍', to: '/docs/useInfo' },
-        { title: '表单校验', to: '/docs/useVerify' }
+        { title: '表单属性', to: '/docs/useFormAttr' },
+        { title: '字段属性', to: '/docs/useFieldAttr' }
       ]
     }
   ])

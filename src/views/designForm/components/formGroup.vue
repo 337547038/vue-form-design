@@ -131,13 +131,14 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, computed, ref, watch } from 'vue'
+  import { reactive, computed, ref, watch, inject } from 'vue'
   import Draggable from 'vuedraggable'
   import FormItem from './formItem.vue'
   import ChildTable from './childTable.vue'
   import Tooltips from './tooltip.vue'
   import { useDesignFormStore } from '@/store/designForm'
   import type { FormList } from '../types'
+  import { constFormOtherData } from './const'
 
   const props = withDefaults(
     defineProps<{
@@ -153,13 +154,14 @@
     (e: 'update:data', value: FormList[]): void
   }>()
   const store = useDesignFormStore()
+  const formOtherData = inject(constFormOtherData, {}) as any
 
   const state = reactive({
     clone: true, // 允许clone
     gridAdd: false,
-    type: store.type
+    type: formOtherData.type
   })
-  const dataList = ref<FormList[]>(props.data)
+  const dataList = ref(props.data)
   watch(
     () => dataList.value,
     () => {
@@ -170,7 +172,7 @@
   )
   watch(
     () => props.data,
-    (v) => {
+    (v: FormList[]) => {
       dataList.value = v
     }
   )
@@ -278,7 +280,7 @@
   // 根据关联条件显示隐藏当前项
   const linksShow = (el: FormList) => {
     // 当前项设置了关联条件，当关联主体的值等于当前组件设定的值时
-    if (!el.config || !store.model) {
+    if (!el.config || !formOtherData.model.value) {
       return true
     }
     const key = el.config.linkKey
@@ -293,13 +295,17 @@
       for (let i = 0; i < keySplit.length; i++) {
         if (hasAndSpit) {
           pass = true
-          console.log(keySplit[i])
-          if ((store.model as any)[keySplit[i]] !== valueSplit[i]) {
+          // console.log(keySplit[i])
+          if (
+            (formOtherData.model.value as any)[keySplit[i]] !== valueSplit[i]
+          ) {
             pass = false
             break
           }
         } else {
-          if ((store.model as any)[keySplit[i]] === valueSplit[i]) {
+          if (
+            (formOtherData.model.value as any)[keySplit[i]] === valueSplit[i]
+          ) {
             pass = true
             break
           }
@@ -311,7 +317,7 @@
   }
   // 根据表单设置不显示指定字段
   const linksIf = (obj: FormList) => {
-    const { type, isEdit } = store
+    const { type, isEdit } = formOtherData
     const { config: { disabledAdd, disabledEdit, disabledDetail } = {} } = obj
     if (type === 1) {
       if ((isEdit && disabledEdit) || (!isEdit && disabledAdd)) {
@@ -325,7 +331,7 @@
       }
     }
     // 如果当前字段的name值存在于表单数据的vIf中，则不显示
-    const vIf: string | string[] = store.hideField
+    const vIf: string | string[] = formOtherData.hideField
     if (vIf?.length > 0) {
       return vIf.indexOf(obj.name) === -1 // 存在时返回false隐藏
     }

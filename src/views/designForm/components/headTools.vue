@@ -30,10 +30,6 @@
   const route = useRoute()
   // 筛选查找模式下不显示
   const vueDisabled = route.query.type === 'search'
-  const showSave = computed(() => {
-    // 有formId时显示保存
-    return route.query.formId === undefined
-  })
   const state = reactive({
     list: [
       { icon: 'del', label: '清空' },
@@ -41,12 +37,12 @@
       { icon: 'json', label: '生成脚本预览' },
       { icon: 'vue', label: '导出vue文件', disabled: vueDisabled },
       { icon: 'import', label: '导入Json' },
-      { icon: 'save', label: '保存', disabled: showSave.value }
+      { icon: 'save', label: '保存' }
     ]
   })
 
   const btnList = computed(() => {
-    return state.list.filter((item) => {
+    return state.list.filter((item: any) => {
       return !item.disabled
     })
   })

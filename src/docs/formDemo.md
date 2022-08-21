@@ -42,7 +42,7 @@
       {
         name: 'checkbox1660724104783',
         type: 'checkbox',
-        control: { modelValue: '' },
+        control: { modelValue: [] },
         options: [
           { label: '标签1', value: 'value1' },
           { label: '标签2', value: 'value2' },
@@ -101,7 +101,9 @@
 
 强大的校验规则，可使用快速选择表单全局的规则，减少同样的规则对不同的控件重复的加入的rules校验去；
 
-内置了常用的必填、手机号码、固话、固话或手机、邮箱、正整数、数字、身份证、自定义正则、自定义方法，使用非常方便
+内置了常用的必填、手机号码、固话、固话或手机、邮箱、正整数、数字、身份证、自定义正则、自定义方法，使用非常方便。
+
+可通用`./designForm/components/validate.ts`扩展，添加常用校验规则
 
 ```vue demo
 <template>
@@ -131,8 +133,7 @@
             }
           ]
         },
-        customRules: [],
-        rulesComm: ['required']
+        customRules: []
       },
       {
         name: 'tel',
@@ -155,8 +156,7 @@
           rules: [
             { required: true, message: '请输入微信号', trigger: 'change' }
           ]
-        },
-        rulesComm: []
+        }
       },
       {
         name: 'select',
@@ -184,7 +184,6 @@
         control: { modelValue: '' },
         config: {},
         item: { label: '自定义', showLabel: false },
-        rulesComm: [],
         customRules: [
           {
             type: 'methods',
@@ -202,15 +201,7 @@
       name: 'form1660725610088'
     },
     config:{
-      submitBtn: { confirm: '' },
-      rulesComm: [
-        {
-          key: 'required',
-          required: true,
-          message: '使用表单全局通用的必须规则',
-          trigger: 'blur'
-        }
-      ]
+      submitBtn: { confirm: '' }
     }
   })
   // todo 自定义校验方法
@@ -246,7 +237,7 @@
 
 ## 表单控件选项数据
 
-使用`setOptions`设置选项数据获取方法适用于单选、多选、下拉、联级。
+使用`provide`设置选项数据获取方法适用于单选、多选、下拉、联级。
 
 ```vue demo
 <template>
@@ -280,8 +271,7 @@
       name: 'form1660725610088'
     },
     config:{
-     submitBtn: { confirm: '' },
-     rulesComm: []
+     submitBtn: { confirm: '' }
     }
   })
   // todo 下拉选择框获取选项值
@@ -419,7 +409,7 @@
   </div>
 </template>
 <script setup>
-  import { provide, ref } from 'vue'
+  import { ref } from 'vue'
   const formData = ref({
     list: [
       {
@@ -441,9 +431,9 @@
       labelWidth: '',
       class: '',
       size: 'default',
-      name: 'form1660789836230'
+      name: 'form1660789836231'
     },
-    config:{
+    config: {
       hideField: []
     }
   })
@@ -455,14 +445,15 @@
   const submitUrl = ref(false) // 表单提交url
   const formName = ref()
   const visibleChange = (type) => {
-    const hasIndex = formData.value.hideField.indexOf(type)
+    const hasIndex = formData.value.config.hideField.indexOf(type)
     if (hasIndex !== -1) {
-      formData.value.hideField.splice(hasIndex, 1)
+      formData.value.config.hideField.splice(hasIndex, 1)
     } else {
-      formData.value.hideField.push(type)
+      formData.value.config.hideField.push(type)
     }
   }
 </script>
+
 ```
 
 ## 表单取值/设值
@@ -1137,7 +1128,9 @@
 </script>
 
 ```
+
 ## 富文本
+
 ```vue demo
 <template>
   <div>

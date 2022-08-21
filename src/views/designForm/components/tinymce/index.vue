@@ -14,12 +14,12 @@
   const props = withDefaults(
     defineProps<{
       modelValue: string
-      placeholder: string
-      width: string
-      height: string
-      blobUrl: string
-      imgUrl: string
-      config: any
+      placeholder?: string
+      width?: string
+      height?: string
+      blobUrl?: string
+      imgUrl?: string
+      config?: any
     }>(),
     {
       modelValue: '',
@@ -140,7 +140,7 @@
   // 侦听默认值 外界第一次传进来一个 v-model 就赋值给 contentValue
   watch(
     () => props.modelValue,
-    (n) => {
+    (n: any) => {
       if (n && n !== contentValue.value) {
         contentValue.value = n
       }
@@ -162,7 +162,7 @@
     // } else {}
     const params = new FormData()
     params.append('file', blobInfo.blob())
-    getRequest('uploadFiledTinymce', params, props.imgUrl)
+    getRequest('uploadFiled', params, { url: props.imgUrl })
       .then((res) => {
         if (res.data.code === 1) {
           success(res.data.path) // 上传成功，在成功函数里填入图片路径
@@ -223,16 +223,16 @@
     }*/
       const params = new FormData()
       params.append('file', file as any)
-      getRequest('uploadFiledTinymce', params, props.blobUrl)
+      getRequest('uploadFiled', params, { url: props.blobUrl })
         .then((res) => {
           if (res.data.code === 1) {
             callback(res.data.path, attr) // 上传成功，在成功函数里填入图片路径
           } else {
-            ElMessage.error(res.data.message)
+            ElMessage.error(res.data?.message)
           }
         })
         .catch((res) => {
-          ElMessage.error(res.data.message)
+          ElMessage.error(res.data?.message)
         })
     }
   }

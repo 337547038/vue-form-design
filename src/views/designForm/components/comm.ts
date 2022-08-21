@@ -1,6 +1,6 @@
 import { EDITTYPE } from '@/utils/form'
 
-export const aceEdit = (data: string, id: string, type: string | undefined) => {
+export const aceEdit = (data: any, id?: string, type?: string | undefined) => {
   id = id || 'editJson'
   type = type || EDITTYPE
   // @ts-ignore

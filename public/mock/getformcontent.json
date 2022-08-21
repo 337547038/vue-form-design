@@ -9,7 +9,7 @@
     },
     "data": {
       "text": "示例表单",
-      "select": 1,
+      "select": "1",
       "radio": 1
     }
   }

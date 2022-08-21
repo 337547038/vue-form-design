@@ -113,11 +113,14 @@
         let temp: any = []
         if (result) {
           result.forEach((item: any) => {
-            temp.push({
-              title: item.name,
-              icon: 'List',
-              path: '/designform/list?tid=' + item.id
-            })
+            if (item.formId && item.status?.toString() === '1') {
+              // 有数据源创建的才能添加
+              temp.push({
+                title: item.name,
+                icon: 'List',
+                path: '/designform/list?tid=' + item.id
+              })
+            }
           })
           navList.value[1].children = temp
           window.sessionStorage.setItem('formMenuList', JSON.stringify(temp))

@@ -6,7 +6,7 @@
       v-if="!fullScreen"
     >
       <div class="logo"
-        ><img src="@/assets/logo.png" />
+        ><img src="@/assets/logo.png" alt="" />
         <span v-show="!isCollapse">AK管理系统</span></div
       >
       <Menu :collapse="isCollapse" @get-menu-list="getMenuList" />
@@ -43,8 +43,8 @@
   import CommonHeader from './header.vue'
 
   const store = useLayoutStore()
-  const isCollapse = ref<boolean>(false)
-  const fullScreen = ref<boolean>(false)
+  const isCollapse = ref(false)
+  const fullScreen = ref(false)
   //const reloadFlag = ref<boolean>(true)
   const navList = ref([])
   const reloadFlag = computed({

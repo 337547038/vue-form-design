@@ -66,7 +66,7 @@
   const newData: any = ref(props.searchData)
   watch(
     () => props.searchData,
-    (v) => {
+    (v: FormList[]) => {
       newData.value = v
     }
   )

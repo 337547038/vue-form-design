@@ -43,9 +43,10 @@
 
 <script setup lang="ts">
   import FormItem from './formItem.vue'
-  import { watch, ref } from 'vue'
+  import { watch, ref, inject } from 'vue'
   import Tooltip from './tooltip.vue'
-  import { useDesignFormStore } from '@/store/designForm'
+  // import { useDesignFormStore } from '@/store/designForm'
+  import { constSetFormValue } from './const'
   const props = withDefaults(
     defineProps<{
       data: any
@@ -61,7 +62,7 @@
       }
     }
   )
-  const formStore = useDesignFormStore()
+  // const formStore = useDesignFormStore()
   const tableDataNew: any = ref(props.tableData)
   const addColumn = () => {
     const temp: any = {}
@@ -89,8 +90,9 @@
     tableDataNew.value.splice(index, 1)
   }
   // 使用setValue设值
+  const setFormValue = inject(constSetFormValue, {}) as any
   watch(
-    () => formStore.formValue,
+    () => setFormValue.value,
     (val: any) => {
       tableDataNew.value = val[props.data.name]
     }

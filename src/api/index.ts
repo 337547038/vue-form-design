@@ -14,7 +14,7 @@ const api: any = {
   getContentList: '/mock/getcontentlist.json', // 获取表单内容列表
   delFormContent: '', // 删除表单内容
   //getOptions: '/mock/getOption', // 设计创建表单时用于测试多选下拉项
-  uploadFiledTinymce: '/upload',
+  uploadFiled: '/upload',
   formSubmit: '/formSubmit'
 }
 export const getRequest = (apiKey: string, data?: any, options = {}) => {

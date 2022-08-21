@@ -125,13 +125,17 @@
           v-if="type === 1 || type === 2"
         />
         <img
+          alt=""
           src="./tinymce/img.png"
           v-if="type === 4"
           style="max-width: 100%"
         />
       </template>
-      <div v-bind="data.control" v-if="data.type === 'txt'" v-html="value">
-      </div>
+      <div
+        v-bind="data.control"
+        v-if="data.type === 'txt'"
+        v-html="value"
+      ></div>
     </template>
   </el-form-item>
 </template>
@@ -143,8 +147,16 @@
   import { ElMessage } from 'element-plus'
   import Tooltip from './tooltip.vue'
   import TinymceEdit from './tinymce/index.vue'
-  import { useDesignFormStore } from '@/store/designForm'
-  import { FormItem, FormList, RulesComm } from '../types'
+  // import { useDesignFormStore } from '@/store/designForm'
+  import { FormItem, FormList } from '../types'
+  import validate from './validate'
+  import {
+    constFormDict,
+    constControlChange,
+    constSetFormOptions,
+    constSetFormValue,
+    constFormOtherData
+  } from './const'
 
   const props = withDefaults(
     defineProps<{
@@ -157,9 +169,10 @@
   const emits = defineEmits<{
     (e: 'update:modelValue', val: string): void
   }>()
-  const store = useDesignFormStore()
+  // const store = useDesignFormStore()
+  const injectData = inject(constFormOtherData, {}) as any
   const type = computed(() => {
-    return store.type
+    return injectData.type
   })
   const { config, control, options = ref([]) } = toRefs(props.data)
   const value = props.tProps
@@ -168,7 +181,7 @@
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
   watch(
     () => props.data,
-    (val) => {
+    (val: FormList) => {
       config.value = val.config || {}
       control.value = val.control || {}
       options.value = val.options || []
@@ -196,10 +209,10 @@
   })
   // 控制编辑模式下是否可用
   const editDisabled = computed(() => {
-    if (store.type === 2) {
+    if (type.value === 2) {
       return true // 查看模式，为不可编辑状态
     }
-    if (store.type === 1 && store.isEdit && config.value.editDisabled) {
+    if (type.value === 1 && injectData.isEdit && config.value.editDisabled) {
       // 新增模式 编辑模式
       return true
     }
@@ -210,10 +223,9 @@
     let temp = undefined
     const itemR: any = props.data.item?.rules || []
     const customR = formatCustomRules()
-    const commR = formatRulesComm()
     // 如果三个都没有设置，则返回undefined
-    if (itemR?.length || customR?.length || commR?.length) {
-      temp = [...customR, ...commR, ...itemR]
+    if (itemR?.length || customR?.length) {
+      temp = [...customR, ...itemR]
     }
     return temp
   })
@@ -253,19 +265,15 @@
   }
   // 处理自定义校验规则，将customRules转换后追加到rules里
   const formatCustomRules = () => {
-    const rulesReg: any = {
-      mobile: /^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9])[0-9]{8}$/, // 手机
-      tel: /^0\d{2,3}-\d{7,8}$/, // 电话
-      phone: /^((0\d{2,3}(-?)\d{7,8})|(1[3456789]\d{9}))$/, // 固话和手机
-      email: /^[a-z0-9A-Z._%-]+@([a-z0-9A-Z-]+\.)+[a-zA-Z]{2,4}$/, //邮箱
-      int: /^[0-9]*[1-9][0-9]*$/, // 正整数
-      number: /^\d+(\.\d+)?$/, //数字带小数
-      card: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/ // 身份证
-    }
+    const rulesReg: any = {}
+    validate &&
+      validate.forEach((item) => {
+        rulesReg[item.type] = item.regExp
+      })
+
     // 获取校验方法 父级使用provide方法注入
-    // const validatorMethods = inject('validatorMethods', {})
     const temp: any = []
-    props.data.customRules?.forEach((item: RulesComm) => {
+    props.data.customRules?.forEach((item: any) => {
       if (!item.message && item.type !== 'methods') {
         return // 方法时允许提示信息为空
       }
@@ -287,7 +295,7 @@
       // 这里判断下防某些条件下重复push的可能或存重复校验类型
       let message: any = { message: item.message }
       if (!item.message) {
-        // 当使用validator校验时，如果存在message字段则不能使用 callback(new Error('xxxxx'));的提示
+        // 当使用validator校验时，如果存在message字段则不能使用 callback(new Error('x'));的提示
         message = {}
       }
       temp.push(
@@ -301,16 +309,6 @@
       )
     })
     return temp
-  }
-  // 从公共校验规则里提取，通过key
-  const formatRulesComm = () => {
-    if (store.rulesComm?.length > 0) {
-      const rules = props.data.rulesComm || []
-      return store.rulesComm.filter((item: RulesComm) =>
-        rules.includes(item.key)
-      )
-    }
-    return []
   }
   // 将{key:value}转[{label:'key',value:'value'}]
   const formatData = (obj: any) => {
@@ -327,22 +325,25 @@
     return obj
   }
   // 为改变事件提供方法
-  const changeEvent = inject('AKControlChange', '') as any
+  const changeEvent = inject(constControlChange, '') as any
   watch(
     () => value.value,
-    (val) => {
+    (val: any) => {
       if (props.tProps) {
         emits('update:modelValue', val)
       } else {
         control.value.modelValue = val
       }
-      changeEvent && changeEvent({ key: props.data.name, value: val })
+      changeEvent &&
+        changeEvent({ key: props.data.name, value: val, data: props.data })
     }
   )
   // 执行表单的setValue方法，对组件设值
+  const setValueEvent = inject(constSetFormValue, {}) as any
   watch(
-    () => store.formValue,
+    () => setValueEvent.value,
     (val: any) => {
+      console.log(val)
       // !props.tProps 的这里不单独处理
       if (val && !props.tProps && val[props.data.name] !== undefined) {
         value.value = val[props.data.name]
@@ -356,8 +357,9 @@
     }
   )
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
+  const formDict = inject(constFormDict, {}) as any
   watch(
-    () => store.formOptionsDict,
+    () => formDict.value,
     (val: any) => {
       if (val && config.value.source === 2) {
         const opt = val[config.value.sourceFun] || val[props.data.name]
@@ -368,8 +370,9 @@
     }
   )
   // 对单选多选select设置options
+  const formOptions = inject(constSetFormOptions, {}) as any
   watch(
-    () => store.formOptions,
+    () => formOptions.value,
     (val: any) => {
       const opt = val[props.data.name]
       // 子表内的需要注意下，只有在子表有记录时才生效

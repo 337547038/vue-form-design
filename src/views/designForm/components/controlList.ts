@@ -46,7 +46,7 @@ export default [
         label: '单选框组',
         icon: 'radio',
         control: {
-          modelValue: ''
+          modelValue: []
         },
         options: selectOption, // 下拉选项数据集合
         config: config

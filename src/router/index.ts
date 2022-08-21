@@ -1,14 +1,9 @@
-import {
-  createRouter,
-  createWebHistory,
-  RouteRecordRaw,
-  createWebHashHistory
-} from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 // @ts-ignore
 import routesPage from '~pages'
 
 console.log(routesPage)
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: '/test',
     name: '/test',
@@ -41,14 +36,14 @@ const router = createRouter({
   routes: routes
 })
 
-router.beforeEach((to, from) => {
-  /*const { path: toPath } = to
+/*router.beforeEach((to: any, from: any) => {
+  /!*const { path: toPath } = to
       const { path: fromPath } = from
       if (toPath === fromPath) {
         return false
-      }*/
+      }*!/
   //console.log(to)
   //console.log(from)
-})
+})*/
 
 export default router

@@ -31,7 +31,8 @@
 
 ### tableData
 
-| 参数      | 类型     | 说明    |
-|---------|--------|-------|
-| config  | Object | 表格配置  |
-| columns | Array  | 表格列配置 |
+| 参数         | 类型     | 说明    |
+|------------|--------|-------|
+| tableProps | Object | 表格配置  |
+| columns    | Array  | 表格列配置 |
+| dict       | Object | 数据字典  |

@@ -33,7 +33,7 @@
     <div class="table-main">
       <el-table
         :data="state.tableDataList"
-        v-bind="tableData.config"
+        v-bind="tableData.tableProps"
         @selection-change="selectionChange"
         ref="tableEl"
       >
@@ -46,30 +46,36 @@
               {{ scope.column.label }}
               <Tooltip :content="item.help" />
             </template>
-            <template #default="scope">
-              <slot
-                :name="item.prop"
-                :row="scope.row"
-                :$index="scope.$index"
-                v-if="$slots[item.prop]"
-              >
+            <template #default="scope" v-if="$slots[item.prop]">
+              <slot :name="item.prop" :row="scope.row" :$index="scope.$index">
               </slot>
-              <template v-else-if="item.config?.dictKey">
-                {{ getDictLabel(scope, item) }}
-              </template>
-              <template v-else-if="item.prop === '__control'">
-                <el-button link @click="addOrEdit(scope.row)">编辑</el-button>
-                <el-popconfirm
-                  title="确定删除该记录?"
-                  confirm-button-text="确认"
-                  cancel-button-text="取消"
-                  @confirm="delClick(scope.row)"
-                >
-                  <template #reference>
-                    <el-button size="small" link>删除</el-button>
-                  </template>
-                </el-popconfirm>
-              </template>
+            </template>
+            <template
+              #default="scope"
+              v-else-if="item.config && Object.keys(item.config.tagList).length"
+            >
+              <el-tag
+                :type="item.config.tagList[scope.row[item.prop]]"
+                effect="light"
+              >
+                {{ getDictLabel(scope, item) }}</el-tag
+              >
+            </template>
+            <template #default="scope" v-else-if="item.config?.dictKey">
+              {{ getDictLabel(scope, item) }}
+            </template>
+            <template #default="scope" v-else-if="item.prop === '__control'">
+              <el-button link @click="addOrEdit(scope.row)">编辑</el-button>
+              <el-popconfirm
+                title="确定删除该记录?"
+                confirm-button-text="确认"
+                cancel-button-text="取消"
+                @confirm="delClick(scope.row)"
+              >
+                <template #reference>
+                  <el-button size="small" link>删除</el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </template>
@@ -96,11 +102,11 @@
   import Tooltip from './tooltip.vue'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
-  import type { FormData } from '../types'
+  import type { FormData, TableData } from '../types'
 
   const props = withDefaults(
     defineProps<{
-      tableData: object
+      tableData: TableData
       searchData?: FormData
       beforeRequest?: Function
       afterResponse?: Function
@@ -115,7 +121,7 @@
         return ['查询', '清空']
       },
       tableData: () => {
-        return { config: {}, columns: {} }
+        return { tableProps: {}, columns: {} }
       },
       searchData: () => {
         return { list: [], form: {} }
@@ -136,7 +142,8 @@
     pageSize: 20,
     total: 0,
     tid: route.query.tid,
-    selectionChecked: []
+    selectionChecked: [],
+    dict: props.tableData.dict || {}
   })
   // 筛选查询列表数据
   const getListData = (page?: number) => {
@@ -160,6 +167,10 @@
         }
         // console.log(result)
         state.tableDataList = result?.list
+        if (result.dict) {
+          // 合并表格里自定义设置的
+          state.dict = Object.assign(props.tableData.dict || {}, result.dict)
+        }
         state.loading = false
       })
       .catch((res) => {
@@ -223,8 +234,14 @@
   }
   // 个性化设置
   const getDictLabel = (scope: any, item: any) => {
-    if (scope.row.$index) {
-      // 表格没数据时也会引用，此时$index，应该是组件ui问题
+    if (scope.row.$index !== -1) {
+      // 表格没数据时也会引用，此时$index=-1，应该是组件ui问题
+      const key = (state.dict as any)[item.config?.dictKey]
+      if (Object.keys(state.dict).length && key) {
+        return key[scope.row[item.prop]]
+      } else {
+        return scope.row[item.prop]
+      }
     }
   }
   onMounted(() => {

@@ -6,20 +6,20 @@
 
 ### Props
 
-| 参数            | 类型             | 说明                                                                              |
-|---------------|----------------|---------------------------------------------------------------------------------|
-| formData      | object         | 设计的生成表单数据                                                                       |
-| type          | number/1       | 表单展示模式，1新增；2查看（表单模式） ；3查看； 4设计                                                  |
-| isEdit        | boolean/false  | 编辑状态，type=1新增模式下有编辑状态，主要用于控制编辑模式下某些字段的禁用状态，即可新增但不能修改                            |
-| disabled      | boolean/false  | 表单禁用模式，类似于表单模式查看                                                                |
-| requestUrl    | string/boolean | 表单编辑初始数据加载，默认`getFormContent`，还需根据url参数id来请求。适用于导出vue文件                         |
-| beforeRequest | function       | 请求编辑数据前参数处理方法，可对请求参数处理，`requestUrl`为`true`时。适用于导出vue文件                          |
-| afterResponse | function       | 请求编辑数据完成后数据处理方法，`requestUrl`为`true`时。适用于导出vue文件                                 |
-| submitUrl     | string/boolean | 表单提交保存接口，类似于`requestUrl`，在配置有表单提交按钮时有效，同时需url参数tid(通用表单提交需要知道提交到哪个表)。适用于导出vue文件 |
-| beforeSubmit  | function       | 表单提交前数据处理，仅在`submitUrl`为`true`时。适用于导出vue文件                                      |
-| afterSubmit   | function       | 表单提交成功处理方法。适用于导出vue文件                                                           |
-| value         | object         | 表单初始值，同setValue                                                                 |
-| options       | object         | 表单选项数据，同setOptions                                                              |
+| 参数            | 类型             | 说明                                                     |
+|---------------|----------------|--------------------------------------------------------|
+| formData      | object         | 设计的生成表单数据                                              |
+| type          | number/1       | 表单展示模式，1新增；2查看（表单模式） ；3查看； 4设计                         |
+| isEdit        | boolean/false  | 编辑状态，type=1新增模式下有编辑状态，主要用于控制编辑模式下某些字段的禁用状态，即可新增但不能修改   |
+| disabled      | boolean/false  | 表单禁用模式，类似于表单模式查看                                       |
+| requestUrl    | string/boolean | 表单编辑初始数据加载，默认`getFormContent`。适用于导出vue文件               |
+| beforeRequest | function       | 请求编辑数据前参数处理方法，可对请求参数处理，`requestUrl`为`true`时。适用于导出vue文件 |
+| afterResponse | function       | 请求编辑数据完成后数据处理方法，`requestUrl`为`true`时。适用于导出vue文件        |
+| submitUrl     | string/boolean | 表单提交保存接口，类似于`requestUrl`，在配置有表单提交按钮时有效。适用于导出vue文件      |
+| beforeSubmit  | function       | 表单提交前数据处理，仅在`submitUrl`为`true`时。适用于导出vue文件             |
+| afterSubmit   | function       | 表单提交成功处理方法。适用于导出vue文件                                  |
+| value         | object         | 表单初始值，同setValue                                        |
+| options       | object         | 表单选项数据，同setOptions                                     |
 
 ### Methods
 
@@ -33,9 +33,9 @@
 
 ### Provide
 
-| 方法              | 说明                       |
-|-----------------|--------------------------|
-| AKControlChange | 表单控件值改变事件，返回{key, value} |
+| 方法              | 说明                             |
+|-----------------|--------------------------------|
+| AKControlChange | 表单控件值改变事件，返回{key, value, data} |
 
 ### Slot
 
@@ -46,6 +46,9 @@
 ### formData
 
 代码编辑输入框可支持`json`或`javascript`，初始使用时可通过修改`/src/utils/form.ts`里的`EDITTYPE`的值
+
+### formData 方法
+get[formName]ControlByName() 用于根据name值获取formData中的数据项，使用方法可见表单示例
 
 ```javascript
 formData = {
@@ -64,7 +67,6 @@ formData = {
           editDisabled: true // 编辑状态下禁用，即表单部分字段只能添加，不允许编辑时可使用此设置
         },
       customRules: [], // 使用快速方法添加的校验规则，会自动合并到`item.rules`
-      rulesComm: [], // 使用快速选择添加的公共校验规则，会自动合并到`item.rules`
       item:// 组件el-form-item的参数配置
         {
           label: "单行文本",
@@ -96,7 +98,7 @@ formData = {
       config:
         {
           type: "async", // `options`数据来源方式`async`动态选项，`fixed`固定选项
-          source: 0, // 动态选项时 0数据源，1方法函数
+          source: 0, // 动态选项时 0数据源，1方法函数，2接口数据dict字典
           request: "get", // source=0时的数据请求方式
           sourceFun: "1" // 方法函数名或请求url
         },
@@ -114,10 +116,10 @@ formData = {
       name: "form1660637148435"
     },
   config: {
-    rulesComm: [], // 为多个控件添加相关的检验规则
     style: '', // 表单css样式，相当于scope
     hideField: [], // 使用v-if隐藏的字段，用于交互
-    submitBtn: {} // 表单按钮
+    submitBtn: {}, // 表单按钮
+    addLoad: false // 新增表单时是否从接口加载默认数据
   }
 }
 ```

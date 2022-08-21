@@ -36,12 +36,12 @@
             :label="item.key"
             :key="item.prop"
             @change="btnCheckChange(item)"
-            >{{ item.label }}</el-checkbox
-          >
+            >{{ item.label }}
+          </el-checkbox>
         </el-checkbox-group>
       </div>
       <div class="title">
-        <el-button size="small" @click="editOtherField"
+        <el-button size="small" @click="editOpenDrawer('columns')"
           >编辑自定义字段
         </el-button>
       </div>
@@ -61,7 +61,7 @@
         </div>
         <el-table
           :data="state.dataList"
-          v-bind="state.tableData.config"
+          v-bind="state.tableData.tableProps"
           ref="tableEl"
         >
           <template
@@ -81,9 +81,7 @@
               <template #default v-if="item.type !== 'index'">
                 <el-checkbox v-if="item.type === 'selection'" />
                 <span v-else-if="item.prop === '__control'">编辑 删除</span>
-                <span v-else @click.stop="rowClick(item)"
-                  >点击单元格可对列个性化设置</span
-                >
+                <span v-else @click.stop="rowClick(item)">点击个性化设置</span>
               </template>
             </el-table-column>
           </template>
@@ -113,14 +111,8 @@
                   @change="configChange"
                 />
               </el-form-item>
-              <!--              <el-form-item label="Tag标签显示">
-                <el-switch
-                  v-model="state.config.isTag"
-                  @change="configChange"
-                />
-              </el-form-item>-->
               <el-form-item
-                v-for="(tag, index) in state.config.tagList"
+                v-for="(tag, index) in state.tagList"
                 :key="index"
                 class="table-tag"
               >
@@ -135,6 +127,7 @@
                       v-model="tag.type"
                       @change="configChange"
                     >
+                      <el-option label="default" value="default" />
                       <el-option label="success" value="success" />
                       <el-option label="info" value="info" />
                       <el-option label="warning" value="warning" />
@@ -150,7 +143,19 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="表格属性" name="second">
-            请使用生成脚本预览功能，编辑config属性
+            <el-button @click="editOpenDrawer('tableConfig')"
+              >编辑表格属性</el-button
+            >
+            <el-button @click="editOpenDrawer('dict')"
+              >设置列表字典
+              <el-tooltip
+                content="表格列表数据字典，不般不设置，从接口dict匹配。格式：{0:'男',1:'女'}"
+                placement="top"
+              >
+                <el-icon>
+                  <QuestionFilled />
+                </el-icon> </el-tooltip
+            ></el-button>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -158,7 +163,7 @@
     <el-drawer
       v-model="state.visibleDialog"
       size="60%"
-      direction="rtl"
+      :direction="state.direction"
       custom-class="json-dialog"
       :append-to-body="true"
       :before-close="drawerBeforeClose"
@@ -170,12 +175,12 @@
         </el-button>
       </div>
     </el-drawer>
-    <vue-File ref="vueFileEl" />
+    <VueFile ref="vueFileEl" />
   </div>
 </template>
 
-<script setup>
-  import headTools from './components/headTools.vue'
+<script setup lang="ts">
+  import HeadTools from './components/headTools.vue'
   import { getRequest } from '@/api'
   import {
     reactive,
@@ -186,17 +191,19 @@
     getCurrentInstance
   } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import vueFile from './components/vueFile.vue'
+  import VueFile from './components/vueFile.vue'
   import { aceEdit } from './components/comm'
   import { ElMessage } from 'element-plus'
   import Sortable from 'sortablejs'
   import { objToStringify, stringToObj } from '@/utils/form'
+  import { FormList } from './types'
 
   const router = useRouter()
   const route = useRoute()
   const { proxy } = getCurrentInstance()
   const vueFileEl = ref()
   const state = reactive({
+    direction: 'rtl',
     filedList: [], // 可选字段
     otherFiled: [
       { label: '勾选', prop: '__selection', type: 'selection' },
@@ -219,7 +226,7 @@
     ],
     controlBtnGroup: [],
     tableData: {
-      config: {}, //表格所有参数
+      tableProps: {}, //表格所有参数
       columns: [],
       controlBtn: []
     },
@@ -232,15 +239,14 @@
     dataList: [{}], // 表格行数据
     dataTemp: {}, // 暂存接口获取到的数据
     attrObj: {}, // 当前选中设置的字段属性
-    config: {
-      tagList: []
-    }
+    tagList: [],
+    config: {}
   })
   const excludeType = ['txt', 'title', 'table', 'component', 'upload']
-  const filterFiled = (obj) => {
-    obj?.list.forEach((item) => {
+  const filterFiled = (obj: any) => {
+    obj?.list.forEach((item: FormList) => {
       if (item.type === 'grid' || item.type === 'tabs') {
-        item.columns.forEach((col) => {
+        item.columns.forEach((col: FormList) => {
           filterFiled(col)
         })
       } else if (item.type === 'card') {
@@ -248,13 +254,13 @@
       } else if (excludeType.indexOf(item.type) === -1) {
         state.filedList.push({
           prop: item.name,
-          label: item.item.label,
+          label: item.item?.label,
           help: item.config.help || ''
         })
       }
     })
   }
-  const headToolClick = (type) => {
+  const headToolClick = (type: string) => {
     switch (type) {
       case 'del':
         // 清空
@@ -279,12 +285,12 @@
         break
     }
   }
-  const checkChange = (item) => {
+  const checkChange = (item: any) => {
     // 判断是否存在
     const indexOf = state.checkboxGroup.indexOf(item.label)
     if (indexOf === -1) {
       // 存在，点击时checkboxGroup的值会先改变，再执行checkChange方法，因此这里＝＝＝-1表示存在
-      state.tableData.columns.forEach((col, index) => {
+      state.tableData.columns.forEach((col: any, index: number) => {
         if (col.label === item.label && col.prop === item.prop) {
           state.tableData.columns.splice(index, 1)
         }
@@ -294,7 +300,8 @@
     }
   }
   // 打开
-  const dialogOpen = (obj) => {
+  const dialogOpen = (obj: any, direction?: string) => {
+    state.direction = direction || 'rtl'
     state.visibleDialog = true
     const editData = objToStringify(obj, true)
     nextTick(() => {
@@ -303,18 +310,25 @@
   }
   const dialogConfirm = () => {
     try {
-      // 将当前数据更新至state.tableData
-      if (state.editIndex !== '') {
+      const val = stringToObj(state.editor.getValue())
+      if (state.editIndex === 'columns') {
+        // 编辑自定义字段
+        state.tableData.columns = val
+      } else if (state.editIndex === 'tableConfig') {
+        // 表格属性
+        state.tableData.tableProps = val
+      } else if (state.editIndex === 'dict') {
+        state.tableData.dict = val
+      } else if (state.editIndex !== '') {
+        // 将当前数据更新至state.tableData
         // 表示编辑单个属性
-        state.tableData.columns[state.editIndex] = stringToObj(
-          state.editor.getValue()
-        )
-        state.editIndex = '' // 清空
+        state.tableData.columns[state.editIndex] = val
       } else {
-        state.tableData = stringToObj(state.editor.getValue())
+        state.tableData = val
       }
+      state.editIndex = '' // 清空
       state.visibleDialog = false
-    } catch (res) {
+    } catch (res: any) {
       // console.log(res.message)
       ElMessage.error(res.message)
     }
@@ -343,17 +357,28 @@
         state.loading = false
       })
   }
-  const drawerBeforeClose = (done) => {
+  const drawerBeforeClose = (done: any) => {
     state.editIndex = '' // 清空
     done()
   }
-  const editOtherField = () => {
-    dialogOpen(state.tableData)
+  const editOpenDrawer = (type: string) => {
+    state.editIndex = type
+    switch (type) {
+      case 'dict':
+        dialogOpen(state.tableData.config || {}, 'ltr')
+        break
+      case 'tableConfig':
+        dialogOpen(state.tableData.tableProps, 'ltr')
+        break
+      case 'columns':
+        dialogOpen(state.tableData.columns)
+        break
+    }
   }
   // 字段属性编辑下拉选择
-  const selectChange = (prop) => {
+  const selectChange = (prop: string) => {
     let obj = {}
-    state.tableData.columns.forEach((item, index) => {
+    state.tableData.columns.forEach((item: any, index: number) => {
       if (item.prop === prop) {
         obj = item
         state.editIndex = index
@@ -362,11 +387,11 @@
     // 打开编辑窗口
     dialogOpen(obj)
   }
-  const btnCheckChange = (obj) => {
+  const btnCheckChange = (obj: any) => {
     let btn = state.tableData?.controlBtn
     let index = -1
     if (btn) {
-      btn.forEach((item, i) => {
+      btn.forEach((item: any, i: number) => {
         if (item.key === obj.key || item.label === obj.label) {
           index = i
         }
@@ -386,7 +411,7 @@
     Sortable.create(wrapperTr, {
       animation: 180,
       delay: 0,
-      onEnd: (evt) => {
+      onEnd: (evt: any) => {
         const oldItem = state.tableData.columns[evt.oldIndex]
         state.tableData.columns.splice(evt.oldIndex, 1)
         state.tableData.columns.splice(evt.newIndex, 0, oldItem)
@@ -405,33 +430,51 @@
             state.tableData = stringToObj(result.tableData)
           }
           // 将表头数据在左则对应选中
-          state.tableData.columns.forEach((item) => {
+          state.tableData.columns.forEach((item: any) => {
             state.checkboxGroup.push(item.label)
           })
-          state.tableData.controlBtn?.forEach((item) => {
+          state.tableData.controlBtn?.forEach((item: any) => {
             state.controlBtnGroup.push(item.key || item.label)
           })
         }
       })
     }
   }
-  const rowClick = (column) => {
+  const rowClick = (column: any) => {
     state.attrObj = column
     state.config = column.config || {}
+    const tagList = state.config.tagList
+    state.tagList = []
+    if (tagList) {
+      for (const key in tagList) {
+        state.tagList.push({
+          value: key,
+          type: tagList[key]
+        })
+      }
+    }
   }
-  const delTagOption = (index) => {
-    state.config.tagList.splice(index, 1)
+  const delTagOption = (index: number) => {
+    state.tagList.splice(index, 1)
+    configChange()
   }
   const tagAdd = () => {
-    if (!state.config?.tagList) {
-      state.config.tagList = []
-    }
-    state.config.tagList.push({
+    state.tagList.push({
       value: '',
-      type: ''
+      type: 'default'
     })
   }
   const configChange = () => {
+    // 转换tagList格式
+    const temp: any = {}
+    state.tagList.forEach((item: any) => {
+      temp[item.value] = item.type
+    })
+    if (Object.keys(temp).length) {
+      state.config.tagList = temp
+    } else {
+      delete state.config.tagList // 没有时删除字段
+    }
     // 将数据合并
     Object.assign(state.attrObj, { config: state.config })
   }

@@ -48,6 +48,7 @@
     </div>
     <form-control-attr
       v-model:formData="state.formData"
+      :dataSource="dialog.tableData"
       @openDialog="dialogOpen"
     />
     <el-drawer
@@ -65,7 +66,7 @@
         </el-button>
       </div>
     </el-drawer>
-    <vue-File ref="vueFileEl" v-if="!state.searchDesign" />
+    <VueFile ref="vueFileEl" v-if="!state.searchDesign" />
     <el-dialog v-model="state.previewVisible" title="预览" :fullscreen="true">
       <form-design
         :form-data="state.formDataPreview"
@@ -87,11 +88,11 @@
   </div>
 </template>
 <script setup lang="ts">
-  import headTools from './components/headTools.vue'
-  import formControl from './components/dragControl.vue'
-  import formDesign from './components/form.vue'
-  import formControlAttr from './components/formControlAttr.vue'
-  import vueFile from './components/vueFile.vue'
+  import HeadTools from './components/headTools.vue'
+  import FormControl from './components/dragControl.vue'
+  import FormDesign from './components/form.vue'
+  import FormControlAttr from './components/formControlAttr.vue'
+  import VueFile from './components/vueFile.vue'
   import { ref, reactive, nextTick, onUnmounted } from 'vue'
   import { useDesignFormStore } from '@/store/designForm'
   import { getRequest } from '@/api'
@@ -106,14 +107,15 @@
   const store = useDesignFormStore()
   const router = useRouter()
   const route = useRoute()
-  const state = reactive<any>({
+  const state = reactive({
     formData: {
       list: [],
       form: {
         labelWidth: '',
         class: '',
         size: 'default',
-        name: 'form' + new Date().getTime()
+        name: 'form' + new Date().getTime(),
+        formId: route.query.formId || ''
       }
     },
     visibleDialog: false,
@@ -138,12 +140,10 @@
     router.push({ path: '/designform', query: { formId: id } })
   }
   const getDialogData = () => {
-    if (route.query.new === 'true') {
-      getRequest('datasource').then((res: any) => {
-        dialog.value.loading = false
-        dialog.value.tableData = res.data.data
-      })
-    }
+    getRequest('datasource').then((res: any) => {
+      dialog.value.loading = false
+      dialog.value.tableData = res.data.data
+    })
   }
   const dialogClose = () => {
     dialogClick()
@@ -192,6 +192,8 @@
         break
       case 'eye':
         // 打开预览窗口
+        store.setActiveKey('')
+        store.setControlAttr({})
         state.previewVisible = true
         let stringPreview = objToStringify(state.formData) // 防止预览窗口数据修改影响
         const formName = state.formData.form.name
@@ -232,13 +234,7 @@
         // callback
         state.dialogType(val)
       } else {
-        if (state.dialogType === 'rules') {
-          // 表单属性－编辑全局检验规则
-          if (!state.formData.config) {
-            state.formData.config = {}
-          }
-          state.formData.config.rulesComm = val
-        } else if (state.dialogType === 'css') {
+        if (state.dialogType === 'css') {
           // 表单属性－编辑表单样式
           if (!state.formData.config) {
             state.formData.config = {}
@@ -262,7 +258,7 @@
         tableData: state.formDataTemp.tableData,
         formData: objToStringify(state.formData),
         id: route.query.id, // 修改时，当前记录id
-        formId: route.query.formId,
+        formId: state.formData.form?.formId || route.query.formId, // formId允许在表单属性设置里修改的
         name: state.formData.form.name // 表单名称，用于在显示所有已创建的表单列表里显示
       }
       if (state.searchDesign) {
@@ -289,6 +285,11 @@
           ElMessage.info(res.data || '保存异常')
           state.loading = false
         })
+      // 清空右侧内容管理菜单存在session的内容，刷新时可重新加载新菜单
+      if (!route.query.id) {
+        // 新增时
+        window.sessionStorage.removeItem('formMenuList')
+      }
     }
     // 清空右侧栏信息
     store.setActiveKey('')

@@ -144,7 +144,7 @@
                   <el-radio :label="2"
                     >接口字典
                     <el-tooltip
-                      content="从当前数据接口dict里匹配，可减少请求数，实际项目也不是每个选项都有单独的接口。此设置需要开启表单属性-添加时从获取请求"
+                      content="从当前数据接口dict里匹配，可减少请求数，实际项目也不是每个选项都有单独的接口。此设置需要开启表单属性-添加时获取请求"
                       placement="top"
                     >
                       <el-icon>
@@ -193,27 +193,17 @@
           >
             <h3>校验设置</h3>
             <div v-if="showHide(['input', 'password', 'component'], true)">
-              <el-form-item v-if="formData.config?.rulesComm?.length > 0">
-                <el-select
-                  placeholder="快速选择"
-                  :multiple="true"
-                  v-model="controlData.rulesComm"
-                >
-                  <el-option
-                    v-for="item in formData.config?.rulesComm"
-                    :label="`${item.key}(${item.message})`"
-                    :value="item.key"
-                    :key="item.key"
-                  />
-                </el-select>
-              </el-form-item>
               <el-form-item
                 v-for="(item, index) in controlData.customRules"
                 :key="item.type"
               >
                 <el-input v-model="item.message" placeholder="校验提示信息">
                   <template #prepend>
-                    <el-select v-model="item.type" style="width: 80px">
+                    <el-select
+                      v-model="item.type"
+                      style="width: 80px"
+                      @change="rulesSelectChange(item, $event)"
+                    >
                       <el-option
                         v-for="list in state.customRulesList"
                         :key="list.type"
@@ -240,7 +230,7 @@
               <el-form-item>
                 <el-button @click="addRulesFast">快速添加</el-button>
                 <el-button @click="addRules"
-                  >编辑校验规则
+                  >编写校验规则
                   <el-tooltip
                     content="可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>"
                     placement="top"
@@ -283,44 +273,33 @@
       <el-tab-pane label="表单属性" name="second">
         <el-form size="small" class="form">
           <el-form-item
-            v-for="(item, index) in state.formAttr"
+            v-for="(item, index) in state.formAttr.filter((item) => !item.hide)"
             :label="item.label"
             :key="index"
           >
             <el-select
               v-if="item.type === 'select'"
-              v-model="formInfo[item.value]"
+              v-model="item.value"
+              :placeholder="item.placeholder"
+              @change="formAttrChange(item)"
             >
               <el-option
-                :label="opt.label"
+                :label="opt.label || opt.name"
                 v-for="opt in item.options"
-                :key="opt.label"
-                :value="opt.value"
+                :key="opt.label || opt.name"
+                :value="opt.value || opt.id"
               />
             </el-select>
             <el-input
               v-else
-              v-model="formInfo[item.value]"
+              v-model="item.value"
               :placeholder="item.placeholder"
-            />
-          </el-form-item>
-          <el-form-item v-if="!state.isSearch" label="提交按钮">
-            <el-input
-              placeholder="提交按钮文案，空不显示"
-              v-model="formBtn.confirm"
-              @change="formAttChange('confirm', $event)"
-            />
-          </el-form-item>
-          <el-form-item v-if="!state.isSearch" label="取消返回按钮">
-            <el-input
-              placeholder="取消返回按钮文案，空不显示"
-              v-model="formBtn.cancel"
-              @change="formAttChange('cancel', $event)"
+              @change="formAttrChange(item)"
             />
           </el-form-item>
           <el-form-item>
             <template #label
-              >添加时从获取请求
+              >添加时获取请求
               <el-tooltip
                 content="新增表单数据时，从接口获取新增初始数据"
                 placement="top"
@@ -331,23 +310,11 @@
               </el-tooltip>
             </template>
             <el-switch
-              v-model="addLoad"
-              @change="formAttChange('addLoad', $event)"
+              v-model="formConfig.addLoad"
+              @change="formAttrChange({ key: 'addLoad' }, $event)"
             />
           </el-form-item>
           <el-form-item>
-            <el-button v-if="!state.isSearch" @click="rulesCommClick"
-              >编辑全局校验规则
-              <el-tooltip
-                content="当前表单通用校验规则，即同一规则可应用于不同的控件。可参考UI组件表单校验(每组必须添加不同的key)，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>"
-                placement="top"
-                raw-content
-              >
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
-            </el-button>
             <el-button @click="editFormStyle"
               >编辑表单样式
               <el-tooltip
@@ -372,81 +339,80 @@
   import { getRequest } from '@/api'
   import { useDesignFormStore } from '@/store/designForm'
   import { FormData } from '../types'
+  import validate from './validate'
 
   const props = withDefaults(
     defineProps<{
       formData: FormData
+      dataSource: any
     }>(),
-    {}
+    {
+      dataSource: () => {
+        return []
+      }
+    }
   )
   const emits = defineEmits<{
     (e: 'openDialog', data: any, type?: any): void
     (e: 'update:formData', data: FormData): void
   }>()
   const formInfo = toRef(props.formData, 'form')
-  const addLoad = ref(props.formData.config?.addLoad)
-
-  const formBtn: any = ref(props.formData.config?.submitBtn || {})
+  const formConfig: any = ref(props.formData.config || {})
   const store = useDesignFormStore()
   const route = useRoute()
-  const state = reactive<any>({
+  const state = reactive({
     formAttr: [
-      { label: '表单名称', value: 'name' },
+      {
+        label: '数据源',
+        placeholder: '请选择数据源',
+        value: formInfo.value.formId,
+        type: 'select',
+        options: props.dataSource,
+        key: 'dataSource',
+        hide: route.query.type === 'search'
+      },
+      { label: '表单名称', value: formInfo.value.name, key: 'name' },
       {
         label: '表单标签宽度',
-        value: 'labelWidth',
-        placeholder: '表单label宽，如180px'
+        value: formInfo.value.labelWidth,
+        placeholder: '表单label宽，如180px',
+        key: 'labelWidth'
       },
       {
         label: '表单样式名称',
-        value: 'class',
-        placeholder: '额外添加的表单class类名'
+        value: formInfo.value.class,
+        placeholder: '额外添加的表单class类名',
+        key: 'class'
       },
       {
         label: '组件尺寸',
-        value: 'size',
+        value: formInfo.value.size,
         type: 'select',
+        key: 'size',
         options: [
           { label: 'large', value: 'large' },
           { label: 'default', value: 'default' },
           { label: 'small', value: 'small' }
         ]
+      },
+      {
+        label: '提交按钮',
+        value: formConfig.value?.formBtn?.confirm,
+        placeholder: '提交按钮文案，空不显示',
+        path: 'formBtn',
+        key: 'confirm'
+      },
+      {
+        label: '取消返回按钮',
+        value: formConfig.value?.formBtn?.cancel,
+        placeholder: '取消返回按钮文案，空不显示',
+        path: 'formBtn',
+        key: 'cancel'
       }
     ],
     dataSourceList: {},
     customRulesList: [
-      {
-        type: 'required',
-        label: '必填'
-      },
-      {
-        type: 'mobile',
-        label: '手机号码'
-      },
-      {
-        type: 'tel',
-        label: '固话'
-      },
-      {
-        type: 'phone',
-        label: '固话或手机'
-      },
-      {
-        type: 'email',
-        label: '邮箱'
-      },
-      {
-        type: 'int',
-        label: '正整数'
-      },
-      {
-        type: 'number',
-        label: '数字'
-      },
-      {
-        type: 'card',
-        label: '身份证'
-      },
+      ...validate,
       {
         type: 'rules',
         label: '自定义正则'
@@ -459,12 +425,18 @@
     isSearch: route.query.type === 'search',
     attrList: []
   })
-  const controlData = computed<any>(() => {
+  watch(
+    () => props.dataSource,
+    (v: any) => {
+      state.formAttr[0].options = v
+    }
+  )
+  const controlData = computed(() => {
     return store.controlAttr
   })
   watch(
     () => controlData.value,
-    (val) => {
+    (val: any) => {
       if (val && Object.keys(val)?.length > 0) {
         setAttrList()
       } else {
@@ -932,8 +904,8 @@
         tableColumnAdd(val)
         break
       /*case 'tableColumn2':
-        tableColumnAdd(val, 1)
-        break*/
+          tableColumnAdd(val, 1)
+          break*/
       case 'formatNumber':
         // val = parseInt(val) // 将值转数值
         break
@@ -1090,7 +1062,7 @@
     }
     controlData.value.customRules.push({
       type: 'required',
-      message: '',
+      message: '必填项',
       trigger: 'blur'
     })
   }
@@ -1099,16 +1071,12 @@
     controlData.value.customRules &&
       controlData.value.customRules.splice(index, 1)
   }
-  // 添加编辑全局校验规则
-  const rulesCommClick = () => {
-    emits('openDialog', props.formData.config?.rulesComm || [], 'rules')
-  }
   // 编辑表单样式
   const editFormStyle = () => {
     emits('openDialog', props.formData.config?.style || '', 'css')
   }
-  const init = () => {
-    const formId = route.query.formId
+  const init = (id?: string) => {
+    const formId = id || route.query.formId
     if (formId) {
       // 根据选定数据源获取表单字段
       getRequest('formFiled', { id: formId })
@@ -1125,21 +1093,34 @@
         })
     }
   }
-  // 表单按钮处理
-  const formAttChange = (type: string, val: boolean | string) => {
-    console.log(val)
-    let newData = {}
-    if (type === 'addLoad') {
-      newData = {
-        addLoad: val
-      }
-    } else {
-      formBtn[type] = val
-      newData = {
-        submitBtn: formBtn.value
-      }
+  // 表单属性修改
+  const formAttrChange = (obj: any, val?: any) => {
+    if (obj.key === 'dataSource') {
+      init(obj.value) // 改变了数据源了，重新请求数据
+      // 清空设计区已选择的组件，再一次选择时字段标识才会变
+      store.setActiveKey('')
+      store.setControlAttr({})
     }
-    emits('update:formData', Object.assign(props.formData, { config: newData }))
+    switch (obj.key) {
+      case 'confirm':
+      case 'cancel':
+      case 'addLoad':
+        if (obj.key === 'addLoad') {
+          formConfig.value.addLoad = val
+        } else {
+          if (!formConfig.value.submitBtn) {
+            formConfig.value.submitBtn = {}
+          }
+          formConfig.value.submitBtn[obj.key] = obj.value
+        }
+        emits(
+          'update:formData',
+          Object.assign(props.formData, { config: formConfig.value })
+        )
+        break
+      default:
+        formInfo.value[obj.key] = obj.value
+    }
   }
   // 返回选项配置提示
   const getOptionPlaceholder = (type: number) => {
@@ -1152,6 +1133,13 @@
         return '字典key，默认为字段标识'
     }
     return ''
+  }
+  // 快速添加校验规则改变时，填写默认的校验提示信息
+  const rulesSelectChange = (item: any, val: string) => {
+    const filter = validate.filter((item) => item.type === val)
+    if (filter && filter.length) {
+      item.message = filter[0].message
+    }
   }
   init()
 </script>

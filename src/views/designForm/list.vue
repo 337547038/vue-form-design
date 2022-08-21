@@ -17,7 +17,11 @@
   import { getRequest } from '@/api'
   import { stringToObj } from '@/utils/form'
   import { ElMessage } from 'element-plus'
-  const loading = ref<boolean>(false)
+  import { useLayoutStore } from '@/store/layout'
+
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([{ label: '内容管理' }, { label: '列表' }])
+  const loading = ref(false)
   const route = useRoute()
   const state = reactive({
     tid: route.query.tid,
