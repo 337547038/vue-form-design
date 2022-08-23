@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "12225038",
+      "name": "divide",
+      "font_class": "div",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
       "icon_id": "5388006",
       "name": "树状图_o",
       "font_class": "tree",

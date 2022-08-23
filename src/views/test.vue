@@ -5,31 +5,15 @@
   </div>
 </template>
 <script setup>
-  import { ref, provide } from 'vue'
-
+  import { ref } from 'vue'
   const formData = ref({
     list: [
       {
-        name: 'text',
-        type: 'input',
-        control: {
-          modelValue: '',
-          onInput: (val) => {
-            const keyName = getform1ControlByName('select')
-            console.log(formData)
-            //keyName.options=[{label:'111'}]
-            // keyName.control.disabled = true
-          }
-        },
-        config: {},
-        item: { label: '单行文本', showLabel: false }
-      },
-      {
-        name: 'radio',
+        name: 'radio1',
         type: 'radio',
         control: { modelValue: '' },
         options: [
-          { label: '标签1', value: 'value1' },
+          { label: '标签1', value: '1' },
           { label: '标签2', value: 'value2' },
           { label: '标签3', value: 'value3' }
         ],
@@ -37,31 +21,26 @@
         item: { label: '单选框组', showLabel: false }
       },
       {
-        name: 'select',
-        type: 'select',
-        control: { modelValue: '', appendToBody: true },
-        options: [
-          { label: '标签1', value: 'value1' },
-          { label: '标签2', value: 'value2' },
-          { label: '标签3', value: 'value3' }
-        ],
-        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
-        item: { label: '下拉选择框', showLabel: false }
+        name: 'input1661157240824',
+        type: 'input',
+        control: { modelValue: '' },
+        config: { linkKey: 'radio1', linkValue: '1', linkResult: 'disabled' },
+        item: { label: '单行文本', showLabel: false }
       }
     ],
     form: {
       labelWidth: '',
       class: '',
       size: 'default',
-      name: 'form1',
+      name: 'form1661157238945',
       formId: ''
     }
   })
 
   // 表单控件值改变事件
-  /* provide('AKControlChange', ({ key, value, data }) => {
+  /*provide('AKControlChange', ({key, value}) => {
     console.log(key)
-    console.log(data)
+    console.log(value)
   })*/
   const submitUrl = ref(false) // 表单提交url
   const formName = ref()

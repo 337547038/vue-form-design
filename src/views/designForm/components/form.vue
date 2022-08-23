@@ -45,6 +45,7 @@
   import {
     constFormDict,
     constFormOtherData,
+    constGetControlByName,
     constSetFormOptions,
     constSetFormValue
   } from './const'
@@ -102,11 +103,10 @@
       if (formName && (!window[eventName as any] || !bool)) {
         // @ts-ignore
         window[eventName] = (name: string) => {
-          for (let i = 0; i < props.formData.list.length; i++) {
-            if (props.formData.list[i].name === name) {
-              return props.formData.list[i]
-            }
-          }
+          const filterList = props.formData.list.filter(
+            (item) => item.name === name
+          )
+          return filterList && filterList[0]
         }
       }
     }
@@ -157,12 +157,12 @@
     model: model,
     hideField: props.formData.config?.hideField as []
   })
-  /*storeForm.$patch((state: any) => {
-    state.type = props.type
-    state.isEdit = props.isEdit
-    state.model = model
-    state.hideField = props.formData.config?.hideField as []
-  })*/
+  // 提供一个方法，用于根据name从formData.list里查找数据
+  const getControlByName = (name: string) => {
+    const filterList = props.formData.list?.filter((item) => item.name === name)
+    return filterList && filterList[0]
+  }
+  provide(constGetControlByName, getControlByName)
   // 表单检验方法
   const ruleForm = ref()
   const validate = (callback: any) => {
@@ -230,6 +230,9 @@
   // 设置了addLoad时，没有id也从接口获取新增时的初始数据或是dict数据
   const resultDict = ref()
   provide(constFormDict, resultDict)
+  const setFormDict = (obj: { [key: string]: string[] }) => {
+    resultDict.value = obj
+  }
   const getFormData = () => {
     if (
       props.formData?.list?.length &&
@@ -345,6 +348,7 @@
     setValue,
     getValue,
     validate,
-    resetFields
+    resetFields,
+    setFormDict
   })
 </script>

@@ -1,6 +1,7 @@
 <template>
   <div class="form-list-page">
     <table-list
+      :searchData="state.searchData"
       :tableData="state.tableData"
       :requestUrl="state.requestUrl"
       ref="tableListEl"
@@ -49,7 +50,6 @@
     total: 0,
     pageSize: 20,
     tableData: {
-      config: {},
       columns: [
         { label: '序号', prop: '__index', type: 'index', width: '60px' },
         { prop: 'name', label: '表单名称' },
@@ -72,7 +72,51 @@
       { label: '列表设置', type: 3 },
       { label: '添加数据', type: 4 },
       { label: '查看', type: 5 }
-    ]
+    ],
+    searchData: {
+      list: [
+        {
+          name: 'text',
+          type: 'input',
+          control: {
+            modelValue: '',
+            placeholder: '表单名称'
+          },
+          config: {},
+          item: {
+            label: '表单名称',
+            showLabel: false
+          }
+        },
+        {
+          name: 'status',
+          type: 'select',
+          control: {
+            modelValue: '',
+            appendToBody: true,
+            placeholder: '请选择状态'
+          },
+          options: [],
+          config: {
+            addAll: true,
+            type: 'async',
+            source: 2,
+            request: 'get',
+            sourceFun: ''
+          },
+          item: {
+            label: '状态',
+            showLabel: false
+          }
+        }
+      ],
+      form: {
+        labelWidth: '',
+        class: '',
+        size: 'small',
+        name: 'form1660211919743'
+      }
+    }
   })
   const btnClick = (type: number, row: any) => {
     const query = { formId: row.formId, id: row.id }

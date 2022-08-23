@@ -22,7 +22,7 @@
         }"
         :style="getFormItemStyle(element)"
         @click.stop="groupClick(element)"
-        v-show="linksShow(element)"
+        v-show="linksShow(element, index)"
         v-if="linksIf(element)"
       >
         <template v-if="element.type === 'tabs'">
@@ -103,6 +103,15 @@
             >{{ element.item && element.item.label }}
           </el-divider>
         </template>
+        <template v-else-if="element.type === 'div'">
+          <div
+            class="div-layout"
+            v-bind="element.control"
+            :class="[element.className]"
+          >
+            <form-group v-model:data="element.list" data-type="not-nested" />
+          </div>
+        </template>
         <template v-else>
           <form-item :data="element" />
         </template>
@@ -181,7 +190,7 @@
   })
 
   const indexType = (type: string) => {
-    const controlType = ['grid', 'table', 'tabs']
+    const controlType = ['grid', 'table', 'tabs', 'div']
     return controlType.indexOf(type) === -1
   }
   // 删除或复制
@@ -216,6 +225,7 @@
     const obj: any = dataList.value[newIndex]
     // console.log(obj)
     const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
+    console.log(isNested)
     if (isNested === 'not-nested' && !indexType(obj.type)) {
       dataList.value.splice(newIndex, 1)
       return
@@ -278,13 +288,14 @@
     }
   }
   // 根据关联条件显示隐藏当前项
-  const linksShow = (el: FormList) => {
+  const linksShow = (el: FormList, index: number) => {
     // 当前项设置了关联条件，当关联主体的值等于当前组件设定的值时
     if (!el.config || !formOtherData.model.value) {
       return true
     }
     const key = el.config.linkKey
     const value = el.config.linkValue
+    const linkResult = el.config.linkResult
     if (key && value && state.type !== 4) {
       //　多个条件时key和value分别使用,和&隔开，
       // 带有&分隔时，需要符合所有条件；否则符合其中一个条件即可
@@ -311,7 +322,13 @@
           }
         }
       }
-      return pass
+      if (linkResult === 'disabled') {
+        // 设置为disabled后返回显示状态
+        dataList.value[index].control.disabled = pass
+        return true
+      } else {
+        return pass
+      }
     }
     return true
   }

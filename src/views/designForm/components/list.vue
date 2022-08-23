@@ -170,6 +170,8 @@
         if (result.dict) {
           // 合并表格里自定义设置的
           state.dict = Object.assign(props.tableData.dict || {}, result.dict)
+          // 同步设置筛选表单的
+          searchFormEl.value.setFormDict(state.dict)
         }
         state.loading = false
       })

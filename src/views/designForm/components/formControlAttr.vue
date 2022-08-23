@@ -36,40 +36,57 @@
               />
             </el-form-item>
           </template>
-          <el-form-item
-            label="联动条件"
-            v-if="
-              showHide(
-                [
-                  'input',
-                  'password',
-                  'textarea',
-                  'radio',
-                  'checkbox',
-                  'select',
-                  'date',
-                  'switch',
-                  'number',
-                  'cascader'
-                ],
-                true
-              )
-            "
-          >
-            <el-col :span="9">
-              <el-input
-                placeholder="标识名称"
-                v-model="controlData.config.linkKey"
-              />
-            </el-col>
-            <el-col :span="2" :offset="1">=</el-col>
-            <el-col :span="9" :offset="1">
-              <el-input
-                placeholder="关联值"
-                v-model="controlData.config.linkValue"
-              />
-            </el-col>
-          </el-form-item>
+          <template v-if="controlData.config">
+            <el-form-item label="联动条件">
+              <el-col :span="9">
+                <el-input
+                  placeholder="标识名称"
+                  v-model="controlData.config.linkKey"
+                />
+              </el-col>
+              <el-col :span="2" :offset="1">=</el-col>
+              <el-col :span="9" :offset="1">
+                <el-input
+                  placeholder="关联值"
+                  v-model="controlData.config.linkValue"
+                />
+              </el-col>
+            </el-form-item>
+            <el-form-item
+              label="联动结果"
+              v-show="controlData.config.linkKey"
+              v-if="
+                showHide(
+                  [
+                    'input',
+                    'textarea',
+                    'radio',
+                    'checkbox',
+                    'select',
+                    'date',
+                    'switch',
+                    'number',
+                    'cascader',
+                    'slider',
+                    'datePicker',
+                    'timePicker',
+                    'colorPicker',
+                    'inputNumber',
+                    'rate'
+                  ],
+                  true
+                )
+              "
+            >
+              <el-radio-group
+                class="option-radio"
+                v-model="controlData.config.linkResult"
+              >
+                <el-radio label="hidden">隐藏(默认)</el-radio>
+                <el-radio label="disabled">禁用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </template>
           <template v-if="showHide(['tabs'], true)">
             <h3>标签配置项</h3>
             <el-form-item
@@ -91,6 +108,12 @@
             v-if="showHide(['radio', 'select', 'checkbox', 'cascader'], true)"
           >
             <h3>选项配置</h3>
+            <el-form-item label="添加全部项" v-if="showHide('select', true)">
+              <el-input
+                placeholder="请输入全部项文案"
+                v-model="controlData.config.addAll"
+              />
+            </el-form-item>
             <el-tabs v-model="controlData.config.type">
               <el-tab-pane label="固定选项" name="fixed">
                 <div v-if="controlData.type !== 'cascader'">
@@ -187,7 +210,8 @@
                 'switch',
                 'gridChild',
                 'tableColumn',
-                'divider'
+                'divider',
+                'div'
               ])
             "
           >
@@ -256,7 +280,7 @@
               />
             </el-form-item>
           </template>
-          <div v-if="showHide(['grid', 'card', 'gridChild', 'divider'])">
+          <div v-if="showHide(['grid', 'card', 'gridChild', 'divider', 'div'])">
             <h3>其他属性</h3>
 
             <el-button size="small" @click="openAttrDialog"
@@ -489,7 +513,8 @@
           'gridChild',
           'tableColumn',
           'divider',
-          'txt'
+          'txt',
+          'div'
         ],
         eventName: 'filedNameKey'
       },
@@ -514,7 +539,7 @@
         label: 'label值',
         value: item.label,
         path: 'item.label',
-        vHide: ['table', 'grid', 'tabs', 'title', 'gridChild']
+        vHide: ['table', 'grid', 'tabs', 'title', 'gridChild', 'div']
       },
       {
         label: '隐藏label',
@@ -528,14 +553,15 @@
           'title',
           'gridChild',
           'divider',
-          'card'
+          'card',
+          'div'
         ]
       },
       {
         label: '帮助信息',
         value: config.help,
         path: 'config.help',
-        vHide: ['table', 'grid', 'tabs', 'gridChild', 'divider']
+        vHide: ['table', 'grid', 'tabs', 'gridChild', 'divider', 'div']
       },
       {
         label: '表单栅格',

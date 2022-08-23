@@ -300,9 +300,77 @@
 
 ```
 
+## 动态获取选项数据
+
+使用动态选项数据源方式获取数据时，数据接口URL可带一个动态的参数，并且当name=key的值发生改变时，可根据改变的值重新请求数据。下面例子展示当单选框组发生改变时，下拉选择框会重新请求加载下拉项
+
+```vue demo
+<template>
+  <div>
+    <ak-form :formData="formData" ref="formName" :submitUrl="submitUrl" />
+  </div>
+</template>
+<script setup>
+  import { ref } from 'vue'
+  const formData = ref({
+    list: [
+      {
+        name: 'text',
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        item: { label: '单行文本', showLabel: false }
+      },
+      {
+        name: 'radio',
+        type: 'radio',
+        control: { modelValue: '' },
+        options: [
+          { label: '标签1', value: 'value1' },
+          { label: '标签2', value: 'value2' },
+          { label: '标签3', value: 'value3' }
+        ],
+        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+        item: { label: '单选框组', showLabel: false }
+      },
+      {
+        name: 'select',
+        type: 'select',
+        control: { modelValue: '', appendToBody: true },
+        options: [],
+        config: {
+          type: 'async',
+          source: 0,
+          request: 'get',
+          sourceFun: '/test?a=${radio}'
+        },
+        item: { label: '下拉选择框', showLabel: false }
+      }
+    ],
+    form: {
+      labelWidth: '',
+      class: '',
+      size: 'default',
+      name: 'form1',
+      formId: ''
+    }
+  })
+
+  // 表单控件值改变事件
+  /* provide('AKControlChange', ({ key, value, data }) => {
+    console.log(key)
+    console.log(data)
+  })*/
+  const submitUrl = ref(false) // 表单提交url
+</script>
+
+```
+
 ## 联动事件
 
-文本输入框的联动条件`radio=1`，则在控件单选框组`radio`的值为`1`时显示。
+文本输入框的联动条件`radio=1`，则该控件在单选框组`radio`的值为`1`时显示或者设置为禁用状态。
 
 多个条件时使用`,`或`&`分隔开，当分隔符中存在`&`时，条件为`and`关系，同时符合时才显示；否则条件为`or`关系，符合其中之一时显示。
 
@@ -338,7 +406,7 @@
           { label: '标签1', value: '1' },
           { label: '标签2', value: '2' }
         ],
-        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '', linkKey: 'radio', linkValue: '2', linkResult: 'disabled' },
         item: { label: '下拉选择框', showLabel: false }
       },
       {

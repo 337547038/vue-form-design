@@ -19,7 +19,7 @@
 | beforeSubmit  | function       | 表单提交前数据处理，仅在`submitUrl`为`true`时。适用于导出vue文件             |
 | afterSubmit   | function       | 表单提交成功处理方法。适用于导出vue文件                                  |
 | value         | object         | 表单初始值，同setValue                                        |
-| options       | object         | 表单选项数据，同setOptions                                     |
+| options       | object         | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                 |
 
 ### Methods
 

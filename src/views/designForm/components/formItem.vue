@@ -65,6 +65,7 @@
         :disabled="editDisabled"
         v-model="value"
       >
+        <el-option v-if="config.addAll" value="" label="全部" />
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -142,7 +143,16 @@
 
 <script lang="ts" setup>
   import axios from '@/utils/request'
-  import { inject, onMounted, computed, watch, toRefs, ref, toRef } from 'vue'
+  import {
+    inject,
+    onMounted,
+    computed,
+    watch,
+    toRefs,
+    ref,
+    toRef,
+    nextTick
+  } from 'vue'
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
   import Tooltip from './tooltip.vue'
@@ -150,12 +160,14 @@
   // import { useDesignFormStore } from '@/store/designForm'
   import { FormItem, FormList } from '../types'
   import validate from './validate'
+  import { debounce } from '@/utils'
   import {
     constFormDict,
     constControlChange,
     constSetFormOptions,
     constSetFormValue,
-    constFormOtherData
+    constFormOtherData,
+    constGetControlByName
   } from './const'
 
   const props = withDefaults(
@@ -179,6 +191,14 @@
     ? ref(props.modelValue)
     : toRef(props.data.control, 'modelValue')
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
+  const getControlByName = inject(constGetControlByName) as any
+  const sourceFunKey = computed(() => {
+    const iReg = new RegExp('(?<=\\${)(.*?)(?=})', 'g')
+    //const iReg = new RegExp('\\${.*?}', 'g') // 结果会包含开头和结尾=>${name}
+    const apiUrl = config.value.sourceFun
+    const replace = apiUrl?.match(iReg)
+    return replace && replace[0]
+  })
   watch(
     () => props.data,
     (val: FormList) => {
@@ -229,20 +249,39 @@
     }
     return temp
   })
-  const getAxiosOptions = () => {
+  const getAxiosOptions = debounce(() => {
     if (config.value.type === 'async') {
-      if (config.value.source === 0) {
+      let sourceFun = config.value.sourceFun
+      if (config.value.source === 0 && sourceFun) {
         // 当前控件为动态获取数据
-        const key = 'getOptions_fun_' + md5(config.value.sourceFun)
+        const key = 'getOptions_fun_' + md5(sourceFun)
         const storage = window.sessionStorage.getItem(key)
         if (storage) {
           options.value = JSON.parse(storage)
         } else {
+          // 从url里提取一个动态值,${name}形式提取name
+          if (sourceFunKey.value) {
+            const control = getControlByName(sourceFunKey.value)
+            const val = control?.control.modelValue
+            const string = '${' + sourceFunKey.value + '}'
+            sourceFun = sourceFun.replace(string, val)
+          }
+          // const iReg = new RegExp('(?<=\\${)(.*?)(?=})', 'g')
+          /*const iReg = new RegExp('\\${.*?}', 'g') // 结果会包含开头和结尾=>${name}
+          sourceFun = sourceFun.replace(iReg, (name: string) => {
+            if (typeof getControlByName === 'function') {
+              // 匹配到存在动态值
+              const nameReplace = name.replace('${', '').replace('}', '')
+              sourceFunKey.value = nameReplace // 暂存起来，当这个name对应的值改变时重新请求
+              const control = getControlByName(nameReplace)
+              return control?.control.modelValue
+            }
+            return '' // 这里异常
+          })*/
           // request.get('url',data)
           ;(axios as any)
-            [config.value.request](config.value.sourceFun, '')
+            [config.value.request](sourceFun, '')
             .then((res: any) => {
-              // todo 这里接口应该统一返回固定格式
               if (res.data.code === 200) {
                 // 请求成功
                 options.value = res.data.data
@@ -257,12 +296,19 @@
             })
         }
       }
-      if (config.value.source === 1 && config.value.sourceFun) {
+      if (config.value.source === 1 && sourceFun) {
         // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-        options.value = inject(config.value.sourceFun, [])
+        options.value = inject(sourceFun, [])
       }
     }
-  }
+  }, 1000)
+  watch(
+    () => injectData.model.value[sourceFunKey.value],
+    () => {
+      getAxiosOptions()
+      // 改变
+    }
+  )
   // 处理自定义校验规则，将customRules转换后追加到rules里
   const formatCustomRules = () => {
     const rulesReg: any = {}
@@ -361,7 +407,7 @@
   watch(
     () => formDict.value,
     (val: any) => {
-      if (val && config.value.source === 2) {
+      if (val && config.value.source === 2 && config.value.type === 'async') {
         const opt = val[config.value.sourceFun] || val[props.data.name]
         if (opt !== undefined) {
           options.value = formatData(opt)
@@ -406,6 +452,8 @@
     control.value.onError && control.value.onError(err, file, fileList)
   }
   onMounted(() => {
-    getAxiosOptions()
+    nextTick(() => {
+      getAxiosOptions()
+    })
   })
 </script>
