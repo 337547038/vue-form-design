@@ -1,0 +1,30 @@
+{
+  "code": 200,
+  "data": {
+    "dict": {
+      "status": {
+        "1": "启用",
+        "0": "禁用"
+      }
+    },
+    "list": [
+      {
+        "formId": 1,
+        "id": 1,
+        "name": "示例测试",
+        "updateDate": "2022-08-08 08:08:08",
+        "status": "1"
+      },
+      {
+        "formId": "",
+        "id": 2,
+        "name": "无数据源表单",
+        "updateDate": "2022-08-08 08:08:08",
+        "status": "0"
+      }
+    ],
+    "pageInfo": {
+      "total": 100
+    }
+  }
+}
