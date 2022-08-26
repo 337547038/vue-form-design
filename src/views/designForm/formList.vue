@@ -189,7 +189,7 @@
             addAll: true
           },
           item: {
-            label: '状态',
+            label: '类型',
             showLabel: false
           }
         }

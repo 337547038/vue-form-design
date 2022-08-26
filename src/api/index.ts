@@ -1,7 +1,6 @@
 import request from '../utils/request'
 
 //const isDev = import.meta.env.DEV
-
 const api: any = {
   formFiled: './mock/formFiled.json', // 设计创建表单时可供选择的所有字段
   datasource: './mock/datasource.json', // 获取可供用于创建表单的数据源
@@ -21,7 +20,7 @@ export const getRequest = (apiKey: string, data?: any, options = {}) => {
   const obj: any = Object.assign(
     {
       url: api[apiKey],
-      method: 'GET',
+      method: 'POST',
       data
     },
     options
