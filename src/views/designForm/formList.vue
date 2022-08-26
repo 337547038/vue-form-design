@@ -7,11 +7,15 @@
       ref="tableListEl"
     >
       <template #control="scope">
+        <el-button size="small" link @click="changeStatus(scope.row)">{{
+          scope.row.status ? '禁用' : '启用'
+        }}</el-button>
         <el-button
           size="small"
           link
           v-for="item in state.btnGroup"
           :key="item.type"
+          :title="item.title"
           @click="btnClick(item.type, scope.row)"
           :disabled="getShow(item, scope.row)"
         >
@@ -28,8 +32,58 @@
           </template>
         </el-popconfirm>
       </template>
+      <div>
+        <el-button type="primary" @click="openDialogClick">新增表单 </el-button>
+        <el-button
+          type="success"
+          @click="
+            $router.push({
+              path: '/designform/table',
+              query: { type: 'table' }
+            })
+          "
+          >新增数据列表<el-tooltip
+            content="直接创建数据列表，适用于部分数据是不需要通过表单的形式录入"
+            placement="top"
+          >
+            <span
+              ><el-icon> <QuestionFilled /> </el-icon
+            ></span>
+          </el-tooltip>
+        </el-button>
+      </div>
     </table-list>
   </div>
+  <el-dialog
+    v-model="dialog.visible"
+    title="选择数据源"
+    width="600px"
+    custom-class="source-dialog"
+    :append-to-body="true"
+    :before-close="dialogClose"
+  >
+    <div style="text-align: right; margin-bottom: 5px">
+      <el-button type="primary" @click="dialogClick()">无数据源创建</el-button>
+    </div>
+    <el-table
+      :data="dialog.tableData"
+      border
+      style="width: 100%"
+      v-loading="dialog.loading"
+    >
+      <el-table-column prop="name" label="表单名称" />
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button
+            size="small"
+            @click="dialogClick(scope.row.id)"
+            type="primary"
+            >创建表单
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -37,7 +91,7 @@
   import { getRequest } from '@/api'
   import { useRouter } from 'vue-router'
   import { ElMessage } from 'element-plus'
-  import TableList from '../designForm/components/list.vue'
+  import TableList from './components/list.vue'
   import { useLayoutStore } from '@/store/layout'
 
   const layoutStore = useLayoutStore()
@@ -53,6 +107,7 @@
       columns: [
         { label: '序号', prop: '__index', type: 'index', width: '60px' },
         { prop: 'name', label: '表单名称' },
+        { prop: 'formId', label: '数据源id' },
         {
           label: '状态',
           prop: 'status',
@@ -61,16 +116,26 @@
             dictKey: 'status'
           }
         },
-        { label: '更新时间', prop: 'updateDate' },
-        { label: '操作', prop: 'control', width: '340px' }
-      ]
+        {
+          label: '类型',
+          prop: 'type',
+          config: {
+            tagList: { 1: 'success', 2: 'info' },
+            dictKey: 'type'
+          }
+        },
+        { label: '添加时间', prop: 'creatDate', width: '170px' },
+        { label: '更新时间', prop: 'updateDate', width: '170px' },
+        { label: '操作', prop: 'control', width: '320px' }
+      ],
+      dict: { type: { 1: '表单', 2: '表格' } }
     },
     requestUrl: 'getFormList',
     btnGroup: [
       { label: '修改', type: 1 },
-      { label: '搜索设置', type: 2 },
-      { label: '列表设置', type: 3 },
-      { label: '添加数据', type: 4 },
+      { label: '搜索', type: 2, title: '搜索设置' },
+      { label: '列表', type: 3, title: '列表设置' },
+      { label: '新增', type: 4, title: '添加数据' },
       { label: '查看', type: 5 }
     ],
     searchData: {
@@ -108,6 +173,25 @@
             label: '状态',
             showLabel: false
           }
+        },
+        {
+          name: 'type',
+          type: 'select',
+          control: {
+            modelValue: '',
+            placeholder: '请选择类型'
+          },
+          options: [
+            { label: 'form', value: 1 },
+            { label: 'table', value: 2 }
+          ],
+          config: {
+            addAll: true
+          },
+          item: {
+            label: '状态',
+            showLabel: false
+          }
         }
       ],
       form: {
@@ -134,9 +218,10 @@
         })
         break
       case 3: // 列表设置
+        const type = row.type === 2 ? 'table' : ''
         router.push({
           path: '/designform/table',
-          query: query
+          query: Object.assign({}, query, { type: type })
         })
         break
       case 4: // 添加数据
@@ -167,7 +252,44 @@
     }
   }
   const getShow = (item: any, row: any) => {
-    // 无数据源创建的不能添加数据和查看
-    return [4, 5].includes(item.type) && !row.formId
+    let val = false
+    // 无数据源或是禁用状态的不能添加数据和查看
+    if (!row.formId || !row.status) {
+      val = [4, 5].includes(item.type)
+    }
+    // 表格类型的不能添加数据和修改
+    if (row.type === 2) {
+      val = [1, 4].includes(item.type)
+    }
+    return val
+  }
+  // 改变记录状态
+  const changeStatus = (row: any) => {
+    console.log(row)
+    // todo 发接口然后刷新数据
+    tableListEl.value.getListData()
+  }
+  //////////////新增弹窗相关////////////////
+  const dialog = ref({
+    visible: false,
+    loading: true,
+    tableData: []
+  })
+  const openDialogClick = () => {
+    dialog.value.visible = true
+    dialog.value.loading = true
+    getDialogData()
+  }
+  const dialogClick = (id?: string) => {
+    router.push({ path: '/designform', query: { formId: id } })
+  }
+  const getDialogData = () => {
+    getRequest('datasource').then((res: any) => {
+      dialog.value.loading = false
+      dialog.value.tableData = res.data.data
+    })
+  }
+  const dialogClose = () => {
+    dialog.value.visible = false
   }
 </script>

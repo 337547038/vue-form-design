@@ -140,7 +140,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, computed, ref, watch, inject } from 'vue'
+  import { reactive, computed, ref, watch, inject, onUnmounted } from 'vue'
   import Draggable from 'vuedraggable'
   import FormItem from './formItem.vue'
   import ChildTable from './childTable.vue'
@@ -225,7 +225,7 @@
     const obj: any = dataList.value[newIndex]
     // console.log(obj)
     const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
-    console.log(isNested)
+    // console.log(isNested)
     if (isNested === 'not-nested' && !indexType(obj.type)) {
       dataList.value.splice(newIndex, 1)
       return
@@ -354,4 +354,9 @@
     }
     return true
   }
+  onUnmounted(() => {
+    console.log('formGroup onUnmounted')
+    dataList.value = {}
+    formOtherData.value = {}
+  })
 </script>

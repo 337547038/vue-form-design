@@ -20,10 +20,36 @@
         :type="data.type === 'password' ? 'password' : ''"
         v-if="['input', 'password'].includes(data.type)"
       >
-        <template #prepend v-if="config.prepend"
-          >{{ config.prepend }}
+        <template #prepend v-if="config.prepend">
+          <div v-if="getInputSlot(config.prepend, 'vIf')">
+            <AKSelect
+              :control="getInputSlot(config.prepend, 'control')"
+              :disabled="editDisabled"
+              :modelValue="getInputSlot(config.prepend, 'value')"
+              :options="getInputSlot(config.prepend, 'options')"
+              :config="getInputSlot(config.prepend, 'config')"
+              :format-number="formatNumber"
+              type="slot"
+              @change="inputSlotChange"
+            />
+          </div>
+          <span v-else>{{ config.prepend }}</span>
         </template>
-        <template #append v-if="config.append">{{ config.append }}</template>
+        <template #append v-if="config.append">
+          <div v-if="getInputSlot(config.append, 'vIf')">
+            <AKSelect
+              :control="getInputSlot(config.append, 'control')"
+              :disabled="editDisabled"
+              :modelValue="getInputSlot(config.append, 'value')"
+              :options="getInputSlot(config.append, 'options')"
+              :config="getInputSlot(config.append, 'config')"
+              :format-number="formatNumber"
+              type="slot"
+              @change="inputSlotChange"
+            />
+          </div>
+          <span v-else>{{ config.append }}</span></template
+        >
       </el-input>
       <el-input
         v-bind="control"
@@ -40,7 +66,7 @@
       >
         <el-radio
           :key="index"
-          :label="item.value"
+          :label="formatNumber(item.value)"
           v-for="(item, index) in options"
         >
           {{ item.label }}
@@ -55,24 +81,21 @@
         <el-checkbox
           v-for="(item, index) in options"
           :key="index"
-          :value="item.value"
+          :value="formatNumber(item.value)"
           :label="item.label"
         />
       </el-checkbox-group>
-      <el-select
-        v-if="data.type === 'select'"
-        v-bind="control"
+      <AKSelect
+        v-if="
+          data.type === 'select' || (type === 4 && data.type === 'inputSlot')
+        "
+        :control="control"
         :disabled="editDisabled"
         v-model="value"
-      >
-        <el-option v-if="config.addAll" value="" label="全部" />
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
+        :options="options"
+        :config="config"
+        :formatNumber="formatNumber"
+      />
       <el-upload
         class="upload-style"
         v-if="data.type === 'upload'"
@@ -151,7 +174,7 @@
     toRefs,
     ref,
     toRef,
-    nextTick
+    onUnmounted
   } from 'vue'
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
@@ -160,7 +183,6 @@
   // import { useDesignFormStore } from '@/store/designForm'
   import { FormItem, FormList } from '../types'
   import validate from './validate'
-  import { debounce } from '@/utils'
   import {
     constFormDict,
     constControlChange,
@@ -169,6 +191,7 @@
     constFormOtherData,
     constGetControlByName
   } from './const'
+  import AKSelect from './select.vue'
 
   const props = withDefaults(
     defineProps<{
@@ -213,6 +236,15 @@
     },
     { deep: true }
   )
+  const formatNumber = (val: string | number) => {
+    // 将字符类数字转为数值类
+    if (val && /^\d+(\.\d+)?$/.test(val.toString())) {
+      // 为数字
+      return Number(val)
+    } else {
+      return val
+    }
+  }
   const getLabel = (ele: FormItem) => {
     if (ele) {
       return ele.showLabel ? '' : ele.label
@@ -249,9 +281,14 @@
     }
     return temp
   })
-  const getAxiosOptions = debounce(() => {
+  // 有inject，这方法不能放异步
+  const getAxiosOptions = () => {
     if (config.value.type === 'async') {
       let sourceFun = config.value.sourceFun
+      if (config.value.source === 1 && sourceFun) {
+        // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
+        options.value = inject(sourceFun, [])
+      }
       if (config.value.source === 0 && sourceFun) {
         // 当前控件为动态获取数据
         const key = 'getOptions_fun_' + md5(sourceFun)
@@ -266,18 +303,6 @@
             const string = '${' + sourceFunKey.value + '}'
             sourceFun = sourceFun.replace(string, val)
           }
-          // const iReg = new RegExp('(?<=\\${)(.*?)(?=})', 'g')
-          /*const iReg = new RegExp('\\${.*?}', 'g') // 结果会包含开头和结尾=>${name}
-          sourceFun = sourceFun.replace(iReg, (name: string) => {
-            if (typeof getControlByName === 'function') {
-              // 匹配到存在动态值
-              const nameReplace = name.replace('${', '').replace('}', '')
-              sourceFunKey.value = nameReplace // 暂存起来，当这个name对应的值改变时重新请求
-              const control = getControlByName(nameReplace)
-              return control?.control.modelValue
-            }
-            return '' // 这里异常
-          })*/
           // request.get('url',data)
           ;(axios as any)
             [config.value.request](sourceFun, '')
@@ -296,17 +321,13 @@
             })
         }
       }
-      if (config.value.source === 1 && sourceFun) {
-        // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-        options.value = inject(sourceFun, [])
-      }
     }
-  }, 1000)
+  }
   watch(
     () => injectData.model.value[sourceFunKey.value],
     () => {
       getAxiosOptions()
-      // 改变
+      // todo 需要优化下，每次改变都会请求一次，但方法内有inject又不能放异步处理
     }
   )
   // 处理自定义校验规则，将customRules转换后追加到rules里
@@ -389,7 +410,7 @@
   watch(
     () => setValueEvent.value,
     (val: any) => {
-      console.log(val)
+      // console.log(val)
       // !props.tProps 的这里不单独处理
       if (val && !props.tProps && val[props.data.name] !== undefined) {
         value.value = val[props.data.name]
@@ -451,9 +472,54 @@
     ElMessage.error(file.name + '上传失败')
     control.value.onError && control.value.onError(err, file, fileList)
   }
+  /****input slot处理***/
+  let inputSlotControl: any = {}
+  const getInputSlot = (slot: string, key: string) => {
+    const has = slot.indexOf('key:') === 0
+    if (!has) {
+      return false
+    }
+    const slotKey = slot.replace('key:', '')
+    const control = getControlByName(slotKey)
+    if (!control) {
+      return false
+    }
+    inputSlotControl = control // 暂存
+    switch (key) {
+      case 'vIf': // 存在slot
+        return !!control
+      case 'control':
+        return control.control
+      case 'options':
+        return control.options
+      case 'config':
+        return control.config
+      case 'value':
+        return control.control.modelValue
+    }
+  }
+  const inputSlotChange = (val: string | number) => {
+    inputSlotControl.control.modelValue = val
+    changeEvent &&
+      changeEvent({
+        key: inputSlotControl.name,
+        value: val,
+        data: inputSlotControl
+      })
+  }
+  /****input slot处理结束***/
   onMounted(() => {
-    nextTick(() => {
-      getAxiosOptions()
-    })
+    getAxiosOptions()
+  })
+  onUnmounted(() => {
+    console.log('formItem onUnmounted')
+    formOptions.value = ''
+    formDict.value = ''
+    setValueEvent.value = ''
+    getControlByName.value = ''
+    config.value = ''
+    control.value = ''
+    options.value = ''
+    injectData.value = ''
   })
 </script>

@@ -105,7 +105,12 @@
             </el-form-item>
           </template>
           <div
-            v-if="showHide(['radio', 'select', 'checkbox', 'cascader'], true)"
+            v-if="
+              showHide(
+                ['radio', 'select', 'checkbox', 'cascader', 'inputSlot'],
+                true
+              )
+            "
           >
             <h3>选项配置</h3>
             <el-form-item label="添加全部项" v-if="showHide('select', true)">
@@ -364,17 +369,12 @@
   import { useDesignFormStore } from '@/store/designForm'
   import { FormData } from '../types'
   import validate from './validate'
-
+  import { ElMessage } from 'element-plus'
   const props = withDefaults(
     defineProps<{
       formData: FormData
-      dataSource: any
     }>(),
-    {
-      dataSource: () => {
-        return []
-      }
-    }
+    {}
   )
   const emits = defineEmits<{
     (e: 'openDialog', data: any, type?: any): void
@@ -391,11 +391,17 @@
         placeholder: '请选择数据源',
         value: formInfo.value.formId,
         type: 'select',
-        options: props.dataSource,
+        options: [],
         key: 'dataSource',
         hide: route.query.type === 'search'
       },
-      { label: '表单名称', value: formInfo.value.name, key: 'name' },
+      {
+        label: '表单名称',
+        value: formInfo.value.title,
+        key: 'title',
+        hide: route.query.type === 'search'
+      },
+      { label: '表单标识', value: formInfo.value.name, key: 'name' },
       {
         label: '表单标签宽度',
         value: formInfo.value.labelWidth,
@@ -449,12 +455,6 @@
     isSearch: route.query.type === 'search',
     attrList: []
   })
-  watch(
-    () => props.dataSource,
-    (v: any) => {
-      state.formAttr[0].options = v
-    }
-  )
   const controlData = computed(() => {
     return store.controlAttr
   })
@@ -487,9 +487,6 @@
       if (list && list.length > 0) {
         columnIndex = list[0].type === 'index'
       }
-      /*if (list && list.length > 0) {
-        columnOperate = list[list.length - 1].typeColumn === 'operate'
-      }*/
     }
     state.attrList = [
       {
@@ -539,7 +536,15 @@
         label: 'label值',
         value: item.label,
         path: 'item.label',
-        vHide: ['table', 'grid', 'tabs', 'title', 'gridChild', 'div']
+        vHide: [
+          'table',
+          'grid',
+          'tabs',
+          'title',
+          'gridChild',
+          'div',
+          'inputSlot'
+        ]
       },
       {
         label: '隐藏label',
@@ -554,14 +559,23 @@
           'gridChild',
           'divider',
           'card',
-          'div'
+          'div',
+          'inputSlot'
         ]
       },
       {
         label: '帮助信息',
         value: config.help,
         path: 'config.help',
-        vHide: ['table', 'grid', 'tabs', 'gridChild', 'divider', 'div']
+        vHide: [
+          'table',
+          'grid',
+          'tabs',
+          'gridChild',
+          'divider',
+          'div',
+          'inputSlot'
+        ]
       },
       {
         label: '表单栅格',
@@ -665,21 +679,32 @@
         value: config.disabledAdd,
         path: 'config.disabledAdd',
         type: 'switch',
-        vIf: state.isSearch
+        vIf: state.isSearch,
+        vHide: ['inputSlot']
       },
       {
         label: '编辑页隐藏',
         value: config.disabledEdit,
         path: 'config.disabledEdit',
         type: 'switch',
-        vIf: state.isSearch
+        vIf: state.isSearch,
+        vHide: ['inputSlot']
       },
       {
         label: '详情页隐藏',
         value: config.disabledDetail,
         path: 'config.disabledDetail',
         type: 'switch',
-        vIf: state.isSearch
+        vIf: state.isSearch,
+        vHide: ['inputSlot']
+      },
+      {
+        label: '设为Input输入框的前/后缀',
+        value: type === 'inputSlot',
+        path: '',
+        type: 'switch',
+        vShow: ['select', 'inputSlot'],
+        eventName: 'setInputSlot'
       },
       {
         label: '标题',
@@ -929,9 +954,6 @@
       case 'tableColumn1':
         tableColumnAdd(val)
         break
-      /*case 'tableColumn2':
-          tableColumnAdd(val, 1)
-          break*/
       case 'formatNumber':
         // val = parseInt(val) // 将值转数值
         break
@@ -946,9 +968,28 @@
           }
         }
         break
+      case 'setInputSlot':
+        if (val) {
+          // 将类型改为inputSlot
+          controlData.value.type = 'inputSlot'
+          controlData.value.item.showLabel = true
+          // console.log(obj)
+          ElMessage.success(
+            `请在对应的Input输入框属性前后缀设置key:${controlData.value.name}`
+          )
+        } else {
+          controlData.value.type = 'select'
+          controlData.value.item.showLabel = false
+        }
+        // 清空设计区已选择的组件，再一次选择时字段标识才会变
+        // 这里会报错Cannot set properties of null (setting 'checked')
+        setAttrList()
+        break
     }
-    const newVal = obj.isNum ? parseInt(val) : val // 类型为数字时转整数
-    obj.path && getPropByPath(controlData.value, obj.path, newVal)
+    if (obj.path) {
+      const newVal = obj.isNum ? parseInt(val) : val // 类型为数字时转整数
+      obj.path && getPropByPath(controlData.value, obj.path, newVal)
+    }
   }
   // 修改指定路径下的值
   const getPropByPath = (obj: any, path: string, val: any) => {
@@ -1117,6 +1158,12 @@
         .catch((res) => {
           console.log(res)
         })
+    }
+    // 获取数据源，表单设计才加载，搜索设置不需要
+    if (route.query.type !== 'search') {
+      getRequest('datasource').then((res: any) => {
+        state.formAttr[0].options = res.data.data
+      })
     }
   }
   // 表单属性修改

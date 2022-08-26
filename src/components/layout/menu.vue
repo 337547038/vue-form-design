@@ -64,11 +64,6 @@
       icon: 'platform',
       children: [
         {
-          title: '表单设计',
-          icon: 'CirclePlus',
-          path: '/designform?new=true'
-        },
-        {
           title: '表单管理',
           icon: 'list',
           path: '/designform/formlist'

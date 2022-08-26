@@ -96,6 +96,7 @@
 
   let timer = 0
   let eventName = ''
+  // 只查一级
   const setWindowEvent = (bool?: boolean) => {
     if (props.formData.list.length > 0) {
       const formName = props.formData.form.name
@@ -103,10 +104,11 @@
       if (formName && (!window[eventName as any] || !bool)) {
         // @ts-ignore
         window[eventName] = (name: string) => {
-          const filterList = props.formData.list.filter(
+          /*const filterList = props.formData.list.filter(
             (item) => item.name === name
           )
-          return filterList && filterList[0]
+          return filterList && filterList[0]*/
+          getNameForEach(props.formData.list, name)
         }
       }
     }
@@ -158,9 +160,26 @@
     hideField: props.formData.config?.hideField as []
   })
   // 提供一个方法，用于根据name从formData.list里查找数据
+  const getNameForEach = (data: any, name: string) => {
+    let temp = {}
+    for (const key in data) {
+      const dataKey = data[key]
+      if (dataKey.name === name) {
+        return dataKey
+      }
+      if (['grid', 'tabs'].includes(dataKey.type)) {
+        dataKey.columns.forEach((co: any) => {
+          temp = getNameForEach(co.list, name)
+        })
+      }
+      if (['card', 'div'].includes(dataKey.type)) {
+        temp = getNameForEach(dataKey.list, name)
+      }
+    }
+    return temp
+  }
   const getControlByName = (name: string) => {
-    const filterList = props.formData.list?.filter((item) => item.name === name)
-    return filterList && filterList[0]
+    return getNameForEach(props.formData.list, name)
   }
   provide(constGetControlByName, getControlByName)
   // 表单检验方法

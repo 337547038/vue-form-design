@@ -1,37 +1,6 @@
 <!-- Created by 337547038 表单设计. -->
 <template>
-  <el-dialog
-    v-if="$route.query.new"
-    v-model="dialog.visible"
-    title="选择数据源"
-    width="600px"
-    custom-class="source-dialog"
-    :append-to-body="true"
-    :before-close="dialogClose"
-  >
-    <div style="text-align: right; margin-bottom: 5px">
-      <el-button type="primary" @click="dialogClick()">无数据源创建</el-button>
-    </div>
-    <el-table
-      :data="dialog.tableData"
-      border
-      style="width: 100%"
-      v-loading="dialog.loading"
-    >
-      <el-table-column prop="name" label="表单名称" />
-      <el-table-column label="操作">
-        <template #default="scope">
-          <el-button
-            size="small"
-            @click="dialogClick(scope.row.id)"
-            type="primary"
-            >创建表单
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-  </el-dialog>
-  <div class="design-container" v-else>
+  <div class="design-container">
     <formControl
       :formData="state.formDataList"
       v-model:searchData="state.formData.list"
@@ -48,7 +17,6 @@
     </div>
     <form-control-attr
       v-model:formData="state.formData"
-      :dataSource="dialog.tableData"
       @openDialog="dialogOpen"
     />
     <el-drawer
@@ -130,26 +98,6 @@
     formDataTemp: {}
   })
   const vueFileEl = ref()
-  // 选择数据源弹窗
-  const dialog = ref({
-    visible: true,
-    loading: true,
-    tableData: []
-  })
-  const dialogClick = (id?: string) => {
-    router.push({ path: '/designform', query: { formId: id } })
-  }
-  const getDialogData = () => {
-    getRequest('datasource').then((res: any) => {
-      dialog.value.loading = false
-      dialog.value.tableData = res.data.data
-    })
-  }
-  const dialogClose = () => {
-    dialogClick()
-  }
-  getDialogData()
-  // 数据源弹窗结束
 
   const getInitData = () => {
     const id = route.query.id // 当前记录保存的id
@@ -252,44 +200,48 @@
   }
   // 将数据保存在服务端
   const saveData = () => {
-    if (route.query.formId) {
-      const prams = {
-        searchData: state.formDataTemp.searchData,
-        tableData: state.formDataTemp.tableData,
-        formData: objToStringify(state.formData),
-        id: route.query.id, // 修改时，当前记录id
-        formId: state.formData.form?.formId || route.query.formId, // formId允许在表单属性设置里修改的
-        name: state.formData.form.name // 表单名称，用于在显示所有已创建的表单列表里显示
-      }
-      if (state.searchDesign) {
-        Object.assign(prams, {
-          searchData: objToStringify(state.formData),
-          formData: state.formDataTemp.formData
-        })
-      }
-      state.loading = true
-      getRequest('saveForm', prams)
-        .then((res) => {
-          if (res.data.code === 200) {
-            ElMessage({
-              message: '保存成功！',
-              type: 'success'
-            })
-            router.push({ path: '/designform/formlist' })
-          } else {
-            ElMessage.error(res.data)
-          }
-          state.loading = false
-        })
-        .catch((res) => {
-          ElMessage.info(res.data || '保存异常')
-          state.loading = false
-        })
-      // 清空右侧内容管理菜单存在session的内容，刷新时可重新加载新菜单
-      if (!route.query.id) {
-        // 新增时
-        window.sessionStorage.removeItem('formMenuList')
-      }
+    const formName = state.formData.form.title
+    if (!formName) {
+      ElMessage.error('请切换到表单属性输入表单名称！')
+      return
+    }
+    const prams = {
+      searchData: state.formDataTemp.searchData,
+      tableData: state.formDataTemp.tableData,
+      formData: objToStringify(state.formData),
+      id: route.query.id, // 修改时，当前记录id
+      formId: state.formData.form?.formId || route.query.formId, // formId允许在表单属性设置里修改的
+      name: formName, // 表单名称，用于在显示所有已创建的表单列表里显示
+      type: 1 // 1表单 2列表
+    }
+    if (state.searchDesign) {
+      Object.assign(prams, {
+        searchData: objToStringify(state.formData),
+        formData: state.formDataTemp.formData
+      })
+    }
+    state.loading = true
+    getRequest('saveForm', prams)
+      .then((res) => {
+        if (res.data.code === 200) {
+          ElMessage({
+            message: '保存成功！',
+            type: 'success'
+          })
+          router.push({ path: '/designform/formlist' })
+        } else {
+          ElMessage.error(res.data)
+        }
+        state.loading = false
+      })
+      .catch((res) => {
+        ElMessage.info(res.data || '保存异常')
+        state.loading = false
+      })
+    // 清空右侧内容管理菜单存在session的内容，刷新时可重新加载新菜单
+    if (!route.query.id) {
+      // 新增时
+      window.sessionStorage.removeItem('formMenuList')
     }
     // 清空右侧栏信息
     store.setActiveKey('')

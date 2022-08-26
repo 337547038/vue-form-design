@@ -1,7 +1,7 @@
 @charset "UTF-8";
 // 左侧栏
 $mainColor: #66b1ff;
-.design-container{padding: 0!important;display: flex;}
+.design-container {padding: 0 !important;display: flex;}
 .components-list {width: 250px;padding: 8px 0;overflow-y: auto;
   .title {padding: 8px 12px;}
   ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
@@ -46,6 +46,7 @@ $mainColor: #66b1ff;
     .el-collapse-item__header {font-weight: 700;border-bottom: 1px solid #ddd;margin-bottom: 20px}
     .el-collapse-item__wrap {border: 0}
   }
+  .group-inputSlot{display: none}
   .form-table {margin-bottom: 22px;
     .drag {border: 0;display: flex;overflow-x: auto;white-space: nowrap;padding: 0;flex-wrap: nowrap;
       > div {min-width: 150px;width: auto}
@@ -72,8 +73,8 @@ $mainColor: #66b1ff;
   .el-tabs__nav-wrap {padding: 0 10px}
   .el-tabs__content {padding: 0 10px}
   .icon-del {cursor: pointer}
-  .option-radio{
-    >label{margin-right: 8px}
+  .option-radio {
+    > label {margin-right: 8px}
   }
 }
 #editJson, #editJsonCopy {width: 100%;height: calc(100vh - 65px)}
@@ -108,6 +109,9 @@ $mainColor: #66b1ff;
     &:hover {border-color: $mainColor;background: #ecf5ff}
     > div {margin-bottom: 0}
   }
+  .group-inputSlot {border-color: #eebe77;display: inline-block;
+    &:hover,&.active {border-color: #eebe77 !important;}
+  }
   .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0;z-index: 5}
   .drag-control {display: none;
     .item-control {position: absolute;right: 0;bottom: 0;z-index: 2; display: flex;align-items: center;height: 24px;background: $mainColor;
@@ -127,19 +131,21 @@ $mainColor: #66b1ff;
     }
   }
   .main-table {padding: 0 20px;}
-  .table-tag{
-    .el-form-item__content{display: flex;
-    >div{flex: 2;margin-right: 5px;}}
+  .table-tag {
+    .el-form-item__content {display: flex;
+      > div {flex: 2;margin-right: 5px;}
+    }
   }
 }
 .table-list-comm {
   .table-main {margin-bottom: 20px}
-  .table-search{
-    form{display: flex;flex-wrap: wrap}
-    .drag{display: flex;flex-wrap: wrap;
-    >div{margin-right: 10px}}
+  .table-search {
+    form {display: flex;flex-wrap: wrap}
+    .drag {display: flex;flex-wrap: wrap;
+      > div {margin-right: 10px}
+    }
   }
-  .control-btn{margin-bottom: 10px}
+  .control-btn {margin-bottom: 10px}
 }
 /*图片文件上传*/
 .upload-style {
@@ -154,4 +160,4 @@ $mainColor: #66b1ff;
   }
 }
 /*分页*/
-.table-page{padding-top: 10px;display: flex;justify-content: flex-end}
+.table-page {padding-top: 10px;display: flex;justify-content: flex-end}

@@ -1,59 +1,55 @@
 <template>
   <div>
-    <ak-form :formData="formData" ref="formName" :submitUrl="submitUrl" />
-    <el-button type="primary" @click="submit">提交</el-button>
+    <ak-form :formData="formData" ref="formName" />
+    <el-button type="primary" @click="setOptions">设置options值</el-button>
   </div>
 </template>
 <script setup>
-  import { ref } from 'vue'
+  import { provide, ref } from 'vue'
+
   const formData = ref({
     list: [
       {
-        name: 'radio1',
+        name: 'radio',
         type: 'radio',
         control: { modelValue: '' },
-        options: [
-          { label: '标签1', value: '1' },
-          { label: '标签2', value: 'value2' },
-          { label: '标签3', value: 'value3' }
-        ],
+        options: [],
         config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
         item: { label: '单选框组', showLabel: false }
       },
       {
-        name: 'input1661157240824',
-        type: 'input',
-        control: { modelValue: '' },
-        config: { linkKey: 'radio1', linkValue: '1', linkResult: 'disabled' },
-        item: { label: '单行文本', showLabel: false }
+        name: 'checkbox',
+        type: 'checkbox',
+        control: { modelValue: [] },
+        options: [],
+        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+        item: { label: '多选框组', showLabel: false }
+      },
+      {
+        name: 'select',
+        type: 'select',
+        control: { modelValue: '', appendToBody: true },
+        options: [],
+        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+        item: { label: '下拉选择框', showLabel: false }
       }
     ],
     form: {
       labelWidth: '',
       class: '',
       size: 'default',
-      name: 'form1661157238945',
-      formId: ''
+      name: 'form1660790919277'
     }
   })
-
-  // 表单控件值改变事件
-  /*provide('AKControlChange', ({key, value}) => {
-    console.log(key)
-    console.log(value)
-  })*/
-  const submitUrl = ref(false) // 表单提交url
   const formName = ref()
-  const submit = () => {
-    formName.value.validate((valid, fields) => {
-      console.log(valid)
-      console.log(fields) // 校验通过时返回当前表单的值
-      if (valid) {
-        alert('submit')
-      } else {
-        console.log('error submit')
-        return false
-      }
+  const setOptions = () => {
+    formName.value.setOptions({
+      radio: [{ label: '单选测试', value: 'value3' }],
+      checkbox: [{ label: '多选测试', value: 'value3' }],
+      select: [
+        { label: '下拉测试2', value: 'value3' },
+        { label: '下拉测试21', value: 'value31' }
+      ]
     })
   }
 </script>

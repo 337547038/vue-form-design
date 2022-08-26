@@ -2,7 +2,7 @@
 <template>
   <div class="design-container design-table" v-loading="state.loading">
     <div class="components-list">
-      <template v-if="state.filedList?.length">
+      <template v-if="state.filedList?.length && state.id && !isTableType">
         <div class="title">可选字段</div>
         <div class="content">
           <el-checkbox-group v-model="state.checkboxGroup" size="small">
@@ -32,7 +32,7 @@
       <div class="content">
         <el-checkbox-group v-model="state.controlBtnGroup" size="small">
           <el-checkbox
-            v-for="item in state.controlBtn"
+            v-for="item in state.controlBtn.filter((item) => !item.hide)"
             :label="item.key"
             :key="item.prop"
             @change="btnCheckChange(item)"
@@ -49,7 +49,7 @@
     <div class="main-body">
       <headTools @click="headToolClick" type="2" />
       <div class="main-form main-table">
-        <p style="padding: 10px 0">提示：点击表头可拖动改变顺序；</p>
+        <p style="padding: 10px 0">提示：点击表头可拖动改变顺序</p>
         <div class="control-btn">
           <el-button
             v-for="item in state.tableData?.controlBtn"
@@ -142,20 +142,32 @@
               </el-form-item>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="表格属性" name="second">
+          <el-tab-pane label="数据列表属性" name="second">
+            <template v-if="isTableType">
+              <el-form-item label="数据列表名称">
+                <el-input
+                  v-model="state.name"
+                  placeholder="请输入数据列表名称"
+                />
+              </el-form-item>
+              <el-form-item label="数据源Id">
+                <el-input v-model="state.formId" placeholder="请输入数据源Id" />
+              </el-form-item>
+            </template>
             <el-button @click="editOpenDrawer('tableConfig')"
-              >编辑表格属性</el-button
-            >
+              >编辑表格属性
+            </el-button>
             <el-button @click="editOpenDrawer('dict')"
               >设置列表字典
               <el-tooltip
-                content="表格列表数据字典，不般不设置，从接口dict匹配。格式：{0:'男',1:'女'}"
+                content="表格列表数据字典，一般不设置，从接口dict匹配。格式：{0:'男',1:'女'}"
                 placement="top"
               >
                 <el-icon>
                   <QuestionFilled />
-                </el-icon> </el-tooltip
-            ></el-button>
+                </el-icon>
+              </el-tooltip>
+            </el-button>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -188,7 +200,8 @@
     nextTick,
     onUnmounted,
     onMounted,
-    getCurrentInstance
+    getCurrentInstance,
+    computed
   } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import VueFile from './components/vueFile.vue'
@@ -202,6 +215,9 @@
   const route = useRoute()
   const { proxy } = getCurrentInstance()
   const vueFileEl = ref()
+  const isTableType = computed(() => {
+    return route.query.type === 'table'
+  })
   const state = reactive({
     direction: 'rtl',
     filedList: [], // 可选字段
@@ -216,7 +232,8 @@
         label: '新增',
         key: 'add',
         type: 'primary',
-        size: 'small'
+        size: 'small',
+        hide: isTableType.value
       },
       {
         label: '删除',
@@ -240,7 +257,9 @@
     dataTemp: {}, // 暂存接口获取到的数据
     attrObj: {}, // 当前选中设置的字段属性
     tagList: [],
-    config: {}
+    config: {},
+    name: '',
+    formId: ''
   })
   const excludeType = ['txt', 'title', 'table', 'component', 'upload']
   const filterFiled = (obj: any) => {
@@ -335,13 +354,22 @@
   }
   // 保存数据，将数据保存到服务端
   const saveData = () => {
+    const name = state.name || state.dataTemp.name
+    if (!name) {
+      ElMessage.error(
+        isTableType.value ? '请输入数据列表名称' : '请输入表单名称'
+      )
+      return
+    }
     state.loading = true
     const prams = {
       tableData: objToStringify(state.tableData),
       id: state.id, // 修改时，当前记录id
       searchData: state.dataTemp.searchData,
       formData: state.dataTemp.formData,
-      name: state.dataTemp.name // 表单名称，用于在显示所有已创建的表单列表里显示
+      name: name, // 表单名称，用于在显示所有已创建的表单列表里显示
+      formId: state.formId || state.dataTemp.formId,
+      type: state.dataTemp.type || 2
     }
     getRequest('saveForm', prams)
       .then((res) => {
@@ -428,6 +456,10 @@
           filterFiled(stringToObj(result.formData)) // 获取表单数据，从表单里提取可选择的表头字段
           if (result.tableData) {
             state.tableData = stringToObj(result.tableData)
+          }
+          if (isTableType.value) {
+            state.name = result.name
+            state.formId = result.formId
           }
           // 将表头数据在左则对应选中
           state.tableData.columns.forEach((item: any) => {
