@@ -13,14 +13,36 @@
         "id": 1,
         "name": "示例测试",
         "updateDate": "2022-08-08 08:08:08",
-        "status": "1"
+        "creatDate": "2022-08-08 08:08:08",
+        "status": 1,
+        "type": 1
       },
       {
         "formId": "",
         "id": 2,
         "name": "无数据源表单",
         "updateDate": "2022-08-08 08:08:08",
-        "status": "0"
+        "creatDate": "2022-08-08 08:08:08",
+        "status": 0,
+        "type": 1
+      },
+      {
+        "formId": "2",
+        "id": 2,
+        "name": "表格列表",
+        "updateDate": "2022-08-08 08:08:08",
+        "creatDate": "2022-08-08 08:08:08",
+        "status": 0,
+        "type": 2
+      },
+      {
+        "formId": "3",
+        "id": 2,
+        "name": "表格列表",
+        "updateDate": "2022-08-08 08:08:08",
+        "creatDate": "2022-08-08 08:08:08",
+        "status": 1,
+        "type": 2
       }
     ],
     "pageInfo": {
