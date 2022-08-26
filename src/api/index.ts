@@ -21,7 +21,7 @@ export const getRequest = (apiKey: string, data?: any, options = {}) => {
   const obj: any = Object.assign(
     {
       url: api[apiKey],
-      method: 'POST',
+      method: 'GET',
       data
     },
     options
