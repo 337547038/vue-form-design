@@ -1,15 +1,16 @@
 <!-- Created by 337547038 on 2021/9/8. -->
 <template>
   <draggable
-    itemKey="key-form"
-    v-model="dataList"
+    itemKey="id"
+    :list="dataList"
     name="fade"
     class="drag"
     v-bind="{
       group: 'form',
       ghostClass: 'ghost',
       animation: 200,
-      handle: '.drag-move'
+      handle: '.drag-move',
+      disabled: state.type !== 4
     }"
     @add="draggableAdd"
   >
@@ -33,7 +34,7 @@
                 :label="item.label"
                 :key="tIndex"
               >
-                <form-group v-model:data="item.list" data-type="not-nested" />
+                <form-group :data="item.list" data-type="not-nested" />
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -53,7 +54,7 @@
         </template>
         <template v-else-if="element.type === 'table'">
           <div class="form-table" v-if="state.type === 4">
-            <form-group v-model:data="element.list" data-type="not-nested" />
+            <form-group :data="element.list" data-type="not-nested" />
           </div>
           <child-table
             v-else
@@ -71,16 +72,16 @@
                 [col.className]: col.className
               }"
               v-bind="col.attr"
-              v-for="(col, index) in element.columns"
-              :key="index"
+              v-for="(col, i) in element.columns"
+              :key="i"
               @click.stop="groupClick(col, 'gridChild')"
             >
-              <form-group v-model:data="col.list" data-type="not-nested" />
+              <form-group :data="col.list" data-type="not-nested" />
               <div class="drag-control" v-if="state.type === 4">
                 <div class="item-control">
                   <i
                     class="icon-del"
-                    @click.stop="click('delGridChild', index, element.columns)"
+                    @click.stop="click('delGridChild', i, element.columns)"
                   ></i>
                 </div>
               </div>
@@ -94,7 +95,7 @@
                 {{ element.item.label }}
                 <Tooltips :content="element.help" />
               </template>
-              <form-group v-model:data="element.list" />
+              <form-group :data="element.list" data-type="not-nested" />
             </el-collapse-item>
           </el-collapse>
         </template>
@@ -109,31 +110,35 @@
             v-bind="element.control"
             :class="[element.className]"
           >
-            <form-group v-model:data="element.list" data-type="not-nested" />
+            <form-group :data="element.list" data-type="not-nested" />
           </div>
         </template>
-        <template v-else>
-          <form-item :data="element" />
-        </template>
-        <div class="drag-control" v-if="state.type === 4">
-          <div class="item-control">
-            <i
-              class="icon-plus"
-              @click.stop="click('gridAdd', index, element)"
-              v-if="state.gridAdd"
-              title="添加列"
-            ></i>
-            <i
-              class="icon-clone"
-              @click.stop="click('clone', index, element)"
-              v-if="state.clone"
-              title="克隆"
-            ></i>
-            <i class="icon-del" @click.stop="click('del', index)"></i>
+        <form-item
+          v-else
+          :data="element"
+          v-model="element.control.modelValue"
+        />
+        <template v-if="state.type === 4">
+          <div class="drag-control">
+            <div class="item-control">
+              <i
+                class="icon-plus"
+                @click.stop="click('gridAdd', index, element)"
+                v-if="state.gridAdd"
+                title="添加列"
+              ></i>
+              <i
+                class="icon-clone"
+                @click.stop="click('clone', index, element)"
+                v-if="state.clone"
+                title="克隆"
+              ></i>
+              <i class="icon-del" @click.stop="click('del', index)"></i>
+            </div>
+            <div class="drag-move icon-move"></div>
           </div>
-          <div class="drag-move icon-move"></div>
-        </div>
-        <div class="tooltip" v-if="state.type === 4">{{ element.name }}</div>
+          <div class="tooltip">{{ element.name }}</div>
+        </template>
       </div>
     </template>
   </draggable>
@@ -159,9 +164,9 @@
       }
     }
   )
-  const emits = defineEmits<{
+  /*  const emits = defineEmits<{
     (e: 'update:data', value: FormList[]): void
-  }>()
+  }>()*/
   const store = useDesignFormStore()
   const formOtherData = inject(constFormOtherData, {}) as any
 
@@ -171,14 +176,6 @@
     type: formOtherData.type
   })
   const dataList = ref(props.data)
-  watch(
-    () => dataList.value,
-    () => {
-      // console.log('watch') // todo 这里会执行两次
-      emits('update:data', dataList.value)
-    },
-    { deep: true }
-  )
   watch(
     () => props.data,
     (v: FormList[]) => {
@@ -190,8 +187,8 @@
   })
 
   const indexType = (type: string) => {
-    const controlType = ['grid', 'table', 'tabs', 'div']
-    return controlType.indexOf(type) === -1
+    const controlType = ['grid', 'table', 'tabs', 'div', 'card']
+    return controlType.includes(type)
   }
   // 删除或复制
   const click = (type: string, index: number, item: any) => {
@@ -223,26 +220,19 @@
     const newIndex = evt.newIndex
     const key = new Date().getTime().toString()
     const obj: any = dataList.value[newIndex]
-    // console.log(obj)
     const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
-    // console.log(isNested)
-    if (isNested === 'not-nested' && !indexType(obj.type)) {
+    if (isNested === 'not-nested' && indexType(obj.type)) {
       dataList.value.splice(newIndex, 1)
       return
     }
     if (!obj) {
       return
     }
-    // console.log(obj)
-    const label = obj.label || obj.item.label || ''
+    const label = obj.label
     delete obj.label
     delete obj.icon
     let objectOther = {}
     if (!indexType(obj.type)) {
-      // 不显示复制
-      objectOther = {}
-    } else {
-      // 除了以上类型时
       objectOther = {
         item: {
           label: label,
@@ -250,19 +240,8 @@
         }
       }
     }
-    const newData = Object.assign(
-      {
-        name: obj.type + key
-      },
-      obj,
-      objectOther
-    )
-    dataList.value.splice(newIndex, 1, newData)
-    store.setActiveKey(obj.type + key)
-    store.setControlAttr(dataList.value[newIndex])
-    // grid时显示添加列按钮
-    state.gridAdd = obj.type === 'grid'
-    state.clone = indexType(obj.type)
+    Object.assign(obj, { name: obj.type + key }, objectOther)
+    groupClick(obj)
   }
   // 点击激活当前
   const groupClick = (item: any, type?: string) => {
@@ -278,8 +257,9 @@
     }
     store.setActiveKey(item.name)
     store.setControlAttr(item)
+    // grid时显示添加列按钮
     state.gridAdd = item.type === 'grid'
-    state.clone = indexType(item.type)
+    state.clone = !indexType(item.type)
   }
   // 返回栅格宽度
   const getFormItemStyle = (ele: FormList) => {

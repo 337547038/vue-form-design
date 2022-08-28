@@ -66,7 +66,7 @@ export default [
         label: '下拉选择框',
         icon: 'select',
         control: {
-          modelValue: [],
+          modelValue: '',
           appendToBody: true
         },
         options: selectOption,
@@ -114,7 +114,7 @@ export default [
         label: '计数器',
         icon: 'number',
         control: {
-          modelValue: ''
+          modelValue: 0
         },
         config: {}
       },
@@ -133,7 +133,7 @@ export default [
         label: '评分',
         icon: 'rate',
         control: {
-          modelValue: ''
+          modelValue: 0
         },
         config: {}
       },
@@ -142,7 +142,7 @@ export default [
         label: '滑块',
         icon: 'slider',
         control: {
-          modelValue: ''
+          modelValue: 0
         },
         config: {}
       },

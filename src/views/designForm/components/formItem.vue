@@ -166,16 +166,7 @@
 
 <script lang="ts" setup>
   import axios from '@/utils/request'
-  import {
-    inject,
-    onMounted,
-    computed,
-    watch,
-    toRefs,
-    ref,
-    toRef,
-    onUnmounted
-  } from 'vue'
+  import { inject, onMounted, computed, watch, ref, onUnmounted } from 'vue'
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
   import Tooltip from './tooltip.vue'
@@ -196,7 +187,7 @@
   const props = withDefaults(
     defineProps<{
       data: FormList
-      modelValue?: null // 子表时值
+      modelValue?: null
       tProps?: string // 子表时的form-item的prop值，用于子表校验用
     }>(),
     {}
@@ -209,10 +200,28 @@
   const type = computed(() => {
     return injectData.type
   })
-  const { config, control, options = ref([]) } = toRefs(props.data)
-  const value = props.tProps
-    ? ref(props.modelValue)
-    : toRef(props.data.control, 'modelValue')
+  // const { config, control, options = ref([]) } = toRefs(props.data)
+  const config = ref(props.data.config)
+  const control = ref(props.data.control)
+  const options = ref(props.data.options)
+  const value = ref(props.modelValue)
+  watch(
+    () => props.modelValue,
+    () => {
+      value.value = props.modelValue
+    }
+  )
+  watch(
+    () => props.data,
+    (val: FormList) => {
+      config.value = val.config || {}
+      control.value = val.control || {}
+      options.value = val.options || []
+    },
+    {
+      /*deep: true */
+    }
+  )
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
   const getControlByName = inject(constGetControlByName) as any
   const sourceFunKey = computed(() => {
@@ -222,20 +231,6 @@
     const replace = apiUrl?.match(iReg)
     return replace && replace[0]
   })
-  watch(
-    () => props.data,
-    (val: FormList) => {
-      config.value = val.config || {}
-      control.value = val.control || {}
-      options.value = val.options || []
-      if (props.tProps) {
-        value.value = props.modelValue
-      } else {
-        value.value = val.control.modelValue
-      }
-    },
-    { deep: true }
-  )
   const formatNumber = (val: string | number) => {
     // 将字符类数字转为数值类
     if (val && /^\d+(\.\d+)?$/.test(val.toString())) {
@@ -396,11 +391,16 @@
   watch(
     () => value.value,
     (val: any) => {
-      if (props.tProps) {
-        emits('update:modelValue', val)
-      } else {
-        control.value.modelValue = val
-      }
+      console.log(
+        'formitem value watch:' +
+          props.data.name +
+          ',' +
+          val +
+          ',' +
+          props.data.type
+      )
+      //emits('update:modelValue', val)
+      // control.value.modelValue = val
       changeEvent &&
         changeEvent({ key: props.data.name, value: val, data: props.data })
     }

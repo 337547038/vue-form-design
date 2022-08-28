@@ -340,7 +340,9 @@
             </template>
             <el-switch
               v-model="formConfig.addLoad"
-              @change="formAttrChange({ key: 'addLoad' }, $event)"
+              @change="
+                formAttrChange({ key: 'addLoad', path: 'config' }, $event)
+              "
             />
           </el-form-item>
           <el-form-item>
@@ -363,60 +365,66 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, computed, watch, toRef, ref } from 'vue'
+  import { reactive, computed, watch, toRefs } from 'vue'
   import { useRoute } from 'vue-router'
   import { getRequest } from '@/api'
   import { useDesignFormStore } from '@/store/designForm'
-  import { FormData } from '../types'
   import validate from './validate'
   import { ElMessage } from 'element-plus'
   const props = withDefaults(
     defineProps<{
-      formData: FormData
+      formData: any
+      formConfig: any
     }>(),
-    {}
+    {
+      formConfig: () => {
+        return {}
+      }
+    }
   )
   const emits = defineEmits<{
     (e: 'openDialog', data: any, type?: any): void
-    (e: 'update:formData', data: FormData): void
+    (e: 'update:formData', data: any): void
+    (e: 'update:formConfig', data: any): void
   }>()
-  const formInfo = toRef(props.formData, 'form')
-  const formConfig: any = ref(props.formData.config || {})
+  const { formConfig, formData } = toRefs(props)
   const store = useDesignFormStore()
   const route = useRoute()
   const state = reactive({
     formAttr: [
       {
+        label: '表单名称',
+        value: formConfig.value.title,
+        key: 'title',
+        hide: route.query.type === 'search',
+        path: 'config'
+      },
+      {
         label: '数据源',
         placeholder: '请选择数据源',
-        value: formInfo.value.formId,
+        value: formConfig.value.formId,
         type: 'select',
         options: [],
-        key: 'dataSource',
-        hide: route.query.type === 'search'
+        key: 'formId',
+        hide: route.query.type === 'search',
+        path: 'config'
       },
-      {
-        label: '表单名称',
-        value: formInfo.value.title,
-        key: 'title',
-        hide: route.query.type === 'search'
-      },
-      { label: '表单标识', value: formInfo.value.name, key: 'name' },
+      { label: '表单标识', value: formData.value.name, key: 'name' },
       {
         label: '表单标签宽度',
-        value: formInfo.value.labelWidth,
+        value: formData.value.labelWidth,
         placeholder: '表单label宽，如180px',
         key: 'labelWidth'
       },
       {
         label: '表单样式名称',
-        value: formInfo.value.class,
+        value: formData.value.class,
         placeholder: '额外添加的表单class类名',
         key: 'class'
       },
       {
         label: '组件尺寸',
-        value: formInfo.value.size,
+        value: formData.value.size,
         type: 'select',
         key: 'size',
         options: [
@@ -427,16 +435,16 @@
       },
       {
         label: '提交按钮',
-        value: formConfig.value?.formBtn?.confirm,
+        value: formConfig.value.confirm,
         placeholder: '提交按钮文案，空不显示',
-        path: 'formBtn',
-        key: 'confirm'
+        key: 'confirm',
+        path: 'config'
       },
       {
         label: '取消返回按钮',
-        value: formConfig.value?.formBtn?.cancel,
+        value: formConfig.value.cancel,
         placeholder: '取消返回按钮文案，空不显示',
-        path: 'formBtn',
+        path: 'config',
         key: 'cancel'
       }
     ],
@@ -480,7 +488,6 @@
       attr = {}
     } = controlData.value
     let columnIndex = false // 是否显示序号列
-    //let columnOperate = false // 是否显示操作列
     if (type === 'table') {
       // 表格时处理
       const list = controlData.value && controlData.value.list
@@ -927,10 +934,10 @@
     state.attrList = state.attrList.filter((item: any) => {
       let hasFilter = true
       if (item.vShow) {
-        hasFilter = item.vShow.indexOf(type) !== -1
+        hasFilter = item.vShow.includes(type)
       }
       if (item.vHide) {
-        hasFilter = item.vHide.indexOf(type) === -1
+        hasFilter = !item.vHide.includes(type)
       }
       if (item.vIf) {
         // 不显示vif＝true的
@@ -1140,7 +1147,7 @@
   }
   // 编辑表单样式
   const editFormStyle = () => {
-    emits('openDialog', props.formData.config?.style || '', 'css')
+    emits('openDialog', props.formConfig.style || '', 'css')
   }
   const init = (id?: string) => {
     const formId = id || route.query.formId
@@ -1168,31 +1175,16 @@
   }
   // 表单属性修改
   const formAttrChange = (obj: any, val?: any) => {
-    if (obj.key === 'dataSource') {
+    if (obj.key === 'formId') {
       init(obj.value) // 改变了数据源了，重新请求数据
       // 清空设计区已选择的组件，再一次选择时字段标识才会变
       store.setActiveKey('')
       store.setControlAttr({})
     }
-    switch (obj.key) {
-      case 'confirm':
-      case 'cancel':
-      case 'addLoad':
-        if (obj.key === 'addLoad') {
-          formConfig.value.addLoad = val
-        } else {
-          if (!formConfig.value.submitBtn) {
-            formConfig.value.submitBtn = {}
-          }
-          formConfig.value.submitBtn[obj.key] = obj.value
-        }
-        emits(
-          'update:formData',
-          Object.assign(props.formData, { config: formConfig.value })
-        )
-        break
-      default:
-        formInfo.value[obj.key] = obj.value
+    if (obj.path === 'config') {
+      formConfig.value[obj.key] = obj.value || val
+    } else {
+      formData.value[obj.key] = obj.value
     }
   }
   // 返回选项配置提示

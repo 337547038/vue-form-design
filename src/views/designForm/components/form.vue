@@ -12,8 +12,7 @@
         'detail-form': type === 3 || type === 2
       }"
     >
-      <!--eslint-disable-next-line vue/no-mutating-props-->
-      <form-group v-model:data="formData.list" />
+      <form-group :data="formData.list" />
       <slot></slot>
       <div v-if="confirmBtn || cancelBtn" style="height: auto">
         <el-button type="primary" v-if="confirmBtn" @click="submit">{{

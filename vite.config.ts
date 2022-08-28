@@ -39,7 +39,7 @@ export default defineConfig({
   server: {
     // 是否开启 https
     https: false,
-    port: 3000,
+    port: 3001,
     host: '0.0.0.0',
     open: false
   }

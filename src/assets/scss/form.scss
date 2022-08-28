@@ -17,9 +17,9 @@ $mainColor: #66b1ff;
 }
 // 框架
 .main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0;overflow: hidden;
-  .empty-tips {text-align: center;width: 100%;font-size: 20px;top: 100px;color: #ccc;position: relative;
+  .empty-tips {text-align: center;width: 100%;font-size: 20px;color: #ccc;position: absolute;left: 0;top: 100px;
   }
-  .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 140px);overflow-y: auto;overflow-x: hidden;}
+  .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 140px);overflow-y: auto;overflow-x: hidden;position: relative}
 }
 // 中间按钮工具
 .main-tools {line-height: 38px;border-bottom: 2px solid #e4e7ed;text-align: right;margin-right: 10px;
@@ -87,8 +87,9 @@ $mainColor: #66b1ff;
 .export-dialog {
   .el-dialog__body {padding: 0 20px}
 }
-.design-form {height: calc(100vh - 167px);
+.design-form {min-height: calc(100vh - 167px);
   > div {height: 100%}
+  > .drag{min-height: calc(100vh - 167px)!important;}
   .ghost {
     background: #F56C6C;
     border: 2px solid #F56C6C;
@@ -119,7 +120,7 @@ $mainColor: #66b1ff;
     }
     .drag-move {position: absolute;left: 0;top: 0;z-index: 2;width: 24px;height: 24px;background: $mainColor;color: #fff;text-align: center;line-height: 24px;cursor: move}
   }
-  .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;display: flex;flex-wrap: wrap;align-content: flex-start}
+  .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;display: flex;flex-wrap: wrap;align-content: flex-start;}
 }
 /*表格设计*/
 .design-table {

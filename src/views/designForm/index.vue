@@ -16,7 +16,8 @@
       </div>
     </div>
     <form-control-attr
-      v-model:formData="state.formData"
+      v-model:formData="state.formData.form"
+      v-model:formConfig="state.formData.config"
       @openDialog="dialogOpen"
     />
     <el-drawer
@@ -69,6 +70,7 @@
   import { aceEdit } from './components/comm'
   import { objToStringify, stringToObj } from '@/utils/form'
   import { useLayoutStore } from '@/store/layout'
+
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
@@ -82,7 +84,11 @@
         labelWidth: '',
         class: '',
         size: 'default',
-        name: 'form' + new Date().getTime(),
+        name: 'form' + new Date().getTime()
+      },
+      config: {
+        // title和formId在提交保存时需要
+        title: 'form' + new Date().getTime(),
         formId: route.query.formId || ''
       }
     },

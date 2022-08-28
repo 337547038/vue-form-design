@@ -73,7 +73,7 @@
   }>()
   const user = ref({
     name: 'userName',
-    avatar: 'https://xxx/avatar.jpg'
+    avatar: ''
   })
   const toolClick = (type: string) => {
     emits('click', type)
