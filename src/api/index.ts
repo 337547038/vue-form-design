@@ -11,16 +11,13 @@ const api: any = {
   saveFormContent: './mock/saveformcontent', // 往已设计好的表单里添加内容
   getFormContent: './mock/getformcontent.json', // 获取表单内容
   getContentList: './mock/getcontentlist.json', // 获取表单内容列表
-  delFormContent: '', // 删除表单内容
-  //getOptions: '/mock/getOption', // 设计创建表单时用于测试多选下拉项
-  uploadFiled: './upload',
-  formSubmit: './formSubmit'
+  delFormContent: '' // 删除表单内容
 }
 export const getRequest = (apiKey: string, data?: any, options = {}) => {
   const obj: any = Object.assign(
     {
       url: api[apiKey],
-      method: 'POST',
+      method: 'GET',
       data
     },
     options

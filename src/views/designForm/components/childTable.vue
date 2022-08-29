@@ -43,27 +43,21 @@
 
 <script setup lang="ts">
   import FormItem from './formItem.vue'
-  import { watch, ref, inject } from 'vue'
+  import { watch, inject, toRef } from 'vue'
   import Tooltip from './tooltip.vue'
-  // import { useDesignFormStore } from '@/store/designForm'
-  import { constSetFormValue } from './const'
+  import { constSetFormValue } from './utils'
   const props = withDefaults(
     defineProps<{
       data: any
       type: number
-      tableData: any
     }>(),
     {
       data: () => {
         return {}
-      },
-      tableData: () => {
-        return []
       }
     }
   )
-  // const formStore = useDesignFormStore()
-  const tableDataNew: any = ref(props.tableData)
+  const tableDataNew: any = toRef(props.data, 'tableData')
   const addColumn = () => {
     const temp: any = {}
     if (props.data.list) {

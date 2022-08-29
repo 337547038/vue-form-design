@@ -23,9 +23,8 @@
   import { ref, nextTick } from 'vue'
   import Clipboard from 'clipboard'
   import { ElMessage } from 'element-plus'
-  import { aceEdit } from './comm'
+  import { aceEdit, constControlChange } from './utils'
   import { objToStringify } from '@/utils/form'
-  import { constControlChange } from './const'
 
   const visible = ref(false)
   const editor = ref()

@@ -8,9 +8,32 @@
       }
     },
     "data": {
-      "text": "示例表单",
+      "id": 1,
+      "formId": 1,
+      "cascader": [],
+      "checkbox": [
+        1
+      ],
+      "colorPicker": "",
+      "component": "测试回填值",
+      "datePicker": "2022-08-04T16:00:00.000Z",
+      "inputNumber": 0,
+      "radio": 1,
+      "rate": 2,
+      "richText": "<p>富文本内容</p>",
       "select": 1,
-      "radio": 1
+      "slider": 3,
+      "switch": true,
+      "table": [
+        {
+          "table1": "1",
+          "table2": "value1"
+        }
+      ],
+      "text": "示例表单",
+      "textarea": "",
+      "timePicker": "2022-08-29T05:50:50.000Z",
+      "upload": []
     }
   }
 }

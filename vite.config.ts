@@ -34,12 +34,17 @@ export default defineConfig({
   },
   base: './',
   build: {
-    outDir: 'docs'
+    outDir: 'docs',
+    rollupOptions: {
+      // 确保外部化处理那些你不想打包进库的依赖2.05/3.02
+      // external: ['vue', 'axios', 'vueRouter']
+      // external: ['tinymce/tinymce']
+    }
   },
   server: {
     // 是否开启 https
     https: false,
-    port: 3001,
+    port: 3000,
     host: '0.0.0.0',
     open: false
   }

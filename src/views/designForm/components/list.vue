@@ -155,7 +155,7 @@
     }
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
-    let formValue = searchFormEl.value?.getValue(true)
+    let formValue = searchFormEl.value?.getValue()
     if (typeof props.beforeRequest === 'function') {
       formValue = props.beforeRequest(formValue || {})
     }
@@ -173,6 +173,7 @@
           // 同步设置筛选表单的
           searchFormEl.value.setFormDict(state.dict)
         }
+        state.total = result.pageInfo?.total
         state.loading = false
       })
       .catch((res) => {

@@ -47,7 +47,7 @@
     constGetControlByName,
     constSetFormOptions,
     constSetFormValue
-  } from './const'
+  } from './utils'
 
   const props = withDefaults(
     defineProps<{
@@ -82,11 +82,12 @@
   // const storeForm = useDesignFormStore()
   const loading = ref(false)
   const hasLoadData = ref(false) // 用于表示是否已加载过表单数据了
+  const transformField = ref([]) // 值需要做转换的
   const confirmBtn = computed(() => {
-    return props.formData.config?.submitBtn?.confirm
+    return props.formData.config?.confirm
   })
   const cancelBtn = computed(() => {
-    return props.formData.config?.submitBtn?.cancel
+    return props.formData.config?.cancel
   })
   // 添加数据时是否从接口获取初始数据
   const addLoad = computed(() => {
@@ -137,16 +138,19 @@
     list.forEach((item: any) => {
       if (item.type === 'table') {
         obj[item.name] = item.tableData
-      } else if (item.type === 'grid' || item.type === 'tabs') {
+      } else if (['grid', 'tabs'].includes(item.type)) {
         item.columns.forEach((col: any) => {
           forEachGetFormModel(col.list, obj)
         })
-      } else if (item.type === 'card') {
+      } else if (['card', 'div'].includes(item.type)) {
         forEachGetFormModel(item.list, obj)
       } else {
-        const excludeType = ['title']
+        const excludeType = ['title', 'divider', 'txt']
         if (excludeType.indexOf(item.type) === -1) {
           obj[item.name] = item.control.modelValue
+          if (item.config?.transform) {
+            transformField.value.push(item.name)
+          }
         }
       }
     })
@@ -194,14 +198,20 @@
     })
   }
   // 提供一个取值的方法
-  const getValue = (bool?: boolean) => {
-    // bool=true时只返回不为空的值
-    if (bool) {
+  const getValue = () => {
+    // 需要将值转换，数组[]=>string,true=>1,false=>0
+    if (transformField.value.length) {
       const obj: any = {}
       for (const key in model.value) {
         if (model.value.hasOwnProperty(key)) {
           const val = (model.value as any)[key]
-          if (val !== '' && val && val.length > 0) {
+          if (val && typeof val === 'object') {
+            obj[key] = val.toString()
+          } else if (val === true) {
+            obj[key] = 1
+          } else if (val === false) {
+            obj[key] = 0
+          } else {
             obj[key] = val
           }
         }
@@ -215,7 +225,29 @@
   const setValueObj = ref({})
   provide(constSetFormValue, setValueObj)
   const setValue = (obj: { [key: string]: any }) => {
-    setValueObj.value = obj
+    if (transformField.value.length) {
+      // 需要转换还原
+      const temp: any = {}
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const val = obj[key]
+          if (transformField.value.includes(key)) {
+            if (typeof val === 'string') {
+              temp[key] = val.split(',')
+            } else if (val === 0) {
+              temp[key] = false
+            } else if (val === 1) {
+              temp[key] = true
+            }
+          } else {
+            temp[key] = val
+          }
+        }
+      }
+      setValueObj.value = temp
+    } else {
+      setValueObj.value = obj
+    }
   }
   // 对表单选择项快速设置
   const setFormOptions = ref({})
@@ -252,6 +284,9 @@
     resultDict.value = obj
   }
   const getFormData = () => {
+    if (props.type === 4) {
+      return
+    }
     if (
       props.formData?.list?.length &&
       props.requestUrl !== false &&
@@ -286,6 +321,9 @@
     }
   }
   const submit = () => {
+    if (props.type === 4) {
+      return ElMessage.error('设计模式不能提交表单')
+    }
     if (
       confirmBtn.value &&
       props.submitUrl !== false &&
@@ -299,7 +337,7 @@
             tid: route.query.tid,
             id: route.query.id,
             // ...formEl.value.getValue()
-            fields
+            ...fields
           }
           if (typeof props.beforeSubmit === 'function') {
             params = props.beforeSubmit(params)

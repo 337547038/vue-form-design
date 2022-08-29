@@ -56,12 +56,7 @@
           <div class="form-table" v-if="state.type === 4">
             <form-group :data="element.list" data-type="not-nested" />
           </div>
-          <child-table
-            v-else
-            :data="element"
-            v-model:tableData="element.tableData"
-            :type="state.type"
-          />
+          <child-table v-else :data="element" :type="state.type" />
         </template>
         <template v-else-if="element.type === 'grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -152,7 +147,7 @@
   import Tooltips from './tooltip.vue'
   import { useDesignFormStore } from '@/store/designForm'
   import type { FormList } from '../types'
-  import { constFormOtherData } from './const'
+  import { constFormOtherData } from './utils'
 
   const props = withDefaults(
     defineProps<{
@@ -187,7 +182,7 @@
   })
 
   const indexType = (type: string) => {
-    const controlType = ['grid', 'table', 'tabs', 'div', 'card']
+    const controlType = ['grid', 'table', 'tabs', 'div']
     return controlType.includes(type)
   }
   // 删除或复制
@@ -221,7 +216,11 @@
     const key = new Date().getTime().toString()
     const obj: any = dataList.value[newIndex]
     const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
-    if (isNested === 'not-nested' && indexType(obj.type)) {
+    if (
+      isNested === 'not-nested' &&
+      (indexType(obj.type) || obj.type == 'card')
+    ) {
+      // 卡片也不能嵌套，但需要item项
       dataList.value.splice(newIndex, 1)
       return
     }

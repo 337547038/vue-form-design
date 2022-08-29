@@ -81,9 +81,9 @@
         <el-checkbox
           v-for="(item, index) in options"
           :key="index"
-          :value="formatNumber(item.value)"
-          :label="item.label"
-        />
+          :label="formatNumber(item.value)"
+          >{{ item.label }}</el-checkbox
+        >
       </el-checkbox-group>
       <AKSelect
         v-if="
@@ -171,8 +171,8 @@
   import { ElMessage } from 'element-plus'
   import Tooltip from './tooltip.vue'
   import TinymceEdit from './tinymce/index.vue'
-  // import { useDesignFormStore } from '@/store/designForm'
   import { FormItem, FormList } from '../types'
+  import { formatNumber } from './utils'
   import validate from './validate'
   import {
     constFormDict,
@@ -181,7 +181,7 @@
     constSetFormValue,
     constFormOtherData,
     constGetControlByName
-  } from './const'
+  } from './utils'
   import AKSelect from './select.vue'
 
   const props = withDefaults(
@@ -231,15 +231,6 @@
     const replace = apiUrl?.match(iReg)
     return replace && replace[0]
   })
-  const formatNumber = (val: string | number) => {
-    // 将字符类数字转为数值类
-    if (val && /^\d+(\.\d+)?$/.test(val.toString())) {
-      // 为数字
-      return Number(val)
-    } else {
-      return val
-    }
-  }
   const getLabel = (ele: FormItem) => {
     if (ele) {
       return ele.showLabel ? '' : ele.label
@@ -391,15 +382,7 @@
   watch(
     () => value.value,
     (val: any) => {
-      console.log(
-        'formitem value watch:' +
-          props.data.name +
-          ',' +
-          val +
-          ',' +
-          props.data.type
-      )
-      //emits('update:modelValue', val)
+      emits('update:modelValue', val)
       // control.value.modelValue = val
       changeEvent &&
         changeEvent({ key: props.data.name, value: val, data: props.data })

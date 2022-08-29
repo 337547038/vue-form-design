@@ -74,16 +74,3 @@ export function stringToObj(string: string) {
     return JSON.parse(string)
   }
 }
-// 用于临时保存表单或搜索设置的数据
-/*export const localStorage = (obj?: { value: string; dataType: string }) => {
-  const key = 'ak_form_design_table_data'
-  const storage: any = {}
-  if (obj && obj.value) {
-    // 存值
-    storage[obj.dataType] = obj.value
-    window.localStorage.setItem(key, objToStringify(storage))
-  } else {
-    // 取值
-    return stringToObj(window.localStorage.getItem(key) || '')
-  }
-}*/

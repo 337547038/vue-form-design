@@ -67,7 +67,7 @@
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { useRoute, useRouter } from 'vue-router'
-  import { aceEdit } from './components/comm'
+  import { aceEdit } from './components/utils'
   import { objToStringify, stringToObj } from '@/utils/form'
   import { useLayoutStore } from '@/store/layout'
 
@@ -169,9 +169,6 @@
       case 'vue':
         vueFileEl.value.open(state.formData)
         break
-      case 'import':
-        dialogOpen({})
-        break
     }
   }
   // 弹窗确认
@@ -206,20 +203,18 @@
   }
   // 将数据保存在服务端
   const saveData = () => {
-    const formName = state.formData.form.title
-    if (!formName) {
+    const formName = state.formData.config?.title
+    if (!state.searchDesign && !formName) {
       ElMessage.error('请切换到表单属性输入表单名称！')
       return
     }
-    const prams = {
-      searchData: state.formDataTemp.searchData,
-      tableData: state.formDataTemp.tableData,
+    const prams = Object.assign({}, state.formDataTemp, {
       formData: objToStringify(state.formData),
       id: route.query.id, // 修改时，当前记录id
-      formId: state.formData.form?.formId || route.query.formId, // formId允许在表单属性设置里修改的
+      formId: state.formData.config?.formId || route.query.formId, // formId允许在表单属性设置里修改的
       name: formName, // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1 // 1表单 2列表
-    }
+    })
     if (state.searchDesign) {
       Object.assign(prams, {
         searchData: objToStringify(state.formData),

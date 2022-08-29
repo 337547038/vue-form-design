@@ -4,13 +4,13 @@
     "list": [
       {
         "text": "示例表单",
-        "select": "1",
+        "radio": 1,
         "dateTime": "2022-08-80 08:08:08",
         "id": 1
       }
     ],
     "pageInfo": {
-      "total": 100
+      "total": 1
     },
     "dict": {
       "select": {

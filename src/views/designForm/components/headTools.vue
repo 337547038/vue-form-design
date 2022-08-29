@@ -36,7 +36,6 @@
       { icon: 'eye', label: '预览', disabled: props.type === '2' },
       { icon: 'json', label: '生成脚本预览' },
       { icon: 'vue', label: '导出vue文件', disabled: vueDisabled },
-      { icon: 'import', label: '导入Json' },
       { icon: 'save', label: '保存' }
     ]
   })

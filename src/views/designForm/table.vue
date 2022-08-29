@@ -9,7 +9,6 @@
             <el-checkbox
               v-for="item in state.filedList"
               :label="item.label"
-              :border="true"
               :key="item.prop"
               @change="checkChange(item)"
             />
@@ -22,7 +21,6 @@
           <el-checkbox
             v-for="item in state.otherFiled"
             :label="item.label"
-            :border="true"
             :key="item.prop"
             @change="checkChange(item)"
           />
@@ -205,7 +203,7 @@
   } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import VueFile from './components/vueFile.vue'
-  import { aceEdit } from './components/comm'
+  import { aceEdit } from './components/utils'
   import { ElMessage } from 'element-plus'
   import Sortable from 'sortablejs'
   import { objToStringify, stringToObj } from '@/utils/form'
