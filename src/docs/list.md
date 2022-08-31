@@ -15,6 +15,7 @@
 | showPage      | boolean/true | 是否显示分页信息                   |
 | requestUrl    | string       | 请求的api接口方法                 |
 | searchBtn     | string[]     | 列表筛选表单按钮                   |
+| dict          | object       | 用于匹配的字典数据，一般不设置，从接口获取      |
 
 ### Methods
 
@@ -35,4 +36,3 @@
 |------------|--------|----------------|
 | tableProps | Object | 表格配置           |
 | columns    | Array  | 表格列配置          |
-| dict       | Object | 数据字典，表格与搜索表单共享 |

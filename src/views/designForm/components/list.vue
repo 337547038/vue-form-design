@@ -5,6 +5,7 @@
       <DesignForm
         :disabled="state.loading"
         :form-data="searchData"
+        :dict="state.dict"
         ref="searchFormEl"
       >
         <el-button
@@ -113,6 +114,7 @@
       showPage?: boolean
       requestUrl?: string // 请求的api
       searchBtn?: string[]
+      dict?: object
     }>(),
     {
       showPage: true,
@@ -125,6 +127,9 @@
       },
       searchData: () => {
         return { list: [], form: {} }
+      },
+      dict: () => {
+        return {}
       }
     }
   )
@@ -143,7 +148,7 @@
     total: 0,
     tid: route.query.tid,
     selectionChecked: [],
-    dict: props.tableData.dict || {}
+    dict: props.dict || {}
   })
   // 筛选查询列表数据
   const getListData = (page?: number) => {
@@ -169,7 +174,7 @@
         state.tableDataList = result?.list
         if (result.dict) {
           // 合并表格里自定义设置的
-          state.dict = Object.assign(props.tableData.dict || {}, result.dict)
+          state.dict = Object.assign(props.dict || {}, result.dict)
           // 同步设置筛选表单的
           searchFormEl.value.setFormDict(state.dict)
         }

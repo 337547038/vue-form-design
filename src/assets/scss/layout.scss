@@ -65,9 +65,12 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
       i {margin: 0 5px;cursor: pointer}
     }
   }
+  // 使用整个右侧滚动，没必要固定那个头部浪费空间
+  .overflow-scroll{overflow-y: auto;display: block;height: 100vh}
   .common-main {
     background: #f0f2f5;
     padding: 10px;
+    overflow: hidden;
     > div {background: #fff;border-radius: 5px;padding: 10px 15px}
   }
   .tag-tabs {display: flex;justify-content: space-between;align-items: center;
@@ -92,4 +95,7 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
   }
   .quit-full {position: fixed;right: 10px;top: 10px;cursor: pointer}
 }
-
+// 设置el-tooltip最大宽度
+.el-popper {
+  max-width: 400px;
+}

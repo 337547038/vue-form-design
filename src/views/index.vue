@@ -33,7 +33,7 @@
     padding: 30px !important;
     font-size: 16px;
     line-height: 36px;
-    height: calc(100vh - 132px);
+    height: 500px;
     h3 {
       padding-top: 10px;
     }

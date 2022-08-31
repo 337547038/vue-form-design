@@ -12,7 +12,11 @@
         <div class="empty-tips" v-if="state.formData.list.length === 0">
           从左侧拖拽来添加字段
         </div>
-        <form-design :type="4" :formData="state.formData" />
+        <form-design
+          :type="4"
+          :formData="state.formData"
+          :dict="state.formDict"
+        />
       </div>
     </div>
     <form-control-attr
@@ -39,6 +43,7 @@
     <el-dialog v-model="state.previewVisible" title="预览" :fullscreen="true">
       <form-design
         :form-data="state.formDataPreview"
+        :dict="state.formDict"
         :type="1"
         ref="previewForm"
         v-if="state.previewVisible"
@@ -68,7 +73,12 @@
   import { ElMessage } from 'element-plus'
   import { useRoute, useRouter } from 'vue-router'
   import { aceEdit } from './components/utils'
-  import { objToStringify, stringToObj } from '@/utils/form'
+  import {
+    json2string,
+    objToStringify,
+    string2json,
+    stringToObj
+  } from '@/utils/form'
   import { useLayoutStore } from '@/store/layout'
 
   const layoutStore = useLayoutStore()
@@ -101,7 +111,8 @@
     previewVisible: false, // 预览窗口
     searchDesign: route.query?.type === 'search', // 是否为筛选设计
     formDataList: {}, // 筛选模式下提供给左则快速选择已有表单字段
-    formDataTemp: {}
+    formDataTemp: {},
+    formDict: {}
   })
   const vueFileEl = ref()
 
@@ -126,12 +137,13 @@
                 state.formData = stringToObj(result.formData)
               }
             }
+            state.formDict = string2json(result.dict)
           }
           state.loading = false
         })
         .catch((res) => {
           // console.log(res)
-          ElMessage.info(res.data || '加载异常')
+          ElMessage.error(res.data || '加载异常')
           state.loading = false
         })
     }
@@ -176,23 +188,23 @@
     // 生成脚本预览和导入json，都是将编辑器内容更新至state.formData
     try {
       const editVal = state.editor.getValue()
-      let val = editVal
-      if (state.dialogType !== 'css') {
-        // css类型时不需要处理
-        val = stringToObj(editVal)
-      }
       if (typeof state.dialogType === 'function') {
         // callback
-        state.dialogType(val)
+        state.dialogType(stringToObj(editVal))
       } else {
-        if (state.dialogType === 'css') {
-          // 表单属性－编辑表单样式
-          if (!state.formData.config) {
-            state.formData.config = {}
-          }
-          state.formData.config.style = val
-        } else {
-          state.formData = val
+        switch (state.dialogType) {
+          case 'css':
+            // 表单属性－编辑表单样式
+            if (!state.formData.config) {
+              state.formData.config = {}
+            }
+            state.formData.config.style = editVal
+            break
+          case 'dict':
+            state.formDict = string2json(editVal)
+            break
+          default:
+            state.formData = stringToObj(editVal)
         }
       }
       state.visibleDialog = false
@@ -213,7 +225,8 @@
       id: route.query.id, // 修改时，当前记录id
       formId: state.formData.config?.formId || route.query.formId, // formId允许在表单属性设置里修改的
       name: formName, // 表单名称，用于在显示所有已创建的表单列表里显示
-      type: 1 // 1表单 2列表
+      type: 1, // 1表单 2列表
+      dict: json2string(state.formDict)
     })
     if (state.searchDesign) {
       Object.assign(prams, {
@@ -236,7 +249,7 @@
         state.loading = false
       })
       .catch((res) => {
-        ElMessage.info(res.data || '保存异常')
+        ElMessage.error(res.data || '保存异常')
         state.loading = false
       })
     // 清空右侧内容管理菜单存在session的内容，刷新时可重新加载新菜单
@@ -248,16 +261,19 @@
     store.setActiveKey('')
     store.setControlAttr({})
   }
-  const dialogOpen = (obj: any, type?: any) => {
+  const dialogOpen = (obj: any, type?: any, codeType?: string) => {
     // 编辑属性和校验规则时从左边弹出
     state.drawerDirection = type ? 'ltr' : 'rtl'
     state.dialogType = type // 暂存,在窗口关闭时作为条件判断，类型为字符串或callback
     state.visibleDialog = true
     let editData = objToStringify(obj, true)
     if (type === 'css') {
-      editData = obj
+      editData = state.formData.config?.style || ''
     }
-    const codeType = type === 'css' ? 'css' : ''
+    if (type === 'dict') {
+      // 格式化一下
+      editData = json2string(state.formDict, true)
+    }
     nextTick(() => {
       state.editor = aceEdit(editData, '', codeType)
     })

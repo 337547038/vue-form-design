@@ -357,6 +357,17 @@
                 </el-icon>
               </el-tooltip>
             </el-button>
+            <el-button @click="editFormDict"
+              >设置数据字典
+              <el-tooltip
+                content="数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式：{0:'男',1:'女'}"
+                placement="top"
+              >
+                <el-icon>
+                  <QuestionFilled />
+                </el-icon>
+              </el-tooltip>
+            </el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -384,7 +395,7 @@
     }
   )
   const emits = defineEmits<{
-    (e: 'openDialog', data: any, type?: any): void
+    (e: 'openDialog', data: any, type?: any, codeType?: string): void
     (e: 'update:formData', data: any): void
     (e: 'update:formConfig', data: any): void
   }>()
@@ -1054,7 +1065,7 @@
   const addSelectOption = (type: string) => {
     if (controlData.value.type === 'cascader') {
       // 级联时打开弹窗口
-      openAttrDialog()
+      openAttrDialog('cascader')
     } else {
       if (type === 'tabs') {
         controlData.value.columns.push({
@@ -1070,13 +1081,13 @@
     }
   }
   // 更多属性弹窗
-  const openAttrDialog = () => {
+  const openAttrDialog = (type?: string) => {
     let editData = controlData.value.control
-    if (controlData.value.type === 'cascader') {
+    if (type === 'cascader') {
       editData = controlData.value.options
     }
     emits('openDialog', editData, (result: any) => {
-      if (controlData.value.type === 'cascader') {
+      if (type === 'cascader') {
         // Object.assign(controlData.value.options, result)
         controlData.value.options = result
       } else {
@@ -1161,7 +1172,10 @@
   }
   // 编辑表单样式
   const editFormStyle = () => {
-    emits('openDialog', props.formConfig.style || '', 'css')
+    emits('openDialog', '', 'css', 'css')
+  }
+  const editFormDict = () => {
+    emits('openDialog', {}, 'dict', 'json')
   }
   const init = (id?: string) => {
     const formId = id || route.query.formId

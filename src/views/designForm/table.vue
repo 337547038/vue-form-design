@@ -156,9 +156,9 @@
               >编辑表格属性
             </el-button>
             <el-button @click="editOpenDrawer('dict')"
-              >设置列表字典
+              >设置数据字典
               <el-tooltip
-                content="表格列表数据字典，一般不设置，从接口dict匹配。格式：{0:'男',1:'女'}"
+                content="数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式：{0:'男',1:'女'}"
                 placement="top"
               >
                 <el-icon>
@@ -206,7 +206,12 @@
   import { aceEdit } from './components/utils'
   import { ElMessage } from 'element-plus'
   import Sortable from 'sortablejs'
-  import { objToStringify, stringToObj } from '@/utils/form'
+  import {
+    json2string,
+    objToStringify,
+    string2json,
+    stringToObj
+  } from '@/utils/form'
   import { FormList } from './types'
 
   const router = useRouter()
@@ -257,7 +262,8 @@
     tagList: [],
     config: {},
     name: '',
-    formId: ''
+    formId: '',
+    dict: {}
   })
   const excludeType = ['txt', 'title', 'table', 'component', 'upload']
   const filterFiled = (obj: any) => {
@@ -292,10 +298,6 @@
         // 导出vue文件
         vueFileEl.value.openTable(state.tableData)
         break
-      case 'import':
-        // 导入脚本
-        dialogOpen({})
-        break
       case 'save':
         // 保存
         saveData()
@@ -317,10 +319,11 @@
     }
   }
   // 打开
-  const dialogOpen = (obj: any, direction?: string) => {
+  const dialogOpen = (obj: any, direction?: string, type?: string) => {
     state.direction = direction || 'rtl'
     state.visibleDialog = true
-    const editData = objToStringify(obj, true)
+    const editData =
+      type === 'dict' ? json2string(obj, true) : objToStringify(obj, true)
     nextTick(() => {
       state.editor = aceEdit(editData)
     })
@@ -328,15 +331,20 @@
   const dialogConfirm = () => {
     try {
       const val = stringToObj(state.editor.getValue())
-      if (state.editIndex === 'columns') {
-        // 编辑自定义字段
-        state.tableData.columns = val
-      } else if (state.editIndex === 'tableConfig') {
-        // 表格属性
-        state.tableData.tableProps = val
-      } else if (state.editIndex === 'dict') {
-        state.tableData.dict = val
-      } else if (state.editIndex !== '') {
+      switch (state.editIndex) {
+        case 'columns':
+          // 编辑自定义字段
+          state.tableData.columns = val
+          break
+        case 'tableConfig':
+          // 表格属性
+          state.tableData.tableProps = val
+          break
+        case 'dict':
+          state.dict = string2json(state.editor.getValue())
+          break
+      }
+      if (state.editIndex !== '') {
         // 将当前数据更新至state.tableData
         // 表示编辑单个属性
         state.tableData.columns[state.editIndex] = val
@@ -360,15 +368,14 @@
       return
     }
     state.loading = true
-    const prams = {
+    const prams = Object.assign(state.dataTemp, {
       tableData: objToStringify(state.tableData),
       id: state.id, // 修改时，当前记录id
-      searchData: state.dataTemp.searchData,
-      formData: state.dataTemp.formData,
       name: name, // 表单名称，用于在显示所有已创建的表单列表里显示
       formId: state.formId || state.dataTemp.formId,
-      type: state.dataTemp.type || 2
-    }
+      type: state.dataTemp.type || 2,
+      dict: json2string(state.dict)
+    })
     getRequest('saveForm', prams)
       .then((res) => {
         ElMessage({
@@ -391,7 +398,7 @@
     state.editIndex = type
     switch (type) {
       case 'dict':
-        dialogOpen(state.tableData.config || {}, 'ltr')
+        dialogOpen(state.dict || {}, 'ltr', type)
         break
       case 'tableConfig':
         dialogOpen(state.tableData.tableProps, 'ltr')
@@ -466,6 +473,7 @@
           state.tableData.controlBtn?.forEach((item: any) => {
             state.controlBtnGroup.push(item.key || item.label)
           })
+          state.dict = string2json(result.dict)
         }
       })
     }

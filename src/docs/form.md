@@ -20,6 +20,7 @@
 | afterSubmit   | function       | 表单提交成功处理方法。适用于导出vue文件                                  |
 | value         | object         | 表单初始值，同setValue                                        |
 | options       | object         | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                 |
+| dict          | object         | 用于匹配的字典数据，一般不设置，从接口获取                                  |
 
 ### Methods
 

@@ -1,7 +1,11 @@
 <!-- Created by 337547038 on 2022/8/12. -->
 <template>
   <div v-loading="loading">
-    <design-list :searchData="state.searchData" :tableData="state.tableData">
+    <design-list
+      :searchData="state.searchData"
+      :tableData="state.tableData"
+      :dict="state.dict"
+    >
       <!--      <template #__control="scope">
         <el-button link>编辑</el-button>
         <el-button link>删除</el-button>
@@ -15,7 +19,7 @@
   import { useRoute } from 'vue-router'
   import DesignList from './components/list.vue'
   import { getRequest } from '@/api'
-  import { stringToObj } from '@/utils/form'
+  import { string2json, stringToObj } from '@/utils/form'
   import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
 
@@ -27,7 +31,8 @@
     tid: route.query.tid,
     loading: false,
     searchData: {},
-    tableData: {}
+    tableData: {},
+    dict: {}
   })
   const getConfigData = () => {
     if (state.tid) {
@@ -42,6 +47,7 @@
             if (result.tableData) {
               state.tableData = stringToObj(result.tableData)
             }
+            state.dict = string2json(result.dict)
           }
         })
         .catch((res) => {

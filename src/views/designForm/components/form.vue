@@ -63,6 +63,7 @@
       afterSubmit?: Function // 表单提交后，仅在submitUrl&submitBtn为true时
       value?: { [key: string]: any } // 表单初始值，同setValue
       options?: { [key: string]: any } // 表单组件选项，同setOptions
+      dict?: object // 固定匹配的字典
     }>(),
     {
       type: 1, // 1新增；2查看（表单模式） ；3查看； 4设计
@@ -72,6 +73,9 @@
           list: [],
           form: {}
         }
+      },
+      dict: () => {
+        return {}
       },
       requestUrl: 'getFormContent',
       submitUrl: 'saveFormContent'
@@ -278,7 +282,7 @@
   // ---------数据处理开始，也可以外部请求到数据使用setValue方式（导出vue文件时）-----------
   // 获取表单初始数据，加载条件还需要是接收到的参数id，即编辑状态
   // 设置了addLoad时，没有id也从接口获取新增时的初始数据或是dict数据
-  const resultDict = ref()
+  const resultDict = ref(props.dict)
   provide(constFormDict, resultDict)
   const setFormDict = (obj: { [key: string]: string[] }) => {
     resultDict.value = obj
@@ -311,9 +315,9 @@
             value = props.afterResponse(result.data)
           }
           setValue(value)
-          // 将dict保存，可用于从接口中设置表单组件options
+          // 将dict保存，可用于从接口中设置表单组件options。有设置自定义的则合并
           if (result.dict) {
-            resultDict.value = result.dict
+            resultDict.value = Object.assign(result.dict, props.dict)
           }
         }
         loading.value = false

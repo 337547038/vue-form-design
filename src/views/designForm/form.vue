@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <design-form :formData="formData" ref="formEl" />
+    <design-form :formData="formData" ref="formEl" :dict="formDict" />
     <!--    <el-button type="primary" @click="submit">提交</el-button>-->
   </div>
 </template>
@@ -16,6 +16,7 @@
   const route = useRoute()
   // const router = useRouter()
   const formData = ref({ list: [], form: {} })
+  const formDict = ref({})
   const formEl = ref()
   const loading = ref(false)
   const query = route.query
@@ -29,6 +30,7 @@
       const result = res.data.data
       if (result) {
         formData.value = stringToObj(result.formData)
+        formDict.value = JSON.parse(result.dict || '')
       }
     })
   }

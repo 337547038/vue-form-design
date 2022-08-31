@@ -43,6 +43,5 @@ export interface FormData {
 export interface TableData {
   tableProps?: any
   columns: any
-  dict?: any
   controlBtn?: any
 }

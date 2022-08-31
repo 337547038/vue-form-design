@@ -11,7 +11,7 @@
       >
       <Menu :collapse="isCollapse" @get-menu-list="getMenuList" />
     </el-aside>
-    <el-container>
+    <el-container class="overflow-scroll">
       <el-header class="common-header" v-if="!fullScreen">
         <CommonHeader @click="headClick" :collapse="isCollapse" />
       </el-header>

@@ -170,7 +170,7 @@
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
   import Tooltip from './tooltip.vue'
-  import TinymceEdit from './tinymce/index.vue'
+  import TinymceEdit from './tinymce.vue'
   import { FormItem, FormList } from '../types'
   import { formatNumber } from './utils'
   import validate from './validate'

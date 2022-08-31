@@ -74,3 +74,10 @@ export function stringToObj(string: string) {
     return JSON.parse(string)
   }
 }
+
+export function string2json(string: string) {
+  return JSON.parse(string || '{}')
+}
+export function json2string(obj: any, isBeautify?: boolean) {
+  return isBeautify ? JSON.stringify(obj, null, 2) : JSON.stringify(obj)
+}
