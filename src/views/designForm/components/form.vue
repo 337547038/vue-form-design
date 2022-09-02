@@ -264,7 +264,7 @@
   const setValueObj = ref({})
   provide(constSetFormValue, setValueObj)
   const setValue = (obj: { [key: string]: any }) => {
-    setValueObj.value = obj
+    setValueObj.value = obj || {}
   }
   // 对表单选择项快速设置
   const setFormOptions = ref({})
