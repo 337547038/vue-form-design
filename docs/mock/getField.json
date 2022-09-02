@@ -1,0 +1,78 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "name": "radio",
+      "label": "单选测试"
+    },
+    {
+      "name": "checkbox",
+      "label": "多选测试"
+    },
+    {
+      "name": "number",
+      "label": "计数器"
+    },
+    {
+      "name": "cascader",
+      "label": "级联"
+    },
+    {
+      "name": "select1",
+      "label": "下拉选择"
+    },
+    {
+      "name": "textarea",
+      "label": "文本框"
+    },
+    {
+      "name": "switch",
+      "label": "开关"
+    },
+    {
+      "name": "text",
+      "label": "单行文本"
+    },
+    {
+      "name": "upload",
+      "label": "图片文件"
+    },
+    {
+      "name": "datePicker",
+      "label": "时间选择器"
+    },
+    {
+      "name": "timePicker",
+      "label": "日期选择器"
+    },
+    {
+      "name": "colorPicker",
+      "label": "颜色选择器"
+    },
+    {
+      "name": "inputNumber",
+      "label": "计数器"
+    },
+    {
+      "name": "rate",
+      "label": "评分"
+    },
+    {
+      "name": "slider",
+      "label": "滑块"
+    },
+    {
+      "name": "component",
+      "label": "自定义组件"
+    },
+    {
+      "name": "richText",
+      "label": "富文本编辑器"
+    },
+    {
+      "name": "table1",
+      "label": "子表"
+    }
+  ],
+  "message": "成功"
+}

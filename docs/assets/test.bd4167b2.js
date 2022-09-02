@@ -1,1 +1,0 @@
-import{r as t,a as n,o as r,c as s,b as c}from"./index.c5c10742.js";const m={__name:"test",setup(p){const e=t("");return(d,a)=>{const l=n("el-date-picker");return r(),s("div",null,[c(l,{modelValue:e.value,"onUpdate:modelValue":a[0]||(a[0]=o=>e.value=o),type:"date",placeholder:"Pick a day"},null,8,["modelValue"])])}}};export{m as default};
