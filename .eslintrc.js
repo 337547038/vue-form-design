@@ -25,7 +25,8 @@ module.exports = defineConfig({
   ],
   plugins: ['prettier', 'import', '@typescript-eslint'],
   globals: {
-    ace: true
+    ace: true,
+    tinymce: true
   },
   rules: {
     'prettier/prettier': [

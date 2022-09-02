@@ -38,16 +38,47 @@ app.listen(port, () => {
 
 // 表单设计
 const formDesign = require('./design')
-app.use('/design', formDesign)
+app.use('/api/design', formDesign)
 
 // 表单内容
 const formContent = require('./formContent')
-app.use('/form', formContent)
+app.use('/api/content', formContent)
 
 // 文件图片上传
 const multerUpload = require('./upload')
-app.use('/upload', multerUpload)
+app.use('/api/upload', multerUpload)
 
+// 获取数据源
+app.post('/api/dataSource', (req, res) => {
+  const sql = `select * from datasource`
+  query(sql, [], res, (results) => {
+    res.json({
+      code: 200,
+      data: results,
+      message: '成功'
+    })
+  })
+})
+// 根据id返回当前数据源字段
+app.post('/api/getField', (req, res) => {
+  const id = req.body.id
+  if (!id) {
+    return res.json({
+      code: 0,
+      message: 'id不能为空'
+    })
+  }
+  const sql = `select COLUMN_NAME as name,COLUMN_COMMENT as label from information_schema.COLUMNS where table_name = (SELECT tableName FROM datasource WHERE id=${id}) and table_schema='akform'`
+  console.log(sql)
+  query(sql, [], res, (results) => {
+    console.log(results)
+    return res.json({
+      code: 200,
+      data: results.filter((item) => item.name !== 'id'),
+      message: '成功'
+    })
+  })
+})
 /*
 const getResult = (err, results, res, message) => {
   if (err) {

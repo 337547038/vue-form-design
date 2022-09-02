@@ -141,9 +141,9 @@
           }
           state.loading = false
         })
-        .catch((res) => {
+        .catch((res: any) => {
           // console.log(res)
-          ElMessage.error(res.data || '加载异常')
+          ElMessage.error(res.data.message || '加载异常')
           state.loading = false
         })
     }
@@ -244,12 +244,12 @@
           })
           router.push({ path: '/designform/formlist' })
         } else {
-          ElMessage.error(res.data)
+          ElMessage.error(res.data.message)
         }
         state.loading = false
       })
       .catch((res) => {
-        ElMessage.error(res.data || '保存异常')
+        ElMessage.error(res.data.message || '保存异常')
         state.loading = false
       })
     // 清空右侧内容管理菜单存在session的内容，刷新时可重新加载新菜单

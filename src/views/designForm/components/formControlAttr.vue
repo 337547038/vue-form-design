@@ -32,7 +32,7 @@
                 :type="item.inputStyle"
                 v-model="item.value"
                 :placeholder="item.placeholder"
-                @change="controlChange(item, $event)"
+                @input="controlChange(item, $event)"
               />
             </el-form-item>
           </template>
@@ -323,7 +323,7 @@
               v-else
               v-model="item.value"
               :placeholder="item.placeholder"
-              @change="formAttrChange(item)"
+              @input="formAttrChange(item)"
             />
           </el-form-item>
           <el-form-item v-if="!state.isSearch">
@@ -472,7 +472,6 @@
     if (Object.keys(controlData.value).length) {
       const {
         control = {},
-        className = '',
         type,
         name,
         config = {},
@@ -490,7 +489,7 @@
       const temp = [
         {
           label: '自定义Class',
-          value: className,
+          value: config.className,
           placeholder: '样式类名',
           path: 'config.className'
         },
@@ -635,7 +634,8 @@
             'switch',
             'cascader',
             'upload',
-            'slider'
+            'slider',
+            'table'
           ]
         },
         {
@@ -994,7 +994,9 @@
         // 根据value找key
         for (const key in state.dataSourceList) {
           if (state.dataSourceList[key] === val) {
-            controlData.value.item.label = key
+            if (controlData.value.item) {
+              controlData.value.item.label = key
+            }
             controlData.value.name = val
             return
           }

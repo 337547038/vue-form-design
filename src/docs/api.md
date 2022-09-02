@@ -20,7 +20,7 @@
 
 ### 1.1 新增/修改保存
 
-接口名称：xxxx
+接口名称：/design/save
 
 请求类型：POST
 
@@ -45,13 +45,14 @@
 ```json
 {
   "code": 200,
-  "data": "新增/修改成功"
+  "data": [],
+  "message": "新增/修改成功"
 }
 ```
 
 ### 1.2 数据列表
 
-接口名称：xxxx
+接口名称：/design/list
 
 请求类型:POST
 
@@ -71,10 +72,10 @@
 
 请求参数说明：
 
-| 参数      | 说明             |
-| --------- | ---------------- |
+| 参数        | 说明       |
+|-----------|----------|
 | pageSize  | 每页分多少条记录 |
-| pageIndex | 当前第几页       |
+| pageIndex | 当前第几页    |
 
 请求结果：
 
@@ -86,23 +87,37 @@
       "status": {
         "0": "禁用",
         "1": "启用"
+      },
+      "type": {
+        "1": "表单",
+        "2": "表格"
       }
     },
     "list": [
       {
-        "id": 1,
         "formId": 1,
-        "name": "设计的表单名称",
-        "updateDate": "2022-08-80 08:08:008",
-        "creatDate": "2022-08-80 08:08:008",
+        "id": 4,
+        "name": "form1661994171692",
         "status": 1,
-        "type": 1
+        "type": 1,
+        "creatDate": "2022-08-30T08:00:00.000Z",
+        "updateDate": "2022-09-01T08:33:53.000Z"
+      },
+      {
+        "formId": 1,
+        "id": 5,
+        "name": "示例表单",
+        "status": 1,
+        "type": 1,
+        "creatDate": "2022-09-01T09:08:05.000Z",
+        "updateDate": "2022-09-01T09:08:05.000Z"
       }
     ],
     "pageInfo": {
-      "total": 10
+      "total": 2
     }
-  }
+  },
+  "message": "成功"
 }
 ```
 
@@ -115,7 +130,7 @@
 
 ### 1.3 修改数据状态
 
-接口名称：xxxx
+接口名称：/design/changeStatus
 
 请求类型:POST
 
@@ -133,13 +148,13 @@
 ```json
 {
   "code": 200,
-  "data": "修改成功"
+  "message": "修改成功"
 }
 ```
 
 ### 1.4 根据 id 获取数据
 
-接口名称：xxxx
+接口名称：/design/formById
 
 请求类型:POST
 
@@ -153,11 +168,29 @@
 
 请求结果：
 
-按提交时的格式和数据类型，返回所有数据
+```json
+{
+  "code": 200,
+  "data": {
+    "id": 4,
+    "formId": 1,
+    "name": "form1661994171692",
+    "type": 1,
+    "formData": "",
+    "searchData": "",
+    "tableData": "",
+    "status": 1,
+    "updateDate": "",
+    "creatDate": "",
+    "dict": ""
+  },
+  "message": "成功"
+}
+```
 
 ### 1.5 根据 id 删除
 
-接口名称：xxxx
+接口名称：/design/delete
 
 请求类型:POST
 
@@ -174,7 +207,7 @@
 ```json
 {
   "code": 200,
-  "data": "删除成功/失败"
+  "message": "删除成功"
 }
 ```
 
@@ -206,7 +239,7 @@
 
 ### 2.1 新增/修改保存
 
-接口名称：xxxx
+接口名称：/content/save
 
 请求类型:POST
 
@@ -256,13 +289,14 @@
 ```json
 {
   "code": 200,
-  "data": "新增/修改成功/失败"
+  "data": [],
+  "message": "新增/修改成功/失败"
 }
 ```
 
 ### 2.2 内容列表
 
-接口名称：xxxx
+接口名称：/content/list
 
 请求类型:POST
 
@@ -270,9 +304,7 @@
 
 ```json
 {
-  "tid": 1,
-  "text": 1,
-  "select": 1,
+  "formId": "1",
   "pageInfo": {
     "pageSize": 20,
     "pageIndex": 1
@@ -284,7 +316,7 @@
 
 | 参数        | 说明       |
 |-----------|----------|
-| tid       | 列表id     |
+| formId    | 列表id     |
 | text      | 设置的搜索条件  |
 | select    | 设置的搜索条件  |
 | pageSize  | 每页分多少条记录 |
@@ -326,7 +358,75 @@
 
 ### 2.3 根据id获取数据
 
-接口名称：xxxx
+接口名称：/content/id
+
+请求类型:POST
+
+请求参数：
+
+```json
+{
+  "formId": "1",
+  "id": "5"
+}
+```
+
+请求结果：
+
+```json
+{
+  "code": 200,
+  "data": {
+    "data": {
+      "id": 5,
+      "radio": "",
+      "checkbox": "",
+      "number": "",
+      "cascader": "",
+      "select1": "",
+      "textarea": "456",
+      "switch": 0,
+      "text": "123",
+      "upload": "",
+      "datePicker": "0000-00-00",
+      "timePicker": "0000-00-00",
+      "colorPicker": "",
+      "inputNumber": 0,
+      "rate": 0,
+      "slider": 0,
+      "component": "",
+      "richText": "",
+      "table1": "",
+      "updateDate": "2022-09-01T09:32:52.000Z",
+      "creatDate": "2022-09-01T09:32:52.000Z"
+    },
+    "dict": {
+      "radio": {
+        "0": "男",
+        "1": "女"
+      },
+      "checkbox": {
+        "1": "看书",
+        "2": "唱歌",
+        "3": "跑步",
+        "4": "旅游",
+        "5": "象棋"
+      },
+      "select": {
+        "1": "vue",
+        "2": "react",
+        "3": "angular",
+        "4": "jquery"
+      }
+    }
+  },
+  "message": "成功"
+}
+```
+
+### 2.4 根据 id 删除
+
+接口名称：/content/delete
 
 请求类型:POST
 
@@ -335,25 +435,7 @@
 ```json
 {
   "id": 1,
-  "tid": 1
-}
-```
-
-请求结果：
-
-按提交时的格式和数据类型，返回所有数据
-
-### 2.4 根据 id 删除
-
-接口名称：xxxx
-
-请求类型:POST
-
-请求参数：
-
-```json
-{
-  "id": 1
+  "formId": 1
 }
 ```
 
@@ -362,13 +444,14 @@
 ```json
 {
   "code": 200,
-  "data": "删除成功/失败"
+  "data": [],
+  "message": "删除成功/失败"
 }
 ```
 
 ## 3. 可创建表单数据源
 
-接口名称：xxxx
+接口名称：/dataSource
 
 请求类型:POST
 
@@ -381,20 +464,28 @@
   "code": 200,
   "data": [
     {
-      "name": "示例表单",
-      "id": 1
+      "id": 1,
+      "name": "组件测试",
+      "tableName": "component-test"
     }
-  ]
+  ],
+  "message": ""
 }
 ```
 
-## 4. 获取当前数据源可用字段
+## 4. 根据id获取当前数据源可用字段
 
-接口名称：xxxx
+接口名称：/getField
 
 请求类型:POST
 
-请求参数：无
+请求参数：
+
+```json
+{
+  "id": "1"
+}
+```
 
 返回结果：
 
@@ -402,85 +493,80 @@
 {
   "code": 200,
   "data": [
-    [
-      {
-        "name": "text",
-        "label": "文本框"
-      },
-      {
-        "name": "textarea",
-        "label": "多行文本"
-      },
-      {
-        "name": "radio",
-        "label": "单选框组"
-      },
-      {
-        "name": "checkbox",
-        "label": "多选框组测试"
-      },
-      {
-        "name": "select",
-        "label": "下拉选择框"
-      },
-      {
-        "name": "datePicker",
-        "label": "日期选择器"
-      },
-      {
-        "name": "timePicker",
-        "label": "时间选择器"
-      },
-      {
-        "name": "colorPicker",
-        "label": "取色器"
-      },
-      {
-        "name": "switch",
-        "label": "开关"
-      },
-      {
-        "name": "inputNumber",
-        "label": "计数器"
-      },
-      {
-        "name": "cascader",
-        "label": "级联选择器"
-      },
-      {
-        "name": "rate",
-        "label": "评分"
-      },
-      {
-        "name": "slider",
-        "label": "滑块"
-      },
-      {
-        "name": "table",
-        "label": "子表"
-      },
-      {
-        "name": "table1",
-        "label": "子表text"
-      },
-      {
-        "name": "table2",
-        "label": "子表选择"
-      },
-      {
-        "name": "component",
-        "label": "自定义组件"
-      },
-      {
-        "name": "upload",
-        "label": "图片文件上专"
-      },
-      {
-        "name": "richText",
-        "label": "富文本"
-      }
-    ]
-  ]
+    {
+      "name": "radio",
+      "label": "单选测试"
+    },
+    {
+      "name": "checkbox",
+      "label": "多选测试"
+    },
+    {
+      "name": "number",
+      "label": "计数器"
+    },
+    {
+      "name": "cascader",
+      "label": "级联"
+    },
+    {
+      "name": "select1",
+      "label": "下拉选择"
+    },
+    {
+      "name": "textarea",
+      "label": "文本框"
+    },
+    {
+      "name": "switch",
+      "label": "开关"
+    },
+    {
+      "name": "text",
+      "label": "单行文本"
+    },
+    {
+      "name": "upload",
+      "label": "图片文件"
+    },
+    {
+      "name": "datePicker",
+      "label": "时间选择器"
+    },
+    {
+      "name": "timePicker",
+      "label": "日期选择器"
+    },
+    {
+      "name": "colorPicker",
+      "label": "颜色选择器"
+    },
+    {
+      "name": "inputNumber",
+      "label": "计数器"
+    },
+    {
+      "name": "rate",
+      "label": "评分"
+    },
+    {
+      "name": "slider",
+      "label": "滑块"
+    },
+    {
+      "name": "component",
+      "label": "自定义组件"
+    },
+    {
+      "name": "richText",
+      "label": "富文本编辑器"
+    },
+    {
+      "name": "table1",
+      "label": "子表"
+    }
+  ],
+  "message": "成功"
 }
 ```
 

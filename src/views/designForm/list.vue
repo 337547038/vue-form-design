@@ -5,6 +5,7 @@
       :searchData="state.searchData"
       :tableData="state.tableData"
       :dict="state.dict"
+      :formId="state.formId"
     >
       <!--      <template #__control="scope">
         <el-button link>编辑</el-button>
@@ -32,7 +33,8 @@
     loading: false,
     searchData: {},
     tableData: {},
-    dict: {}
+    dict: {},
+    formId: ''
   })
   const getConfigData = () => {
     if (state.tid) {
@@ -48,10 +50,11 @@
               state.tableData = stringToObj(result.tableData)
             }
             state.dict = string2json(result.dict)
+            state.formId = result.formId
           }
         })
         .catch((res) => {
-          ElMessage.error(res.data || '请求异常')
+          ElMessage.error(res.data.message || '请求异常')
         })
     }
   }

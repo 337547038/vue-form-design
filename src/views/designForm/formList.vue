@@ -4,6 +4,7 @@
       :searchData="state.searchData"
       :tableData="state.tableData"
       :requestUrl="state.requestUrl"
+      :dict="state.dict"
       ref="tableListEl"
     >
       <template #control="scope">
@@ -124,8 +125,18 @@
             dictKey: 'type'
           }
         },
-        { label: '添加时间', prop: 'creatDate', width: '170px' },
-        { label: '更新时间', prop: 'updateDate', width: '170px' },
+        {
+          label: '添加时间',
+          prop: 'creatDate',
+          width: '170px',
+          config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        },
+        {
+          label: '更新时间',
+          prop: 'updateDate',
+          width: '170px',
+          config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        },
         { label: '操作', prop: 'control', width: '320px' }
       ],
       dict: { type: { 1: '表单', 2: '表格' } }
@@ -141,7 +152,7 @@
     searchData: {
       list: [
         {
-          name: 'text',
+          name: 'name',
           type: 'input',
           control: {
             modelValue: '',
@@ -227,13 +238,13 @@
       case 4: // 添加数据
         router.push({
           path: '/designform/form',
-          query: { tid: row.id }
+          query: { tid: row.id, formId: row.formId }
         })
         break
       case 5: // 查看
         router.push({
           path: '/designform/list',
-          query: { tid: row.id }
+          query: { tid: row.id, formId: row.formId }
         })
         break
       case 6:
@@ -241,12 +252,12 @@
         getRequest('delForm', { id: row.id })
           .then((res) => {
             if (res.data.code === 200) {
-              ElMessage.success('删除成功')
+              ElMessage.success(res.data.message || '删除成功')
               tableListEl.value?.getListData() // 重新拉数据
             }
           })
           .catch((res: any) => {
-            ElMessage.error(res.data || '删除失败')
+            ElMessage.error(res.data.message || '删除失败')
           })
         break
     }
@@ -266,8 +277,17 @@
   // 改变记录状态
   const changeStatus = (row: any) => {
     console.log(row)
-    // todo 发接口然后刷新数据
-    tableListEl.value.getListData()
+    const status = row.status === 1 ? 0 : 1
+    getRequest('changeStatus', { id: row.id, status: status })
+      .then((res) => {
+        if (res.data.code === 200) {
+          ElMessage.success(res.data.message || '操作成功')
+          tableListEl.value.getListData() // 重新拉数据
+        }
+      })
+      .catch((res: any) => {
+        ElMessage.error(res.data.message || '操作失败')
+      })
   }
   //////////////新增弹窗相关////////////////
   const dialog = ref({

@@ -142,6 +142,12 @@
     list.forEach((item: any) => {
       if (item.type === 'table') {
         obj[item.name] = item.tableData
+        if (
+          item.config?.transform &&
+          !transformField.value.includes(item.name)
+        ) {
+          transformField.value.push(item.name)
+        }
       } else if (['grid', 'tabs'].includes(item.type)) {
         item.columns.forEach((col: any) => {
           forEachGetFormModel(col.list, obj)
@@ -152,7 +158,10 @@
         const excludeType = ['title', 'divider', 'txt']
         if (excludeType.indexOf(item.type) === -1) {
           obj[item.name] = item.control.modelValue
-          if (item.config?.transform) {
+          if (
+            item.config?.transform &&
+            !transformField.value.includes(item.name)
+          ) {
             transformField.value.push(item.name)
           }
         }
@@ -202,56 +211,60 @@
     })
   }
   // 提供一个取值的方法
-  const getValue = () => {
-    // 需要将值转换，数组[]=>string,true=>1,false=>0
+  const getValue = (filter?: boolean) => {
+    // 需要将值转换，数组[]=>string,true=>'true',false=>'false'
     if (transformField.value.length) {
       const obj: any = {}
       for (const key in model.value) {
         if (model.value.hasOwnProperty(key)) {
           const val = (model.value as any)[key]
-          if (val && typeof val === 'object') {
-            obj[key] = val.toString()
-          } else if (val === true) {
-            obj[key] = 1
-          } else if (val === false) {
-            obj[key] = 0
+          let newVal = val
+          if (transformField.value.includes(key)) {
+            if (val && typeof val === 'object') {
+              newVal = val.join(',')
+              // 表格时转换出来的是这种'[object Object],[object Object]'
+              if (newVal.includes('[object Object]')) {
+                newVal = JSON.stringify(val)
+              }
+            } else if (val === true) {
+              newVal = 1
+            } else if (val === false) {
+              newVal = 0
+            }
+          }
+          if (filter) {
+            // 过滤掉空值
+            if (!/^\s*$/.test(val)) {
+              obj[key] = newVal
+            }
           } else {
-            obj[key] = val
+            obj[key] = newVal
           }
         }
       }
       return obj
     } else {
-      return model.value
+      if (filter) {
+        const obj: any = {}
+        for (const key in model.value) {
+          if (model.value.hasOwnProperty(key)) {
+            const val = (model.value as any)[key]
+            if (!/^\s*$/.test(val)) {
+              obj[key] = val
+            }
+          }
+        }
+        return obj
+      } else {
+        return model.value
+      }
     }
   }
   // 对表单设置初始值
   const setValueObj = ref({})
   provide(constSetFormValue, setValueObj)
   const setValue = (obj: { [key: string]: any }) => {
-    if (transformField.value.length) {
-      // 需要转换还原
-      const temp: any = {}
-      for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          const val = obj[key]
-          if (transformField.value.includes(key)) {
-            if (typeof val === 'string') {
-              temp[key] = val.split(',')
-            } else if (val === 0) {
-              temp[key] = false
-            } else if (val === 1) {
-              temp[key] = true
-            }
-          } else {
-            temp[key] = val
-          }
-        }
-      }
-      setValueObj.value = temp
-    } else {
-      setValueObj.value = obj
-    }
+    setValueObj.value = obj
   }
   // 对表单选择项快速设置
   const setFormOptions = ref({})
@@ -279,14 +292,22 @@
       styleId && styleId.parentNode.removeChild(styleId)
     }
   }
+  const resultDict = ref(props.dict)
+  watch(
+    () => props.dict,
+    (v: any) => {
+      resultDict.value = v
+    },
+    { deep: true }
+  )
+  provide(constFormDict, resultDict)
   // ---------数据处理开始，也可以外部请求到数据使用setValue方式（导出vue文件时）-----------
   // 获取表单初始数据，加载条件还需要是接收到的参数id，即编辑状态
   // 设置了addLoad时，没有id也从接口获取新增时的初始数据或是dict数据
-  const resultDict = ref(props.dict)
-  provide(constFormDict, resultDict)
-  const setFormDict = (obj: { [key: string]: string[] }) => {
-    resultDict.value = obj
-  }
+  /*const setFormDict = (obj: { [key: string]: string[] }) => {
+    console.log('setFormDict')
+    // resultDict.value = obj
+  }*/
   const getFormData = () => {
     if (props.type === 4) {
       return
@@ -300,7 +321,7 @@
       loading.value = true
       hasLoadData.value = true
       let prams = {
-        tid: route.query.tid,
+        formId: route.query.formId,
         id: route.query.id
       }
       if (typeof props.beforeRequest === 'function') {
@@ -314,6 +335,7 @@
           if (typeof props.afterResponse === 'function') {
             value = props.afterResponse(result.data)
           }
+          // console.log(value)
           setValue(value)
           // 将dict保存，可用于从接口中设置表单组件options。有设置自定义的则合并
           if (result.dict) {
@@ -334,13 +356,11 @@
       loading.value === false
     )
       validate((valid: boolean, fields: any) => {
-        // console.log(fields)
         if (valid) {
           loading.value = true
           let params = {
-            tid: route.query.tid,
+            formId: route.query.formId,
             id: route.query.id,
-            // ...formEl.value.getValue()
             ...fields
           }
           if (typeof props.beforeSubmit === 'function') {
@@ -352,14 +372,14 @@
               if (typeof props.afterSubmit === 'function') {
                 props.afterSubmit(res)
               } else {
-                ElMessage.success(res.data || '保存成功')
-                router.push({ path: '/designform/list' })
+                ElMessage.success(res.data.message || '保存成功')
+                router.push({ path: '/designform/list', query: route.query })
               }
               loading.value = false
             })
             .catch((res) => {
               loading.value = false
-              ElMessage.error(res.data || '保存失败')
+              ElMessage.error(res.data.message || '保存失败')
             })
         }
       })
@@ -408,7 +428,6 @@
     setValue,
     getValue,
     validate,
-    resetFields,
-    setFormDict
+    resetFields
   })
 </script>

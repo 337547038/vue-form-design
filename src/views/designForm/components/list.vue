@@ -6,6 +6,7 @@
         :disabled="state.loading"
         :form-data="searchData"
         :dict="state.dict"
+        :requestUrl="false"
         ref="searchFormEl"
       >
         <el-button
@@ -53,7 +54,11 @@
             </template>
             <template
               #default="scope"
-              v-else-if="item.config && Object.keys(item.config.tagList).length"
+              v-else-if="
+                item.config &&
+                item.config.tagList &&
+                Object.keys(item.config.tagList).length
+              "
             >
               <el-tag
                 :type="item.config.tagList[scope.row[item.prop]]"
@@ -64,6 +69,9 @@
             </template>
             <template #default="scope" v-else-if="item.config?.dictKey">
               {{ getDictLabel(scope, item) }}
+            </template>
+            <template #default="scope" v-else-if="item.config?.formatter">
+              {{ getDictLabel(scope, item, 'formatter') }}
             </template>
             <template #default="scope" v-else-if="item.prop === '__control'">
               <el-button link @click="addOrEdit(scope.row)">编辑</el-button>
@@ -98,12 +106,13 @@
 
 <script setup lang="ts">
   import DesignForm from './form.vue'
-  import { reactive, ref, onMounted } from 'vue'
+  import { reactive, ref, onMounted, computed } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import Tooltip from './tooltip.vue'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import type { FormData, TableData } from '../types'
+  import { dateFormatting } from '@/utils'
 
   const props = withDefaults(
     defineProps<{
@@ -146,9 +155,13 @@
     currentPage: 1,
     pageSize: 20,
     total: 0,
-    tid: route.query.tid,
+    tid: route.query.tid, // 设计表单的id
     selectionChecked: [],
     dict: props.dict || {}
+  })
+  const formId = computed(() => {
+    // 数据源id 发接口请求的参数
+    return route.query.formId
   })
   // 筛选查询列表数据
   const getListData = (page?: number) => {
@@ -160,30 +173,37 @@
     }
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
-    let formValue = searchFormEl.value?.getValue()
+    let formValue = searchFormEl.value?.getValue(true)
     if (typeof props.beforeRequest === 'function') {
       formValue = props.beforeRequest(formValue || {})
     }
-    getRequest(props.requestUrl, { ...formValue, tid: state.tid })
+    const pageInfo = {
+      pageInfo: {
+        pageSize: state.pageSize,
+        pageIndex: state.currentPage
+      }
+    }
+    getRequest(props.requestUrl, {
+      ...formValue,
+      formId: formId.value,
+      ...pageInfo
+    })
       .then((res) => {
         let result = res.data.data
         if (typeof props.afterResponse === 'function') {
           result = props.afterResponse(result)
         }
-        // console.log(result)
         state.tableDataList = result?.list
         if (result.dict) {
           // 合并表格里自定义设置的
-          state.dict = Object.assign(props.dict || {}, result.dict)
-          // 同步设置筛选表单的
-          searchFormEl.value.setFormDict(state.dict)
+          state.dict = Object.assign({}, props.dict, result.dict)
         }
         state.total = result.pageInfo?.total
         state.loading = false
       })
       .catch((res) => {
         state.loading = false
-        ElMessage.error(res.data || '数据加载异常')
+        ElMessage.error(res.data.message || '数据加载异常')
       })
     state.loading = false
   }
@@ -203,19 +223,23 @@
   const addOrEdit = (row: any) => {
     router.push({
       path: '/designform/form',
-      query: { tid: state.tid, id: row.id }
+      query: { id: row.id, tid: state.tid, formId: formId.value }
     })
   }
   const delClick = (row: any, idList?: string[]) => {
     state.loading = true
-    getRequest('delFormContent', { tid: state.tid, id: row.id, idList: idList })
-      .then(() => {
+    getRequest('delFormContent', {
+      formId: formId.value,
+      id: row.id || idList?.toString()
+    })
+      .then((res) => {
         state.loading = false
+        ElMessage.success(res.data.message || '删除成功')
         getListData() // 请求列表数据
       })
       .catch((res) => {
         state.loading = false
-        ElMessage.error(res.data || '删除失败')
+        ElMessage.error(res.data.message || '删除失败')
       })
   }
   const controlBtnClick = (row: any) => {
@@ -241,14 +265,19 @@
     emits('selectionChange', row)
   }
   // 个性化设置
-  const getDictLabel = (scope: any, item: any) => {
+  const getDictLabel = (scope: any, item: any, type?: string) => {
     if (scope.row.$index !== -1) {
       // 表格没数据时也会引用，此时$index=-1，应该是组件ui问题
-      const key = (state.dict as any)[item.config?.dictKey]
-      if (Object.keys(state.dict).length && key) {
-        return key[scope.row[item.prop]]
+      if (type === 'formatter') {
+        // 时间日期类格式化
+        return dateFormatting(scope.row[item.prop], item.config?.formatter)
       } else {
-        return scope.row[item.prop]
+        const key = (state.dict as any)[item.config?.dictKey]
+        if (Object.keys(state.dict).length && key) {
+          return key[scope.row[item.prop]]
+        } else {
+          return scope.row[item.prop]
+        }
       }
     }
   }

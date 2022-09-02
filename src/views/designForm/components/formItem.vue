@@ -28,7 +28,7 @@
               :modelValue="getInputSlot(config.prepend, 'value')"
               :options="getInputSlot(config.prepend, 'options')"
               :config="getInputSlot(config.prepend, 'config')"
-              :format-number="formatNumber"
+              :format-number="formatToString"
               type="slot"
               @change="inputSlotChange"
             />
@@ -43,7 +43,7 @@
               :modelValue="getInputSlot(config.append, 'value')"
               :options="getInputSlot(config.append, 'options')"
               :config="getInputSlot(config.append, 'config')"
-              :format-number="formatNumber"
+              :format-number="formatToString"
               type="slot"
               @change="inputSlotChange"
             />
@@ -66,7 +66,7 @@
       >
         <el-radio
           :key="index"
-          :label="formatNumber(item.value)"
+          :label="formatToString(item.value)"
           v-for="(item, index) in options"
         >
           {{ item.label }}
@@ -81,7 +81,7 @@
         <el-checkbox
           v-for="(item, index) in options"
           :key="index"
-          :label="formatNumber(item.value)"
+          :label="formatToString(item.value)"
           >{{ item.label }}</el-checkbox
         >
       </el-checkbox-group>
@@ -94,7 +94,7 @@
         v-model="value"
         :options="options"
         :config="config"
-        :formatNumber="formatNumber"
+        :formatNumber="formatToString"
       />
       <el-upload
         class="upload-style"
@@ -172,7 +172,7 @@
   import Tooltip from './tooltip.vue'
   import TinymceEdit from './tinymce.vue'
   import { FormItem, FormList } from '../types'
-  import { formatNumber } from './utils'
+  import { formatNumber, formatToString } from './utils'
   import validate from './validate'
   import {
     constFormDict,
@@ -389,6 +389,42 @@
     }
   )
   // 执行表单的setValue方法，对组件设值
+  // value转换，保存时设置了数组转换转换的，这里要做恢复处理。另外对于部分组件v-model必须要是数字类型，这里兼容接口返回或数据转换后格式问题，主要为字符串类型的数字，即转换为对应组件所需的样式
+  const transformValue = (val: any) => {
+    const isTransform = config.value.transform // 是否设置了转换
+    switch (props.data.type) {
+      case 'radio': // 选项对应的值使用了字符串转换，当为数字时这里要确保是字符
+        return formatToString(val)
+      case 'checkbox':
+      case 'upload':
+      case 'cascader':
+        if (isTransform) {
+          return val ? val.split(',') : []
+        }
+        return val ? val : []
+      case 'switch':
+        if (isTransform) {
+          return !!val
+        }
+        return val
+      case 'inputNumber':
+      case 'rate':
+        return formatNumber(val)
+      case 'slider':
+        if (isTransform && val.includes(',')) {
+          const strArr = val.split(',')
+          return strArr.map(Number)
+        } else {
+          return formatNumber(val)
+        }
+      case 'select':
+        if (isTransform && val) {
+          return val.split(',')
+        }
+        return formatToString(val)
+    }
+    return val
+  }
   const setValueEvent = inject(constSetFormValue, {}) as any
   watch(
     () => setValueEvent.value,
@@ -396,18 +432,18 @@
       // console.log(val)
       // !props.tProps 的这里不单独处理
       if (val && !props.tProps && val[props.data.name] !== undefined) {
-        value.value = val[props.data.name]
+        value.value = transformValue(val[props.data.name])
         // 上传默认值需要使用fileList参数
         if (props.data.type === 'upload') {
           control.value.fileList = JSON.parse(
-            JSON.stringify(val[props.data.name])
+            JSON.stringify(transformValue(val[props.data.name]))
           )
         }
       }
     }
   )
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
-  const formDict = inject(constFormDict, {}) as any
+  const formDict = inject(constFormDict) as any
   watch(
     () => formDict.value,
     (val: any) => {
@@ -417,7 +453,8 @@
           options.value = formatData(opt)
         }
       }
-    }
+    },
+    { deep: true }
   )
   // 对单选多选select设置options
   const formOptions = inject(constSetFormOptions, {}) as any

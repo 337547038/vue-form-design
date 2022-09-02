@@ -2,8 +2,10 @@
   "code": 200,
   "data": [
     {
-      "name": "示例表单",
-      "id": 1
+      "id": 1,
+      "name": "组件测试",
+      "tableName": "component-test"
     }
-  ]
+  ],
+  "message": "成功"
 }

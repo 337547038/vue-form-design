@@ -102,11 +102,24 @@
             </el-form-item>
             <div v-show="Object.keys(state.attrObj).length">
               <h3>{{ state.attrObj.label }}个性化设置</h3>
+              <el-form-item label="时间格式化">
+                <el-select
+                  v-model="state.config.formatter"
+                  @change="objectMerge"
+                >
+                  <el-option
+                    label="{y}-{m}-{d} {h}:{i}:{s}"
+                    value="{y}-{m}-{d} {h}:{i}:{s}"
+                  />
+                  <el-option label="{y}-{m}-{d}" value="{y}-{m}-{d}" />
+                  <el-option label="{h}:{i}:{s}" value="{h}:{i}:{s}" />
+                </el-select>
+              </el-form-item>
               <el-form-item label="值匹配字典">
                 <el-input
                   placeholder="字典对应的key"
                   v-model="state.config.dictKey"
-                  @change="configChange"
+                  @change="objectMerge"
                 />
               </el-form-item>
               <el-form-item
@@ -377,16 +390,17 @@
       dict: json2string(state.dict)
     })
     getRequest('saveForm', prams)
-      .then((res) => {
+      .then((res: any) => {
+        console.log(res)
         ElMessage({
-          message: res.data || '保存成功！',
+          message: res.data.message || '保存成功！',
           type: 'success'
         })
         router.push({ path: '/designform/formlist' })
         state.loading = false
       })
-      .catch((res) => {
-        ElMessage.error(res.data || '保存异常')
+      .catch((res: any) => {
+        ElMessage.error(res.data.message || '保存异常')
         state.loading = false
       })
   }
@@ -513,6 +527,9 @@
     } else {
       delete state.config.tagList // 没有时删除字段
     }
+    objectMerge()
+  }
+  const objectMerge = () => {
     // 将数据合并
     Object.assign(state.attrObj, { config: state.config })
   }

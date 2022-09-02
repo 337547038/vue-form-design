@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "^0.26.1",
     "clipboard": "^2.0.8",
-    "element-plus": "^2.2.13",
+    "element-plus": "^2.2.15",
     "js-beautify": "^1.14.0",
     "md5": "^2.3.0",
     "pinia": "^2.0.18",

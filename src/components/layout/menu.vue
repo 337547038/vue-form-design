@@ -102,7 +102,7 @@
     if (sessionList) {
       navList.value[1].children = JSON.parse(sessionList)
     } else {
-      getRequest('getFormList', {}).then((res) => {
+      getRequest('getFormList', { status: 1 }).then((res) => {
         //contentForm.value = res.data.data?.list || []
         const result = res.data.data?.list
         let temp: any = []

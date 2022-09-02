@@ -27,6 +27,14 @@ export const formatNumber = (val: string | number) => {
     return val
   }
 }
+// 转所有值转为字符串类型
+export const formatToString = (val: any) => {
+  if (val !== undefined) {
+    return val.toString()
+  } else {
+    return val
+  }
+}
 
 // provide 方法定义的key
 const prefix = 'AK'
