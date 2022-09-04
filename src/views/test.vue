@@ -1,46 +1,50 @@
 <template>
-  <div>
-    {{ val }}
-    <el-time-picker v-model="value1" placeholder="Arbitrary time" />
+  <div class="form-list-page">
+    <ak-list
+        ref="tableListEl"
+        :requestUrl="requestUrl"
+        :searchData="searchData"
+        :tableData="tableData"
+    >
+      <!--<template #__control="scope">
+        <el-button link @click="btnClick(scope.row.id,'show')">查看</el-button>
+        <el-button link @click="btnClick(scope.row.id,'edit')">编辑</el-button>
+        <el-button link @click="btnClick(scope.row.id,'del')">删除</el-button>
+      </template>-->
+    </ak-list>
   </div>
 </template>
-<script setup>
-  import { ref, computed } from 'vue'
-  const value1 = ref()
-  const val = computed(() => {
-    return JSON.stringify(value1.value)
-  })
 
-  /*const a = ['2', '3']
-  const b = a.join(',')
-  console.log(b)
-  const c = b.split(',')
-  console.log(c)*/
-  //const a = '[{"a":"b"}]'
-  //const b = '[{"a":"b"},{"a":"c"}]'
-  /*let temp = []
-  try {
-    temp = JSON.parse(a)
-  } catch {
-    temp = a.split(',')
-  }
-  console.log(temp)
-  console.log(a.split(','))*/
-  /*let table1 = [
-    {
-      table3: '1',
-      table2: 'value2'
+<script setup>
+  // import {useRoute, useRouter} from 'vue-router'
+  import { ref } from 'vue'
+  // const route = useRoute()
+  // const router = useRouter()
+  // const tableListEl = ref()
+  const tableData = ref({
+    config: {},
+    columns: [
+      { label: '勾选', prop: '__selection', type: 'selection', width: '100px' },
+      { label: '序号', prop: '__index', type: 'index', width: '100px' },
+      { prop: 'text', label: '文本框', help: '' },
+      { label: '操作', prop: '__control' }
+    ],
+    controlBtn: [
+      { label: '新增', key: 'add', type: 'primary' },
+      { label: '删除', key: 'del' }
+    ]
+  })
+  const searchData = ref({}) // 筛选表单
+  const requestUrl = ref('getContentList')
+  /*const btnClick = (id, type) => {
+    switch (type) {
+      case 'show':
+        break
+      case 'edit':
+        break
+      case 'del':
+        // tableListEl.value.getListData() // 调用组件内部方法重新拉数据
+        break
     }
-  ]
-  if (table1 && typeof table1 === 'object') {
-    table1 = table1.join(',')
-    // 表格时转换出来的是这种'[object Object],[object Object]'
-    console.log(table1)
-    console.log(typeof table1)
-    if (table1.includes('[object Object]')) {
-      console.log('ppp')
-      table1 = JSON.stringify(table1)
-    }
-  }
-  console.log(table1)*/
+  }*/
 </script>

@@ -138,7 +138,9 @@
                   </el-form-item>
                 </div>
                 <el-form-item>
-                  <el-button @click="addSelectOption">新增</el-button>
+                  <el-button @click="addSelectOption">{{
+                    controlData.type === 'cascader' ? '编辑' : '新增'
+                  }}</el-button>
                 </el-form-item>
               </el-tab-pane>
               <el-tab-pane name="async">
@@ -289,7 +291,7 @@
             <h3>其他属性</h3>
 
             <el-button size="small" @click="openAttrDialog"
-              >添加属性
+              >编辑属性
               <el-tooltip content="可添加当前组件所有prop属性" placement="top">
                 <el-icon>
                   <QuestionFilled />

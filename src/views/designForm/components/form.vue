@@ -335,12 +335,13 @@
           if (typeof props.afterResponse === 'function') {
             value = props.afterResponse(result.data)
           }
-          // console.log(value)
           setValue(value)
-          // 将dict保存，可用于从接口中设置表单组件options。有设置自定义的则合并
-          if (result.dict) {
-            resultDict.value = Object.assign(result.dict, props.dict)
-          }
+          nextTick(() => {
+            // 将dict保存，可用于从接口中设置表单组件options。有设置自定义的则合并
+            if (result.dict) {
+              resultDict.value = Object.assign(result.dict, props.dict)
+            }
+          })
         }
         loading.value = false
       })

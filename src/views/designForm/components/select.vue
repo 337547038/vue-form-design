@@ -26,7 +26,11 @@
       config?: any
       type?: string
     }>(),
-    {}
+    {
+      options: () => {
+        return []
+      }
+    }
   )
   const emits = defineEmits<{
     (e: 'change', val: string | number): void

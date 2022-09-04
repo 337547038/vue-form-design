@@ -166,7 +166,14 @@
 
 <script lang="ts" setup>
   import axios from '@/utils/request'
-  import { inject, onMounted, computed, watch, ref, onUnmounted } from 'vue'
+  import {
+    inject,
+    onMounted,
+    computed,
+    watch,
+    ref,
+    onUnmounted
+  } from 'vue'
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
   import Tooltip from './tooltip.vue'
@@ -273,7 +280,7 @@
       let sourceFun = config.value.sourceFun
       if (config.value.source === 1 && sourceFun) {
         // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-        options.value = inject(sourceFun, [])
+        options.value = inject(sourceFun, []).value
       }
       if (config.value.source === 0 && sourceFun) {
         // 当前控件为动态获取数据
@@ -307,6 +314,7 @@
             })
         }
       }
+      setFormDict(formDict.value) // 表格里新增时行时需要重新设一次
     }
   }
   watch(
@@ -410,15 +418,15 @@
       case 'inputNumber':
       case 'rate':
         return formatNumber(val)
-      case 'slider':
-        if (isTransform && val.includes(',')) {
+      case 'slider': // 区间时为数组
+        if (isTransform && control.value.range) {
           const strArr = val.split(',')
           return strArr.map(Number)
         } else {
           return formatNumber(val)
         }
       case 'select':
-        if (isTransform && val) {
+        if (isTransform && control.value.multiple) {
           return val.split(',')
         }
         return formatToString(val)
@@ -444,15 +452,18 @@
   )
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
   const formDict = inject(constFormDict) as any
+  const setFormDict = (val: any) => {
+    if (val && config.value.source === 2 && config.value.type === 'async') {
+      const opt = val[config.value.sourceFun] || val[props.data.name]
+      if (opt !== undefined) {
+        options.value = formatData(opt)
+      }
+    }
+  }
   watch(
     () => formDict.value,
     (val: any) => {
-      if (val && config.value.source === 2 && config.value.type === 'async') {
-        const opt = val[config.value.sourceFun] || val[props.data.name]
-        if (opt !== undefined) {
-          options.value = formatData(opt)
-        }
-      }
+      setFormDict(val)
     },
     { deep: true }
   )
@@ -535,8 +546,6 @@
     console.log('formItem onUnmounted')
     formOptions.value = ''
     formDict.value = ''
-    setValueEvent.value = ''
-    getControlByName.value = ''
     config.value = ''
     control.value = ''
     options.value = ''

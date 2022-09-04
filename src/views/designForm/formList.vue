@@ -72,7 +72,7 @@
       style="width: 100%"
       v-loading="dialog.loading"
     >
-      <el-table-column prop="name" label="表单名称" />
+      <el-table-column prop="name" label="数据源名称" />
       <el-table-column label="操作">
         <template #default="scope">
           <el-button

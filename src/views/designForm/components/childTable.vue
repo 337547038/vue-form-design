@@ -58,6 +58,7 @@
     }
   )
   const tableDataNew: any = toRef(props.data, 'tableData')
+  // const tableDataNew: any = ref(props.tableData)
   const addColumn = () => {
     const temp: any = {}
     if (props.data.list) {

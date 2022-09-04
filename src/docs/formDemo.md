@@ -84,7 +84,7 @@
       size: 'default',
       name: 'form1660723952800'
     },
-    config:{
+    config: {
       submitBtn: { confirm: '提交', cancel: '取消' }
     }
   })
@@ -200,7 +200,7 @@
       size: 'default',
       name: 'form1660725610088'
     },
-    config:{
+    config: {
       submitBtn: { confirm: '' }
     }
   })
@@ -231,7 +231,6 @@
     })
   }
 </script>
-
 
 ```
 
@@ -270,8 +269,8 @@
       size: 'default',
       name: 'form1660725610088'
     },
-    config:{
-     submitBtn: { confirm: '' }
+    config: {
+      submitBtn: { confirm: '' }
     }
   })
   // todo 下拉选择框获取选项值
@@ -366,6 +365,7 @@
   const submitUrl = ref(false) // 表单提交url
 </script>
 
+
 ```
 
 ## 联动事件
@@ -406,7 +406,15 @@
           { label: '标签1', value: '1' },
           { label: '标签2', value: '2' }
         ],
-        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '', linkKey: 'radio', linkValue: '2', linkResult: 'disabled' },
+        config: {
+          type: 'fixed',
+          source: 0,
+          request: 'get',
+          sourceFun: '',
+          linkKey: 'radio',
+          linkValue: '2',
+          linkResult: 'disabled'
+        },
         item: { label: '下拉选择框', showLabel: false }
       },
       {
@@ -457,6 +465,7 @@
     })
   }
 </script>
+
 
 ```
 
@@ -522,6 +531,7 @@
     })
   }
 </script>
+
 
 ```
 
