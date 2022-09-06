@@ -630,15 +630,7 @@
           value: config.transform,
           path: 'config.transform',
           type: 'switch',
-          vShow: [
-            'checkbox',
-            'select',
-            'switch',
-            'cascader',
-            'upload',
-            'slider',
-            'table'
-          ]
+          vShow: ['checkbox', 'select', 'switch', 'cascader', 'slider', 'table']
         },
         {
           label: '是否多选',
@@ -784,14 +776,14 @@
         {
           label: '上传地址',
           value: control.action,
-          placeholder: '图片/文件上传地址',
+          placeholder: '图片/文件上传地址,可不填有默认值',
           path: 'control.action',
           vShow: ['upload']
         },
         {
           label: '文件字段名',
           value: control.name,
-          placeholder: '上传的文件字段名',
+          placeholder: '上传的文件字段名,默认file',
           path: 'control.name',
           vShow: ['upload']
         },

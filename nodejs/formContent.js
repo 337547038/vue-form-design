@@ -96,8 +96,9 @@ router.post('/list', async (req, res) => {
   }*/
   let where = 'WHERE id is not null'
   if (whereTemp.length) {
-    where = ` WHERE ${whereTemp.join('AND')}`
+    where = ` WHERE ${whereTemp.join('AND')} `
   }
+  where += ' order by id desc'
   const sql = `SELECT * FROM \`${tableName}\` ${where} Limit ${start},${pageSize}`
   const countSql = 'select count(id) as num from `' + tableName + '`' + where
   const count = await sqlQuery(countSql)

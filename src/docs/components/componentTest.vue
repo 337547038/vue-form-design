@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, toRef } from 'vue'
+  import { reactive, toRef, watch, ref } from 'vue'
   const props = withDefaults(
     defineProps<{
       modelValue: string
@@ -24,7 +24,13 @@
   const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void
   }>()
-  const value = toRef(props, 'modelValue')
+  const value = ref(props.modelValue)
+  watch(
+    () => props.modelValue,
+    () => {
+      value.value = props.modelValue
+    }
+  )
   const state = reactive({
     visible: false
   })

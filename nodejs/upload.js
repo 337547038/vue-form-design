@@ -17,10 +17,10 @@ const upload = multer({
 router.post('/single', upload.single('file'), (req, res) => {
   console.log(req.file)
   res.json({
-    code: 1,
+    code: 200,
     type: 'single',
     fileName: req.file.originalname,
-    path: req.file.path.replace(/\\/g, '/')
+    path: req.file.path.replace(/\\/g, '/').replace('../public', '')
   })
 })
 // 多个
@@ -33,7 +33,7 @@ router.post('/multer', upload.array('file'), (req, res) => {
     })
   })
   res.json({
-    code: 1,
+    code: 200,
     type: 'multer',
     fileList: fileList
   })

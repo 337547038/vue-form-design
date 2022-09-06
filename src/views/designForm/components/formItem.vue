@@ -99,13 +99,14 @@
       <el-upload
         class="upload-style"
         v-if="data.type === 'upload'"
+        :action="uploadUrl"
         v-bind="control"
+        :name="control.file || 'file'"
         :disabled="editDisabled"
+        v-model:file-list="fileList"
         :class="{
           limit: control.limit <= control.modelValue.length
         }"
-        :on-success="uploadSuccess"
-        :on-remove="uploadRemove"
         :on-error="uploadError"
       >
         <el-button type="primary" v-if="config.btnText"
@@ -172,7 +173,8 @@
     computed,
     watch,
     ref,
-    onUnmounted
+    onUnmounted,
+    isRef
   } from 'vue'
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
@@ -190,6 +192,7 @@
     constGetControlByName
   } from './utils'
   import AKSelect from './select.vue'
+  import { uploadUrl } from '@/api'
 
   const props = withDefaults(
     defineProps<{
@@ -212,10 +215,30 @@
   const control = ref(props.data.control)
   const options = ref(props.data.options)
   const value = ref(props.modelValue)
+  const fileList = ref([]) // 图片上传列表
+  const setFileList = (val: any) => {
+    if (props.data.type === 'upload') {
+      if (val && val.length) {
+        const temp: any = []
+        val.split(',').forEach((item: any) => {
+          temp.push({
+            name: '',
+            url: item
+          })
+        })
+        fileList.value = temp
+      }
+    }
+  }
+  setFileList(props.modelValue)
   watch(
     () => props.modelValue,
     () => {
       value.value = props.modelValue
+      if (fileList.value.length === 0) {
+        // 没数据时更新一次，重新上传或删除时会更新modelValue，以免反复更新
+        setFileList(props.modelValue)
+      }
     }
   )
   watch(
@@ -280,7 +303,8 @@
       let sourceFun = config.value.sourceFun
       if (config.value.source === 1 && sourceFun) {
         // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
-        options.value = inject(sourceFun, []).value
+        const injectValue = inject(sourceFun, [])
+        options.value = isRef(injectValue) ? injectValue.value : injectValue
       }
       if (config.value.source === 0 && sourceFun) {
         // 当前控件为动态获取数据
@@ -480,23 +504,27 @@
     }
   )
   // 图片上传
-  const uploadSuccess = (response: any, file: any, fileList: any) => {
-    // console.log(file)
-    control.value.modelValue.push({
-      name: file.fileName,
-      url: file.path
-    })
-    control.value.onSuccess && control.value.onSuccess(response, file, fileList)
-  }
-  // 删除上传图片
-  const uploadRemove = (file: any, fileList: any) => {
-    control.value.modelValue.forEach((item: any, index: any) => {
-      if (item.url === file.url) {
-        control.value.modelValue.splice(index, 1)
+  watch(
+    () => fileList.value,
+    (val: any) => {
+      if (val && val.length) {
+        let temp: any = []
+        val.forEach((item: any) => {
+          if (item.response) {
+            // 新增数据
+            temp.push(item.response?.path)
+          } else {
+            // 原来
+            temp.push(item.url)
+          }
+        })
+        control.value.modelValue = temp.join(',')
+      } else {
+        control.value.modelValue = ''
       }
-    })
-    control.value.onRemove && control.value.onRemove(file, fileList)
-  }
+    },
+    { deep: true }
+  )
   // 上传错误
   const uploadError = (err: any, file: any, fileList: any) => {
     // console.log('uploadError')

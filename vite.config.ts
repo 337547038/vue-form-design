@@ -4,6 +4,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import Pages from 'vite-plugin-pages'
 import vitePluginVuedoc, { vueDocFiles } from 'vite-plugin-vuedoc'
 import * as path from 'path'
+const fs = require('fs')
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -43,9 +44,19 @@ export default defineConfig({
   },
   server: {
     // 是否开启 https
-    https: false,
+    //https: true,
     port: 3000,
     host: '0.0.0.0',
-    open: false
+    open: false,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      }
+    }
+    /*https: {
+      cert: fs.readFileSync(path.join(__dirname, 'cert.crt')),
+      key: fs.readFileSync(path.join(__dirname, 'cert.key'))
+    }*/
   }
 })

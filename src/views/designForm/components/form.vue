@@ -171,7 +171,7 @@
   // 子组件formGroup为递归组件
   provide(constFormOtherData, {
     type: props.type,
-    isEdit: props.isEdit,
+    isEdit: !!route.query.id || props.isEdit, // 有id时默认为编辑模式
     model: model,
     hideField: props.formData.config?.hideField as []
   })
@@ -327,24 +327,29 @@
       if (typeof props.beforeRequest === 'function') {
         prams = props.beforeRequest(prams)
       }
-      getRequest(props.requestUrl as string, prams).then((res) => {
-        // console.log(res)
-        let result = res.data.data
-        if (result) {
-          let value = result.data
-          if (typeof props.afterResponse === 'function') {
-            value = props.afterResponse(result.data)
-          }
-          setValue(value)
-          nextTick(() => {
-            // 将dict保存，可用于从接口中设置表单组件options。有设置自定义的则合并
-            if (result.dict) {
-              resultDict.value = Object.assign(result.dict, props.dict)
+      getRequest(props.requestUrl as string, prams)
+        .then((res) => {
+          // console.log(res)
+          let result = res.data.data
+          if (result) {
+            let value = result.data
+            if (typeof props.afterResponse === 'function') {
+              value = props.afterResponse(result.data)
             }
-          })
-        }
-        loading.value = false
-      })
+            setValue(value)
+            nextTick(() => {
+              // 将dict保存，可用于从接口中设置表单组件options。有设置自定义的则合并
+              if (result.dict) {
+                resultDict.value = Object.assign(result.dict, props.dict)
+              }
+            })
+          }
+          loading.value = false
+        })
+        .catch((res: any) => {
+          loading.value = false
+          return ElMessage.error(res.data.message)
+        })
     }
   }
   const submit = () => {

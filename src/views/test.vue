@@ -1,50 +1,57 @@
 <template>
-  <div class="form-list-page">
-    <ak-list
-        ref="tableListEl"
-        :requestUrl="requestUrl"
-        :searchData="searchData"
-        :tableData="tableData"
-    >
-      <!--<template #__control="scope">
-        <el-button link @click="btnClick(scope.row.id,'show')">查看</el-button>
-        <el-button link @click="btnClick(scope.row.id,'edit')">编辑</el-button>
-        <el-button link @click="btnClick(scope.row.id,'del')">删除</el-button>
-      </template>-->
-    </ak-list>
+  <div>
+    <ak-form :formData="formData" ref="formName" :submitUrl="submitUrl" />
+    <el-button type="primary" @click="submit">提交</el-button>
   </div>
 </template>
-
 <script setup>
-  // import {useRoute, useRouter} from 'vue-router'
-  import { ref } from 'vue'
-  // const route = useRoute()
-  // const router = useRouter()
-  // const tableListEl = ref()
-  const tableData = ref({
-    config: {},
-    columns: [
-      { label: '勾选', prop: '__selection', type: 'selection', width: '100px' },
-      { label: '序号', prop: '__index', type: 'index', width: '100px' },
-      { prop: 'text', label: '文本框', help: '' },
-      { label: '操作', prop: '__control' }
+  import { ref, provide } from 'vue'
+  const formData = ref({
+    list: [
+      {
+        type: 'select',
+        control: { modelValue: '', appendToBody: true },
+        options: [],
+        config: {
+          type: 'async',
+          source: 1,
+          request: 'get',
+          sourceFun: 'optionsMethods'
+        },
+        name: 'select1662441804514',
+        item: { label: '下拉选择框', showLabel: false }
+      }
     ],
-    controlBtn: [
-      { label: '新增', key: 'add', type: 'primary' },
-      { label: '删除', key: 'del' }
-    ]
+    form: {
+      labelWidth: '',
+      class: '',
+      size: 'default',
+      name: 'form1662441802135'
+    },
+    config: { title: 'form1662441802135', formId: '', addLoad: true }
   })
-  const searchData = ref({}) // 筛选表单
-  const requestUrl = ref('getContentList')
-  /*const btnClick = (id, type) => {
-    switch (type) {
-      case 'show':
-        break
-      case 'edit':
-        break
-      case 'del':
-        // tableListEl.value.getListData() // 调用组件内部方法重新拉数据
-        break
-    }
-  }*/
+
+  // todo 下拉选择框获取选项值
+  const select1662441804514Option = ref([{ label: '选项1', value: '1' }])
+  provide('optionsMethods', select1662441804514Option)
+
+  // 表单控件值改变事件
+  /*provide('AKControlChange', ({key, value}) => {
+    console.log(key)
+    console.log(value)
+  })*/
+  const submitUrl = ref(false) // 表单提交url
+  const formName = ref()
+  const submit = () => {
+    formName.value.validate((valid, fields) => {
+      console.log(valid)
+      console.log(fields) // 校验通过时返回当前表单的值
+      if (valid) {
+        alert('submit')
+      } else {
+        console.log('error submit')
+        return false
+      }
+    })
+  }
 </script>

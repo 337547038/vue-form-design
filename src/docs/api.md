@@ -54,7 +54,7 @@
 
 接口名称：/design/list
 
-请求类型:POST
+请求类型：POST
 
 请求参数：（用于条件搜索，非必填）
 
@@ -132,7 +132,7 @@
 
 接口名称：/design/changeStatus
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -156,7 +156,7 @@
 
 接口名称：/design/formById
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -192,7 +192,7 @@
 
 接口名称：/design/delete
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -241,7 +241,7 @@
 
 接口名称：/content/save
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -298,7 +298,7 @@
 
 接口名称：/content/list
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -360,7 +360,7 @@
 
 接口名称：/content/id
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -428,7 +428,7 @@
 
 接口名称：/content/delete
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -461,7 +461,7 @@
 
 接口名称：/dataSource
 
-请求类型:POST
+请求类型：POST
 
 请求参数：无
 
@@ -485,7 +485,7 @@
 
 接口名称：/getField
 
-请求类型:POST
+请求类型：POST
 
 请求参数：
 
@@ -591,7 +591,8 @@
 ```json
 {
   "code": 200,
-  "data": "上传后的图片或文件路径"
+  "data": "上传后的图片或文件路径",
+  "message": "上传成功"
 }
 
 ```

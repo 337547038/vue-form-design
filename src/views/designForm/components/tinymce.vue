@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, watch, ref, computed } from 'vue'
+  import { onMounted, watch, ref, computed, onUnmounted } from 'vue'
   import { ElMessage } from 'element-plus'
   import { getRequest } from '@/api'
   // https://www.cnblogs.com/huihuihero/p/13877589.html
@@ -66,84 +66,33 @@
       })
     }
   }
-  const defaultInit = {
-    plugins: buttonPlugins, // 插件配置
-    toolbar: toolbar, // 工具栏配置，设为false则隐藏
-    menubar: true, // 菜单栏配置，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看 http://tinymce.ax-z.cn/configure/editor-appearance.php --搜索“自定义菜单”
-    //emoticons_database_url: './tinymce/emoticons/js/emojis.js',
-    // eslint-disable-next-line max-len
-    font_formats:
-      '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;', // 字体样式 微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif, 宋体=simsun,serif,仿宋体=FangSong,黑体=SimHei,Arial=arial,
-    // content_style: 'p {margin-block-start: 0; margin-block-end: 0; color: #606D81; font-size: 14px;}; table { border: 1px}', // 直接自定义可编辑区域的css样式
-    content_css: false, // 以css文件方式自定义可编辑区域的css样式，css文件需自己创建并引入
-    paste_data_images: true, // 图片是否可粘贴
-    // 允许外界传进来高度和placeholder
-    // 粘贴图片 自动处理 base64
-    urlconverter_callback: (url: string, node: string) => {
-      if (node === 'img' && url.startsWith('blob:')) {
-        tinymce.activeEditor && tinymce.activeEditor.uploadImages()
-      }
-      return url
-    },
-    // 图片上传
-    images_upload_handler: (blobInfo: any, success: any, failure: any) => {
-      imgUploadFn(blobInfo, success, failure)
-    },
-    file_picker_types: 'file image media', //分别对应三个类型文件的上传：link插件，image和axupimgs插件，media插件。想屏蔽某个插件的上传就去掉对应的参数
-    file_picker_callback: function (callback: any, value: any, meta: any) {
-      fileUpload(callback, value, meta)
-    }
-  }
-  const simpleInit = {
-    plugins: '', // 插件配置
-    toolbar: toolbarSimple, // 工具栏配置，设为false则隐藏
-    menubar: false, // 菜单栏配置，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看
-    font_formats: '',
-    paste_data_images: false // 图片是否可粘贴
-  }
-  const myInit = computed(() => {
-    const styleType =
-      props.config?.style === 'simple' ? simpleInit : defaultInit
-    return Object.assign(commInit, styleType)
-  })
-  onMounted(() => {
-    tinymce.init(myInit.value)
-  })
-  // 侦听默认值 外界第一次传进来一个 v-model 就赋值给 contentValue
-  watch(
-    () => props.modelValue,
-    (n: any) => {
-      if (n && n !== contentValue.value) {
-        contentValue.value = n
-      }
-    }
-  )
-  const imgUploadFn = (blobInfo: any, success: any, failure: any) => {
-    // 可以限制图片大小
-    // if (blobInfo.blob().size / 1024 / 1024 > 2) {
-    //   failure('上传失败，图片大小请控制在 2M 以内')
-    // } else {}
-    const params = new FormData()
-    params.append('file', blobInfo.blob())
-    getRequest('uploadFiled', params, { url: props.imgUrl })
-      .then((res) => {
-        if (res.data.code === 1) {
-          success(res.data.path) // 上传成功，在成功函数里填入图片路径
-          // console.log('[文件上传]', res.data)
-        } else {
-          failure('上传失败')
+  // 图片上传
+  const imgUploadFn = (blobInfo: any, progress) =>
+    new Promise((resolve, reject) => {
+      // https://www.tiny.cloud/docs/tinymce/6/file-image-upload/#images_upload_handler
+      const params = new FormData()
+      params.append('file', blobInfo.blob())
+      let options = {}
+      if (props.imgUrl) {
+        options = {
+          url: props.imgUrl
         }
-      })
-      .catch(() => {
-        failure('上传出错，示例暂不提供上传接口')
-      })
-    /*const config = {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  }*/
-  }
-
+      }
+      getRequest('upload', params, options)
+        .then((res) => {
+          console.log(res)
+          console.log(res.data.path)
+          if (res.data.code === 200) {
+            resolve(res.data.path) // 上传成功，在成功函数里填入图片路径
+            // console.log('[文件上传]', res.data)
+          } else {
+            reject('上传失败')
+          }
+        })
+        .catch(() => {
+          reject('上传出错，示例暂不提供上传接口')
+        })
+    })
   const fileUpload = (callback: any, value: string, meta: any) => {
     const filetype =
       '.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4'
@@ -175,9 +124,15 @@
     }*/
       const params = new FormData()
       params.append('file', file as any)
-      getRequest('uploadFiled', params, { url: props.blobUrl })
+      let options = {}
+      if (props.blobUrl) {
+        options = {
+          url: props.blobUrl
+        }
+      }
+      getRequest('upload', params, options)
         .then((res) => {
-          if (res.data.code === 1) {
+          if (res.data.code === 200) {
             callback(res.data.path, attr) // 上传成功，在成功函数里填入图片路径
           } else {
             ElMessage.error(res.data?.message)
@@ -188,4 +143,55 @@
         })
     }
   }
+  const defaultInit = {
+    plugins: buttonPlugins, // 插件配置
+    toolbar: toolbar, // 工具栏配置，设为false则隐藏
+    menubar: true, // 菜单栏配置，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看 http://tinymce.ax-z.cn/configure/editor-appearance.php --搜索“自定义菜单”
+    //emoticons_database_url: './tinymce/emoticons/js/emojis.js',
+    // eslint-disable-next-line max-len
+    font_formats:
+      '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;', // 字体样式 微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif, 宋体=simsun,serif,仿宋体=FangSong,黑体=SimHei,Arial=arial,
+    // content_style: 'p {margin-block-start: 0; margin-block-end: 0; color: #606D81; font-size: 14px;}; table { border: 1px}', // 直接自定义可编辑区域的css样式
+    content_css: false, // 以css文件方式自定义可编辑区域的css样式，css文件需自己创建并引入
+    paste_data_images: true, // 图片是否可粘贴
+    // 允许外界传进来高度和placeholder
+    // 粘贴图片 自动处理 base64
+    urlconverter_callback: (url: string, node: string) => {
+      if (node === 'img' && url.startsWith('blob:')) {
+        tinymce.activeEditor && tinymce.activeEditor.uploadImages()
+      }
+      return url
+    },
+    // 图片上传
+    images_upload_handler: imgUploadFn,
+    file_picker_types: 'file image media', //分别对应三个类型文件的上传：link插件，image和axupimgs插件，media插件。想屏蔽某个插件的上传就去掉对应的参数
+    file_picker_callback: fileUpload
+  }
+  const simpleInit = {
+    plugins: '', // 插件配置
+    toolbar: toolbarSimple, // 工具栏配置，设为false则隐藏
+    menubar: false, // 菜单栏配置，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看
+    font_formats: '',
+    paste_data_images: false // 图片是否可粘贴
+  }
+  const myInit = computed(() => {
+    const styleType =
+      props.config?.style === 'simple' ? simpleInit : defaultInit
+    return Object.assign(commInit, styleType)
+  })
+  onMounted(() => {
+    tinymce.init(myInit.value)
+  })
+  onUnmounted(() => {
+    tinymce.remove()
+  })
+  // 侦听默认值 外界第一次传进来一个 v-model 就赋值给 contentValue
+  watch(
+    () => props.modelValue,
+    (n: any) => {
+      if (n && n !== contentValue.value) {
+        contentValue.value = n
+      }
+    }
+  )
 </script>
