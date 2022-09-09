@@ -1,7 +1,11 @@
 <template>
   <div>
-    <ak-form :formData="formData" ref="formName" :submitUrl="submitUrl" />
-    <el-button type="primary" @click="submit">提交</el-button>
+    <ak-form
+      :formData="formData"
+      ref="formName"
+      :requestUrl="requestUrl"
+      :submitUrl="submitUrl"
+    />
   </div>
 </template>
 <script setup>
@@ -11,7 +15,7 @@
       {
         type: 'input',
         control: { modelValue: '' },
-        config: {},
+        config: { editDisabled: true, disabledEdit: false, disabledAdd: true },
         name: 'text',
         item: { label: '文本框', showLabel: false }
       },
@@ -26,8 +30,8 @@
         type: 'radio',
         control: { modelValue: '' },
         options: [
-          { label: '男', value: '1' },
-          { label: '女', value: '2' }
+          { label: '男', value: '0' },
+          { label: '女', value: '1' }
         ],
         config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
         name: 'radio',
@@ -41,7 +45,13 @@
           { label: '游戏', value: '2' },
           { label: '看书', value: '3' }
         ],
-        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+        config: {
+          type: 'fixed',
+          source: 0,
+          request: 'get',
+          sourceFun: '',
+          transform: true
+        },
         name: 'checkbox',
         item: { label: '多选框组测试', showLabel: false }
       },
@@ -49,9 +59,14 @@
         type: 'select',
         control: { modelValue: '', appendToBody: true },
         options: [],
-        config: { type: 'async', source: 2, request: 'get', sourceFun: '' },
-        name: 'select',
-        item: { label: '下拉选择框', showLabel: false }
+        config: {
+          type: 'async',
+          source: 2,
+          request: 'get',
+          sourceFun: 'select'
+        },
+        name: 'select1',
+        item: { label: '下拉选择', showLabel: false }
       },
       {
         type: 'datePicker',
@@ -77,7 +92,7 @@
       {
         type: 'switch',
         control: { modelValue: false },
-        config: {},
+        config: { transform: true },
         name: 'switch',
         item: { label: '开关', showLabel: false }
       },
@@ -90,9 +105,28 @@
       },
       {
         type: 'cascader',
-        control: { modelValue: [] },
-        options: [],
-        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+        control: {
+          modelValue: [],
+          showAllLevels: false,
+          props: { multiple: true }
+        },
+        options: [
+          {
+            value: 'disciplines',
+            label: 'Disciplines',
+            children: [
+              { value: 'consistency', label: 'Consistency' },
+              { value: 'a', label: 'a' }
+            ]
+          }
+        ],
+        config: {
+          type: 'fixed',
+          source: 0,
+          request: 'get',
+          sourceFun: '',
+          transform: true
+        },
         name: 'cascader',
         item: { label: '级联选择器', showLabel: false }
       },
@@ -105,8 +139,8 @@
       },
       {
         type: 'slider',
-        control: { modelValue: 0 },
-        config: {},
+        control: { modelValue: [0, 0], range: true },
+        config: { transform: true },
         name: 'slider',
         item: { label: '滑块', showLabel: false }
       },
@@ -120,7 +154,7 @@
       {
         type: 'upload',
         control: { modelValue: [] },
-        config: {},
+        config: { transform: true },
         name: 'upload',
         item: { label: '图片文件上专', showLabel: false }
       },
@@ -131,7 +165,7 @@
             type: 'input',
             control: { modelValue: '' },
             config: {},
-            name: 'table1',
+            name: 'table3',
             item: { label: '子表text', showLabel: false }
           },
           {
@@ -149,8 +183,8 @@
         ],
         tableData: [],
         control: { border: true },
-        config: {},
-        name: 'table1661751304485'
+        config: { transform: true },
+        name: 'table1'
       },
       {
         type: 'tinymce',
@@ -181,17 +215,6 @@
     console.log(value)
   })*/
   const submitUrl = ref(false) // 表单提交url
+  const requestUrl = ref(false) // 获取表单初始数据
   const formName = ref()
-  const submit = () => {
-    formName.value.validate((valid, fields) => {
-      console.log(valid)
-      console.log(fields) // 校验通过时返回当前表单的值
-      if (valid) {
-        alert('submit')
-      } else {
-        console.log('error submit')
-        return false
-      }
-    })
-  }
 </script>

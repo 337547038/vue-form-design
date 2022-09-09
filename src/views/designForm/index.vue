@@ -104,6 +104,7 @@
     },
     visibleDialog: false,
     dialogType: '',
+    codeType: '',
     editor: {},
     loading: false,
     drawerDirection: 'rtl', // 默认右边弹出
@@ -190,7 +191,11 @@
       const editVal = state.editor.getValue()
       if (typeof state.dialogType === 'function') {
         // callback
-        state.dialogType(stringToObj(editVal))
+        const newObj =
+          state.codeType === 'json'
+            ? string2json(editVal)
+            : stringToObj(editVal)
+        state.dialogType(newObj)
       } else {
         switch (state.dialogType) {
           case 'css':
@@ -202,6 +207,15 @@
             break
           case 'dict':
             state.formDict = string2json(editVal)
+            break
+          case 'beforeRequest':
+          case 'beforeSubmit':
+          case 'afterResponse':
+          case 'afterSubmit':
+            if (!state.formData.events) {
+              state.formData.events = {}
+            }
+            state.formData.events[state.dialogType] = stringToObj(editVal)
             break
           default:
             state.formData = stringToObj(editVal)
@@ -265,14 +279,29 @@
     // 编辑属性和校验规则时从左边弹出
     state.drawerDirection = type ? 'ltr' : 'rtl'
     state.dialogType = type // 暂存,在窗口关闭时作为条件判断，类型为字符串或callback
+    state.codeType = codeType
     state.visibleDialog = true
-    let editData = objToStringify(obj, true)
-    if (type === 'css') {
-      editData = state.formData.config?.style || ''
-    }
-    if (type === 'dict') {
-      // 格式化一下
-      editData = json2string(state.formDict, true)
+    let editData =
+      codeType === 'json' ? json2string(obj, true) : objToStringify(obj, true)
+    switch (type) {
+      case 'css':
+        editData = state.formData.config?.style || ''
+        break
+      case 'dict':
+        // 格式化一下
+        editData = json2string(state.formDict, true)
+        break
+      case 'beforeRequest':
+      case 'beforeSubmit':
+      case 'afterResponse':
+      case 'afterSubmit':
+        const newData = state.formData.events || {}
+        const afterResponse = (data: any) => {
+          // data经过处理后返回
+          return data
+        }
+        editData = objToStringify(newData[type] || afterResponse, true)
+        break
     }
     nextTick(() => {
       state.editor = aceEdit(editData, '', codeType)

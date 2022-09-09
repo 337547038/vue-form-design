@@ -1,6 +1,10 @@
 # AKList 内容列表
 
-适用于导出vue文件
+适用于导出vue文件，组件已全局注册
+
+```html
+<ak-list :tableData="tableData"></ak-list>
+```
 
 ## API
 
@@ -14,7 +18,6 @@
 | afterResponse | function     | 请求完成后列表数据处理方法              |
 | showPage      | boolean/true | 是否显示分页信息                   |
 | requestUrl    | string       | 请求的api接口方法                 |
-| searchBtn     | string[]     | 列表筛选表单按钮                   |
 | dict          | object       | 用于匹配的字典数据，一般不设置，从接口获取      |
 
 ### Methods
@@ -25,14 +28,19 @@
 
 ### Slot
 
-| 参数           | 说明                               |
-|--------------|----------------------------------|
-| default      | 位于筛选表单和表格列表间，可用于存放添加删除数据的按钮或其他操作 |
-| -            | columns对应的props                  |
+| 参数         | 说明                               |
+|------------|----------------------------------|
+| default    | 位于筛选表单和表格列表间，可用于存放添加删除数据的按钮或其他操作 |
+| controlBtn | 位于筛列表可配置新增删除按钮后面                 |
+| searchForm | 位于条件筛选表单内部                       |
+| -          | columns对应的props                  |
 
 ### tableData
 
-| 参数         | 类型     | 说明             |
-|------------|--------|----------------|
-| tableProps | Object | 表格配置           |
-| columns    | Array  | 表格列配置          |
+| 参数                   | 类型       | 说明                     |
+|----------------------|----------|------------------------|
+| tableProps           | Object   | 表格配置                   |
+| columns              | Array    | 表格列配置                  |
+| controlBtn           | Array    | 新增/删除按钮                |
+| events.beforeRequest | Function | 同`props.beforeRequest` |
+| events.afterResponse | Function | 同`props.afterResponse` |

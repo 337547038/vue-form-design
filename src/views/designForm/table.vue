@@ -48,6 +48,13 @@
       <headTools @click="headToolClick" type="2" />
       <div class="main-form main-table">
         <p style="padding: 10px 0">提示：点击表头可拖动改变顺序</p>
+        <DesignForm
+          :type="2"
+          v-if="state.searchData?.list?.length"
+          :form-data="state.searchData"
+          :dict="state.dict"
+          :requestUrl="false"
+        />
         <div class="control-btn">
           <el-button
             v-for="item in state.tableData?.controlBtn"
@@ -153,7 +160,7 @@
               </el-form-item>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="数据列表属性" name="second">
+          <el-tab-pane label="数据列表配置" name="second">
             <template v-if="isTableType">
               <el-form-item label="数据列表名称">
                 <el-input
@@ -165,20 +172,28 @@
                 <el-input v-model="state.formId" placeholder="请输入数据源Id" />
               </el-form-item>
             </template>
-            <el-button @click="editOpenDrawer('tableConfig')"
-              >编辑表格属性
-            </el-button>
-            <el-button @click="editOpenDrawer('dict')"
-              >设置数据字典
-              <el-tooltip
-                content="数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式：{0:'男',1:'女'}"
-                placement="top"
+            <el-form-item class="event-btn">
+              <el-button @click="editOpenDrawer('tableConfig')"
+                >编辑表格属性
+              </el-button>
+              <el-button @click="editOpenDrawer('dict')"
+                >设置数据字典
+                <el-tooltip
+                  content="数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式：{0:'男',1:'女'}"
+                  placement="top"
+                >
+                  <el-icon>
+                    <QuestionFilled />
+                  </el-icon>
+                </el-tooltip>
+              </el-button>
+              <el-button @click="editOpenDrawer('beforeRequest')"
+                >beforeRequest</el-button
               >
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
-            </el-button>
+              <el-button @click="editOpenDrawer('afterResponse')"
+                >afterResponse</el-button
+              >
+            </el-form-item>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -204,6 +219,7 @@
 
 <script setup lang="ts">
   import HeadTools from './components/headTools.vue'
+  import DesignForm from './components/form.vue'
   import { getRequest } from '@/api'
   import {
     reactive,
@@ -239,7 +255,7 @@
     filedList: [], // 可选字段
     otherFiled: [
       { label: '勾选', prop: '__selection', type: 'selection' },
-      { label: '序号', prop: '__index', type: 'index' },
+      { label: '序号', prop: '__index', type: 'index', width: '70px' },
       { label: '操作', prop: '__control' }
     ],
     checkboxGroup: [], // 左则已勾选的值
@@ -276,7 +292,8 @@
     config: {},
     name: '',
     formId: '',
-    dict: {}
+    dict: {},
+    searchData: {}
   })
   const excludeType = ['txt', 'title', 'table', 'component', 'upload']
   const filterFiled = (obj: any) => {
@@ -356,6 +373,13 @@
         case 'dict':
           state.dict = string2json(state.editor.getValue())
           break
+        case 'beforeRequest':
+        case 'afterResponse':
+          if (!state.tableData.events) {
+            state.tableData.events = {}
+          }
+          state.tableData.events[state.editIndex] = val
+          break
       }
       if (state.editIndex !== '') {
         // 将当前数据更新至state.tableData
@@ -420,6 +444,15 @@
       case 'columns':
         dialogOpen(state.tableData.columns)
         break
+      case 'beforeRequest':
+      case 'afterResponse':
+        const newData = state.tableData.events || {}
+        const afterResponse = (data: any) => {
+          // data经过处理后返回
+          return data
+        }
+        dialogOpen(newData[type] || afterResponse, 'ltr')
+        break
     }
   }
   // 字段属性编辑下拉选择
@@ -449,6 +482,7 @@
     if (index !== -1) {
       state.tableData.controlBtn.splice(index, 1)
     } else {
+      delete obj.hide
       state.tableData.controlBtn.push(obj)
     }
   }
@@ -475,6 +509,9 @@
           filterFiled(stringToObj(result.formData)) // 获取表单数据，从表单里提取可选择的表头字段
           if (result.tableData) {
             state.tableData = stringToObj(result.tableData)
+          }
+          if (result.searchData) {
+            state.searchData = stringToObj(result.searchData)
           }
           if (isTableType.value) {
             state.name = result.name

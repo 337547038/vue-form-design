@@ -1,6 +1,6 @@
 <!-- Created by 337547038 on 2022/8/12. -->
 <template>
-  <div v-loading="loading">
+  <div v-loading="state.loading">
     <design-list
       :searchData="state.searchData"
       :tableData="state.tableData"
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive } from 'vue'
+  import { reactive } from 'vue'
   import { useRoute } from 'vue-router'
   import DesignList from './components/list.vue'
   import { getRequest } from '@/api'
@@ -26,7 +26,6 @@
 
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '内容管理' }, { label: '列表' }])
-  const loading = ref(false)
   const route = useRoute()
   const state = reactive({
     tid: route.query.tid,
@@ -51,9 +50,11 @@
             }
             state.dict = string2json(result.dict)
             state.formId = result.formId
+            state.loading = false
           }
         })
         .catch((res) => {
+          state.loading = false
           ElMessage.error(res.data.message || '请求异常')
         })
     }

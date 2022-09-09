@@ -37,6 +37,13 @@ export interface FormData {
     confirm?: string // 用于内部提交的表单按钮
     cancel?: string // 用于内部提交的表单按钮
     addLoad?: boolean
+    expand?: boolean // 用于设置筛选条件默认展开/收起状态
+  }
+  events?: {
+    beforeRequest?: Function
+    afterResponse?: Function
+    beforeSubmit?: Function
+    afterSubmit?: Function
   }
 }
 
@@ -44,4 +51,5 @@ export interface TableData {
   tableProps?: any
   columns: any
   controlBtn?: any
+  events?: any
 }

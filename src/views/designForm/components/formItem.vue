@@ -94,6 +94,7 @@
         v-model="value"
         :options="options"
         :config="config"
+        :remote-method="getAxiosOptions"
         :formatNumber="formatToString"
       />
       <el-upload
@@ -298,7 +299,8 @@
     return temp
   })
   // 有inject，这方法不能放异步
-  const getAxiosOptions = () => {
+  // data 根据条件搜索，select远程搜索里data有值
+  const getAxiosOptions = (data?: any) => {
     if (config.value.type === 'async') {
       let sourceFun = config.value.sourceFun
       if (config.value.source === 1 && sourceFun) {
@@ -307,10 +309,11 @@
         options.value = isRef(injectValue) ? injectValue.value : injectValue
       }
       if (config.value.source === 0 && sourceFun) {
-        // 当前控件为动态获取数据
+        // 当前控件为动态获取数据，防多次加载，先从本地取。data=true时直接请求
         const key = 'getOptions_fun_' + md5(sourceFun)
         const storage = window.sessionStorage.getItem(key)
-        if (storage) {
+        // console.log(storage)
+        if (storage && !data) {
           options.value = JSON.parse(storage)
         } else {
           // 从url里提取一个动态值,${name}形式提取name
@@ -319,21 +322,31 @@
             const val = control?.control.modelValue
             const string = '${' + sourceFunKey.value + '}'
             sourceFun = sourceFun.replace(string, val)
+            // 如有需要可从sourceFun里提取url参数放入到newData中
           }
+          // 处理请求前的数据
+          const newData = Object.assign(
+            {},
+            data || {},
+            config.value.params || {}
+          )
           // request.get('url',data)
           ;(axios as any)
-            [config.value.request](sourceFun, '')
+            [config.value.request](sourceFun, newData)
             .then((res: any) => {
               if (res.data.code === 200) {
                 // 请求成功
-                options.value = res.data.data
-                window.sessionStorage.setItem(
-                  key,
-                  JSON.stringify(res.data.data)
-                ) //缓存，例如子表添加时不用每添加一行就请求一次
+                let result = res.data.data
+                // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
+                if (typeof config.value.afterResponse === 'function') {
+                  result = config.value.afterResponse(result)
+                }
+                options.value = result
+                window.sessionStorage.setItem(key, JSON.stringify(result)) //缓存，例如子表添加时不用每添加一行就请求一次
               }
             })
             .catch((res: any) => {
+              options.value = []
               console.log(res)
             })
         }

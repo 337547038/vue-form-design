@@ -63,7 +63,7 @@ yarn dev
 
 复制以下文件到你项目下：
 
-复制`/public/staic`， 在index.html引入，可参数`/index.html`引入方式；
+复制`/public/staic`， 在index.html引入，可参考`/index.html`引入方式；
 
 复制`/src/api`、`/src/store/designForm`、`/src/utils`、`/src/viesw/designForm`，引入方式可参考`/src/main.ts`
 

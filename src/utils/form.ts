@@ -60,7 +60,7 @@ export function objToStringify(obj: any, isBeautify?: boolean) {
         brace_style: 'expand'
       })
     } else {
-      return obj2string(obj)
+      return 'opt=' + obj2string(obj)
     }
   } else {
     return isBeautify ? JSON.stringify(obj, null, 2) : JSON.stringify(obj)

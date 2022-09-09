@@ -1,6 +1,11 @@
 <template>
   <div class="form-list-page">
-    <ak-list ref="tableListEl" :searchData="searchData" :tableData="tableData">
+    <ak-list
+      ref="tableListEl"
+      :requestUrl="requestUrl"
+      :searchData="searchData"
+      :tableData="tableData"
+    >
       <!--<template #__control="scope">
         <el-button link @click="btnClick(scope.row.id,'show')">查看</el-button>
         <el-button link @click="btnClick(scope.row.id,'edit')">编辑</el-button>
@@ -13,54 +18,41 @@
 <script setup>
   // import {useRoute, useRouter} from 'vue-router'
   import { ref } from 'vue'
-
   // const route = useRoute()
   // const router = useRouter()
   // const tableListEl = ref()
   const tableData = ref({
-    config: {},
+    tableProps: {},
     columns: [
-      { label: '勾选', prop: '__selection', type: 'selection', width: '100px' },
-      { label: '序号', prop: '__index', type: 'index', width: '100px' },
+      { label: '勾选', prop: '__selection', type: 'selection' },
       { prop: 'text', label: '文本框', help: '' },
-      { label: '操作', prop: '__control' }
-    ],
-    controlBtn: [{ label: '新增', key: 'add', type: 'primary' }]
-  })
-  const searchData = ref({
-    list: [
       {
-        name: 'text',
-        type: 'input',
-        control: {
-          modelValue: ''
-        },
-        config: {},
-        item: {
-          label: '单行文本',
-          showLabel: false
-        }
+        prop: 'radio',
+        label: '单选框组',
+        help: '',
+        config: { dictKey: 'radio' }
       },
+      { label: '操作', prop: '__control', width: '100px' },
       {
-        name: 'text2',
-        type: 'input',
-        control: {
-          modelValue: ''
-        },
-        config: {},
-        item: {
-          label: '单行文本',
-          showLabel: false
-        }
+        prop: 'datePicker',
+        label: '日期选择器',
+        help: '',
+        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       }
     ],
-    form: {
-      labelWidth: '',
-      class: '',
-      size: 'default',
-      name: 'form1660211919743'
-    }
-  }) // 筛选表单
+    controlBtn: [
+      {
+        label: '新增',
+        key: 'add',
+        type: 'primary',
+        size: 'small',
+        hide: false
+      },
+      { label: '删除', key: 'del', size: 'small' }
+    ]
+  })
+  const searchData = ref({}) // 筛选表单
+  const requestUrl = ref('')
   /*const btnClick = (id, type) => {
     switch (type) {
       case 'show':

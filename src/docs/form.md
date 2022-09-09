@@ -7,6 +7,7 @@
 可查看示例展示，组件已全局注册
 
 ```html
+
 <ak-form :formData="formData"></ak-form>
 ```
 
@@ -67,31 +68,31 @@ formData = {
       name: "input1660637151831", // 表单元素唯一标识
       type: "input", // 表单元素类型
       control: // 当前控件类型的所有`props`参数，详见`element-plus`对应的`props`参数
-      {
-        modelValue: ""
-      },
+        {
+          modelValue: ""
+        },
       config: // 其他一些扩展配置信息
-      {
-        linkKey: "radio", // 联动标识
-        linkValue: "2", // 联动值，即当表单中`name=linkKey`的控件值为`linkValue`时，当前控件才显示
-        editDisabled: true // 编辑状态下禁用，即表单部分字段只能添加，不允许编辑时可使用此设置
-      },
+        {
+          linkKey: "radio", // 联动标识
+          linkValue: "2", // 联动值，即当表单中`name=linkKey`的控件值为`linkValue`时，当前控件才显示
+          editDisabled: true // 编辑状态下禁用，即表单部分字段只能添加，不允许编辑时可使用此设置
+        },
       customRules: [], // 使用快速方法添加的校验规则，会自动合并到`item.rules`
       item:// 组件el-form-item的参数配置
-      {
-        label: "单行文本",
-        showLabel: false,
-        rules: [] // 校验规则
-      }
+        {
+          label: "单行文本",
+          showLabel: false,
+          rules: [] // 校验规则
+        }
     },
     {
       name: "select1660637154631",
       type: "select",
       control:
-      {
-        modelValue: "",
-        appendToBody: true
-      },
+        {
+          modelValue: "",
+          appendToBody: true
+        },
       options: [// 单选多选下拉的`option`选项数据
         {
           label: "标签1",
@@ -106,30 +107,45 @@ formData = {
           value: "value3"
         }],
       config:
-      {
-        type: "async", // `options`数据来源方式`async`动态选项，`fixed`固定选项
-        source: 0, // 动态选项时 0数据源，1方法函数，2接口数据dict字典
-        request: "get", // source=0时的数据请求方式
-        sourceFun: "1" // 方法函数名或请求url
-      },
+        {
+          type: "async", // `options`数据来源方式`async`动态选项，`fixed`固定选项
+          source: 0, // 动态选项时 0数据源，1方法函数，2接口数据dict字典
+          request: "get", // source=0时的数据请求方式
+          sourceFun: "1" // 方法函数名或请求url
+        },
       item:
-      {
-        label: "下拉选择框",
-        showLabel: false
-      }
+        {
+          label: "下拉选择框",
+          showLabel: false
+        }
     }],
   form:// 表单配置信息
-  {
-    labelWidth: "",
-    class: "",
-    size: "default",
-    name: "form1660637148435"
-  },
+    {
+      labelWidth: "",
+      class: "",
+      size: "default",
+      name: "form1660637148435"
+    },
   config: {
     style: '', // 表单css样式，相当于scope
     hideField: [], // 使用v-if隐藏的字段，用于交互
-    submitBtn: {}, // 表单按钮
+    confirm: '', // 表单按钮
+    cancel: '', // 表单按钮
     addLoad: false // 新增表单时是否从接口加载默认数据
+  },
+  events: { // 同props事件
+    beforeRequest: (data) => {
+      return data
+    },
+    afterResponse: (data) => {
+      return data
+    },
+    beforeSubmit: (data) => {
+      return data
+    },
+    afterSubmit: (data) => {
+      return data
+    }
   }
 }
 ```

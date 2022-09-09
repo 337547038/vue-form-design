@@ -46,7 +46,7 @@ $mainColor: #66b1ff;
     .el-collapse-item__header {font-weight: 700;border-bottom: 1px solid #ddd;margin-bottom: 20px}
     .el-collapse-item__wrap {border: 0}
   }
-  .group-inputSlot{display: none}
+  .group-inputSlot {display: none}
   .form-table {margin-bottom: 22px;
     .drag {border: 0;display: flex;overflow-x: auto;white-space: nowrap;padding: 0;flex-wrap: nowrap;
       > div {min-width: 150px;width: auto}
@@ -76,6 +76,9 @@ $mainColor: #66b1ff;
   .option-radio {
     > label {margin-right: 8px}
   }
+  .event-btn{
+    button{margin: 0 12px 5px 0}
+  }
 }
 #editJson, #editJsonCopy {width: 100%;height: calc(100vh - 65px)}
 #editJsonCopy {height: calc(100vh - 350px)}
@@ -89,7 +92,7 @@ $mainColor: #66b1ff;
 }
 .design-form {min-height: calc(100vh - 167px);
   > div {height: 100%}
-  > .drag{min-height: calc(100vh - 167px)!important;}
+  > .drag {min-height: calc(100vh - 167px) !important;}
   .ghost {
     background: #F56C6C;
     border: 2px solid #F56C6C;
@@ -111,7 +114,7 @@ $mainColor: #66b1ff;
     > div {margin-bottom: 0}
   }
   .group-inputSlot {border-color: #eebe77;display: inline-block;
-    &:hover,&.active {border-color: #eebe77 !important;}
+    &:hover, &.active {border-color: #eebe77 !important;}
   }
   .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0;z-index: 5}
   .drag-control {display: none;
@@ -131,7 +134,11 @@ $mainColor: #66b1ff;
       }
     }
   }
-  .main-table {padding: 0 20px;}
+  .main-table {padding: 0 20px;
+    .add-form {min-height: auto;display: flex;
+      > .drag {height: auto;min-height: auto!important;}
+    }
+  }
   .table-tag {
     .el-form-item__content {display: flex;
       > div {flex: 2;margin-right: 5px;}
@@ -140,11 +147,13 @@ $mainColor: #66b1ff;
 }
 .table-list-comm {
   .table-main {margin-bottom: 20px}
-  .table-search {
+  .table-search {position: relative;
+    .search-form {}
     form {display: flex;flex-wrap: wrap}
     .drag {display: flex;flex-wrap: wrap;
       > div {margin-right: 10px}
     }
+    .search-icon {margin-left: 10px;height: 30px;cursor: pointer;position: absolute;right: 0;top: 0}
   }
   .control-btn {margin-bottom: 10px}
 }

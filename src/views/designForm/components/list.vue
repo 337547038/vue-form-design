@@ -3,23 +3,24 @@
   <div class="table-list-comm" v-loading="state.loading">
     <div class="table-search" v-if="searchData?.list?.length">
       <DesignForm
+        v-show="!state.searchFormDown"
+        is-search
+        class="search-form"
         :disabled="state.loading"
         :form-data="searchData"
         :dict="state.dict"
         :requestUrl="false"
         ref="searchFormEl"
+        @click="formBtnClick"
       >
-        <el-button
-          type="primary"
-          @click="getListData(1)"
-          :loading="state.loading"
-          v-if="searchBtn[0]"
-          >{{ searchBtn[0] }}
-        </el-button>
-        <el-button @click="searchClear" v-if="searchBtn[1]"
-          >{{ searchBtn[1] }}
-        </el-button>
+        <slot name="searchForm"></slot>
       </DesignForm>
+      <el-icon
+        class="search-icon"
+        title="展开/收起筛选"
+        @click="state.searchFormDown = !state.searchFormDown"
+        ><Search
+      /></el-icon>
     </div>
     <slot></slot>
     <div class="control-btn">
@@ -31,6 +32,7 @@
       >
         {{ item.label }}
       </el-button>
+      <slot name="controlBtn"></slot>
     </div>
     <div class="table-main">
       <el-table
@@ -122,15 +124,11 @@
       afterResponse?: Function
       showPage?: boolean
       requestUrl?: string // 请求的api
-      searchBtn?: string[]
       dict?: object
     }>(),
     {
       showPage: true,
       requestUrl: 'getContentList',
-      searchBtn: () => {
-        return ['查询', '清空']
-      },
       tableData: () => {
         return { tableProps: {}, columns: {} }
       },
@@ -157,7 +155,8 @@
     total: 0,
     tid: route.query.tid, // 设计表单的id
     selectionChecked: [],
-    dict: props.dict || {}
+    dict: props.dict || {},
+    searchFormDown: props.searchData.config?.expand
   })
   const formId = computed(() => {
     // 数据源id 发接口请求的参数
@@ -174,6 +173,9 @@
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
     let formValue = searchFormEl.value?.getValue(true)
+    if (typeof props.tableData.events?.beforeRequest === 'function') {
+      formValue = props.tableData.events.beforeRequest(formValue || {})
+    }
     if (typeof props.beforeRequest === 'function') {
       formValue = props.beforeRequest(formValue || {})
     }
@@ -190,6 +192,9 @@
     })
       .then((res) => {
         let result = res.data.data
+        if (typeof props.tableData.events?.afterResponse === 'function') {
+          result = props.tableData.events.afterResponse(result)
+        }
         if (typeof props.afterResponse === 'function') {
           result = props.afterResponse(result)
         }
@@ -279,6 +284,14 @@
           return scope.row[item.prop]
         }
       }
+    }
+  }
+  const formBtnClick = (type: string) => {
+    if (type === 'confirm') {
+      state.loading = true
+      getListData(1)
+    } else if (type === 'cancel') {
+      searchClear()
     }
   }
   onMounted(() => {

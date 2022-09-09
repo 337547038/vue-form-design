@@ -368,6 +368,69 @@
 
 ```
 
+## Select远程搜索
+
+启用远程搜索，可通过编辑属性将`filterable`和`remote`设置为`true`，同时将选项配置设置为`动态选项-数据源方式`，当输入关键字时，将会重新根据输入关键字获取数据。`afterResponse`可对请求数据处理再返回，同时可通过配置`queryName`改变参数名称
+
+```vue demo
+<template>
+  <ak-form
+    :formData="formData"
+    ref="formName"
+    :requestUrl="requestUrl"
+    :submitUrl="submitUrl"
+  />
+</template>
+<script setup>
+  import { ref } from 'vue'
+  const formData = ref({
+    list: [
+      {
+        type: 'select',
+        control: {
+          modelValue: '',
+          appendToBody: true,
+          filterable: true,
+          remote: true,
+          placeholder: '请输入关键字搜索'
+        },
+        options: [],
+        config: {
+          type: 'async',
+          source: 0,
+          request: 'post',
+          sourceFun: '/api/content/list',
+          afterResponse: (data) => {
+            data.push({label:'1',value:'1'})
+            return data
+          },
+          queryName: 'queryName' // 远程搜索时发送请求的参数名称，默认为name
+        },
+        name: 'select1662536735690',
+        item: { label: '下拉选择框', showLabel: false }
+      }
+    ],
+    form: {
+      labelWidth: '',
+      class: '',
+      size: 'default',
+      name: 'form1662536407108'
+    },
+    config: { title: 'form1662536407108', formId: '' }
+  })
+
+  // 表单控件值改变事件
+  /*provide('AKControlChange', ({key, value}) => {
+    console.log(key)
+    console.log(value)
+  })*/
+  const submitUrl = ref(false) // 表单提交url
+  const requestUrl = ref(false) // 获取表单初始数据
+  const formName = ref()
+</script>
+
+```
+
 ## 联动事件
 
 文本输入框的联动条件`radio=1`，则该控件在单选框组`radio`的值为`1`时显示或者设置为禁用状态。

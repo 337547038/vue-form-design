@@ -25,14 +25,20 @@
     const prams = {
       id: query.tid
     }
-    getRequest('getFormById', prams).then((res) => {
-      // console.log(res)
-      const result = res.data.data
-      if (result) {
-        formData.value = stringToObj(result.formData)
-        formDict.value = JSON.parse(result.dict || '')
-      }
-    })
+    loading.value = true
+    getRequest('getFormById', prams)
+      .then((res) => {
+        // console.log(res)
+        const result = res.data.data
+        if (result) {
+          formData.value = stringToObj(result.formData)
+          formDict.value = JSON.parse(result.dict || '')
+        }
+        loading.value = false
+      })
+      .catch(() => {
+        loading.value = false
+      })
   }
   /*const submit = () => {
     formEl.value.validate((valid: boolean, fields: any) => {

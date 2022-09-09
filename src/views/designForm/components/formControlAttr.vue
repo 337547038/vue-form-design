@@ -2,7 +2,7 @@
 <template>
   <div class="sidebar-tools">
     <el-tabs modelValue="first">
-      <el-tab-pane label="字段属性" name="first">
+      <el-tab-pane label="字段配置" name="first">
         <el-form size="small" class="form">
           <h3>通用属性</h3>
           <template v-for="(item, index) in attrList" :key="index">
@@ -138,9 +138,9 @@
                   </el-form-item>
                 </div>
                 <el-form-item>
-                  <el-button @click="addSelectOption">{{
-                    controlData.type === 'cascader' ? '编辑' : '新增'
-                  }}</el-button>
+                  <el-button @click="addSelectOption"
+                    >{{ controlData.type === 'cascader' ? '编辑' : '新增' }}
+                  </el-button>
                 </el-form-item>
               </el-tab-pane>
               <el-tab-pane name="async">
@@ -201,6 +201,16 @@
                     </template>
                   </el-input>
                 </el-form-item>
+                <template v-if="controlData.config.source === 0">
+                  <el-form-item>
+                    <el-button @click="optionsEvent('optionsParams')"
+                      >请求附加参数
+                    </el-button>
+                    <el-button @click="optionsEvent('optionsResult')"
+                      >请求结果处理事件
+                    </el-button>
+                  </el-form-item>
+                </template>
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -301,7 +311,7 @@
           </div>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="表单属性" name="second">
+      <el-tab-pane label="表单配置" name="second">
         <el-form size="small" class="form">
           <el-form-item
             v-for="(item, index) in formAttr.filter((item) => !item.hide)"
@@ -321,6 +331,11 @@
                 :value="formatNumber(opt.value || opt.id)"
               />
             </el-select>
+            <el-switch
+              v-else-if="item.type === 'switch'"
+              v-model="item.value"
+              @input="formAttrChange(item)"
+            />
             <el-input
               v-else
               v-model="item.value"
@@ -371,6 +386,23 @@
               </el-tooltip>
             </el-button>
           </el-form-item>
+          <template v-if="!state.isSearch">
+            <h3>事件处理</h3>
+            <el-form-item class="event-btn">
+              <el-button @click="eventClick('beforeRequest')"
+                >beforeRequest</el-button
+              >
+              <el-button @click="eventClick('afterResponse')"
+                >afterResponse</el-button
+              >
+              <el-button @click="eventClick('beforeSubmit')"
+                >beforeSubmit</el-button
+              >
+              <el-button @click="eventClick('afterSubmit')"
+                >afterSubmit</el-button
+              >
+            </el-form-item>
+          </template>
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -385,6 +417,7 @@
   import validate from './validate'
   import { ElMessage } from 'element-plus'
   import { formatNumber } from './utils'
+
   const props = withDefaults(
     defineProps<{
       formData: any
@@ -455,18 +488,24 @@
       {
         label: '提交按钮',
         value: formConfig.value.confirm,
-        placeholder: '提交按钮文案，空不显示',
+        placeholder: isSearch ? '查询按钮文案' : '提交按钮文案，空不显示',
         key: 'confirm',
-        path: 'config',
-        hide: isSearch
+        path: 'config'
       },
       {
         label: '取消返回按钮',
         value: formConfig.value.cancel,
-        placeholder: '取消返回按钮文案，空不显示',
+        placeholder: isSearch ? '取消查询文案' : '取消返回按钮文案，空不显示',
         path: 'config',
-        key: 'cancel',
-        hide: isSearch
+        key: 'cancel'
+      },
+      {
+        label: '筛选条件展开/收起',
+        value: formConfig.value.expand,
+        type: 'switch',
+        path: 'config',
+        key: 'expand',
+        hide: !isSearch
       }
     ]
   })
@@ -624,6 +663,22 @@
           placeholder: '文本后缀',
           path: 'config.append',
           vShow: ['input', 'password']
+        },
+        {
+          label: '状态打开时的值',
+          value: control.activeValue,
+          placeholder: '状态打开时的值',
+          path: 'control.activeValue',
+          vShow: ['switch'],
+          isNum: true
+        },
+        {
+          label: '状态关闭时的值',
+          value: control.inactiveValue,
+          placeholder: '状态关闭时的值',
+          path: 'control.inactiveValue',
+          vShow: ['switch'],
+          isNum: true
         },
         {
           label: '转换格式化值',
@@ -1015,7 +1070,7 @@
         break
     }
     if (obj.path) {
-      const newVal = obj.isNum ? parseInt(val) : val // 类型为数字时转整数
+      const newVal = obj.isNum ? formatNumber(val) : val // 类型为数字时转整数
       obj.path && getPropByPath(controlData.value, obj.path, newVal)
     }
   }
@@ -1079,18 +1134,44 @@
   // 更多属性弹窗
   const openAttrDialog = (type?: string) => {
     let editData = controlData.value.control
-    if (type === 'cascader') {
-      editData = controlData.value.options
+    let codeType = ''
+    const afterResponse = (data: any) => {
+      // data经过处理后返回
+      return data
     }
-    emits('openDialog', editData, (result: any) => {
-      if (type === 'cascader') {
-        // Object.assign(controlData.value.options, result)
-        controlData.value.options = result
-      } else {
-        controlData.value.control = {}
-        Object.assign(controlData.value.control, result)
-      }
-    })
+    switch (type) {
+      case 'cascader':
+        editData = controlData.value.options
+        break
+      case 'optionsParams': // 选项请求附加参数
+        editData = controlData.value.config.params || {}
+        codeType = 'json'
+        break
+      case 'optionsResult':
+        editData = controlData.value.config.afterResponse || afterResponse
+        break
+    }
+    emits(
+      'openDialog',
+      editData,
+      (result: any) => {
+        switch (type) {
+          case 'cascader':
+            controlData.value.options = result
+            break
+          case 'optionsParams':
+            controlData.value.config.params = result
+            break
+          case 'optionsResult':
+            controlData.value.config.afterResponse = result
+            break
+          default:
+            controlData.value.control = {}
+            Object.assign(controlData.value.control, result)
+        }
+      },
+      codeType
+    )
   }
   // 必填校验
   const requiredChange = (val: boolean) => {
@@ -1230,6 +1311,13 @@
     if (filter && filter.length) {
       item.message = filter[0].message
     }
+  }
+  // options动态选项数据源请求时
+  const optionsEvent = (type: string) => {
+    openAttrDialog(type)
+  }
+  const eventClick = (type: string) => {
+    emits('openDialog', '', type)
   }
   init()
 </script>

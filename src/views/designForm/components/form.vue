@@ -14,14 +14,14 @@
     >
       <form-group :data="formData.list" />
       <slot></slot>
-      <div v-if="confirmBtn || cancelBtn" style="height: auto">
+      <template v-if="confirmBtn || cancelBtn">
         <el-button type="primary" v-if="confirmBtn" @click="submit">{{
           confirmBtn
         }}</el-button>
-        <el-button v-if="cancelBtn" @click="$router.go(-1)">{{
+        <el-button v-if="cancelBtn" @click="cancelClick">{{
           cancelBtn
         }}</el-button>
-      </div>
+      </template>
     </el-form>
   </div>
 </template>
@@ -37,7 +37,6 @@
     provide
   } from 'vue'
   import type { FormData, FormList } from '../types'
-  // import { useDesignFormStore } from '@/store/designForm'
   import { getRequest } from '@/api'
   import { useRoute, useRouter } from 'vue-router'
   import { ElMessage } from 'element-plus'
@@ -64,6 +63,7 @@
       value?: { [key: string]: any } // 表单初始值，同setValue
       options?: { [key: string]: any } // 表单组件选项，同setOptions
       dict?: object // 固定匹配的字典
+      isSearch?: boolean // 列表里作为筛选使用
     }>(),
     {
       type: 1, // 1新增；2查看（表单模式） ；3查看； 4设计
@@ -78,9 +78,13 @@
         return {}
       },
       requestUrl: 'getFormContent',
-      submitUrl: 'saveFormContent'
+      submitUrl: 'saveFormContent',
+      isSearch: false
     }
   )
+  const emits = defineEmits<{
+    (e: 'click', type: string): void
+  }>()
   const route = useRoute()
   const router = useRouter()
   // const storeForm = useDesignFormStore()
@@ -324,6 +328,10 @@
         formId: route.query.formId,
         id: route.query.id
       }
+      // 同时可使用props或是events里的事件，根据使用使用其中一种即可
+      if (typeof props.formData.events?.beforeRequest === 'function') {
+        prams = props.formData.events.beforeRequest(prams)
+      }
       if (typeof props.beforeRequest === 'function') {
         prams = props.beforeRequest(prams)
       }
@@ -333,8 +341,13 @@
           let result = res.data.data
           if (result) {
             let value = result.data
+            // 比较适用通用表单，保存在服务端
+            if (typeof props.formData.events?.afterResponse === 'function') {
+              value = props.formData.events.afterResponse(value)
+            }
+            // 比较适用于导出vue文件
             if (typeof props.afterResponse === 'function') {
-              value = props.afterResponse(result.data)
+              value = props.afterResponse(value)
             }
             setValue(value)
             nextTick(() => {
@@ -356,6 +369,11 @@
     if (props.type === 4) {
       return ElMessage.error('设计模式不能提交表单')
     }
+    if (props.isSearch) {
+      // 列表里作为筛选时，不提交表单
+      emits('click', 'confirm')
+      return
+    }
     if (
       confirmBtn.value &&
       props.submitUrl !== false &&
@@ -369,13 +387,18 @@
             id: route.query.id,
             ...fields
           }
+          if (typeof props.formData.events?.beforeSubmit === 'function') {
+            params = props.formData.events.beforeSubmit(params)
+          }
           if (typeof props.beforeSubmit === 'function') {
             params = props.beforeSubmit(params)
           }
           // 提交保存表单
           getRequest(props.submitUrl as string, params)
             .then((res: any) => {
-              if (typeof props.afterSubmit === 'function') {
+              if (typeof props.formData.events?.afterSubmit === 'function') {
+                props.formData.events?.afterSubmit(res)
+              } else if (typeof props.afterSubmit === 'function') {
                 props.afterSubmit(res)
               } else {
                 ElMessage.success(res.data.message || '保存成功')
@@ -391,6 +414,17 @@
       })
   }
   // onMounted时formData不一定有值，这里当监听到变化时，如果没加载过再请求一次
+  const cancelClick = () => {
+    if (props.type === 4) {
+      return ElMessage.error('设计模式不能提交表单')
+    }
+    if (props.isSearch) {
+      // 列表里作为筛选时，不提交表单
+      emits('click', 'cancel')
+      return
+    }
+    router.router.go(-1)
+  }
   watch(
     () => props.formData,
     () => {

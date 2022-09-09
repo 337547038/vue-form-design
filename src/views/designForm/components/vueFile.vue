@@ -74,10 +74,10 @@
     visible.value = true
     const getHtml = getObjHtml(obj)
     // 判断有没配置有提交按钮
-    const hasBtn = obj.submitBtn?.confirm
+    const hasBtn = obj.config?.confirm
     let submitBtn = ``
     let submitHtml = ''
-    let submitUrl = ''
+    // let submitUrl = ''
     if (!hasBtn) {
       submitBtn = `    <el-button type="primary" @click="submit">提交</el-button>`
       submitHtml = `    const submit = () => {
@@ -92,11 +92,11 @@
         }
       })
     }`
-      submitUrl = `:submitUrl="submitUrl"`
+      // submitUrl = `:submitUrl="submitUrl"`
     }
     const html = `<template>
   <div>
-    <ak-form :formData="formData" ref="formName" ${submitUrl}>
+    <ak-form :formData="formData" ref="formName" :requestUrl="requestUrl" :submitUrl="submitUrl">
     </ak-form>
     ${submitBtn}
   </div>
@@ -111,7 +111,8 @@
       console.log(key)
       console.log(value)
     })*/
-    ${hasBtn ? '' : 'const submitUrl = ref(false) // 表单提交url'}
+    const submitUrl = ref(false) // 表单提交url
+    const requestUrl = ref(false) // 获取表单初始数据
     const formName = ref()
     ${submitHtml}
     <\/script>`
@@ -144,7 +145,7 @@
     // const route = useRoute()
     // const router = useRouter()
     // const tableListEl = ref()
-    const tableData = ref(${JSON.stringify(obj)})
+    const tableData = ref(${objToStringify(obj)})
     const searchData = ref({}) // 筛选表单
     const requestUrl = ref('')
     /*const btnClick = (id, type) => {
