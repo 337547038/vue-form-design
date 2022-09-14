@@ -104,19 +104,23 @@
 
   let timer = 0
   let eventName = ''
-  // 只查一级
+  let getValueEvent = ''
+  // 注册window事件
   const setWindowEvent = (bool?: boolean) => {
     if (props.formData.list.length > 0) {
       const formName = props.formData.form.name
       eventName = `get${formName}ControlByName`
+      getValueEvent = `get${formName}ValueByName`
       if (formName && (!window[eventName as any] || !bool)) {
+        // 根据name获取当前数据项
         // @ts-ignore
         window[eventName] = (name: string) => {
-          /*const filterList = props.formData.list.filter(
-            (item) => item.name === name
-          )
-          return filterList && filterList[0]*/
-          getNameForEach(props.formData.list, name)
+          return getNameForEach(props.formData.list, name)
+        }
+        // 根据name获取当前项的值
+        // @ts-ignore
+        window[getValueEvent] = (name: string) => {
+          return model.value[name]
         }
       }
     }

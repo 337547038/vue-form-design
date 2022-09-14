@@ -1,75 +1,138 @@
 <template>
-  <div class="form-list-page">
-    <ak-list
-      ref="tableListEl"
-      :requestUrl="requestUrl"
-      :searchData="searchData"
-      :tableData="tableData"
-    >
-      <!--<template #__control="scope">
-        <el-button link @click="btnClick(scope.row.id,'show')">查看</el-button>
-        <el-button link @click="btnClick(scope.row.id,'edit')">编辑</el-button>
-        <el-button link @click="btnClick(scope.row.id,'del')">删除</el-button>
-      </template>-->
-    </ak-list>
+  <div>
+    <ak-form :formData="formData" ref="formName" :submitUrl="submitUrl" />
+    <el-button type="primary" @click="submit">提交</el-button>
   </div>
 </template>
-
 <script setup>
-  // import {useRoute, useRouter} from 'vue-router'
-  import { ref } from 'vue'
-  // const route = useRoute()
-  // const router = useRouter()
-  // const tableListEl = ref()
-  const tableData = ref({
-    tableProps: {},
-    columns: [
-      { label: '勾选', prop: '__selection', type: 'selection' },
-      { prop: 'text', label: '文本框', help: '' },
+  import { provide, ref } from 'vue'
+  const formData = ref({
+    list: [
       {
-        prop: 'radio',
-        label: '单选框组',
-        help: '',
-        config: { dictKey: 'radio' }
+        name: 'radio',
+        type: 'radio',
+        control: { modelValue: '' },
+        options: [
+          { label: '男', value: '1' },
+          { label: '女', value: '2' }
+        ],
+        config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+        item: { label: '性别', showLabel: false }
       },
-      { label: '操作', prop: '__control', width: '100px' },
       {
-        prop: 'datePicker',
-        label: '日期选择器',
-        help: '',
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        name: 'select',
+        type: 'select',
+        control: { modelValue: '', appendToBody: true },
+        options: [
+          { label: '游戏', value: '1' },
+          { label: '购物', value: '2' }
+        ],
+        config: {
+          type: 'fixed',
+          source: 0,
+          request: 'get',
+          sourceFun: '',
+          linkKey: true,
+          linkValue: "$.radio==='1'",
+          linkResult: 'disabled'
+        },
+        item: { label: '兴趣爱好', showLabel: false }
+      },
+      {
+        name: 'inputGame',
+        type: 'input',
+        control: {
+          modelValue: '',
+          placeholder: '性别为男性或兴趣爱好为游戏时显示'
+        },
+        slot: {},
+        config: { linkKey: true, linkValue: "$.radio==='1'||$.select==='1'" },
+        item: { label: '游戏项目', showLabel: false },
+        rules: [],
+        customRules: [
+          { type: 'required', message: '游戏项目', trigger: 'blur' }
+        ]
+      },
+      {
+        name: 'inputShop',
+        type: 'input',
+        control: {
+          modelValue: '',
+          placeholder: '性别为女性或兴趣爱好为购物时显示'
+        },
+        slot: {},
+        config: { linkKey: true, linkValue: "$.radio==='2'&&$.select==='2'" },
+        item: { label: '购物项目', showLabel: false },
+        rules: [],
+        customRules: []
+      },
+      {
+        name: 'password',
+        type: 'password',
+        control: { modelValue: '' },
+        config: {},
+        item: {
+          label: '密码',
+          showLabel: false
+        },
+        customRules: [
+          { type: 'required', message: '请输入密码', trigger: 'blur' }
+        ]
+      },
+      {
+        name: 'password2',
+        type: 'password',
+        control: { modelValue: '' },
+        config: {},
+        item: {
+          label: '确认密码',
+          showLabel: false,
+          rules: [
+            {
+              validator: (rule, value, callback) => {
+                // 获取密码的值
+                const val = getform1660728166875ValueByName('password')
+                console.log(val)
+                const control = getform1660728166875ControlByName('password')
+                console.log(control)
+                if (value === '') {
+                  callback(new Error('请输入密码'))
+                } else if (value !== control.control.modelValue) {
+                  callback(new Error('两次密码不一样'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'change'
+            }
+          ]
+        }
       }
     ],
-    controlBtn: [
-      {
-        label: '新增',
-        key: 'add',
-        type: 'primary',
-        size: 'small',
-        hide: false
-      },
-      { label: '删除', key: 'del', size: 'small' }
-    ],
-    events: {
-      beforeRequest: (data) => {
-        return { name: '12131231' }
-      },
-      afterResponse: (data) => {
-        return data
-      }
+    form: {
+      labelWidth: '',
+      class: '',
+      size: 'default',
+      name: 'form1660728166875'
     }
   })
-  const searchData = ref({}) // 筛选表单
-  const requestUrl = ref('getContentList')
-  /*const btnClick = (id, type) => {
-    switch (type) {
-      case 'show':
-        break
-      case 'edit':
-        break
-      case 'del':
-        // tableListEl.value.getListData() // 调用组件内部方法重新拉数据
-        break
-    }
-  }*/
+  // 表单控件值改变事件
+  /*provide('AKControlChange', ({key, value}) => {
+    console.log(key)
+    console.log(value)
+  })*/
+  const submitUrl = ref(false) // 表单提交url
+  const formName = ref()
+  const submit = () => {
+    formName.value.validate((valid, fields) => {
+      console.log(valid)
+      console.log(fields) // 校验通过时返回当前表单的值
+      if (valid) {
+        alert('submit')
+      } else {
+        console.log('error submit')
+        return false
+      }
+    })
+  }
 </script>

@@ -433,15 +433,11 @@
 
 ## 联动事件
 
-文本输入框的联动条件`radio=1`，则该控件在单选框组`radio`的值为`1`时显示或者设置为禁用状态。
-
-多个条件时使用`,`或`&`分隔开，当分隔符中存在`&`时，条件为`and`关系，同时符合时才显示；否则条件为`or`关系，符合其中之一时显示。
+`$`为表单的`model`，包含了表单所有的值，多个条件可用`||`或`&`连接
 
 ```vue demo
 <template>
   <div>
-    <p>结果：1.单选标签1时或者下拉选择标签1时，显示单行文本1输入框</p>
-    <p>2.单选标签1时和下拉选择标签1时，显示单行文本1和单行文本2输入框</p>
     <ak-form :formData="formData" ref="formName" :submitUrl="submitUrl" />
     <el-button type="primary" @click="submit">提交</el-button>
   </div>
@@ -455,48 +451,54 @@
         type: 'radio',
         control: { modelValue: '' },
         options: [
-          { label: '标签1', value: '1' },
-          { label: '标签2', value: '2' }
+          { label: '男', value: '1' },
+          { label: '女', value: '2' }
         ],
         config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
-        item: { label: '单选框组', showLabel: false }
+        item: { label: '性别', showLabel: false }
       },
       {
         name: 'select',
         type: 'select',
         control: { modelValue: '', appendToBody: true },
         options: [
-          { label: '标签1', value: '1' },
-          { label: '标签2', value: '2' }
+          { label: '游戏', value: '1' },
+          { label: '购物', value: '2' }
         ],
         config: {
           type: 'fixed',
           source: 0,
           request: 'get',
           sourceFun: '',
-          linkKey: 'radio',
-          linkValue: '2',
+          linkKey: true,
+          linkValue: "$.radio==='1'",
           linkResult: 'disabled'
         },
-        item: { label: '下拉选择框', showLabel: false }
+        item: { label: '兴趣爱好', showLabel: false }
       },
       {
         name: 'input1637189604237',
         type: 'input',
-        control: { modelValue: '', placeholder: '单选或下拉为label1时显示' },
+        control: {
+          modelValue: '',
+          placeholder: '性别为男性或兴趣爱好为游戏时显示'
+        },
         slot: {},
-        config: { linkKey: 'radio,select', linkValue: '1,1' },
-        item: { label: '单行文本1', showLabel: false },
+        config: { linkKey: true, linkValue: "$.radio==='1'||$.select==='1'" },
+        item: { label: '游戏项目', showLabel: false },
         rules: [],
         customRules: []
       },
       {
         name: 'input1637198443468',
         type: 'input',
-        control: { modelValue: '', placeholder: '单选和下拉为label1时显示' },
+        control: {
+          modelValue: '',
+          placeholder: '性别为女性或兴趣爱好为购物时显示'
+        },
         slot: {},
-        config: { linkKey: 'radio&select', linkValue: '1,1' },
-        item: { label: '单行文本2', showLabel: false },
+        config: { linkKey: true, linkValue: "$.radio==='2'&&$.select==='2'" },
+        item: { label: '购物项目', showLabel: false },
         rules: [],
         customRules: []
       }
@@ -528,7 +530,6 @@
     })
   }
 </script>
-
 
 ```
 
@@ -801,7 +802,7 @@
 ## 控件绑定事件，可同时获取当前表单其他项的值
 
 通过`生成脚本预览`或`添加属性`代码编辑窗口对表单组件绑定事件，同时可使用全局`get[formName]ControlByName`方法获取当前表单其他控件的配置项数据（`formName`为当前表单`config.name`
-的值，本示例为`form1660790919277`，因此在控件中添加的方法名为`getform1660790919277ControlByName`）
+的值，本示例为`form1660790919277`，因此在控件中添加的方法名为`getform1660790919277ControlByName`）；当仅需要获取指定控件值时可使用`get[formName]ValueByName`直接获取控件的值
 
 ```vue demo
 <template>
@@ -828,7 +829,7 @@
         ]
       },
       {
-        name: 'password',
+        name: 'password2',
         type: 'password',
         control: { modelValue: '' },
         config: {},

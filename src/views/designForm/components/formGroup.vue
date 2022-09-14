@@ -278,7 +278,7 @@
     if (key && value && state.type !== 4) {
       //　多个条件时key和value分别使用,和&隔开，
       // 带有&分隔时，需要符合所有条件；否则符合其中一个条件即可
-      const keySplit = key.split(/,|&/)
+      /*const keySplit = key.split(/,|&/)
       const valueSplit = value.split(/,|&/)
       const hasAndSpit = key.indexOf('&') !== -1 || value.indexOf('&') !== -1 // 存在&分隔
       let pass = false
@@ -300,7 +300,9 @@
             break
           }
         }
-      }
+      }*/
+      const Fn = new Function('$', `return (${value})`)
+      const pass = Fn(formOtherData.model.value)
       if (linkResult === 'disabled') {
         // 设置为disabled后返回显示状态
         dataList.value[index].control.disabled = pass

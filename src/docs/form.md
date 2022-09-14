@@ -59,7 +59,9 @@
 
 ### formData 方法
 
-get[formName]ControlByName() 用于根据name值获取formData中的数据项，使用方法可见表单示例
+get[formName]ControlByName(name) 用于根据name值获取formData中的数据项，使用方法可见表单示例；
+
+get[formName]ValueByName(name) 用于根据name值获取formData中的数据项的值；
 
 ```javascript
 formData = {
@@ -73,8 +75,8 @@ formData = {
         },
       config: // 其他一些扩展配置信息
         {
-          linkKey: "radio", // 联动标识
-          linkValue: "2", // 联动值，即当表单中`name=linkKey`的控件值为`linkValue`时，当前控件才显示
+          linkKey: true, // 开启联动
+          linkValue: "$.name===1", // 联动表达式，即当表单中字段标识为`name`的控件值为`1`时，当前控件才显示
           editDisabled: true // 编辑状态下禁用，即表单部分字段只能添加，不允许编辑时可使用此设置
         },
       customRules: [], // 使用快速方法添加的校验规则，会自动合并到`item.rules`

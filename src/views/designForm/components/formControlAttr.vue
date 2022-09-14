@@ -38,54 +38,50 @@
           </template>
           <template v-if="controlData.config">
             <el-form-item label="联动条件">
-              <el-col :span="9">
+              <el-switch v-model="controlData.config.linkKey" />
+            </el-form-item>
+            <template v-if="controlData.config.linkKey">
+              <el-form-item>
                 <el-input
-                  placeholder="标识名称"
-                  v-model="controlData.config.linkKey"
-                />
-              </el-col>
-              <el-col :span="2" :offset="1">=</el-col>
-              <el-col :span="9" :offset="1">
-                <el-input
-                  placeholder="关联值"
+                  type="textarea"
                   v-model="controlData.config.linkValue"
+                  placeholder="表达式如: $.input>1 $表示为当前表单数据，input为字段标识"
                 />
-              </el-col>
-            </el-form-item>
-            <el-form-item
-              label="联动结果"
-              v-show="controlData.config.linkKey"
-              v-if="
-                showHide(
-                  [
-                    'input',
-                    'textarea',
-                    'radio',
-                    'checkbox',
-                    'select',
-                    'date',
-                    'switch',
-                    'number',
-                    'cascader',
-                    'slider',
-                    'datePicker',
-                    'timePicker',
-                    'colorPicker',
-                    'inputNumber',
-                    'rate'
-                  ],
-                  true
-                )
-              "
-            >
-              <el-radio-group
-                class="option-radio"
-                v-model="controlData.config.linkResult"
+              </el-form-item>
+              <el-form-item
+                label="联动结果"
+                v-if="
+                  showHide(
+                    [
+                      'input',
+                      'textarea',
+                      'radio',
+                      'checkbox',
+                      'select',
+                      'date',
+                      'switch',
+                      'number',
+                      'cascader',
+                      'slider',
+                      'datePicker',
+                      'timePicker',
+                      'colorPicker',
+                      'inputNumber',
+                      'rate'
+                    ],
+                    true
+                  )
+                "
               >
-                <el-radio label="hidden">隐藏(默认)</el-radio>
-                <el-radio label="disabled">禁用</el-radio>
-              </el-radio-group>
-            </el-form-item>
+                <el-radio-group
+                  class="option-radio"
+                  v-model="controlData.config.linkResult"
+                >
+                  <el-radio label="hidden">隐藏(默认)</el-radio>
+                  <el-radio label="disabled">禁用</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </template>
           </template>
           <template v-if="showHide(['tabs'], true)">
             <h3>标签配置项</h3>
@@ -270,10 +266,10 @@
               </el-form-item>
               <el-form-item>
                 <el-button @click="addRulesFast">快速添加</el-button>
-                <el-button @click="addRules"
+                <el-button @click="addRules(state.tooltip.rules)"
                   >编写校验规则
                   <el-tooltip
-                    content="可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>"
+                    :content="state.tooltip.rules"
                     placement="top"
                     raw-content
                   >
@@ -300,9 +296,11 @@
           <div v-if="showHide(['grid', 'card', 'gridChild', 'divider', 'div'])">
             <h3>其他属性</h3>
 
-            <el-button size="small" @click="openAttrDialog"
+            <el-button
+              size="small"
+              @click="openAttrDialog('', state.tooltip.props)"
               >编辑属性
-              <el-tooltip content="可添加当前组件所有prop属性" placement="top">
+              <el-tooltip :content="state.tooltip.props" placement="top">
                 <el-icon>
                   <QuestionFilled />
                 </el-icon>
@@ -363,23 +361,17 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button @click="editFormStyle"
+            <el-button @click="editFormStyle(state.tooltip.css)"
               >编辑表单样式
-              <el-tooltip
-                content="当前表单应用页的样式，类似于.vue文件中的<style scoped>中的样式"
-                placement="top"
-              >
+              <el-tooltip :content="state.tooltip.css" placement="top">
                 <el-icon>
                   <QuestionFilled />
                 </el-icon>
               </el-tooltip>
             </el-button>
-            <el-button @click="editFormDict"
+            <el-button @click="editFormDict(state.tooltip.dict)"
               >设置数据字典
-              <el-tooltip
-                content="数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式：{0:'男',1:'女'}"
-                placement="top"
-              >
+              <el-tooltip :content="state.tooltip.dict" placement="top">
                 <el-icon>
                   <QuestionFilled />
                 </el-icon>
@@ -387,18 +379,37 @@
             </el-button>
           </el-form-item>
           <template v-if="!state.isSearch">
-            <h3>事件处理</h3>
+            <h3>接口数据事件</h3>
             <el-form-item class="event-btn">
-              <el-button @click="eventClick('beforeRequest')"
+              <el-button
+                @click="
+                  eventClick(
+                    'beforeRequest',
+                    '获取表单初始数据前事件，可修改请求参数'
+                  )
+                "
                 >beforeRequest</el-button
               >
-              <el-button @click="eventClick('afterResponse')"
+              <el-button
+                @click="
+                  eventClick(
+                    'afterResponse',
+                    '获取表单初始数据后事件，可对请求返回数据进行处理'
+                  )
+                "
                 >afterResponse</el-button
               >
-              <el-button @click="eventClick('beforeSubmit')"
+              <el-button
+                @click="
+                  eventClick(
+                    'beforeSubmit',
+                    '表单数据提交前事件，可对提交数据进行处理'
+                  )
+                "
                 >beforeSubmit</el-button
               >
-              <el-button @click="eventClick('afterSubmit')"
+              <el-button
+                @click="eventClick('afterSubmit', '表单数据提交成功事件')"
                 >afterSubmit</el-button
               >
             </el-form-item>
@@ -430,7 +441,7 @@
     }
   )
   const emits = defineEmits<{
-    (e: 'openDialog', data: any, type?: any, codeType?: string): void
+    (e: 'openDialog', data: any, type?: any, params?: any): void
     (e: 'update:formData', data: any): void
     (e: 'update:formConfig', data: any): void
   }>()
@@ -1018,7 +1029,14 @@
         label: '自定义方法'
       }
     ], // 自定义校验规则
-    isSearch: route.query.type === 'search'
+    isSearch: route.query.type === 'search',
+    tooltip: {
+      css: '当前表单应用页的样式，类似于.vue文件中的<\style scoped>中的样式</style>',
+      dict: "数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式：{0:'男',1:'女'}",
+      rules:
+        "可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>",
+      props: '可添加当前组件所有prop属性及事件方法'
+    }
   })
   const controlChange = (obj: any, val: any) => {
     // select多选属性，
@@ -1132,9 +1150,9 @@
     }
   }
   // 更多属性弹窗
-  const openAttrDialog = (type?: string) => {
+  const openAttrDialog = (type?: string, tooltip?: string) => {
     let editData = controlData.value.control
-    let codeType = ''
+    let params: any = { title: tooltip }
     const afterResponse = (data: any) => {
       // data经过处理后返回
       return data
@@ -1145,7 +1163,7 @@
         break
       case 'optionsParams': // 选项请求附加参数
         editData = controlData.value.config.params || {}
-        codeType = 'json'
+        params.codeType = 'json'
         break
       case 'optionsResult':
         editData = controlData.value.config.afterResponse || afterResponse
@@ -1170,7 +1188,7 @@
             Object.assign(controlData.value.control, result)
         }
       },
-      codeType
+      params
     )
   }
   // 必填校验
@@ -1189,13 +1207,18 @@
     }
   }
   // 添加校验规则
-  const addRules = () => {
+  const addRules = (tooltip: string) => {
     if (!controlData.value.item?.rules) {
       controlData.value.item.rules = []
     }
-    emits('openDialog', controlData.value.item?.rules, (result: any) => {
-      Object.assign(controlData.value.item.rules, result)
-    })
+    emits(
+      'openDialog',
+      controlData.value.item?.rules,
+      (result: any) => {
+        Object.assign(controlData.value.item.rules, result)
+      },
+      { title: tooltip }
+    )
   }
   // 根据不同类型判断是否显示当前属性
   const showHide = (type: string[], show?: boolean) => {
@@ -1248,11 +1271,17 @@
       controlData.value.customRules.splice(index, 1)
   }
   // 编辑表单样式
-  const editFormStyle = () => {
-    emits('openDialog', '', 'css', 'css')
+  const editFormStyle = (tooltip: string) => {
+    emits('openDialog', '', 'css', {
+      codeType: 'css',
+      title: tooltip
+    })
   }
-  const editFormDict = () => {
-    emits('openDialog', {}, 'dict', 'json')
+  const editFormDict = (tooltip: string) => {
+    emits('openDialog', {}, 'dict', {
+      codeType: 'json',
+      title: tooltip
+    })
   }
   const init = (id?: string) => {
     const formId = id || route.query.formId
@@ -1316,8 +1345,8 @@
   const optionsEvent = (type: string) => {
     openAttrDialog(type)
   }
-  const eventClick = (type: string) => {
-    emits('openDialog', '', type)
+  const eventClick = (type: string, tooltip?: string) => {
+    emits('openDialog', '', type, { title: tooltip })
   }
   init()
 </script>

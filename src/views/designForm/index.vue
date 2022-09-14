@@ -27,11 +27,15 @@
     <el-drawer
       v-model="state.visibleDialog"
       size="60%"
+      :title="state.dialogTitle"
       :direction="state.drawerDirection"
-      custom-class="json-dialog"
+      custom-class="ace-dialog"
       :append-to-body="true"
       :before-close="drawerBeforeClose"
     >
+      <template #header>
+        <div v-html="state.dialogTitle"></div>
+      </template>
       <div v-if="state.visibleDialog" id="editJson"></div>
       <div class="dialog-footer">
         <el-button type="primary" size="small" @click="dialogConfirm">
@@ -104,6 +108,7 @@
     },
     visibleDialog: false,
     dialogType: '',
+    dialogTitle: '',
     codeType: '',
     editor: {},
     loading: false,
@@ -174,7 +179,9 @@
         break
       case 'json':
         // 生成脚本预览
-        dialogOpen(state.formData)
+        dialogOpen(state.formData, '', {
+          title: '可编辑修改或将已生成的脚本粘贴进来'
+        })
         break
       case 'save':
         saveData()
@@ -275,14 +282,17 @@
     store.setActiveKey('')
     store.setControlAttr({})
   }
-  const dialogOpen = (obj: any, type?: any, codeType?: string) => {
+  const dialogOpen = (obj: any, type?: any, params?: any) => {
     // 编辑属性和校验规则时从左边弹出
     state.drawerDirection = type ? 'ltr' : 'rtl'
     state.dialogType = type // 暂存,在窗口关闭时作为条件判断，类型为字符串或callback
-    state.codeType = codeType
+    state.codeType = params?.codeType || ''
+    state.dialogTitle = params?.title ? `提示：${params?.title}` : ''
     state.visibleDialog = true
     let editData =
-      codeType === 'json' ? json2string(obj, true) : objToStringify(obj, true)
+      state.codeType === 'json'
+        ? json2string(obj, true)
+        : objToStringify(obj, true)
     switch (type) {
       case 'css':
         editData = state.formData.config?.style || ''
@@ -304,7 +314,7 @@
         break
     }
     nextTick(() => {
-      state.editor = aceEdit(editData, '', codeType)
+      state.editor = aceEdit(editData, '', state.codeType)
     })
   }
   const drawerBeforeClose = (done: () => void) => {
