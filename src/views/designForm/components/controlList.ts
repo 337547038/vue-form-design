@@ -189,7 +189,7 @@ export default [
         },
         config: {}
         /*template: '', // 组件模板名称
-        component: '' // 根据template注入的组件*/
+                component: '' // 根据template注入的组件*/
       },
       {
         type: 'upload',
@@ -253,6 +253,15 @@ export default [
         control: {},
         config: {},
         item: {} // label标题相关
+      },
+      {
+        type: 'flex',
+        label: '弹性布局',
+        icon: 'flex',
+        list: [],
+        tableData: [], // 值集合
+        control: {},
+        config: {}
       },
       {
         type: 'divider',

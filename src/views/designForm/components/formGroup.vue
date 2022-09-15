@@ -108,6 +108,20 @@
             <form-group :data="element.list" data-type="not-nested" />
           </div>
         </template>
+        <template v-else-if="element.type === 'flex'">
+          <form-group
+            :data="element.list"
+            data-type="not-nested"
+            v-if="state.type === 4"
+          />
+          <flex-box :data="element" :type="state.type" v-else />
+          <el-button
+            style="position: relative; top: -28px; left: 10px"
+            v-if="element.config.add && state.type === 4"
+            size="small"
+            >{{ element.config.add }}</el-button
+          >
+        </template>
         <form-item
           v-else
           :data="element"
@@ -145,6 +159,7 @@
   import FormItem from './formItem.vue'
   import ChildTable from './childTable.vue'
   import Tooltips from './tooltip.vue'
+  import FlexBox from './flexBox.vue'
   import { useDesignFormStore } from '@/store/designForm'
   import type { FormList } from '../types'
   import { constFormOtherData } from './utils'
@@ -182,7 +197,7 @@
   })
 
   const indexType = (type: string) => {
-    const controlType = ['grid', 'table', 'tabs', 'div']
+    const controlType = ['grid', 'table', 'tabs', 'div', 'flex']
     return controlType.includes(type)
   }
   // 删除或复制
@@ -276,31 +291,6 @@
     const value = el.config.linkValue
     const linkResult = el.config.linkResult
     if (key && value && state.type !== 4) {
-      //　多个条件时key和value分别使用,和&隔开，
-      // 带有&分隔时，需要符合所有条件；否则符合其中一个条件即可
-      /*const keySplit = key.split(/,|&/)
-      const valueSplit = value.split(/,|&/)
-      const hasAndSpit = key.indexOf('&') !== -1 || value.indexOf('&') !== -1 // 存在&分隔
-      let pass = false
-      for (let i = 0; i < keySplit.length; i++) {
-        if (hasAndSpit) {
-          pass = true
-          // console.log(keySplit[i])
-          if (
-            (formOtherData.model.value as any)[keySplit[i]] !== valueSplit[i]
-          ) {
-            pass = false
-            break
-          }
-        } else {
-          if (
-            (formOtherData.model.value as any)[keySplit[i]] === valueSplit[i]
-          ) {
-            pass = true
-            break
-          }
-        }
-      }*/
       const Fn = new Function('$', `return (${value})`)
       const pass = Fn(formOtherData.model.value)
       if (linkResult === 'disabled') {

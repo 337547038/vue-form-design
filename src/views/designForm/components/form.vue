@@ -148,7 +148,7 @@
   // 从表单数据里提取表单所需的model
   const forEachGetFormModel = (list: FormList[], obj: any) => {
     list.forEach((item: any) => {
-      if (item.type === 'table') {
+      if (['table', 'flex'].includes(item.type)) {
         obj[item.name] = item.tableData
         if (
           item.config?.transform &&

@@ -469,7 +469,7 @@
         type: 'select',
         options: dataSourceOption.value,
         key: 'formId',
-        hide: isSearch,
+        hide: isSearch || !dataSourceOption.value.length,
         path: 'config'
       },
       { label: '表单标识', value: formData.value.name, key: 'name' },
@@ -594,7 +594,8 @@
             'title',
             'gridChild',
             'div',
-            'inputSlot'
+            'inputSlot',
+            'flex'
           ]
         },
         {
@@ -611,7 +612,8 @@
             'divider',
             'card',
             'div',
-            'inputSlot'
+            'inputSlot',
+            'flex'
           ]
         },
         {
@@ -625,7 +627,8 @@
             'gridChild',
             'divider',
             'div',
-            'inputSlot'
+            'inputSlot',
+            'flex'
           ]
         },
         {
@@ -696,7 +699,29 @@
           value: config.transform,
           path: 'config.transform',
           type: 'switch',
-          vShow: ['checkbox', 'select', 'switch', 'cascader', 'slider', 'table']
+          vShow: [
+            'checkbox',
+            'select',
+            'switch',
+            'cascader',
+            'slider',
+            'table',
+            'flex'
+          ]
+        },
+        {
+          label: '增加按钮文案',
+          value: config.add,
+          path: 'config.add',
+          type: 'text',
+          vShow: ['flex', 'table']
+        },
+        {
+          label: '删除按钮文案',
+          value: config.delete,
+          path: 'config.delete',
+          type: 'text',
+          vShow: ['flex', 'table']
         },
         {
           label: '是否多选',

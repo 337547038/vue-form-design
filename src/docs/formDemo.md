@@ -934,7 +934,7 @@
         ],
         tableData: [],
         control: { border: true },
-        config: {}
+        config: { add: '增加', delete: '删除' }
       }
     ],
     form: {
@@ -1319,6 +1319,99 @@
     console.log(value)
   })*/
   const submitUrl = ref(false) // 表单提交url
+  const formName = ref()
+  const submit = () => {
+    formName.value.validate((valid, fields) => {
+      console.log(valid)
+      console.log(fields) // 校验通过时返回当前表单的值
+      if (valid) {
+        alert('submit')
+      } else {
+        console.log('error submit')
+        return false
+      }
+    })
+  }
+</script>
+
+```
+
+## 布局字段－弹性布局
+
+```vue demo
+<template>
+  <div>
+    <ak-form
+      :formData="formData"
+      ref="formName"
+      :requestUrl="requestUrl"
+      :submitUrl="submitUrl"
+    />
+    <el-button type="primary" @click="submit">提交</el-button>
+  </div>
+</template>
+<script setup>
+  import { ref } from 'vue'
+  const formData = ref({
+    list: [
+      {
+        type: 'flex',
+        list: [
+          {
+            type: 'input',
+            control: { modelValue: '' },
+            config: {},
+            name: 'userName',
+            item: { label: '用户名', showLabel: false },
+            customRules: [
+              { type: 'required', message: '请输入用户名', trigger: 'blur' }
+            ]
+          },
+          {
+            type: 'input',
+            control: { modelValue: '' },
+            config: {},
+            name: 'tel',
+            item: { label: '电话号码', showLabel: false },
+            customRules: [
+              { type: 'required', message: '请输入手机号码', trigger: 'blur' },
+              { type: 'mobile', message: '请输入手机号码', trigger: 'blur' }
+            ]
+          },
+          {
+            type: 'radio',
+            control: { modelValue: '' },
+            options: [
+              { label: '男', value: '1' },
+              { label: '女', value: '2' }
+            ],
+            config: { type: 'fixed', source: 0, request: 'get', sourceFun: '' },
+            name: 'radio1663146936352',
+            item: { label: '单选框组', showLabel: false }
+          }
+        ],
+        tableData: [],
+        control: {},
+        config: { add: '增加', delete: '删除' },
+        name: 'flex1663146822121'
+      }
+    ],
+    form: {
+      labelWidth: '',
+      class: '',
+      size: 'default',
+      name: 'form1663146820436'
+    },
+    config: { title: 'form1663146820436', formId: '' }
+  })
+
+  // 表单控件值改变事件
+  /*provide('AKControlChange', ({key, value}) => {
+    console.log(key)
+    console.log(value)
+  })*/
+  const submitUrl = ref(false) // 表单提交url
+  const requestUrl = ref(false) // 获取表单初始数据
   const formName = ref()
   const submit = () => {
     formName.value.validate((valid, fields) => {

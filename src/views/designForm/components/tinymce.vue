@@ -67,9 +67,10 @@
     }
   }
   // 图片上传
-  const imgUploadFn = (blobInfo: any, progress) =>
+  const imgUploadFn = (blobInfo: any, progress: number) =>
     new Promise((resolve, reject) => {
       // https://www.tiny.cloud/docs/tinymce/6/file-image-upload/#images_upload_handler
+      console.log(progress)
       const params = new FormData()
       params.append('file', blobInfo.blob())
       let options = {}
@@ -80,8 +81,8 @@
       }
       getRequest('upload', params, options)
         .then((res) => {
-          console.log(res)
-          console.log(res.data.path)
+          // console.log(res)
+          // console.log(res.data.path)
           if (res.data.code === 200) {
             resolve(res.data.path) // 上传成功，在成功函数里填入图片路径
             // console.log('[文件上传]', res.data)

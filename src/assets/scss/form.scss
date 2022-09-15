@@ -64,6 +64,12 @@ $mainColor: #66b1ff;
   }
   .gray {color: #999}
   > .drag {border: 0 !important;}
+  .group-flex {
+    .flex-group {display: flex;justify-content: space-between;
+      button {margin-left: 10px}
+    }
+    .flex-item {flex: 2;}
+  }
 }
 .sidebar-tools {width: 300px;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;bottom: 0; height: calc(100vh - 80px);
   .form {
@@ -76,8 +82,8 @@ $mainColor: #66b1ff;
   .option-radio {
     > label {margin-right: 8px}
   }
-  .event-btn{
-    button{margin: 0 12px 5px 0}
+  .event-btn {
+    button {margin: 0 12px 5px 0}
   }
 }
 #editJson, #editJsonCopy {width: 100%;height: calc(100vh - 65px)}
@@ -136,7 +142,7 @@ $mainColor: #66b1ff;
   }
   .main-table {padding: 0 20px;
     .add-form {min-height: auto;display: flex;
-      > .drag {height: auto;min-height: auto!important;}
+      > .drag {height: auto;min-height: auto !important;}
     }
   }
   .table-tag {

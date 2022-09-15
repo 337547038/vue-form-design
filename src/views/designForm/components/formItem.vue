@@ -2,7 +2,7 @@
 <template>
   <el-form-item
     v-bind="data.item"
-    :prop="tProps || data.name"
+    :prop="tProp || data.name"
     :class="config.className"
     :rules="itemRules"
     :label="getLabel(data.item)"
@@ -199,7 +199,7 @@
     defineProps<{
       data: FormList
       modelValue?: null
-      tProps?: string // 子表时的form-item的prop值，用于子表校验用
+      tProp?: string // 子表时的form-item的prop值，用于子表校验用
     }>(),
     {}
   )
@@ -475,8 +475,8 @@
     () => setValueEvent.value,
     (val: any) => {
       // console.log(val)
-      // !props.tProps 的这里不单独处理
-      if (val && !props.tProps && val[props.data.name] !== undefined) {
+      // !props.tProp 的这里不单独处理
+      if (val && !props.tProp && val[props.data.name] !== undefined) {
         value.value = transformValue(val[props.data.name])
         // 上传默认值需要使用fileList参数
         if (props.data.type === 'upload') {
