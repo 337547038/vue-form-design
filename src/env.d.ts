@@ -18,8 +18,6 @@ declare module 'vue-router'
 declare module 'vue'
 declare module 'clipboard'
 declare module 'vuedraggable'
-declare module '@tinymce/tinymce-vue'
-declare module 'tinymce/tinymce'
 /*
 declare module 'vuex' {
   type StoreStateType = typeof store.state

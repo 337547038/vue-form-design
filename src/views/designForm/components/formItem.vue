@@ -82,8 +82,8 @@
           v-for="(item, index) in options"
           :key="index"
           :label="formatToString(item.value)"
-          >{{ item.label }}</el-checkbox
-        >
+          >{{ item.label }}
+        </el-checkbox>
       </el-checkbox-group>
       <AKSelect
         v-if="
@@ -132,13 +132,15 @@
             'timePicker',
             'datePicker',
             'cascader',
-            'component'
+            'component',
+            'treeSelect'
           ].includes(data.type)
         "
         :is="currentComponent"
         v-bind="control"
         :disabled="editDisabled"
         :options="options"
+        :filter-method="filterMethod"
         v-model="value"
       />
       <template v-if="data.type === 'tinymce'">
@@ -325,11 +327,10 @@
             // 如有需要可从sourceFun里提取url参数放入到newData中
           }
           // 处理请求前的数据
-          const newData = Object.assign(
-            {},
-            data || {},
-            config.value.params || {}
-          )
+          let newData = Object.assign({}, data || {}, config.value.params || {})
+          if (config.value.request === 'get') {
+            newData = { params: newData }
+          }
           // request.get('url',data)
           ;(axios as any)
             [config.value.request](sourceFun, newData)
@@ -341,12 +342,20 @@
                 if (typeof config.value.afterResponse === 'function') {
                   result = config.value.afterResponse(result)
                 }
-                options.value = result
+                if (props.data.type === 'treeSelect') {
+                  control.value.data = result
+                } else {
+                  options.value = result
+                }
                 window.sessionStorage.setItem(key, JSON.stringify(result)) //缓存，例如子表添加时不用每添加一行就请求一次
               }
             })
             .catch((res: any) => {
-              options.value = []
+              if (props.data.type === 'treeSelect') {
+                control.value.data = []
+              } else {
+                options.value = []
+              }
               console.log(res)
             })
         }
@@ -512,7 +521,12 @@
       const opt = val[props.data.name]
       // 子表内的需要注意下，只有在子表有记录时才生效
       if (val && opt !== undefined) {
-        options.value = formatData(opt)
+        if (props.data.type === 'treeSelect') {
+          // 树结构的参数为data
+          control.value.data = formatData(opt)
+        } else {
+          options.value = formatData(opt)
+        }
       }
     }
   )
@@ -580,6 +594,15 @@
       })
   }
   /****input slot处理结束***/
+  // treeSelect
+  const filterMethod = (val: string) => {
+    if (props.data.type === 'treeSelect') {
+      // 请求参数名，可使用config.queryName传进来
+      const queryName = config.value.queryName || 'name'
+      control.value.filterMethod && control.value.filterMethod(val)
+      getAxiosOptions({ [queryName]: val })
+    }
+  }
   onMounted(() => {
     getAxiosOptions()
   })

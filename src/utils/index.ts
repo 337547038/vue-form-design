@@ -40,3 +40,14 @@ export const dateFormatting = (time: any, cFormat?: string) => {
   })
   return timeStr
 }
+// 动态远程加载script脚本
+export function loadScript(src: string) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.onload = resolve
+    script.onerror = reject
+    script.src = src
+    document.head.appendChild(script)
+  })
+}

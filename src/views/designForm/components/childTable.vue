@@ -18,7 +18,7 @@
           <div v-if="type === 3">{{ getText(scope.row[item.name]) }}</div>
           <div v-else>
             <form-item
-              :tProps="`${data.name}.${scope.$index}.${item.name}`"
+              :tProp="`${data.name}.${scope.$index}.${item.name}`"
               v-model="scope.row[item.name]"
               :data="item"
             />
@@ -29,14 +29,22 @@
           <Tooltip :content="item.help" />
         </template>
       </el-table-column>
-      <el-table-column prop="del" label="操作" v-if="type === 1">
+      <el-table-column
+        prop="del"
+        label="操作"
+        v-if="type === 1 && data.config.delete"
+      >
         <template #default="scope">
-          <el-button link @click="delColumn(scope.$index)">删除 </el-button>
+          <el-button link @click="delColumn(scope.$index)"
+            >{{ data.config.delete }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div class="table-btn" v-if="type === 1">
-      <el-button size="small" @click="addColumn">增加</el-button>
+    <div class="table-btn" v-if="type === 1 && data.config.add">
+      <el-button size="small" @click="addColumn">{{
+        data.config.add
+      }}</el-button>
     </div>
   </div>
 </template>

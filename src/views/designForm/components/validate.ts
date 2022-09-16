@@ -43,11 +43,47 @@ const validateConfig = [
     message: '请输入数字'
   },
   {
+    type: 'money',
+    label: '金额',
+    regExp: /^[0-9]+\.?[0-9]{0,2}$/,
+    message: '请输入正确的金额，最多两位小数'
+  },
+  {
     type: 'card',
     label: '身份证',
     regExp:
       /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/,
     message: '请输入身份证号'
+  },
+  {
+    type: 'cn',
+    label: '中文',
+    regExp: /[\u4e00-\u9fa5]+/,
+    message: '请输入中文'
+  },
+  {
+    type: 'numberLetter',
+    label: '数字字母',
+    regExp: /[0-9a-zA-Z]$/,
+    message: '请输入数字或字母'
+  },
+  {
+    type: 'url',
+    label: '网址',
+    regExp: /^https?:\/\/((.)+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?.(\?)?)*)*$/,
+    message: '请输入网址'
+  },
+  {
+    type: 'longitude',
+    label: '经度',
+    regExp: /^[\-+]?(0?\d{1,2}\.\d{1,10}|1[0-7]?\d\.\d{1,10}|180\.0{1,10})$/,
+    message: '请输入正确的经度'
+  },
+  {
+    type: 'latitude',
+    label: '纬度',
+    regExp: /^[\-+]?([0-8]?\d{1}\.\d{1,10}|90\.0{1,10})$/,
+    message: '请输入正确的纬度'
   }
 ]
 export default validateConfig

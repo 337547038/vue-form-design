@@ -46,7 +46,6 @@ yarn install
 yarn dev
 ```
 
-
 浏览器进入 http://localhost:3000 开始创建表单
 
 ![](./img/img1.png)
@@ -65,6 +64,35 @@ yarn dev
 
 复制`/public/staic`， 在index.html引入，可参考`/index.html`引入方式；
 
-复制`/src/api`、`/src/store/designForm`、`/src/utils`、`/src/viesw/designForm`，引入方式可参考`/src/main.ts`
+复制`/src/api`、`/src/store/designForm`、`/src/utils`、`/src/viesw/designForm`，引入方式可参考`/src/main.ts`，如：
 
+```javascript
+import AKDesignForm from './views/designForm/index'
+
+const pinia = createPinia()
+const app = createApp(App)
+app.use(pinia).use(AKDesignForm).mount('#app')
+```
+
+最后做好路由指向，如:
+
+```javascript
+[
+  {
+    path: '/designform', // 主设计页
+    name: 'designform',
+    component: () => import('../views/designForm/index.vue')
+  },
+  {
+    path:'/designform/table', // 列表设计页
+    name:'designformTable',
+    component: () => import('../views/designForm/table.vue')
+  },
+  {
+    // ... 其他
+  }
+]
+```
+
+> 如果是新项目，建议在此框架基础上开发即可
 

@@ -147,6 +147,17 @@ export default [
         config: {}
       },
       {
+        type: 'treeSelect',
+        label: '树形控件',
+        icon: 'tree2',
+        control: {
+          modelValue: '',
+          data: [],
+          renderAfterExpand: false
+        },
+        config: {}
+      },
+      {
         type: 'txt',
         label: '文字',
         icon: 'text',

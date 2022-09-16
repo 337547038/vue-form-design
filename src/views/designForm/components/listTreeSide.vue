@@ -1,35 +1,44 @@
 <template>
-  <el-input v-model="filterText" placeholder="Filter keyword" />
-
-  <el-tree
-    ref="treeRef"
-    class="filter-tree"
-    :data="data"
-    :props="defaultProps"
-    default-expand-all
-    :filter-node-method="filterNode"
-  />
+  <div class="tree-sidebar">
+    <el-input v-model="filterText" placeholder="输入关键字进行过滤" />
+    <el-tree
+      ref="treeRef"
+      class="filter-tree"
+      :data="data"
+      :props="defaultProps"
+      default-expand-all
+      :filter-node-method="filterNode"
+    />
+  </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
   import { ref, watch } from 'vue'
-  import { ElTree } from 'element-plus'
-
   interface Tree {
     id: number
     label: string
     children?: Tree[]
   }
-
-  const filterText = ref('')
+  const props = withDefaults(
+    defineProps<{
+      data: Tree[]
+    }>(),
+    {
+      data: () => {
+        return []
+      }
+    }
+  )
+  const emits = defineEmits<{
+    (e: 'update:modelValue', row: any): void
+  }>()
   const treeRef = ref()
-
+  const filterText = ref('')
   const defaultProps = {
     children: 'children',
     label: 'label'
   }
-
-  watch(filterText, (val) => {
+  watch(filterText, (val: string) => {
     treeRef.value!.filter(val)
   })
 
@@ -37,7 +46,6 @@
     if (!value) return true
     return data.label.includes(value)
   }
-
   const data: Tree[] = [
     {
       id: 1,

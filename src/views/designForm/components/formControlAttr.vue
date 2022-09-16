@@ -67,7 +67,8 @@
                       'timePicker',
                       'colorPicker',
                       'inputNumber',
-                      'rate'
+                      'rate',
+                      'treeSelect'
                     ],
                     true
                   )
@@ -103,7 +104,14 @@
           <div
             v-if="
               showHide(
-                ['radio', 'select', 'checkbox', 'cascader', 'inputSlot'],
+                [
+                  'radio',
+                  'select',
+                  'checkbox',
+                  'cascader',
+                  'inputSlot',
+                  'treeSelect'
+                ],
                 true
               )
             "
@@ -388,8 +396,8 @@
                     '获取表单初始数据前事件，可修改请求参数'
                   )
                 "
-                >beforeRequest</el-button
-              >
+                >beforeRequest
+              </el-button>
               <el-button
                 @click="
                   eventClick(
@@ -397,8 +405,8 @@
                     '获取表单初始数据后事件，可对请求返回数据进行处理'
                   )
                 "
-                >afterResponse</el-button
-              >
+                >afterResponse
+              </el-button>
               <el-button
                 @click="
                   eventClick(
@@ -406,12 +414,12 @@
                     '表单数据提交前事件，可对提交数据进行处理'
                   )
                 "
-                >beforeSubmit</el-button
-              >
+                >beforeSubmit
+              </el-button>
               <el-button
                 @click="eventClick('afterSubmit', '表单数据提交成功事件')"
-                >afterSubmit</el-button
-              >
+                >afterSubmit
+              </el-button>
             </el-form-item>
           </template>
         </el-form>
@@ -580,7 +588,8 @@
             'number',
             'datePicker',
             'tinymce',
-            'timePicker'
+            'timePicker',
+            'treeSelect'
           ]
         },
         {
@@ -706,7 +715,8 @@
             'cascader',
             'slider',
             'table',
-            'flex'
+            'flex',
+            'treeSelect'
           ]
         },
         {
@@ -728,7 +738,7 @@
           value: control.multiple,
           path: 'control.multiple',
           type: 'switch',
-          vShow: ['select'],
+          vShow: ['select', 'treeSelect'],
           eventName: 'selectMultiple'
         },
         {
@@ -749,7 +759,8 @@
             'cascader',
             'upload',
             'rate',
-            'tinymce'
+            'tinymce',
+            'treeSelect'
           ],
           vIf: state.isSearch
         },
@@ -769,7 +780,8 @@
             'switch',
             'number',
             'cascader',
-            'upload'
+            'upload',
+            'treeSelect'
           ],
           vIf: state.isSearch
         },
@@ -1160,6 +1172,8 @@
     if (controlData.value.type === 'cascader') {
       // 级联时打开弹窗口
       openAttrDialog('cascader')
+    } else if (controlData.value.type === 'treeSelect') {
+      openAttrDialog('treeSelect', '编辑组件下拉选项数据')
     } else {
       if (type === 'tabs') {
         controlData.value.columns.push({
@@ -1183,6 +1197,9 @@
       return data
     }
     switch (type) {
+      case 'treeSelect':
+        editData = controlData.value.control.data
+        break
       case 'cascader':
         editData = controlData.value.options
         break
@@ -1199,6 +1216,9 @@
       editData,
       (result: any) => {
         switch (type) {
+          case 'treeSelect':
+            controlData.value.control.data = result
+            break
           case 'cascader':
             controlData.value.options = result
             break
