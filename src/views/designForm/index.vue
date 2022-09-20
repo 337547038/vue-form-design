@@ -76,7 +76,7 @@
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { useRoute, useRouter } from 'vue-router'
-  import { aceEdit } from './components/utils'
+  import { aceEdit, afterResponse, beforeRequest } from './components/utils'
   import {
     json2string,
     objToStringify,
@@ -303,13 +303,12 @@
         break
       case 'beforeRequest':
       case 'beforeSubmit':
+        const beforeData = state.formData.events || {}
+        editData = objToStringify(beforeData[type] || beforeRequest, true)
+        break
       case 'afterResponse':
       case 'afterSubmit':
         const newData = state.formData.events || {}
-        const afterResponse = (data: any) => {
-          // data经过处理后返回
-          return data
-        }
         editData = objToStringify(newData[type] || afterResponse, true)
         break
     }

@@ -7,6 +7,7 @@
 表单控件唯一标识，即表单控件元素的name值。选择了数据源创建的表单，可通过接口返回的可选字段来选择，表单提交保存编辑时使用此值和对应的填写值提交表单。
 
 ## 帮助信息
+
 用于对当前字段加以说明提示的帮助信息，会在label后面显示一个小问号，鼠标滑过提示。
 
 ## 转换格式化值
@@ -38,12 +39,11 @@
 
 ![](./img/img8.png)
 
-
 ## 联动条件
 
 当表单组件的值改变时，其他组件根据当前值作显示或隐藏显示；多个条件可以`||`或`&&`连接，`$`为当前表单的值，即`model`；当条件满足时，设置了关联条件的组件将会根据设定的条件来显示或隐藏。
 
->注意：区分字符串数字和纯数字
+> 注意：区分字符串数字和纯数字
 
 ## 联动结果
 
@@ -73,12 +73,13 @@
 
 可通过配置`请求附加参数`来添加指定请求参数配置，同时可使用`请求结果处理事件`编辑方法对获取到的数据进行处理，最后再`return`回去（注意：必须要return）。
 
-当选择为数据源时，`数据源接口URL sourceFun`可带一个动态参数，如`/api?id=${key}`，其中`${key}`会被转换为数据列表中`name=key`的值。并且`name=key`的组件中，当modelValue发生改变时会重新请求
+当选择为数据源时，`数据源接口URL sourceFun`可带一个动态参数，如`/api?id=${key}`，其中`${key}`会被转换为数据列表中`name=key`的值。并且`name=key`
+的组件中，当modelValue发生改变时会重新请求；
 
 ```javascript
 const formDataList = [
   {
-    name:'select1',
+    name: 'select1',
     type: 'select',
     control: {modelValue: 'v1', appendToBody: true},
     ...
@@ -87,12 +88,15 @@ const formDataList = [
     name: 'select2',
     type: 'select',
     control: {modelValue: '', appendToBody: true},
-    options: [
-    ],
+    options: [],
     config: {
       type: 'async',
       source: 0, // 0数据源 1 方法函数 2接口字典
       request: 'get',
+      beforeRequest: (data, route) => {
+        data.id = route.query.id
+        return data
+      },
       sourceFun: '/api?id=${select1}'  // => 会查找当前数据中name=select1的组件，取modelValue的值，即/api?id=v1
     },
     item: {label: '下拉选择框', showLabel: false}

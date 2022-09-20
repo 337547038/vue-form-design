@@ -229,7 +229,7 @@
       { label: '序号', prop: '__index', type: 'index', width: '100px' },
       { prop: 'text', label: '文本框', help: '' },
       {
-        prop: 'select',
+        prop: 'radio',
         label: '性别',
         config: {
           tagList: {
@@ -261,5 +261,65 @@
   }
 </script>
 
+```
+
+## 左侧栏树选择
+
+```vue demo
+<template>
+  <div class="form-list-page">
+    <ak-list
+      ref="tableListEl"
+      :requestUrl="requestUrl"
+      :searchData="searchData"
+      :tableData="tableData"
+    >
+      <!--<template #__control="scope">
+        <el-button link @click="btnClick(scope.row.id,'show')">查看</el-button>
+        <el-button link @click="btnClick(scope.row.id,'edit')">编辑</el-button>
+        <el-button link @click="btnClick(scope.row.id,'del')">删除</el-button>
+      </template>-->
+    </ak-list>
+  </div>
+</template>
+
+<script setup>
+  import { ref } from 'vue'
+  const tableData = ref({
+    tableProps: {},
+    columns: [
+      { label: '勾选', prop: '__selection', type: 'selection', width: '100px' },
+      { label: '序号', prop: '__index', type: 'index', width: '100px' },
+      { prop: 'text', label: '文本框', help: '' },
+      { label: '操作', prop: '__control' }
+    ],
+    controlBtn: [
+      { label: '新增', key: 'add', type: 'primary' },
+      { label: '删除', key: 'del' }
+    ],
+    tree: {
+      show: true,
+      name: 'tree',
+      request: 'get',
+      sourceFun: '/getTree',
+      beforeRequest: (data, route) => {
+        return data
+      }
+    }
+  })
+  const searchData = ref({}) // 筛选表单
+  const requestUrl = ref('getContentList')
+  /*const btnClick = (id, type) => {
+    switch (type) {
+      case 'show':
+        break
+      case 'edit':
+        break
+      case 'del':
+        // tableListEl.value.getListData() // 调用组件内部方法重新拉数据
+        break
+    }
+  }*/
+</script>
 
 ```

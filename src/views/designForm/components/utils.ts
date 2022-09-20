@@ -35,6 +35,15 @@ export const formatToString = (val: any) => {
     return val
   }
 }
+// 定义两个空方法，用于在编辑事件时作为默认值
+// eslint-disable-next-line
+export const beforeRequest = (data: any, route: any) => {
+  // data经过处理后返回
+  return data
+}
+export const afterResponse = (data: any) => {
+  return data
+}
 
 // provide 方法定义的key
 const prefix = 'AK'

@@ -207,7 +207,8 @@
                 </el-form-item>
                 <template v-if="controlData.config.source === 0">
                   <el-form-item>
-                    <el-button @click="optionsEvent('optionsParams')"
+                    <el-button
+                      @click="optionsEvent('optionsParams', '请求前处理事件')"
                       >请求附加参数
                     </el-button>
                     <el-button @click="optionsEvent('optionsResult')"
@@ -435,7 +436,7 @@
   import { useDesignFormStore } from '@/store/designForm'
   import validate from './validate'
   import { ElMessage } from 'element-plus'
-  import { formatNumber } from './utils'
+  import { beforeRequest, afterResponse, formatNumber } from './utils'
 
   const props = withDefaults(
     defineProps<{
@@ -1192,10 +1193,6 @@
   const openAttrDialog = (type?: string, tooltip?: string) => {
     let editData = controlData.value.control
     let params: any = { title: tooltip }
-    const afterResponse = (data: any) => {
-      // data经过处理后返回
-      return data
-    }
     switch (type) {
       case 'treeSelect':
         editData = controlData.value.control.data
@@ -1204,8 +1201,8 @@
         editData = controlData.value.options
         break
       case 'optionsParams': // 选项请求附加参数
-        editData = controlData.value.config.params || {}
-        params.codeType = 'json'
+        editData = controlData.value.config.beforeRequest || beforeRequest
+        // params.codeType = 'json'
         break
       case 'optionsResult':
         editData = controlData.value.config.afterResponse || afterResponse
@@ -1387,8 +1384,8 @@
     }
   }
   // options动态选项数据源请求时
-  const optionsEvent = (type: string) => {
-    openAttrDialog(type)
+  const optionsEvent = (type: string, tooltip?: string) => {
+    openAttrDialog(type, tooltip)
   }
   const eventClick = (type: string, tooltip?: string) => {
     emits('openDialog', '', type, { title: tooltip })

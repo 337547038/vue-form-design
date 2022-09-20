@@ -151,7 +151,9 @@ $mainColor: #66b1ff;
     }
   }
 }
-.table-list-comm {
+.table-list-comm {display: flex;justify-content: space-between;
+  .tree-sidebar{width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px}
+  .table-list{flex: 2}
   .table-main {margin-bottom: 20px}
   .table-search {position: relative;
     .search-form {}

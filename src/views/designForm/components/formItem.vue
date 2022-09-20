@@ -196,6 +196,7 @@
   } from './utils'
   import AKSelect from './select.vue'
   import { uploadUrl } from '@/api'
+  import { useRoute } from 'vue-router'
 
   const props = withDefaults(
     defineProps<{
@@ -208,6 +209,7 @@
   const emits = defineEmits<{
     (e: 'update:modelValue', val: string): void
   }>()
+  const route = useRoute()
   // const store = useDesignFormStore()
   const injectData = inject(constFormOtherData, {}) as any
   const type = computed(() => {
@@ -326,8 +328,22 @@
             sourceFun = sourceFun.replace(string, val)
             // 如有需要可从sourceFun里提取url参数放入到newData中
           }
+          //let queryParams = config.value.params || {}
+          // 转换路由参数{query:'$route.query.id'}将字符串转为路由实际参数
+          /*if (Object.keys(queryParams)) {
+            for (const key in queryParams) {
+              if (queryParams[key].indexOf('$route.query.') === 0) {
+                const query = queryParams[key].substring(13)
+                queryParams[key] = route.query[query]
+              }
+            }
+          }*/
           // 处理请求前的数据
-          let newData = Object.assign({}, data || {}, config.value.params || {})
+          //let newData = Object.assign({}, data || {}, queryParams)
+          let newData = data || {}
+          if (typeof config.value.beforeRequest === 'function') {
+            newData = config.value.beforeRequest(newData, route)
+          }
           if (config.value.request === 'get') {
             newData = { params: newData }
           }

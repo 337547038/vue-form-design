@@ -334,10 +334,10 @@
       }
       // 同时可使用props或是events里的事件，根据使用使用其中一种即可
       if (typeof props.formData.events?.beforeRequest === 'function') {
-        prams = props.formData.events.beforeRequest(prams)
+        prams = props.formData.events.beforeRequest(prams, route)
       }
       if (typeof props.beforeRequest === 'function') {
-        prams = props.beforeRequest(prams)
+        prams = props.beforeRequest(prams, route)
       }
       getRequest(props.requestUrl as string, prams)
         .then((res) => {
@@ -392,10 +392,10 @@
             ...fields
           }
           if (typeof props.formData.events?.beforeSubmit === 'function') {
-            params = props.formData.events.beforeSubmit(params)
+            params = props.formData.events.beforeSubmit(params, route)
           }
           if (typeof props.beforeSubmit === 'function') {
-            params = props.beforeSubmit(params)
+            params = props.beforeSubmit(params, route)
           }
           // 提交保存表单
           getRequest(props.submitUrl as string, params)

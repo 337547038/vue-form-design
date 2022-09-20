@@ -15,21 +15,21 @@
 
 ### Props
 
-| 参数            | 类型             | 说明                                                     |
-|---------------|----------------|--------------------------------------------------------|
-| formData      | object         | 设计的生成表单数据                                              |
-| type          | number/1       | 表单展示模式，1新增；2查看（表单模式） ；3查看； 4设计                         |
-| isEdit        | boolean/false  | 编辑状态，type=1新增模式下有编辑状态，主要用于控制编辑模式下某些字段的禁用状态，即可新增但不能修改   |
-| disabled      | boolean/false  | 表单禁用模式，类似于表单模式查看                                       |
-| requestUrl    | string/boolean | 表单编辑初始数据加载，默认`getFormContent`。适用于导出vue文件               |
-| beforeRequest | function       | 请求编辑数据前参数处理方法，可对请求参数处理，`requestUrl`为`true`时。适用于导出vue文件 |
-| afterResponse | function       | 请求编辑数据完成后数据处理方法，`requestUrl`为`true`时。适用于导出vue文件        |
-| submitUrl     | string/boolean | 表单提交保存接口，类似于`requestUrl`，在配置有表单提交按钮时有效。适用于导出vue文件      |
-| beforeSubmit  | function       | 表单提交前数据处理，仅在`submitUrl`为`true`时。适用于导出vue文件             |
-| afterSubmit   | function       | 表单提交成功处理方法。适用于导出vue文件                                  |
-| value         | object         | 表单初始值，同setValue                                        |
-| options       | object         | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                 |
-| dict          | object         | 用于匹配的字典数据，一般不设置，从接口获取                                  |
+| 参数            | 类型                      | 说明                                                     |
+|---------------|-------------------------|--------------------------------------------------------|
+| formData      | object                  | 设计的生成表单数据                                              |
+| type          | number/1                | 表单展示模式，1新增；2查看（表单模式） ；3查看； 4设计                         |
+| isEdit        | boolean/false           | 编辑状态，type=1新增模式下有编辑状态，主要用于控制编辑模式下某些字段的禁用状态，即可新增但不能修改   |
+| disabled      | boolean/false           | 表单禁用模式，类似于表单模式查看                                       |
+| requestUrl    | string/boolean          | 表单编辑初始数据加载，默认`getFormContent`。适用于导出vue文件               |
+| beforeRequest | function (params,route) | 请求编辑数据前参数处理方法，可对请求参数处理，`requestUrl`为`true`时。适用于导出vue文件 |
+| afterResponse | function                | 请求编辑数据完成后数据处理方法，`requestUrl`为`true`时。适用于导出vue文件        |
+| submitUrl     | string/boolean          | 表单提交保存接口，类似于`requestUrl`，在配置有表单提交按钮时有效。适用于导出vue文件      |
+| beforeSubmit  | function (params,route) | 表单提交前数据处理，仅在`submitUrl`为`true`时。适用于导出vue文件             |
+| afterSubmit   | function                | 表单提交成功处理方法。适用于导出vue文件                                  |
+| value         | object                  | 表单初始值，同setValue                                        |
+| options       | object                  | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                 |
+| dict          | object                  | 用于匹配的字典数据，一般不设置，从接口获取                                  |
 
 ### Methods
 

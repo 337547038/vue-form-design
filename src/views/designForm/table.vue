@@ -172,6 +172,14 @@
                 <el-input v-model="state.formId" placeholder="请输入数据源Id" />
               </el-form-item>
             </template>
+            <el-form-item label="开启侧栏树">
+              <el-switch v-model="state.treeData.show" @change="treeSwitch" />
+            </el-form-item>
+            <el-form-item v-show="state.treeData.show">
+              <el-button @click="editOpenDrawer('tree')"
+                >编辑侧栏树属性
+              </el-button>
+            </el-form-item>
             <el-form-item class="event-btn">
               <el-button @click="editOpenDrawer('tableConfig')"
                 >编辑表格属性
@@ -188,11 +196,11 @@
                 </el-tooltip>
               </el-button>
               <el-button @click="editOpenDrawer('beforeRequest')"
-                >beforeRequest</el-button
-              >
+                >beforeRequest
+              </el-button>
               <el-button @click="editOpenDrawer('afterResponse')"
-                >afterResponse</el-button
-              >
+                >afterResponse
+              </el-button>
             </el-form-item>
           </el-tab-pane>
         </el-tabs>
@@ -202,10 +210,13 @@
       v-model="state.visibleDialog"
       size="60%"
       :direction="state.direction"
-      custom-class="json-dialog"
+      custom-class="ace-dialog"
       :append-to-body="true"
       :before-close="drawerBeforeClose"
     >
+      <template #header>
+        <div v-html="state.dialogTitle"></div>
+      </template>
       <div v-if="state.visibleDialog" id="editJson"></div>
       <div class="dialog-footer">
         <el-button type="primary" size="small" @click="dialogConfirm">
@@ -232,7 +243,7 @@
   } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import VueFile from './components/vueFile.vue'
-  import { aceEdit } from './components/utils'
+  import { aceEdit, afterResponse, beforeRequest } from './components/utils'
   import { ElMessage } from 'element-plus'
   import Sortable from 'sortablejs'
   import {
@@ -293,7 +304,9 @@
     name: '',
     formId: '',
     dict: {},
-    searchData: {}
+    searchData: {},
+    dialogTitle: '',
+    treeData: {} // 左侧树相关
   })
   const excludeType = ['txt', 'title', 'table', 'component', 'upload']
   const filterFiled = (obj: any) => {
@@ -349,11 +362,14 @@
     }
   }
   // 打开
-  const dialogOpen = (obj: any, direction?: string, type?: string) => {
-    state.direction = direction || 'rtl'
+  const dialogOpen = (obj: any, params: any = {}) => {
+    state.direction = params.direction || 'rtl'
     state.visibleDialog = true
+    state.dialogTitle = params.title
     const editData =
-      type === 'dict' ? json2string(obj, true) : objToStringify(obj, true)
+      params.type === 'dict'
+        ? json2string(obj, true)
+        : objToStringify(obj, true)
     nextTick(() => {
       state.editor = aceEdit(editData)
     })
@@ -379,6 +395,9 @@
             state.tableData.events = {}
           }
           state.tableData.events[state.editIndex] = val
+          break
+        case 'tree':
+          state.tableData.tree = val
           break
       }
       if (state.editIndex !== '') {
@@ -436,10 +455,10 @@
     state.editIndex = type
     switch (type) {
       case 'dict':
-        dialogOpen(state.dict || {}, 'ltr', type)
+        dialogOpen(state.dict || {}, { direction: 'ltr', type: type })
         break
       case 'tableConfig':
-        dialogOpen(state.tableData.tableProps, 'ltr')
+        dialogOpen(state.tableData.tableProps, { direction: 'ltr' })
         break
       case 'columns':
         dialogOpen(state.tableData.columns)
@@ -447,11 +466,20 @@
       case 'beforeRequest':
       case 'afterResponse':
         const newData = state.tableData.events || {}
-        const afterResponse = (data: any) => {
-          // data经过处理后返回
-          return data
+        const fn = type === 'beforeRequest' ? beforeRequest : afterResponse
+        dialogOpen(newData[type] || fn, { direction: 'ltr' })
+        break
+      case 'tree':
+        let tree = state.tableData.tree || {}
+        if (Object.keys(tree).length === 1) {
+          tree = {
+            show: true,
+            name: '唯一标识', // 唯一标识
+            request: 'post',
+            sourceFun: '请求url'
+          }
         }
-        dialogOpen(newData[type] || afterResponse, 'ltr')
+        dialogOpen(tree, { direction: 'ltr', title: '更多参数详见ak-list组件' })
         break
     }
   }
@@ -524,6 +552,7 @@
           state.tableData.controlBtn?.forEach((item: any) => {
             state.controlBtnGroup.push(item.key || item.label)
           })
+          state.treeData = state.tableData?.tree || {}
           state.dict = string2json(result.dict)
         }
       })
@@ -569,6 +598,13 @@
   const objectMerge = () => {
     // 将数据合并
     Object.assign(state.attrObj, { config: state.config })
+  }
+  // 侧栏树
+  const treeSwitch = (val: boolean) => {
+    if (!state.tableData.tree) {
+      state.tableData.tree = {}
+    }
+    state.tableData.tree.show = val
   }
   onMounted(() => {
     nextTick(() => {

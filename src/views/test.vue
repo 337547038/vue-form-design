@@ -1,91 +1,55 @@
 <template>
-  <el-input v-model="filterText" placeholder="Filter keyword" />
-
-  <el-tree
-    ref="treeRef"
-    class="filter-tree"
-    :data="data"
-    :props="defaultProps"
-    default-expand-all
-    :filter-node-method="filterNode"
-  />
+  <div class="form-list-page">
+    <ak-list
+      ref="tableListEl"
+      :requestUrl="requestUrl"
+      :searchData="searchData"
+      :tableData="tableData"
+    >
+      <!--<template #__control="scope">
+        <el-button link @click="btnClick(scope.row.id,'show')">查看</el-button>
+        <el-button link @click="btnClick(scope.row.id,'edit')">编辑</el-button>
+        <el-button link @click="btnClick(scope.row.id,'del')">删除</el-button>
+      </template>-->
+    </ak-list>
+  </div>
 </template>
 
-<script lang="ts" setup>
-  import { ref, watch } from 'vue'
-  import { ElTree } from 'element-plus'
-
-  interface Tree {
-    id: number
-    label: string
-    children?: Tree[]
-  }
-
-  const filterText = ref('')
-  const treeRef = ref()
-
-  const defaultProps = {
-    children: 'children',
-    label: 'label'
-  }
-
-  watch(filterText, (val) => {
-    treeRef.value!.filter(val)
-  })
-
-  const filterNode = (value: string, data: Tree) => {
-    if (!value) return true
-    return data.label.includes(value)
-  }
-
-  const data: Tree[] = [
-    {
-      id: 1,
-      label: 'Level one 1',
-      children: [
-        {
-          id: 4,
-          label: 'Level two 1-1',
-          children: [
-            {
-              id: 9,
-              label: 'Level three 1-1-1'
-            },
-            {
-              id: 10,
-              label: 'Level three 1-1-2'
-            }
-          ]
-        }
-      ]
-    },
-    {
-      id: 2,
-      label: 'Level one 2',
-      children: [
-        {
-          id: 5,
-          label: 'Level two 2-1'
-        },
-        {
-          id: 6,
-          label: 'Level two 2-2'
-        }
-      ]
-    },
-    {
-      id: 3,
-      label: 'Level one 3',
-      children: [
-        {
-          id: 7,
-          label: 'Level two 3-1'
-        },
-        {
-          id: 8,
-          label: 'Level two 3-2'
-        }
-      ]
+<script setup>
+  import { ref } from 'vue'
+  const tableData = ref({
+    tableProps: {},
+    columns: [
+      { label: '勾选', prop: '__selection', type: 'selection', width: '100px' },
+      { label: '序号', prop: '__index', type: 'index', width: '100px' },
+      { prop: 'text', label: '文本框', help: '' },
+      { label: '操作', prop: '__control' }
+    ],
+    controlBtn: [
+      { label: '新增', key: 'add', type: 'primary' },
+      { label: '删除', key: 'del' }
+    ],
+    tree: {
+      show: true,
+      name: 'tree',
+      request: 'get',
+      sourceFun: '/getTree',
+      beforeRequest: (data, route) => {
+        return data
+      }
     }
-  ]
+  })
+  const searchData = ref({}) // 筛选表单
+  const requestUrl = ref('getContentList')
+  /*const btnClick = (id, type) => {
+    switch (type) {
+      case 'show':
+        break
+      case 'edit':
+        break
+      case 'del':
+        // tableListEl.value.getListData() // 调用组件内部方法重新拉数据
+        break
+    }
+  }*/
 </script>

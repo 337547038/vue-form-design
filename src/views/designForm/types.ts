@@ -52,4 +52,12 @@ export interface TableData {
   columns: any
   controlBtn?: any
   events?: any
+  tree?: {
+    show: boolean
+    beforeRequest?: Function
+    afterResponse?: Function
+    request: string
+    sourceFun: string
+    name: string
+  }
 }

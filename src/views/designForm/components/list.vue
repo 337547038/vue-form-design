@@ -1,107 +1,115 @@
 <!-- Created by 337547038 on 通用数据表格页. -->
 <template>
   <div class="table-list-comm" v-loading="state.loading">
-    <div class="table-search" v-if="searchData?.list?.length">
-      <DesignForm
-        v-show="!state.searchFormDown"
-        is-search
-        class="search-form"
-        :disabled="state.loading"
-        :form-data="searchData"
-        :dict="state.dict"
-        :requestUrl="false"
-        ref="searchFormEl"
-        @click="formBtnClick"
-      >
-        <slot name="searchForm"></slot>
-      </DesignForm>
-      <el-icon
-        class="search-icon"
-        title="展开/收起筛选"
-        @click="state.searchFormDown = !state.searchFormDown"
-        ><Search
-      /></el-icon>
-    </div>
-    <slot></slot>
-    <div class="control-btn">
-      <el-button
-        v-for="item in tableData.controlBtn"
-        :key="item.key"
-        v-bind="item"
-        @click="controlBtnClick(item)"
-      >
-        {{ item.label }}
-      </el-button>
-      <slot name="controlBtn"></slot>
-    </div>
-    <div class="table-main">
-      <el-table
-        :data="state.tableDataList"
-        v-bind="tableData.tableProps"
-        @selection-change="selectionChange"
-        ref="tableEl"
-      >
-        <template
-          v-for="item in tableData.columns"
-          :key="item.prop || item.label"
+    <list-tree-side
+      v-if="treeData.show"
+      :data="treeData"
+      :formId="formId"
+      @node-click="treeNodeClick"
+    />
+    <div class="table-list">
+      <div class="table-search" v-if="searchData?.list?.length">
+        <DesignForm
+          v-show="!state.searchFormDown"
+          is-search
+          class="search-form"
+          :disabled="state.loading"
+          :form-data="searchData"
+          :dict="state.dict"
+          :requestUrl="false"
+          ref="searchFormEl"
+          @click="formBtnClick"
         >
-          <el-table-column v-bind="item" config="">
-            <template #header="scope" v-if="item.help">
-              {{ scope.column.label }}
-              <Tooltip :content="item.help" />
-            </template>
-            <template #default="scope" v-if="$slots[item.prop]">
-              <slot :name="item.prop" :row="scope.row" :$index="scope.$index">
-              </slot>
-            </template>
-            <template
-              #default="scope"
-              v-else-if="
-                item.config &&
-                item.config.tagList &&
-                Object.keys(item.config.tagList).length
-              "
-            >
-              <el-tag
-                :type="item.config.tagList[scope.row[item.prop]]"
-                effect="light"
+          <slot name="searchForm"></slot>
+        </DesignForm>
+        <el-icon
+          class="search-icon"
+          title="展开/收起筛选"
+          @click="state.searchFormDown = !state.searchFormDown"
+          ><Search
+        /></el-icon>
+      </div>
+      <slot></slot>
+      <div class="control-btn">
+        <el-button
+          v-for="item in tableData.controlBtn"
+          :key="item.key"
+          v-bind="item"
+          @click="controlBtnClick(item)"
+        >
+          {{ item.label }}
+        </el-button>
+        <slot name="controlBtn"></slot>
+      </div>
+      <div class="table-main">
+        <el-table
+          :data="state.tableDataList"
+          v-bind="tableData.tableProps"
+          @selection-change="selectionChange"
+          ref="tableEl"
+        >
+          <template
+            v-for="item in tableData.columns"
+            :key="item.prop || item.label"
+          >
+            <el-table-column v-bind="item" config="">
+              <template #header="scope" v-if="item.help">
+                {{ scope.column.label }}
+                <Tooltip :content="item.help" />
+              </template>
+              <template #default="scope" v-if="$slots[item.prop]">
+                <slot :name="item.prop" :row="scope.row" :$index="scope.$index">
+                </slot>
+              </template>
+              <template
+                #default="scope"
+                v-else-if="
+                  item.config &&
+                  item.config.tagList &&
+                  Object.keys(item.config.tagList).length
+                "
               >
-                {{ getDictLabel(scope, item) }}</el-tag
-              >
-            </template>
-            <template #default="scope" v-else-if="item.config?.dictKey">
-              {{ getDictLabel(scope, item) }}
-            </template>
-            <template #default="scope" v-else-if="item.config?.formatter">
-              {{ getDictLabel(scope, item, 'formatter') }}
-            </template>
-            <template #default="scope" v-else-if="item.prop === '__control'">
-              <el-button link @click="addOrEdit(scope.row)">编辑</el-button>
-              <el-popconfirm
-                title="确定删除该记录?"
-                confirm-button-text="确认"
-                cancel-button-text="取消"
-                @confirm="delClick(scope.row)"
-              >
-                <template #reference>
-                  <el-button size="small" link>删除</el-button>
-                </template>
-              </el-popconfirm>
-            </template>
-          </el-table-column>
-        </template>
-      </el-table>
-    </div>
-    <div class="table-page" v-if="showPage">
-      <el-pagination
-        v-model:currentPage="state.currentPage"
-        :page-sizes="[20, 30, 40, 50]"
-        :page-size="state.pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="state.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+                <el-tag
+                  :type="item.config.tagList[scope.row[item.prop]]"
+                  effect="light"
+                >
+                  {{ getDictLabel(scope, item) }}</el-tag
+                >
+              </template>
+              <template #default="scope" v-else-if="item.config?.dictKey">
+                {{ getDictLabel(scope, item) }}
+              </template>
+              <template #default="scope" v-else-if="item.config?.formatter">
+                {{ getDictLabel(scope, item, 'formatter') }}
+              </template>
+              <template #default="scope" v-else-if="item.prop === '__control'">
+                <el-button link @click="addOrEdit(scope.row)">编辑</el-button>
+                <el-popconfirm
+                  title="确定删除该记录?"
+                  confirm-button-text="确认"
+                  cancel-button-text="取消"
+                  @confirm="delClick(scope.row)"
+                >
+                  <template #reference>
+                    <el-button size="small" link>删除</el-button>
+                  </template>
+                </el-popconfirm>
+              </template>
+            </el-table-column>
+          </template>
+        </el-table>
+      </div>
+      <div class="table-page" v-if="showPage">
+        <el-pagination
+          v-model:currentPage="state.currentPage"
+          :page-sizes="[20, 30, 40, 50]"
+          v-model:page-size="state.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="state.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -115,6 +123,7 @@
   import { ElMessage } from 'element-plus'
   import type { FormData, TableData } from '../types'
   import { dateFormatting } from '@/utils'
+  import ListTreeSide from './listTreeSide.vue'
 
   const props = withDefaults(
     defineProps<{
@@ -156,11 +165,15 @@
     tid: route.query.tid, // 设计表单的id
     selectionChecked: [],
     dict: props.dict || {},
-    searchFormDown: props.searchData.config?.expand
+    searchFormDown: props.searchData.config?.expand,
+    treeValue: {} // 侧栏树选中的值
   })
   const formId = computed(() => {
     // 数据源id 发接口请求的参数
     return route.query.formId
+  })
+  const treeData = computed(() => {
+    return props.tableData.tree || {}
   })
   // 筛选查询列表数据
   const getListData = (page?: number) => {
@@ -172,12 +185,16 @@
     }
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
-    let formValue = searchFormEl.value?.getValue(true)
+    let formValue = Object.assign(
+      {},
+      searchFormEl.value?.getValue(true),
+      state.treeValue
+    )
     if (typeof props.tableData.events?.beforeRequest === 'function') {
-      formValue = props.tableData.events.beforeRequest(formValue || {})
+      formValue = props.tableData.events.beforeRequest(formValue || {}, route)
     }
     if (typeof props.beforeRequest === 'function') {
-      formValue = props.beforeRequest(formValue || {})
+      formValue = props.beforeRequest(formValue || {}, route)
     }
     const pageInfo = {
       pageInfo: {
@@ -203,7 +220,7 @@
           // 合并表格里自定义设置的
           state.dict = Object.assign({}, props.dict, result.dict)
         }
-        state.total = result.pageInfo?.total
+        state.total = result.pageInfo?.total || 0
         state.loading = false
       })
       .catch((res) => {
@@ -293,6 +310,11 @@
     } else if (type === 'cancel') {
       searchClear()
     }
+  }
+  // 侧栏树点击事件
+  const treeNodeClick = (val: string | number) => {
+    state.treeValue = { [treeData.value.name]: val }
+    getListData(1)
   }
   onMounted(() => {
     getListData() // 请求列表数据
