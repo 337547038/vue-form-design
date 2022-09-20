@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "11307823",
+      "name": "Directory tree",
+      "font_class": "tree2",
+      "unicode": "e892",
+      "unicode_decimal": 59538
+    },
+    {
+      "icon_id": "20360961",
+      "name": "流式布局",
+      "font_class": "flex",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
       "icon_id": "12225038",
       "name": "divide",
       "font_class": "div",
