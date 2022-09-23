@@ -15,7 +15,15 @@
       </div>
     </div>
     <div v-for="(list, index) in controlList" :key="index">
-      <div class="title">{{ list.title }}</div>
+      <div class="title"
+        >{{ list.title }}
+        <div
+          class="template"
+          v-if="index === 0 && !searchDesign"
+          @click="useTemplateClick"
+          >使用模板</div
+        >
+      </div>
       <draggable
         itemKey="key123"
         tag="ul"
@@ -33,6 +41,7 @@
         </template>
       </draggable>
     </div>
+    <use-template ref="useTemplateEl" @click="useTemplateSelect" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -40,6 +49,7 @@
   import Draggable from 'vuedraggable'
   import { computed, ref, watch } from 'vue'
   import { FormData, FormList } from '../types'
+  import UseTemplate from './template.vue'
 
   const props = withDefaults(
     defineProps<{
@@ -62,6 +72,7 @@
   )
   const emits = defineEmits<{
     (e: 'update:searchData', value: FormList[]): void
+    (e: 'click', value: FormData): void
   }>()
   const newData: any = ref(props.searchData)
   watch(
@@ -132,5 +143,13 @@
         }
       })
     }
+  }
+  // 使用模板
+  const useTemplateEl = ref()
+  const useTemplateClick = () => {
+    useTemplateEl.value.open()
+  }
+  const useTemplateSelect = (data: FormData) => {
+    emits('click', data)
   }
 </script>

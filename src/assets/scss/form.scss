@@ -2,8 +2,10 @@
 // 左侧栏
 $mainColor: #66b1ff;
 .design-container {padding: 0 !important;display: flex;}
-.components-list {width: 250px;padding: 8px 0;overflow-y: auto;height: calc(100vh - 80px);
-  .title {padding: 8px 12px;}
+.components-list {width: 250px;padding: 8px 0;overflow-y: auto;height: calc(100vh - 80px);position: relative;overflow-x: hidden;
+  .title {padding: 8px 12px;position: relative;
+    .template {position: absolute;right: 12px;top: 0;padding: 8px;cursor: pointer}
+  }
   ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
     li {font-size: 14px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
       i {margin-right: 5px}
@@ -14,6 +16,20 @@ $mainColor: #66b1ff;
     }
   }
   .content {margin-left: 12px}
+}
+.use-template {position: absolute;left: -100%;top: 0;width: 100%;bottom: 0;background: #fff;opacity: 0;
+  &.active {animation: templateAni .5s forwards;}
+  .close {position: absolute;right: 5px;top: 5px;font-size: 14px;cursor: pointer}
+  .list {padding: 30px 10px;overflow-y: auto;
+    .item {box-shadow: 0 0 4px rgba(0, 21, 41, 0.1);padding: 10px;text-align: center;transition: all .5s;cursor: pointer;margin-bottom: 10px;
+      img {display: block;width: 100%;margin: 0 auto 10px}
+      &:hover {box-shadow: 0 0 4px rgba(0, 21, 41, 0.25);}
+    }
+  }
+  .no-date {text-align: center;padding-top: 20px;color: #999}
+}
+@keyframes templateAni {
+  100% {opacity: 1;left: 0}
 }
 // 框架
 .main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0;overflow: hidden;
@@ -152,8 +168,8 @@ $mainColor: #66b1ff;
   }
 }
 .table-list-comm {display: flex;justify-content: space-between;
-  .tree-sidebar{width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px}
-  .table-list{flex: 2}
+  .tree-sidebar {width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px}
+  .table-list {flex: 2}
   .table-main {margin-bottom: 20px}
   .table-search {position: relative;
     .search-form {}

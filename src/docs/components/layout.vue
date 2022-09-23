@@ -62,7 +62,8 @@
       children: [
         { title: '页面介绍', to: '/docs/useInfo' },
         { title: '表单属性', to: '/docs/useFormAttr' },
-        { title: '字段属性', to: '/docs/useFieldAttr' }
+        { title: '字段属性', to: '/docs/useFieldAttr' },
+        { title: '使用模板', to: '/docs/useTemplate' }
       ]
     }
   ])
