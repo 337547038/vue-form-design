@@ -130,23 +130,23 @@ formData = {
     },
   config: {
     style: '', // 表单css样式，相当于scope
-    hideField: [], // 使用v-if隐藏的字段，用于交互
+    hideField: [], // 使用v-if隐藏的字段，用于交互。仅在导出vue时可通过自定义方法修改
     confirm: '', // 表单按钮
     cancel: '', // 表单按钮
     addLoad: false // 新增表单时是否从接口加载默认数据
   },
   events: { // 同props事件
-    beforeRequest: (data) => {
-      return data
+    beforeRequest: (data, route) => {
+      return data // 必须要return
     },
     afterResponse: (data) => {
-      return data
+      return data // 必须要return
     },
-    beforeSubmit: (data) => {
-      return data
+    beforeSubmit: (data, route) => {
+      return data // 必须要return
     },
     afterSubmit: (data) => {
-      return data
+      console.log(data)
     }
   }
 }

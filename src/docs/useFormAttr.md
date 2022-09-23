@@ -8,8 +8,7 @@
 
 ## 表单名称
 
-设计生成的表单名称 
-
+设计生成的表单名称
 
 ## 提交/返回按钮
 
@@ -22,6 +21,32 @@
 ## 编辑表单样式
 
 可在弹出的窗口里编写css样式，相当于vue页面的style scope，会在当前表单页加载完成时插入到页面中
+
+## 接口数据事件
+
+### beforeRequest
+
+在表单编辑请求数据时执行，在此方法里可修改或添加当前请求的参数，注意必须要有return；
+参数`data`当前请求的参数，`route`为路由信息
+
+```javascript
+const beforeRequest = (data, route) => {
+  data.id = route.query.id // 添加当前路由id作为参数
+  return data
+}
+```
+
+### afterResponse
+
+获取表单编辑数据后执行，在此方法里可对获取到的数据进行处理
+
+### beforeSubmit
+
+表单提交前执行，在此方法里可对需要提交的数据进行处理，方法参数同`beforeRequest`
+
+### afterSubmit
+
+表单提交成功后执行
 
 　　
 

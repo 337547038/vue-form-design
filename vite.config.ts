@@ -4,7 +4,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import Pages from 'vite-plugin-pages'
 import vitePluginVuedoc, { vueDocFiles } from 'vite-plugin-vuedoc'
 import * as path from 'path'
-const fs = require('fs')
+// const fs = require('fs')
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [

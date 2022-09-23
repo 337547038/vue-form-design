@@ -222,8 +222,9 @@
   const value = ref(props.modelValue)
   const fileList = ref([]) // 图片上传列表
   const setFileList = (val: any) => {
+    // 这里兼容modelValue为字符串和数组两种
     if (props.data.type === 'upload') {
-      if (val && val.length) {
+      if (val && typeof val === 'string') {
         const temp: any = []
         val.split(',').forEach((item: any) => {
           temp.push({
@@ -232,6 +233,8 @@
           })
         })
         fileList.value = temp
+      } else if (typeof val === 'object') {
+        fileList.value = val
       }
     }
   }
