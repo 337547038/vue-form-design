@@ -86,7 +86,7 @@
               <template #default v-if="item.type !== 'index'">
                 <el-checkbox v-if="item.type === 'selection'" />
                 <span v-else-if="item.prop === '__control'">编辑 删除</span>
-                <span v-else @click.stop="rowClick(item)">点击个性化设置</span>
+                <span v-else @click.stop="rowClick(item)">设置</span>
               </template>
             </el-table-column>
           </template>

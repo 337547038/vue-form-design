@@ -17,7 +17,7 @@ declare module 'element-plus'
 declare module 'vue-router'
 declare module 'vue'
 declare module 'clipboard'
-declare module 'vuedraggable'
+declare module 'vuedraggable-es'
 /*
 declare module 'vuex' {
   type StoreStateType = typeof store.state

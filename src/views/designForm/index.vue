@@ -85,10 +85,10 @@
     stringToObj
   } from '@/utils/form'
   import { useLayoutStore } from '@/store/layout'
-  import { FormData } from "@/views/designForm/types";
+  import { FormData } from './types'
 
   const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{label: '系统工具'}, {label: '表单设计'}])
+  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
   const store = useDesignFormStore()
   const router = useRouter()
@@ -129,7 +129,7 @@
     if (id) {
       // 获取初始表单数据
       state.loading = true
-      getRequest('getFormById', {id: id})
+      getRequest('getFormById', { id: id })
         .then((res) => {
           if (res.data.code === 200) {
             const result = res.data.data
@@ -174,10 +174,10 @@
         const reg = new RegExp(`get${formName}ControlByName`, 'g')
         stringPreview = stringPreview.replace(
           reg,
-          `getPreview${ formName }ControlByName`
+          `getPreview${formName}ControlByName`
         )
         state.formDataPreview = stringToObj(stringPreview)
-        state.formDataPreview.form.name = `Preview${ formName }` // 修改下表单名
+        state.formDataPreview.form.name = `Preview${formName}` // 修改下表单名
         break
       case 'json':
         // 生成脚本预览
@@ -265,7 +265,7 @@
             message: '保存成功！',
             type: 'success'
           })
-          router.push({path: '/designform/formlist'})
+          router.push({ path: '/designform/formlist' })
         } else {
           ElMessage.error(res.data.message)
         }
@@ -289,7 +289,7 @@
     state.drawerDirection = type ? 'ltr' : 'rtl'
     state.dialogType = type // 暂存,在窗口关闭时作为条件判断，类型为字符串或callback
     state.codeType = params?.codeType || ''
-    state.dialogTitle = params?.title ? `提示：${ params?.title }` : ''
+    state.dialogTitle = params?.title ? `提示：${params?.title}` : ''
     state.visibleDialog = true
     let editData =
       state.codeType === 'json'

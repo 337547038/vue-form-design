@@ -155,7 +155,7 @@
 
 <script lang="ts" setup>
   import { reactive, computed, ref, watch, inject, onUnmounted } from 'vue'
-  import Draggable from 'vuedraggable'
+  import Draggable from 'vuedraggable-es'
   import FormItem from './formItem.vue'
   import ChildTable from './childTable.vue'
   import Tooltips from './tooltip.vue'

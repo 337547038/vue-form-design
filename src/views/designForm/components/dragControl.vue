@@ -46,7 +46,7 @@
 </template>
 <script lang="ts" setup>
   import controlListData from './controlList'
-  import Draggable from 'vuedraggable'
+  import Draggable from 'vuedraggable-es'
   import { computed, ref, watch } from 'vue'
   import { FormData, FormList } from '../types'
   import UseTemplate from './template.vue'
