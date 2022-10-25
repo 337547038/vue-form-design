@@ -36,7 +36,7 @@ https://337547038.github.io/vue-form-design/
 
 ### 微信交流群
 
-<img src="./qrcode.jpg" width ="200" alt=""/>
+<img src="https://gitee.com/q337547038/vue-form-design/raw/main/qrcode.jpg" width ="200" alt=""/>
 
 ### 目录结构
 
