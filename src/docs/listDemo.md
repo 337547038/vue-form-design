@@ -239,6 +239,13 @@
           dictKey: 'select'
         }
       },
+      {
+        prop: 'status',
+        label: '状态',
+        config: {
+          dictKey: 'select'
+        }
+      },
       { label: '操作', prop: '__control' }
     ],
     controlBtn: [

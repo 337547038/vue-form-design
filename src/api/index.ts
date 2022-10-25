@@ -1,7 +1,7 @@
 import request from '../utils/request'
 
 //const isDev = import.meta.env.DEV
-/*const api: any = {
+const api: any = {
   formFiled: './mock/getField.json', // 设计创建表单时可供选择的所有字段
   datasource: './mock/datasource.json', // 获取可供用于创建表单的数据源
   saveForm: '', // 保存或编辑设计的表单
@@ -13,8 +13,8 @@ import request from '../utils/request'
   getFormContent: './mock/contentId.json', // 获取表单内容
   getContentList: './mock/contentList.json', // 获取表单内容列表
   delFormContent: '' // 删除表单内容
-}*/
-const api: any = {
+}
+/*const api: any = {
   formFiled: '/api/getField', // 设计创建表单时可供选择的所有字段
   datasource: '/api/dataSource', // 获取可供用于创建表单的数据源
   saveForm: '/api/design/save', // 保存或编辑设计的表单
@@ -27,12 +27,12 @@ const api: any = {
   getContentList: '/api/content/list', // 获取表单内容列表
   delFormContent: '/api/content/delete', // 删除表单内容
   upload: '/api/upload/single' // 默认el-upload上传url，也可单独在设计时填写上传地址
-}
+}*/
 export const getRequest = (apiKey: string, data?: any, options = {}) => {
   const obj: any = Object.assign(
     {
       url: api[apiKey],
-      method: 'POST', // github演示json格式时需要使用get
+      method: 'GET', // github演示json格式时需要使用get
       data
     },
     options
