@@ -344,7 +344,7 @@
   }
   // 选择模板
   const selectTemplate = (data: FormData) => {
-    state.formData = data
+    state.formData = stringToObj(objToStringify(data))
   }
   getInitData()
   onUnmounted(() => {
