@@ -26,8 +26,9 @@
           class="search-icon"
           title="展开/收起筛选"
           @click="state.searchFormDown = !state.searchFormDown"
-          ><Search
-        /></el-icon>
+        >
+          <Search />
+        </el-icon>
       </div>
       <slot></slot>
       <div class="control-btn">
@@ -73,8 +74,8 @@
                   :type="item.config.tagList[scope.row[item.prop]]"
                   effect="light"
                 >
-                  {{ getDictLabel(scope, item) }}</el-tag
-                >
+                  {{ getDictLabel(scope, item) }}
+                </el-tag>
               </template>
               <template #default="scope" v-else-if="item.config?.dictKey">
                 {{ getDictLabel(scope, item) }}
@@ -185,16 +186,24 @@
     }
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
-    let formValue = Object.assign(
+    const formValue = Object.assign(
       {},
       searchFormEl.value?.getValue(true),
       state.treeValue
     )
+    let newData: any = formValue
     if (typeof props.tableData.events?.beforeRequest === 'function') {
-      formValue = props.tableData.events.beforeRequest(formValue || {}, route)
+      newData = props.tableData.events.beforeRequest(formValue || {}, route)
     }
     if (typeof props.beforeRequest === 'function') {
-      formValue = props.beforeRequest(formValue || {}, route)
+      newData = props.beforeRequest(formValue || {}, route)
+    }
+    if (newData === false) {
+      return
+    }
+    if (!newData) {
+      // beforeRequest没有return时
+      newData = formValue
     }
     const pageInfo = {
       pageInfo: {
@@ -203,24 +212,28 @@
       }
     }
     getRequest(props.requestUrl, {
-      ...formValue,
+      ...newData,
       formId: formId.value,
       ...pageInfo
     })
       .then((res) => {
-        let result = res.data.data
+        const result = res.data.data
+        let formatResult = result
         if (typeof props.tableData.events?.afterResponse === 'function') {
-          result = props.tableData.events.afterResponse(result)
+          formatResult = props.tableData.events.afterResponse(result) ?? result
         }
         if (typeof props.afterResponse === 'function') {
-          result = props.afterResponse(result)
+          formatResult = props.afterResponse(result) ?? result
         }
-        state.tableDataList = result?.list
-        if (result.dict) {
+        if (formatResult === false) {
+          return
+        }
+        state.tableDataList = formatResult?.list
+        if (formatResult.dict) {
           // 合并表格里自定义设置的
-          state.dict = Object.assign({}, props.dict, result.dict)
+          state.dict = Object.assign({}, props.dict, formatResult.dict)
         }
-        state.total = result.pageInfo?.total || 0
+        state.total = formatResult.pageInfo?.total || 0
         state.loading = false
       })
       .catch((res) => {

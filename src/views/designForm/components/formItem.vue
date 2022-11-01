@@ -345,7 +345,10 @@
           //let newData = Object.assign({}, data || {}, queryParams)
           let newData = data || {}
           if (typeof config.value.beforeRequest === 'function') {
-            newData = config.value.beforeRequest(newData, route)
+            newData = config.value.beforeRequest(newData, route) ?? data
+          }
+          if (newData === false) {
+            return
           }
           if (config.value.request === 'get') {
             newData = { params: newData }
@@ -356,17 +359,22 @@
             .then((res: any) => {
               if (res.data.code === 200) {
                 // 请求成功
-                let result = res.data.data
+                const result = res.data.data
+                let formatResult: any = result
                 // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
                 if (typeof config.value.afterResponse === 'function') {
-                  result = config.value.afterResponse(result)
+                  // 没有return时，使用原来的，相当于没处理
+                  formatResult = config.value.afterResponse(result) ?? result
+                }
+                if (formatResult === false) {
+                  return
                 }
                 if (props.data.type === 'treeSelect') {
-                  control.value.data = result
+                  control.value.data = formatResult
                 } else {
-                  options.value = result
+                  options.value = formatResult
                 }
-                window.sessionStorage.setItem(key, JSON.stringify(result)) //缓存，例如子表添加时不用每添加一行就请求一次
+                window.sessionStorage.setItem(key, JSON.stringify(formatResult)) //缓存，例如子表添加时不用每添加一行就请求一次
               }
             })
             .catch((res: any) => {

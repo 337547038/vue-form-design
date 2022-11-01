@@ -328,36 +328,45 @@
     ) {
       loading.value = true
       hasLoadData.value = true
-      let prams = {
+      const prams = {
         formId: route.query.formId,
         id: route.query.id
       }
+      let newPrams: any = prams
       // 同时可使用props或是events里的事件，根据使用使用其中一种即可
       if (typeof props.formData.events?.beforeRequest === 'function') {
-        prams = props.formData.events.beforeRequest(prams, route)
+        newPrams = props.formData.events.beforeRequest(prams, route)
       }
       if (typeof props.beforeRequest === 'function') {
-        prams = props.beforeRequest(prams, route)
+        newPrams = props.beforeRequest(prams, route)
       }
-      getRequest(props.requestUrl as string, prams)
+      if (newPrams === false) {
+        // 停止数据请求
+        return
+      }
+      getRequest(props.requestUrl as string, newPrams ?? prams)
         .then((res) => {
           // console.log(res)
-          let result = res.data.data
+          const result = res.data.data
           if (result) {
-            let value = result.data
+            let formatResult: any = {}
             // 比较适用通用表单，保存在服务端
             if (typeof props.formData.events?.afterResponse === 'function') {
-              value = props.formData.events.afterResponse(value)
+              formatResult =
+                props.formData.events.afterResponse(result) ?? result
             }
             // 比较适用于导出vue文件
             if (typeof props.afterResponse === 'function') {
-              value = props.afterResponse(value)
+              formatResult = props.afterResponse(result) ?? result
             }
-            setValue(value)
+            if (formatResult === false) {
+              return
+            }
+            setValue(formatResult.data)
             nextTick(() => {
               // 将dict保存，可用于从接口中设置表单组件options。有设置自定义的则合并
-              if (result.dict) {
-                resultDict.value = Object.assign(result.dict, props.dict)
+              if (formatResult.dict) {
+                resultDict.value = Object.assign(formatResult.dict, props.dict)
               }
             })
           }
@@ -386,19 +395,23 @@
       validate((valid: boolean, fields: any) => {
         if (valid) {
           loading.value = true
-          let params = {
+          const params = {
             formId: route.query.formId,
             id: route.query.id,
             ...fields
           }
+          let formatParams = params
           if (typeof props.formData.events?.beforeSubmit === 'function') {
-            params = props.formData.events.beforeSubmit(params, route)
+            formatParams = props.formData.events.beforeSubmit(params, route)
           }
           if (typeof props.beforeSubmit === 'function') {
-            params = props.beforeSubmit(params, route)
+            formatParams = props.beforeSubmit(params, route)
+          }
+          if (formatParams === false) {
+            return
           }
           // 提交保存表单
-          getRequest(props.submitUrl as string, params)
+          getRequest(props.submitUrl as string, formatParams ?? params)
             .then((res: any) => {
               if (typeof props.formData.events?.afterSubmit === 'function') {
                 props.formData.events?.afterSubmit(res)

@@ -1220,7 +1220,7 @@
             controlData.value.options = result
             break
           case 'optionsParams':
-            controlData.value.config.params = result
+            controlData.value.config.beforeRequest = result
             break
           case 'optionsResult':
             controlData.value.config.afterResponse = result

@@ -16,11 +16,13 @@
   import { ref, watch, reactive, onMounted } from 'vue'
   import axios from '@/utils/request'
   import { useRoute } from 'vue-router'
+
   interface Tree {
     id: number
     label: string
     children?: Tree[]
   }
+
   const props = withDefaults(
     defineProps<{
       data: any
@@ -61,15 +63,19 @@
     const { request, sourceFun, beforeRequest, afterResponse } = props.data
     if (request && sourceFun) {
       // 处理请求前的数据
-      let newData: any = { formId: props.formId }
+      const newData: any = { formId: props.formId }
+      let formatData = newData
       if (typeof beforeRequest === 'function') {
-        newData = beforeRequest(newData, route)
+        formatData = beforeRequest(newData, route) ?? newData
+      }
+      if (formatData === false) {
+        return
       }
       if (request === 'get') {
-        newData = { params: newData }
+        formatData = { params: formatData }
       }
       ;(axios as any)
-        [request](sourceFun, newData)
+        [request](sourceFun, formatData)
         .then((res: any) => {
           if (res.data.code === 200) {
             // 请求成功
