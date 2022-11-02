@@ -196,3 +196,8 @@
     }
   )
 </script>
+<style>
+  .tox-tinymce-aux {
+    z-index: 2200 !important; /*el-dialog层为2014，默认时在el弹出层显示不了编辑器里的弹窗*/
+  }
+</style>
