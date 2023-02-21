@@ -36,14 +36,20 @@ export const formatToString = (val: any) => {
   }
 }
 // 定义两个空方法，用于在编辑事件时作为默认值
+export const beforeRequest =
+  'opt=(data, route) => {\n' +
+  '  // data经过处理后返回\n' +
+  '  return data\n' +
+  '}'
 // eslint-disable-next-line
-export const beforeRequest = (data: any, route: any) => {
-  // data经过处理后返回
-  return data
-}
-export const afterResponse = (data: any) => {
-  return data
-}
+// export const beforeRequest1 = (data: any, route: any) => {
+//   // data经过处理后返回
+//   return data
+// }
+export const afterResponse = 'opt=(data)=>{\nreturn data\n}'
+// export const afterResponse1 = (data: any) => {
+//   return data
+// }
 
 // provide 方法定义的key
 const prefix = 'AK'

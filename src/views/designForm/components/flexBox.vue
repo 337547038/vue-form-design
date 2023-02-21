@@ -63,21 +63,9 @@
   watch(
     () => setFormValue.value,
     (val: any) => {
-      tableDataNew.value = transformValue(val[props.data.name])
+      tableDataNew.value = val[props.data.name]
     }
   )
-  const transformValue = (val: any) => {
-    const isTransform = props.data.config?.transform // 是否设置了转换
-    let newVal = val
-    if (isTransform && val) {
-      newVal = JSON.parse(val)
-    }
-    if (!newVal || typeof newVal !== 'object') {
-      return []
-    } else {
-      return newVal
-    }
-  }
   onMounted(() => {
     init()
   })

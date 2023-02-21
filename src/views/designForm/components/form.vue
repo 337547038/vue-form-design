@@ -15,12 +15,12 @@
       <form-group :data="formData.list" />
       <slot></slot>
       <template v-if="confirmBtn || cancelBtn">
-        <el-button type="primary" v-if="confirmBtn" @click="submit">{{
-          confirmBtn
-        }}</el-button>
-        <el-button v-if="cancelBtn" @click="cancelClick">{{
-          cancelBtn
-        }}</el-button>
+        <el-button type="primary" v-if="confirmBtn" @click="submit"
+          >{{ confirmBtn }}
+        </el-button>
+        <el-button v-if="cancelBtn" @click="cancelClick"
+          >{{ cancelBtn }}
+        </el-button>
       </template>
     </el-form>
   </div>
@@ -90,7 +90,6 @@
   // const storeForm = useDesignFormStore()
   const loading = ref(false)
   const hasLoadData = ref(false) // 用于表示是否已加载过表单数据了
-  const transformField = ref([]) // 值需要做转换的
   const confirmBtn = computed(() => {
     return props.formData.config?.confirm
   })
@@ -150,12 +149,6 @@
     list.forEach((item: any) => {
       if (['table', 'flex'].includes(item.type)) {
         obj[item.name] = item.tableData
-        if (
-          item.config?.transform &&
-          !transformField.value.includes(item.name)
-        ) {
-          transformField.value.push(item.name)
-        }
       } else if (['grid', 'tabs'].includes(item.type)) {
         item.columns.forEach((col: any) => {
           forEachGetFormModel(col.list, obj)
@@ -166,12 +159,6 @@
         const excludeType = ['title', 'divider', 'txt']
         if (excludeType.indexOf(item.type) === -1) {
           obj[item.name] = item.control.modelValue
-          if (
-            item.config?.transform &&
-            !transformField.value.includes(item.name)
-          ) {
-            transformField.value.push(item.name)
-          }
         }
       }
     })
@@ -220,52 +207,19 @@
   }
   // 提供一个取值的方法
   const getValue = (filter?: boolean) => {
-    // 需要将值转换，数组[]=>string,true=>'true',false=>'false'
-    if (transformField.value.length) {
+    if (filter) {
       const obj: any = {}
       for (const key in model.value) {
         if (model.value.hasOwnProperty(key)) {
           const val = (model.value as any)[key]
-          let newVal = val
-          if (transformField.value.includes(key)) {
-            if (val && typeof val === 'object') {
-              newVal = val.join(',')
-              // 表格时转换出来的是这种'[object Object],[object Object]'
-              if (newVal.includes('[object Object]')) {
-                newVal = JSON.stringify(val)
-              }
-            } else if (val === true) {
-              newVal = 1
-            } else if (val === false) {
-              newVal = 0
-            }
-          }
-          if (filter) {
-            // 过滤掉空值
-            if (!/^\s*$/.test(val)) {
-              obj[key] = newVal
-            }
-          } else {
-            obj[key] = newVal
+          if (!/^\s*$/.test(val)) {
+            obj[key] = val
           }
         }
       }
       return obj
     } else {
-      if (filter) {
-        const obj: any = {}
-        for (const key in model.value) {
-          if (model.value.hasOwnProperty(key)) {
-            const val = (model.value as any)[key]
-            if (!/^\s*$/.test(val)) {
-              obj[key] = val
-            }
-          }
-        }
-        return obj
-      } else {
-        return model.value
-      }
+      return model.value
     }
   }
   // 对表单设置初始值

@@ -472,38 +472,21 @@
   // 执行表单的setValue方法，对组件设值
   // value转换，保存时设置了数组转换转换的，这里要做恢复处理。另外对于部分组件v-model必须要是数字类型，这里兼容接口返回或数据转换后格式问题，主要为字符串类型的数字，即转换为对应组件所需的样式
   const transformValue = (val: any) => {
-    const isTransform = config.value.transform // 是否设置了转换
-    switch (props.data.type) {
-      case 'radio': // 选项对应的值使用了字符串转换，当为数字时这里要确保是字符
-        return formatToString(val)
-      case 'checkbox':
-      case 'upload':
-      case 'cascader':
-        if (isTransform) {
-          return val ? val.split(',') : []
-        }
-        return val ? val : []
-      case 'switch':
-        if (isTransform) {
-          return !!val
-        }
-        return val
-      case 'inputNumber':
-      case 'rate':
-        return formatNumber(val)
-      case 'slider': // 区间时为数组
-        if (isTransform && control.value.range) {
-          const strArr = val.split(',')
-          return strArr.map(Number)
-        } else {
-          return formatNumber(val)
-        }
-      case 'select':
-        if (isTransform && control.value.multiple) {
-          return val.split(',')
-        }
-        return formatToString(val)
-    }
+    // switch (props.data.type) {
+    //   case 'radio': // 选项对应的值使用了字符串转换，当为数字时这里要确保是字符
+    //     return formatToString(val)
+    //   case 'checkbox':
+    //   case 'upload':
+    //   case 'cascader':
+    //     return val ? val : []
+    //   case 'inputNumber':
+    //   case 'rate':
+    //     return formatNumber(val)
+    //   case 'slider': // 区间时为数组
+    //     return formatNumber(val)
+    //   case 'select':
+    //     return formatToString(val)
+    // }
     return val
   }
   const setValueEvent = inject(constSetFormValue, {}) as any

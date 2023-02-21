@@ -4,7 +4,7 @@
       :searchData="state.searchData"
       :tableData="state.tableData"
       :requestUrl="state.requestUrl"
-      :dict="state.dict"
+      :dict="state.tableData.dict"
       ref="tableListEl"
     >
       <template #control="scope">

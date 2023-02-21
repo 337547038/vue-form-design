@@ -436,7 +436,7 @@
   import { useDesignFormStore } from '@/store/designForm'
   import validate from './validate'
   import { ElMessage } from 'element-plus'
-  import { beforeRequest, afterResponse, formatNumber } from './utils'
+  import { formatNumber } from './utils'
 
   const props = withDefaults(
     defineProps<{
@@ -450,7 +450,7 @@
     }
   )
   const emits = defineEmits<{
-    (e: 'openDialog', data: any, type?: any, params?: any): void
+    (e: 'openDialog', data: any): void
     (e: 'update:formData', data: any): void
     (e: 'update:formConfig', data: any): void
   }>()
@@ -704,22 +704,22 @@
           vShow: ['switch'],
           isNum: true
         },
-        {
-          label: '转换格式化值',
-          value: config.transform,
-          path: 'config.transform',
-          type: 'switch',
-          vShow: [
-            'checkbox',
-            'select',
-            'switch',
-            'cascader',
-            'slider',
-            'table',
-            'flex',
-            'treeSelect'
-          ]
-        },
+        // {
+        //   label: '转换格式化值',
+        //   value: config.transform,
+        //   path: 'config.transform',
+        //   type: 'switch',
+        //   vShow: [
+        //     'checkbox',
+        //     'select',
+        //     'switch',
+        //     'cascader',
+        //     'slider',
+        //     'table',
+        //     'flex',
+        //     'treeSelect'
+        //   ]
+        // },
         {
           label: '增加按钮文案',
           value: config.add,
@@ -1192,7 +1192,6 @@
   // 更多属性弹窗
   const openAttrDialog = (type?: string, tooltip?: string) => {
     let editData = controlData.value.control
-    let params: any = { title: tooltip }
     switch (type) {
       case 'treeSelect':
         editData = controlData.value.control.data
@@ -1201,17 +1200,19 @@
         editData = controlData.value.options
         break
       case 'optionsParams': // 选项请求附加参数
-        editData = controlData.value.config.beforeRequest || beforeRequest
+        editData = controlData.value.config.beforeRequest
         // params.codeType = 'json'
         break
       case 'optionsResult':
-        editData = controlData.value.config.afterResponse || afterResponse
+        editData = controlData.value.config.afterResponse
         break
     }
-    emits(
-      'openDialog',
-      editData,
-      (result: any) => {
+    const emitsParams = {
+      content: editData,
+      title: tooltip,
+      type: type,
+      direction: 'ltr',
+      callback: (result: any) => {
         switch (type) {
           case 'treeSelect':
             controlData.value.control.data = result
@@ -1229,9 +1230,9 @@
             controlData.value.control = {}
             Object.assign(controlData.value.control, result)
         }
-      },
-      params
-    )
+      }
+    }
+    emits('openDialog', emitsParams)
   }
   // 必填校验
   const requiredChange = (val: boolean) => {
@@ -1253,14 +1254,15 @@
     if (!controlData.value.item?.rules) {
       controlData.value.item.rules = []
     }
-    emits(
-      'openDialog',
-      controlData.value.item?.rules,
-      (result: any) => {
+    const params = {
+      content: controlData.value.item?.rules,
+      title: tooltip,
+      direction: 'ltr',
+      callback: (result: any) => {
         Object.assign(controlData.value.item.rules, result)
-      },
-      { title: tooltip }
-    )
+      }
+    }
+    emits('openDialog', params)
   }
   // 根据不同类型判断是否显示当前属性
   const showHide = (type: string[], show?: boolean) => {
@@ -1314,13 +1316,17 @@
   }
   // 编辑表单样式
   const editFormStyle = (tooltip: string) => {
-    emits('openDialog', '', 'css', {
+    emits('openDialog', {
       codeType: 'css',
+      direction: 'ltr',
+      type: 'css',
       title: tooltip
     })
   }
   const editFormDict = (tooltip: string) => {
-    emits('openDialog', {}, 'dict', {
+    emits('openDialog', {
+      type: 'dict',
+      direction: 'ltr',
       codeType: 'json',
       title: tooltip
     })
@@ -1388,7 +1394,7 @@
     openAttrDialog(type, tooltip)
   }
   const eventClick = (type: string, tooltip?: string) => {
-    emits('openDialog', '', type, { title: tooltip })
+    emits('openDialog', { type: type, title: tooltip, direction: 'ltr' })
   }
   init()
 </script>

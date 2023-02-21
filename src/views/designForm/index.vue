@@ -23,21 +23,21 @@
     <form-control-attr
       v-model:formData="state.formData.form"
       v-model:formConfig="state.formData.config"
-      @openDialog="dialogOpen"
+      @openDialog="openAceEditDrawer"
     />
     <el-drawer
-      v-model="state.visibleDialog"
+      v-model="drawer.visible"
       size="60%"
-      :title="state.dialogTitle"
-      :direction="state.drawerDirection"
+      :title="drawer.title"
+      :direction="drawer.direction"
       custom-class="ace-dialog"
       :append-to-body="true"
       :before-close="drawerBeforeClose"
     >
       <template #header>
-        <div v-html="state.dialogTitle"></div>
+        <div v-html="drawer.title"></div>
       </template>
-      <div v-if="state.visibleDialog" id="editJson"></div>
+      <div v-if="drawer.visible" id="editJson"></div>
       <div class="dialog-footer">
         <el-button type="primary" size="small" @click="dialogConfirm">
           确定
@@ -108,19 +108,22 @@
         formId: route.query.formId || ''
       }
     },
-    visibleDialog: false,
-    dialogType: '',
-    dialogTitle: '',
-    codeType: '',
     editor: {},
     loading: false,
-    drawerDirection: 'rtl', // 默认右边弹出
     formDataPreview: {},
     previewVisible: false, // 预览窗口
     searchDesign: route.query?.type === 'search', // 是否为筛选设计
     formDataList: {}, // 筛选模式下提供给左则快速选择已有表单字段
     formDataTemp: {},
     formDict: {}
+  })
+  const drawer = reactive({
+    visible: false,
+    type: '',
+    title: '',
+    codeType: '',
+    direction: 'ltr', //弹出方向rtl / ltr
+    callback: ''
   })
   const vueFileEl = ref()
 
@@ -157,7 +160,6 @@
     }
   }
   const headToolClick = (type: string) => {
-    state.dialogType = '' // 清空下防意外
     switch (type) {
       case 'del':
         state.formData.list = []
@@ -181,7 +183,9 @@
         break
       case 'json':
         // 生成脚本预览
-        dialogOpen(state.formData, '', {
+        openAceEditDrawer({
+          direction: 'rtl',
+          content: state.formData,
           title: '可编辑修改或将已生成的脚本粘贴进来'
         })
         break
@@ -198,15 +202,15 @@
     // 生成脚本预览和导入json，都是将编辑器内容更新至state.formData
     try {
       const editVal = state.editor.getValue()
-      if (typeof state.dialogType === 'function') {
+      if (typeof drawer.callback === 'function') {
         // callback
         const newObj =
-          state.codeType === 'json'
+          drawer.codeType === 'json'
             ? string2json(editVal)
             : stringToObj(editVal)
-        state.dialogType(newObj)
+        drawer.callback(newObj)
       } else {
-        switch (state.dialogType) {
+        switch (drawer.type) {
           case 'css':
             // 表单属性－编辑表单样式
             if (!state.formData.config) {
@@ -230,7 +234,7 @@
             state.formData = stringToObj(editVal)
         }
       }
-      state.visibleDialog = false
+      drawer.visible = false
     } catch (res) {
       // console.log(res.message)
       //ElMessage.error(res.message)
@@ -284,17 +288,18 @@
     store.setActiveKey('')
     store.setControlAttr({})
   }
-  const dialogOpen = (obj: any, type?: any, params?: any) => {
-    // 编辑属性和校验规则时从左边弹出
-    state.drawerDirection = type ? 'ltr' : 'rtl'
-    state.dialogType = type // 暂存,在窗口关闭时作为条件判断，类型为字符串或callback
-    state.codeType = params?.codeType || ''
-    state.dialogTitle = params?.title ? `提示：${params?.title}` : ''
-    state.visibleDialog = true
+  const openAceEditDrawer = (params: any) => {
+    const { type, direction, codeType, title, callback, content } = params
+    drawer.direction = direction // 窗口位置ltr/rtl
+    drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
+    drawer.codeType = codeType || '' // 显示代码类型
+    drawer.title = title ? `提示：${title}` : ''
+    drawer.visible = true
+    drawer.callback = callback
     let editData =
-      state.codeType === 'json'
-        ? json2string(obj, true)
-        : objToStringify(obj, true)
+      codeType === 'json'
+        ? json2string(content, true)
+        : objToStringify(content, true)
     switch (type) {
       case 'css':
         editData = state.formData.config?.style || ''
@@ -306,16 +311,34 @@
       case 'beforeRequest':
       case 'beforeSubmit':
         const beforeData = state.formData.events || {}
-        editData = objToStringify(beforeData[type] || beforeRequest, true)
+        if (beforeData[type]) {
+          editData = objToStringify(beforeData[type], true)
+        } else {
+          editData = beforeRequest
+        }
         break
       case 'afterResponse':
       case 'afterSubmit':
         const newData = state.formData.events || {}
-        editData = objToStringify(newData[type] || afterResponse, true)
+        if (newData[type]) {
+          editData = objToStringify(newData[type], true)
+        } else {
+          editData = afterResponse
+        }
+        break
+      case 'optionsParams':
+        if (!content) {
+          editData = beforeRequest
+        }
+        break
+      case 'optionsResult':
+        if (!content) {
+          editData = afterResponse
+        }
         break
     }
     nextTick(() => {
-      state.editor = aceEdit(editData, '', state.codeType)
+      state.editor = aceEdit(editData, '', codeType)
     })
   }
   const drawerBeforeClose = (done: () => void) => {
@@ -323,8 +346,11 @@
     done()
   }
   const dialogCancel = () => {
-    state.visibleDialog = false
-    state.dialogType = ''
+    drawer.visible = false
+    drawer.type = ''
+    drawer.title = ''
+    drawer.codeType = ''
+    drawer.callback = ''
   }
   // 预览窗口提交测试
   const previewForm = ref()
