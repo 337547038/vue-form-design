@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1057386",
+      "name": "柱状图",
+      "font_class": "bar",
+      "unicode": "e6ce",
+      "unicode_decimal": 59086
+    },
+    {
+      "icon_id": "1727592",
+      "name": "407饼图",
+      "font_class": "pie",
+      "unicode": "e902",
+      "unicode_decimal": 59650
+    },
+    {
+      "icon_id": "5961328",
+      "name": "折线图",
+      "font_class": "line",
+      "unicode": "ec66",
+      "unicode_decimal": 60518
+    },
+    {
       "icon_id": "11307823",
       "name": "Directory tree",
       "font_class": "tree2",

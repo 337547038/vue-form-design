@@ -27,7 +27,8 @@ module.exports = defineConfig({
   globals: {
     ace: true,
     tinymce: true,
-    AMap: true
+    AMap: true,
+    echarts: true
   },
   rules: {
     'prettier/prettier': [
