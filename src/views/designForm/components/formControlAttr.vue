@@ -495,6 +495,12 @@
         key: 'class'
       },
       {
+        label: '字段名后添加冒号',
+        value: formData.value.showColon,
+        key: 'showColon',
+        type: 'switch'
+      },
+      {
         label: '组件尺寸',
         value: formData.value.size,
         type: 'select',

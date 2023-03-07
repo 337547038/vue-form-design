@@ -9,6 +9,7 @@ import './assets/scss/element-var.scss'
 import '@/assets/scss/layout.scss'
 import '@/assets/scss/form.scss'
 import AKDesignForm from './views/designForm/index'
+import AKDesignEcharts from './views/echarts/index'
 // 实例化 Pinia
 const pinia = createPinia()
 const app = createApp(App)
@@ -19,6 +20,7 @@ app
   })
   .use(router)
   .use(AKDesignForm)
+  .use(AKDesignEcharts)
   .mount('#app')
 // 全局注册icon
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'

@@ -12,7 +12,9 @@ const api: any = {
   saveFormContent: '', // 往已设计好的表单里添加内容
   getFormContent: './mock/contentId.json', // 获取表单内容
   getContentList: './mock/contentList.json', // 获取表单内容列表
-  delFormContent: '' // 删除表单内容
+  delFormContent: '', // 删除表单内容
+  saveEcharts: '', // 保存编辑图表设计
+  echartsList: '' // 图表设计的列表
 }
 /*const api: any = {
   formFiled: '/api/getField', // 设计创建表单时可供选择的所有字段

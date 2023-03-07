@@ -22,6 +22,15 @@
         >快速开始</el-button
       >
     </div>
+    <div>
+      <br />
+      <p>应网友学习需求简单添加图表演示</p>
+      <el-button
+        type="primary"
+        @click="$router.push({ path: '/echarts/design' })"
+        >快速开始</el-button
+      >
+    </div>
   </div>
 </template>
 <script setup>

@@ -168,7 +168,8 @@
     type: props.type,
     isEdit: !!route.query.id || props.isEdit, // 有id时默认为编辑模式
     model: model,
-    hideField: props.formData.config?.hideField as []
+    hideField: props.formData.config?.hideField as [],
+    showColon: props.formData.form.showColon // 非响应式
   })
   // 提供一个方法，用于根据name从formData.list里查找数据
   const getNameForEach = (data: any, name: string) => {

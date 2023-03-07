@@ -185,6 +185,25 @@
       clipboard.onClick(e)
     })
   }
+  // 导出echarts
+  const openEcharts = (obj: any) => {
+    visible.value = true
+    const html = `<template>
+  <div>
+    <ak-echarts :data="data"></ak-echarts>
+  </div>
+</template>
+
+<script setup>
+  import { ref } from 'vue'
+
+  const data = ref(${objToStringify(obj)})
+<\/script>
+`
+    nextTick(() => {
+      editor.value = aceEdit(html, 'editJsonCopy', 'html')
+    })
+  }
   // 导出文件
   const dialogExport = () => {
     const content = 'data:text/csv;charset=utf-8,' + editor.value?.getValue()
@@ -197,6 +216,7 @@
   }
   defineExpose({
     open,
-    openTable
+    openTable,
+    openEcharts
   })
 </script>

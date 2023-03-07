@@ -82,7 +82,7 @@
           v-for="(item, index) in options"
           :key="index"
           :label="formatToString(item.value)"
-          >{{ item.label }}
+        >{{ item.label }}
         </el-checkbox>
       </el-checkbox-group>
       <AKSelect
@@ -111,7 +111,7 @@
         :on-error="uploadError"
       >
         <el-button type="primary" v-if="config.btnText"
-          >{{ config.btnText }}
+        >{{ config.btnText }}
         </el-button>
         <i class="icon-plus" v-else></i>
         <template #tip v-if="config.tip">
@@ -270,8 +270,9 @@
     return replace && replace[0]
   })
   const getLabel = (ele: FormItem) => {
+    const showColon = injectData.showColon ? '：' : ''
     if (ele) {
-      return ele.showLabel ? '' : ele.label
+      return ele.showLabel ? '' : ele.label + showColon
     } else {
       return ''
     }
@@ -281,7 +282,7 @@
       // 自定义组件
       return config.value.componentName
     }
-    return `el-${props.data.type}`
+    return `el-${ props.data.type }`
   })
   // 控制编辑模式下是否可用
   const editDisabled = computed(() => {
@@ -351,7 +352,7 @@
             return
           }
           if (config.value.request === 'get') {
-            newData = { params: newData }
+            newData = {params: newData}
           }
           // request.get('url',data)
           ;(axios as any)
@@ -401,9 +402,9 @@
   const formatCustomRules = () => {
     const rulesReg: any = {}
     validate &&
-      validate.forEach((item) => {
-        rulesReg[item.type] = item.regExp
-      })
+    validate.forEach((item) => {
+      rulesReg[item.type] = item.regExp
+    })
 
     // 获取校验方法 父级使用provide方法注入
     const temp: any = []
@@ -413,21 +414,21 @@
       }
       let obj = {}
       if (item.type === 'required') {
-        obj = { required: true }
+        obj = {required: true}
       } else if (item.type === 'rules') {
         // 自定义表达式
-        obj = { pattern: item.rules }
+        obj = {pattern: item.rules}
       } else if (item.type === 'methods') {
         // 方法时
         const methods: any = item.methods
         if (methods) {
-          obj = { validator: inject(methods, {}) }
+          obj = {validator: inject(methods, {})}
         }
       } else if (item.type) {
-        obj = { pattern: rulesReg[item.type as string] }
+        obj = {pattern: rulesReg[item.type as string]}
       }
       // 这里判断下防某些条件下重复push的可能或存重复校验类型
-      let message: any = { message: item.message }
+      let message: any = {message: item.message}
       if (!item.message) {
         // 当使用validator校验时，如果存在message字段则不能使用 callback(new Error('x'));的提示
         message = {}
@@ -466,7 +467,7 @@
       emits('update:modelValue', val)
       // control.value.modelValue = val
       changeEvent &&
-        changeEvent({ key: props.data.name, value: val, data: props.data })
+      changeEvent({key: props.data.name, value: val, data: props.data})
     }
   )
   // 执行表单的setValue方法，对组件设值
@@ -521,7 +522,7 @@
     (val: any) => {
       setFormDict(val)
     },
-    { deep: true }
+    {deep: true}
   )
   // 对单选多选select设置options
   const formOptions = inject(constSetFormOptions, {}) as any
@@ -560,7 +561,7 @@
         control.value.modelValue = ''
       }
     },
-    { deep: true }
+    {deep: true}
   )
   // 上传错误
   const uploadError = (err: any, file: any, fileList: any) => {
@@ -597,22 +598,22 @@
   const inputSlotChange = (val: string | number) => {
     inputSlotControl.control.modelValue = val
     changeEvent &&
-      changeEvent({
-        key: inputSlotControl.name,
-        value: val,
-        data: inputSlotControl
-      })
+    changeEvent({
+      key: inputSlotControl.name,
+      value: val,
+      data: inputSlotControl
+    })
   }
   /****input slot处理结束***/
-  // treeSelect
+    // treeSelect
   const filterMethod = (val: string) => {
-    if (props.data.type === 'treeSelect') {
-      // 请求参数名，可使用config.queryName传进来
-      const queryName = config.value.queryName || 'name'
-      control.value.filterMethod && control.value.filterMethod(val)
-      getAxiosOptions({ [queryName]: val })
+      if (props.data.type === 'treeSelect') {
+        // 请求参数名，可使用config.queryName传进来
+        const queryName = config.value.queryName || 'name'
+        control.value.filterMethod && control.value.filterMethod(val)
+        getAxiosOptions({[queryName]: val})
+      }
     }
-  }
   onMounted(() => {
     getAxiosOptions()
   })

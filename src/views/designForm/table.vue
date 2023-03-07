@@ -366,10 +366,22 @@
     state.direction = params.direction || 'rtl'
     state.visibleDialog = true
     state.dialogTitle = params.title
-    const editData =
-      params.type === 'dict'
-        ? json2string(obj, true)
-        : objToStringify(obj, true)
+    let editData = objToStringify(obj, true)
+    switch (params.type) {
+      case 'dict':
+        editData = json2string(obj, true)
+        break
+      case 'beforeRequest':
+        if (!obj) {
+          editData = beforeRequest
+        }
+        break
+      case 'afterResponse':
+        if (!obj) {
+          editData = afterResponse
+        }
+        break
+    }
     nextTick(() => {
       state.editor = aceEdit(editData)
     })
@@ -466,8 +478,8 @@
       case 'beforeRequest':
       case 'afterResponse':
         const newData = state.tableData.events || {}
-        const fn = type === 'beforeRequest' ? beforeRequest : afterResponse
-        dialogOpen(newData[type] || fn, { direction: 'ltr' })
+        //const fn = type === 'beforeRequest' ? beforeRequest : afterResponse
+        dialogOpen(newData[type], { direction: 'ltr', type: type })
         break
       case 'tree':
         let tree = state.tableData.tree || {}

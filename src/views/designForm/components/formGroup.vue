@@ -201,7 +201,7 @@
     return controlType.includes(type)
   }
   // 删除或复制
-  const click = (type: string, index: number, item: any) => {
+  const click = (type: string, index: number, item?: any) => {
     if (state.type !== 4) {
       return // 非设计模式
     }
