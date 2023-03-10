@@ -33,68 +33,95 @@
   }>()
   const navList = ref([
     {
-      title: '首页',
-      path: '/',
-      icon: 'HomeFilled'
-    },
-    {
-      title: '内容管理',
-      icon: 'Document',
+      title: '表单设计管理',
+      icon: 'form',
       children: []
     },
-
     {
-      title: '导出vue测试',
-      icon: 'FolderOpened',
+      title: '列表页设计管理',
+      icon: 'list',
+      children: []
+    },
+    {
+      title: '数据统计图管理',
+      icon: 'line',
+      children: []
+    },
+    {
+      title: '数据大屏管理',
+      icon: 'data',
+      children: []
+    },
+    {
+      title: '流程配置管理',
+      icon: 'tree',
+      children: []
+    },
+    {
+      title: '系统管理',
+      icon: 'sys',
       children: [
         {
-          title: '表单测试',
-          icon: 'Document',
-          path: '/export/form'
+          title: '用户管理',
+          icon: 'user',
+          path: ''
         },
         {
-          title: '列表测试',
-          icon: 'Tickets',
-          path: '/export/list'
+          title: '角色管理',
+          icon: 'role',
+          path: ''
+        },
+        {
+          title: '菜单管理',
+          icon: 'menu',
+          path: ''
+        },
+        {
+          title: '部门管理',
+          icon: 'tree',
+          path: ''
+        },
+        {
+          title: '岗位管理',
+          icon: 'post',
+          path: ''
+        },
+        {
+          title: '字典管理',
+          icon: 'dict',
+          path: ''
+        },
+        {
+          title: '登录日志',
+          icon: 'log2',
+          path: ''
+        },
+        {
+          title: '操作日志',
+          icon: 'log',
+          path: '/system/log'
         }
       ]
     },
     {
       title: '系统工具',
-      icon: 'platform',
+      icon: 'tool',
       children: [
         {
-          title: '表单管理',
-          icon: 'list',
-          path: '/designform/formlist'
+          title: '新建设计',
+          icon: 'creat',
+          path: '/design'
         },
         {
           title: '帮助文档',
-          icon: 'InfoFilled',
+          icon: 'doc',
           path: '/docs'
         }
       ]
     }
   ])
   const select = () => {
-    //router.push({ path: index })
-    // 位置导航处理，如若异常可在当前页面中修改changeBreadcrumb
-    /*console.log(index)
-    const temp = []
-    if (indexItem && indexItem.length) {
-      temp.push({ label: indexItem[0] })
-      if (indexItem.length === 2) {
-        navList.value.forEach((item: any) => {
-          item.children &&
-            item.children.forEach((ch: any) => {
-              if (index === ch.path) {
-                temp.push({ label: ch.label })
-              }
-            })
-        })
-      }
-      store.changeBreadcrumb(temp)
-    }*/
+    console.log('select')
   }
   // 获取创建的表单导航，存下storage不用每次刷新请求
   const initForm = () => {

@@ -6,6 +6,104 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5371107",
+      "name": "文档",
+      "font_class": "doc",
+      "unicode": "e7d0",
+      "unicode_decimal": 59344
+    },
+    {
+      "icon_id": "12959365",
+      "name": "系统管理",
+      "font_class": "sys",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "24007617",
+      "name": "创建图表",
+      "font_class": "creat",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "24069228",
+      "name": "可视化",
+      "font_class": "data",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "339044",
+      "name": "菜单",
+      "font_class": "menu",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "397442",
+      "name": "icon-user",
+      "font_class": "user",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "4329375",
+      "name": "表单管理",
+      "font_class": "form",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "5961366",
+      "name": "列表",
+      "font_class": "list",
+      "unicode": "ec6b",
+      "unicode_decimal": 60523
+    },
+    {
+      "icon_id": "7474663",
+      "name": "操作日志",
+      "font_class": "log",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "8605754",
+      "name": "字典管理",
+      "font_class": "dict",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "8949009",
+      "name": "岗位",
+      "font_class": "post",
+      "unicode": "e658",
+      "unicode_decimal": 58968
+    },
+    {
+      "icon_id": "10213489",
+      "name": "角色管理",
+      "font_class": "role",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "26876046",
+      "name": "管理登录日志",
+      "font_class": "log2",
+      "unicode": "ea45",
+      "unicode_decimal": 59973
+    },
+    {
+      "icon_id": "34047671",
+      "name": "系统工具",
+      "font_class": "tool",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
       "icon_id": "1057386",
       "name": "柱状图",
       "font_class": "bar",

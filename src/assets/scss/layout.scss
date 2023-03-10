@@ -37,17 +37,18 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
     .logo {
       display: flex;
       align-items: center;
-      font-size: 18px;
-      font-weight: 700;
-      height: 60px;
+      font-size: 16px;
+      height: 40px;
       justify-content: center;
+      cursor: pointer;
       img {
-        width: 30px;
-        height: 30px;
+        width: 20px;
+        height: 20px;
       }
     }
     .el-menu {
       border-right: 0;
+      .icon{margin-right: 5px}
     }
   }
   .common-header {
@@ -71,7 +72,9 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
     background: #f0f2f5;
     padding: 10px;
     overflow: hidden;
-    > div {background: #fff;border-radius: 5px;padding: 10px 15px}
+    > div {border-radius: 5px;padding: 10px 15px;background: #fff;
+    &.bg-none{background: none;}
+    }
   }
   .tag-tabs {display: flex;justify-content: space-between;align-items: center;
     padding: 0 20px;

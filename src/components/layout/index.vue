@@ -5,7 +5,7 @@
       class="common-sidebar"
       v-if="!fullScreen"
     >
-      <div class="logo"
+      <div class="logo" @click="$router.push({ path: '/' })"
         ><img src="@/assets/logo.png" alt="" />
         <span v-show="!isCollapse">AK管理系统</span></div
       >
