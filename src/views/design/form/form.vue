@@ -1,0 +1,71 @@
+<!-- Created by 337547038 -->
+<template>
+  <div>
+    <ak-form
+      ref="formEl"
+      :formData="state.formData"
+      :type="formType"
+      :dict="state.dict"
+      :formId="state.formId"
+      :id="state.id"
+      requestUrl="getFormContent"
+      addUrl="saveFormContent"
+      editUrl="editFormContent"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { ref, reactive, onMounted, computed } from 'vue'
+  import { useRoute } from 'vue-router'
+  import { getRequest } from '@/api'
+  import { ElMessage } from 'element-plus'
+  import { string2json, stringToObj } from '@/utils/form'
+  const route = useRoute().query
+  const formEl = ref()
+  const state = reactive({
+    formData: {
+      list: [],
+      form: {},
+      config: {}
+    },
+    dict: {},
+    formId: route.form,
+    id: route.id
+  })
+  const formType = computed(() => {
+    // 带有参数id为编辑状态
+    if (route.id) {
+      return 2
+    } else {
+      return 1
+    }
+  })
+  const getFormData = () => {
+    if (!state.formId) {
+      ElMessage.error('非法操作.')
+      return false
+    }
+    const params = {
+      id: state.formId
+    }
+    getRequest('designById', params)
+      .then((res: any) => {
+        const result = res.data
+        if (result && Object.keys(result).length) {
+          state.formData = stringToObj(result.data)
+          state.dict = string2json(result.dict)
+          // 编辑时加载表单初始数据。或设置了添加时获取请求
+          if (route.id || state.formData.config?.addLoad) {
+            formEl.value.getData()
+          }
+        }
+      })
+      .catch((res: any) => {
+        ElMessage.error(res.message || '非法操作..')
+      })
+  }
+  onMounted(() => {
+    getFormData()
+  })
+</script>

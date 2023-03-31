@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
   import MenuItem from './menuItem.vue'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   // import { useRoute } from 'vue-router'
   // import { useLayoutStore } from '@/store/layout'
   import { getRequest } from '@/api'
@@ -31,95 +31,107 @@
   const emits = defineEmits<{
     (e: 'getMenuList', val: any): void
   }>()
-  const navList = ref([
-    {
-      title: '表单设计管理',
-      icon: 'form',
-      children: []
-    },
-    {
-      title: '列表页设计管理',
-      icon: 'list',
-      children: []
-    },
-    {
-      title: '数据统计图管理',
-      icon: 'line',
-      children: []
-    },
-    {
-      title: '数据大屏管理',
-      icon: 'data',
-      children: []
-    },
-    {
-      title: '流程配置管理',
-      icon: 'tree',
-      children: []
-    },
-    {
-      title: '系统管理',
-      icon: 'sys',
-      children: [
-        {
-          title: '用户管理',
-          icon: 'user',
-          path: ''
-        },
-        {
-          title: '角色管理',
-          icon: 'role',
-          path: ''
-        },
-        {
-          title: '菜单管理',
-          icon: 'menu',
-          path: ''
-        },
-        {
-          title: '部门管理',
-          icon: 'tree',
-          path: ''
-        },
-        {
-          title: '岗位管理',
-          icon: 'post',
-          path: ''
-        },
-        {
-          title: '字典管理',
-          icon: 'dict',
-          path: ''
-        },
-        {
-          title: '登录日志',
-          icon: 'log2',
-          path: ''
-        },
-        {
-          title: '操作日志',
-          icon: 'log',
-          path: '/system/log'
-        }
-      ]
-    },
-    {
-      title: '系统工具',
-      icon: 'tool',
-      children: [
-        {
-          title: '新建设计',
-          icon: 'creat',
-          path: '/design'
-        },
-        {
-          title: '帮助文档',
-          icon: 'doc',
-          path: '/docs'
-        }
-      ]
-    }
-  ])
+  const contentList = ref([])
+  const navList = computed(() => {
+    return [
+      {
+        title: '内容管理',
+        icon: 'doc',
+        children: contentList.value
+      },
+      {
+        title: '设计管理',
+        icon: 'design',
+        children: [
+          { title: '表单设计管理', icon: 'form', path: '/design/form/list' },
+          {
+            title: '列表页设计管理',
+            icon: 'list',
+            path: '/design/dataList/list'
+          },
+          {
+            title: '数据统计图管理',
+            icon: 'line'
+          },
+          {
+            title: '数据大屏管理',
+            icon: 'data'
+          },
+          {
+            title: '流程配置管理',
+            icon: 'tree'
+          }
+        ]
+      },
+      {
+        title: '系统管理',
+        icon: 'sys',
+        children: [
+          {
+            title: '用户管理',
+            icon: 'user',
+            path: ''
+          },
+          {
+            title: '角色管理',
+            icon: 'role',
+            path: ''
+          },
+          {
+            title: '菜单管理',
+            icon: 'menu',
+            path: ''
+          },
+          {
+            title: '部门管理',
+            icon: 'tree',
+            path: ''
+          },
+          {
+            title: '岗位管理',
+            icon: 'post',
+            path: ''
+          },
+          {
+            title: '字典管理',
+            icon: 'dict',
+            path: '/system/dict'
+          },
+          {
+            title: '登录日志',
+            icon: 'log2',
+            path: ''
+          },
+          {
+            title: '操作日志',
+            icon: 'log',
+            path: '/system/log'
+          }
+        ]
+      },
+      {
+        title: '系统工具',
+        icon: 'tool',
+        children: [
+          {
+            title: '新建设计',
+            icon: 'creat',
+            path: '/design'
+          },
+          {
+            title: '表单数据源',
+            icon: 'data-source',
+            path: '/design/dataSource'
+          },
+          {
+            title: '帮助文档',
+            icon: 'doc',
+            path: '/docs'
+          }
+        ]
+      }
+    ]
+  })
   const select = () => {
     console.log('select')
   }
@@ -127,28 +139,35 @@
   const initForm = () => {
     const sessionList = window.sessionStorage.getItem('formMenuList')
     if (sessionList) {
-      navList.value[1].children = JSON.parse(sessionList)
-    } else {
-      getRequest('getFormList', { status: 1 }).then((res) => {
-        //contentForm.value = res.data.data?.list || []
-        const result = res.data.data?.list
-        let temp: any = []
-        if (result) {
-          result.forEach((item: any) => {
-            if (item.formId && item.status?.toString() === '1') {
-              // 有数据源创建的才能添加
-              temp.push({
-                title: item.name,
-                icon: 'List',
-                path: '/designform/list?tid=' + item.id
-              })
-            }
-          })
-          navList.value[1].children = temp
-          window.sessionStorage.setItem('formMenuList', JSON.stringify(temp))
-        }
-      })
+      contentList.value = JSON.parse(sessionList)
+      return
     }
+    // 搜索条件为启用的，类型为表单
+    const params = {
+      pageInfo: {
+        pageSize: 100,
+        pageIndex: 1
+      },
+      status: 1,
+      type: 2
+    }
+    getRequest('designList', params).then((res) => {
+      const result = res.data?.list
+      contentList.value = []
+      if (result) {
+        result.forEach((item: any) => {
+          contentList.value.push({
+            title: item.name,
+            icon: item.icon || '',
+            path: `/design/dataList/content?id=${item.id}&form=${item.source}`
+          })
+        })
+        window.sessionStorage.setItem(
+          'formMenuList',
+          JSON.stringify(contentList.value)
+        )
+      }
+    })
   }
   onMounted(() => {
     // 将导航信息传给tagViews，根据path匹配出显示的title

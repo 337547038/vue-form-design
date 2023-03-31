@@ -33,10 +33,36 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue'
+  import { getRequest } from '@/api'
   import { useLayoutStore } from '@/store/layout'
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([])
+  const initDict = () => {
+    getRequest('dictList', { status: 1 }).then((res: any) => {
+      const result = res.data.list
+      let temp: any = {}
+      if (result) {
+        console.log(result)
+        result.forEach((item: any) => {
+          const children = item.children
+          if (children) {
+            const childJson = JSON.parse(children)
+            let list: any = {}
+            childJson.forEach((ch: any) => {
+              list[ch.value] = ch.label
+            })
+            temp[item.type] = list
+          }
+        })
+      }
+      window.localStorage.setItem('akFormDict', JSON.stringify(temp))
+    })
+  }
+  onMounted(() => {
+    initDict() // todo 这个应该是每次登录进来就加载一次
+  })
 </script>
 <style scoped lang="scss">
   .info {

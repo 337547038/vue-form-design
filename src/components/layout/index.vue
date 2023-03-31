@@ -1,7 +1,7 @@
 <template>
   <el-container class="common-layout">
     <el-aside
-      :width="isCollapse ? '64px' : '220px'"
+      :width="isCollapse ? '64px' : '200px'"
       class="common-sidebar"
       v-if="!fullScreen"
     >
@@ -44,7 +44,7 @@
 
   const store = useLayoutStore()
   const isCollapse = ref(false)
-  const fullScreen = ref(false)
+  const fullScreen = ref(true) // todo default false
   //const reloadFlag = ref<boolean>(true)
   const navList = ref([])
   const reloadFlag = computed({

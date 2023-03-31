@@ -7,8 +7,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import './assets/scss/element-var.scss'
 import '@/assets/scss/index.scss'
-import AKDesignForm from './views/designForm/index'
-import AKDesignEcharts from './views/echarts/index'
+import AKDesign from './views/design/index'
 // 实例化 Pinia
 const pinia = createPinia()
 const app = createApp(App)
@@ -18,8 +17,7 @@ app
     locale: zhCn
   })
   .use(router)
-  .use(AKDesignForm)
-  .use(AKDesignEcharts)
+  .use(AKDesign)
   .mount('#app')
 // 全局注册icon
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
