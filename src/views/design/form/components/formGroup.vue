@@ -19,7 +19,7 @@
         class="group"
         :class="{
           ['group-' + element.type]: true,
-          active: activeKey === element.name
+          active: activeKey === getGroupName(element)
         }"
         :style="getFormItemStyle(element)"
         @click.stop="groupClick(element)"
@@ -188,6 +188,7 @@
   import { useDesignFormStore } from '@/store/designForm'
   import type { FormList } from '../../types'
   import { constFormOtherData, constFormBtnEvent } from '../../utils'
+  import md5 from 'md5'
 
   const props = withDefaults(
     defineProps<{
@@ -301,6 +302,14 @@
     Object.assign(obj, nameObj, objectItem)
     groupClick(obj)
   }
+  const getGroupName = (item: any) => {
+    // console.log('getGroupName', md5(JSON.stringify(item)))
+    if (item.name) {
+      return item.name
+    } else {
+      return md5(JSON.stringify(item))
+    }
+  }
   // 点击激活当前
   const groupClick = (item: any, ele?: string) => {
     // 设计模式下才执行
@@ -313,7 +322,7 @@
       // }
       item.type = ele
     }
-    store.setActiveKey(item.name)
+    store.setActiveKey(getGroupName(item))
     store.setControlAttr(item)
     // grid时显示添加列按钮
     state.gridAdd = item.type === 'grid'
