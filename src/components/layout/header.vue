@@ -72,7 +72,7 @@
     (e: 'click', type: string): void
   }>()
   const user = ref({
-    name: 'userName',
+    name: 'admin',
     avatar: ''
   })
   const toolClick = (type: string) => {

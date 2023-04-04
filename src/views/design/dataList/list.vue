@@ -7,7 +7,11 @@
       :searchData="searchData"
       :tableData="tableData"
       :beforeRequest="beforeRequest"
-    />
+    >
+      <template #sourceName="{ row }">
+        <div>{{ row.sourceName }}/{{ row.source }}</div>
+      </template>
+    </ak-list>
     <el-dialog v-model="dialog.visible" title="设置" width="480px">
       <ak-form
         ref="formEl"
@@ -26,9 +30,7 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { ref, reactive, nextTick } from 'vue'
-  // import { getRequest } from '@/api'
-  import { ElMessage } from 'element-plus'
-  // const route = useRoute()
+  // import { ElMessage } from 'element-plus'
   const router = useRouter()
   const dialog = reactive({
     visible: false,
@@ -41,9 +43,9 @@
       { label: '勾选', type: 'selection' },
       { prop: 'id', label: 'ID' },
       { prop: 'name', label: '名称', width: '150px' },
-      { prop: 'source', label: '表单ID', width: '110px' },
-      { prop: 'sourceName', label: '表单名称' },
-      { prop: 'category', label: '分类', config: { dictKey: 'category' } },
+      /*{ prop: 'source', label: '表单ID', width: '110px' },*/
+      { prop: 'sourceName', label: '表单名称/ID', width: 150 },
+      { prop: 'category', label: '分类', config: { dictKey: 'list' } },
       {
         prop: 'status',
         label: '状态',
@@ -73,25 +75,28 @@
     ],
     controlBtn: [
       {
-        label: '新增',
-        key: 'add',
+        label: '新增列表',
+        icon: 'plus',
         type: 'primary',
         size: 'small',
         click: () => {
           toFormDesign({})
-          return false
         }
       },
-      { label: '删除', key: 'del', size: 'small' }
+      {
+        label: '删除',
+        key: 'del',
+        size: 'small',
+        type: 'danger',
+        icon: 'delete'
+      }
     ],
     operateBtn: [
       {
         label: '编辑',
-        key: 'edit',
         click: (row: any) => {
           // 跳转到表单设计编辑页
           toFormDesign(row)
-          return false
         }
       },
       // {
@@ -113,7 +118,6 @@
       {
         label: '设置',
         click: (row: any) => {
-          // todo 弹窗没完善
           dialog.visible = true
           nextTick(() => {
             dialog.row = row
@@ -136,7 +140,10 @@
       {
         label: '查看',
         click: (row: any) => {
-          router.push({ path: '/design/form/content/' + row.id })
+          router.push({
+            path: '/design/dataList/content',
+            query: { id: row.id, form: row.source }
+          })
         }
       },
       {
@@ -166,6 +173,33 @@
         item: {
           label: '名称'
         }
+      },
+      {
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        name: 'sourceName',
+        item: {
+          label: '表单名称'
+        }
+      },
+      {
+        type: 'button',
+        control: {
+          icon: 'search',
+          label: '查询',
+          key: 'submit',
+          type: 'primary'
+        }
+      },
+      {
+        type: 'button',
+        control: {
+          label: '重置',
+          key: 'reset'
+        }
       }
     ],
     form: {
@@ -193,26 +227,12 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          // todo
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
+          type: 'async',
+          source: 2,
           request: 'get',
-          sourceFun: ''
+          sourceFun: 'list'
         },
         name: 'category',
         item: {
@@ -225,26 +245,13 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          // todo
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
+          // todo
+          type: 'async',
+          source: 2,
           request: 'get',
-          sourceFun: ''
+          sourceFun: 'list'
         },
         name: 'role',
         item: {
@@ -259,7 +266,7 @@
         config: {},
         name: 'icon',
         item: {
-          label: 'icon图标'
+          label: 'icon图标' // todo
         }
       },
       {
@@ -268,26 +275,12 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          // todo
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
+          type: 'async',
+          source: 2,
           request: 'get',
-          sourceFun: ''
+          sourceFun: 'status'
         },
         name: 'status',
         item: {
@@ -309,27 +302,28 @@
         type: 'div',
         control: {},
         config: {
-          textAlign: 'center',
-          inline: true
+          textAlign: 'center'
         },
         list: [
           {
             type: 'button',
             control: {
               label: '修改',
-              type: 'primary'
+              type: 'primary',
+              key: 'submit'
             },
             config: {
-              event: '0'
+              span: 0
             }
           },
           {
             type: 'button',
             control: {
-              label: '取消'
+              label: '取消',
+              key: 'reset'
             },
             config: {
-              event: '1'
+              span: 0
             }
           }
         ]
@@ -346,21 +340,17 @@
     }
   })
   const afterSubmit = (res: any, type: string) => {
-    console.log(res, type)
     if (type === 'success') {
       dialog.visible = false
       dialog.row = {}
-      ElMessage.success(res.message || '修改成功')
       tableListEl.value.getListData() // 重新拉数据
-    } else {
-      ElMessage.error(res.message || '操作失败')
     }
   }
   const beforeSubmit = (params: any) => {
     params.id = dialog.row.id
   }
   const cancelClick = (type: string) => {
-    if (type === '1') {
+    if (type === 'reset') {
       dialog.visible = false
     }
   }

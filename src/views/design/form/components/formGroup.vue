@@ -291,7 +291,14 @@
         }
       }
     }
-    Object.assign(obj, { name: obj.type + key }, objectItem)
+    //　不需要name的组件
+    let nameObj = {}
+    if (!needItem.includes(obj.type)) {
+      nameObj = {
+        name: obj.type + key
+      }
+    }
+    Object.assign(obj, nameObj, objectItem)
     groupClick(obj)
   }
   // 点击激活当前
@@ -301,9 +308,9 @@
       return
     }
     if (ele === 'gridChild') {
-      if (!item.name) {
-        item.name = 'gridChild' + new Date().getTime().toString()
-      }
+      // if (!item.name) {
+      //   item.name = 'gridChild' + new Date().getTime().toString()
+      // }
       item.type = ele
     }
     store.setActiveKey(item.name)
@@ -365,7 +372,7 @@
     }
     // 如果当前字段的name值存在于表单数据的vIf中，则不显示
     const vIf: string | string[] = formOtherData.value.hideField
-    if (vIf?.length > 0) {
+    if (vIf?.length > 0 && obj.name) {
       return vIf.indexOf(obj.name) === -1 // 存在时返回false隐藏
     }
     return true
@@ -386,5 +393,7 @@
     console.log('formGroup onUnmounted')
     dataList.value = {}
     //formOtherData.value = {}
+    store.setActiveKey('')
+    store.setControlAttr({})
   })
 </script>

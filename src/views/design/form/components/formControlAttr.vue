@@ -169,7 +169,7 @@
                   <el-radio :label="1"
                     >方法函数
                     <el-tooltip
-                      content="适用于导出为单独的vue文件，在当前文件使用provide形式将方法传递"
+                      content="适用于导出为单独的vue文件，在当前文件使用provide形式将方法传递，也可使用setOptions方法"
                       placement="top"
                     >
                       <el-icon>
@@ -211,10 +211,10 @@
                   <el-form-item>
                     <el-button
                       @click="optionsEvent('optionsParams', '请求前处理事件')"
-                      >请求附加参数
+                      >beforeRequest
                     </el-button>
                     <el-button @click="optionsEvent('optionsResult')"
-                      >请求结果处理事件
+                      >afterResponse
                     </el-button>
                   </el-form-item>
                 </template>
@@ -334,6 +334,7 @@
               :filterable="item.key === 'class'"
               :allow-create="item.key === 'class'"
               :placeholder="item.placeholder"
+              :clearable="item.clearable"
               @change="formAttrChange(item)"
             >
               <el-option
@@ -485,7 +486,7 @@
   }>()
   const { formConfig, formData } = toRefs(props)
   const store = useDesignFormStore()
-  const route = useRoute()
+  // const route = useRoute()
   const controlData = computed(() => {
     return store.controlAttr
   })
@@ -496,8 +497,8 @@
       {
         label: '表单名称',
         placeholder: '用于保存的表单名称',
-        value: props.formOtherData.name,
-        key: 'name',
+        value: props.formOtherData.formName,
+        key: 'formName',
         hide: isSearch
       },
       {
@@ -507,11 +508,13 @@
         type: 'select',
         options: dataSourceOption.value,
         key: 'source',
-        hide: isSearch || !dataSourceOption.value?.length
+        hide: isSearch || !dataSourceOption.value?.length,
+        clearable: true
       },
       {
         label: '表单标识',
         value: formData.value.name,
+        placeholder: '表单唯一标识，可为空',
         key: 'name',
         hide: isSearch
       },
@@ -533,7 +536,8 @@
           { label: '每行三列', value: 'form-row-3' },
           { label: '每行四列', value: 'form-row-4' }
         ],
-        hide: isSearch
+        hide: isSearch,
+        clearable: true
       },
       {
         label: '字段名后添加冒号',
@@ -551,15 +555,15 @@
           { label: 'default', value: 'default' },
           { label: 'small', value: 'small' }
         ]
-      },
-      {
+      }
+      /*{
         label: '筛选条件展开/收起',
         value: formConfig.value.expand,
         type: 'switch',
         path: 'config',
         key: 'expand',
         hide: !isSearch
-      }
+      }*/
     ]
   })
   const attrList = computed(() => {
@@ -729,7 +733,7 @@
         {
           label: '表单栅格',
           value: config.span,
-          placeholder: '表单区域栅格宽',
+          placeholder: '表单区域栅格宽，0为自动宽',
           path: 'config.span',
           vHide: ['table', 'grid', 'gridChild', 'divider'],
           isNum: true
@@ -833,6 +837,13 @@
           type: 'switch',
           vShow: ['select', 'treeSelect'],
           eventName: 'selectMultiple'
+        },
+        {
+          label: '可清空',
+          value: control.clearable,
+          path: 'control.clearable',
+          type: 'switch',
+          vShow: ['select']
         },
         {
           label: '是否禁用',
@@ -1200,15 +1211,16 @@
       case 'filedNameKey':
         // 选择字段标识时，同时修改显示标题
         // 根据value找key
-        console.log(val)
-        state.dataSourceList.forEach((item: any) => {
-          if (item.name === val) {
-            if (controlData.value.item) {
-              controlData.value.item.label = item.label
+        if (obj.type === 'select') {
+          state.dataSourceList.forEach((item: any) => {
+            if (item.name === val) {
+              if (controlData.value.item) {
+                controlData.value.item.label = item.label
+              }
+              controlData.value.name = item.label
             }
-            controlData.value.name = item.label
-          }
-        })
+          })
+        }
         break
       case 'setInputSlot':
         if (val) {
@@ -1470,7 +1482,7 @@
     if (!state.isSearch) {
       getRequest('sourceList').then((res: any) => {
         dataSourceOption.value = res.data.list
-        dataSourceOption.value.unshift({ name: '无', id: '' })
+        //dataSourceOption.value.unshift({ name: '无', id: '' })
       })
     }
   }
@@ -1482,7 +1494,7 @@
       store.setActiveKey('')
       store.setControlAttr({})
     }
-    if (['name', 'source'].includes(obj.key)) {
+    if (['formName', 'source'].includes(obj.key)) {
       emits(
         'update:formOtherData',
         Object.assign(props.formOtherData, { [obj.key]: obj.value })

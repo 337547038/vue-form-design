@@ -34,7 +34,11 @@
           <head-tools @click="headToolClick" />
         </div>
         <div class="main-form main-table">
-          <div class="search-box" @click="searchFormClick">
+          <div
+            class="search-box"
+            @click="searchFormClick"
+            title="条件查询搜索区域，单击可编辑"
+          >
             <design-form
               is-search
               v-if="state.searchData?.list?.length"
@@ -42,11 +46,15 @@
               :dict="state.dict"
               requestUrl=""
             />
-            <div class="tip" v-else>条件搜索区域，点击可编辑</div>
+            <div class="tip" v-else>条件查询搜索区域，单击可编辑</div>
           </div>
           <el-divider border-style="dashed" />
-          <div class="control-btn" @click="editOpenDrawer('controlBtn')">
-            <div class="btn-group">
+          <div class="control-btn">
+            <div
+              class="btn-group"
+              @click="editOpenDrawer('controlBtn')"
+              title="单击可编辑"
+            >
               <div
                 class="tip"
                 v-if="
@@ -78,6 +86,10 @@
               />
             </div>
           </div>
+          <div class="tip" v-if="!state.tableData.columns?.length"
+            >表格列设置区域，可从左上角 添加表格列字段
+            选择已有列或直接从上方工具栏 生成脚本预览 编辑</div
+          >
           <el-table
             :data="[{}]"
             v-bind="state.tableData.tableProps"
@@ -199,6 +211,7 @@
                   v-if="item.type === 'select'"
                   v-model="item.value"
                   :placeholder="item.placeholder"
+                  :clearable="true"
                   @change="tableListAttrChange(item)"
                 >
                   <el-option
@@ -352,7 +365,8 @@
         value: parseInt(state.formId) || '',
         key: 'formId',
         type: 'select',
-        options: state.formList
+        options: state.formList,
+        clearable: true
       },
       {
         label: '数据列表名称',
@@ -382,7 +396,8 @@
           { label: '新页面', value: 'page' }
         ],
         key: 'openType',
-        path: 'config'
+        path: 'config',
+        clearable: true
       },
       {
         label: '横向滚动固定在底部',
@@ -397,7 +412,8 @@
             value: true
           },
           { label: '禁用', value: false }
-        ]
+        ],
+        clearable: true
       },
       {
         label: '列显示隐藏设置',
@@ -412,7 +428,8 @@
             value: true
           },
           { label: '禁用', value: false }
-        ]
+        ],
+        clearable: true
       },
       {
         label: '可折叠查询表单',
@@ -689,6 +706,13 @@
         break
       case 'dict':
         state.dict = string2json(content)
+        break
+      case 'beforeRequest':
+      case 'afterResponse':
+        if (!state.tableData.events) {
+          state.tableData.events = {}
+        }
+        state.tableData.events[drawer.type] = val
         break
     }
     drawerBeforeClose()

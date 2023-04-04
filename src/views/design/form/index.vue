@@ -89,10 +89,7 @@
     formData: {
       list: [],
       form: {
-        labelWidth: '',
-        class: '',
-        size: 'default',
-        name: 'form' + new Date().getTime()
+        size: 'default'
       },
       config: {}
     },
@@ -104,7 +101,7 @@
     formDict: {},
     formOtherData: {
       source: route.source || '',
-      name: '未命名表单'
+      formName: '未命名表单'
     }
   })
   const drawer = reactive({
@@ -134,7 +131,7 @@
           state.formDict = string2json(result.dict)
           // 恢复表单名称
           state.formOtherData.source = result.source
-          state.formOtherData.name = result.name
+          state.formOtherData.formName = result.name
           if (result.source && state.designType !== 'search') {
             // 加载属性侧边栏的字段标识，搜索时不需要请求
             formControlAttrEl.value.getFormFieldBySource(result.source)
@@ -243,7 +240,7 @@
     let params: any = {
       data: objToStringify(state.formData),
       source: state.formOtherData.source, // 数据源允许在表单属性设置里修改的
-      name: state.formOtherData.name, // 表单名称，用于在显示所有已创建的表单列表里显示
+      name: state.formOtherData.formName, // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1, // 1表单 2列表
       dict: json2string(state.formDict)
     }

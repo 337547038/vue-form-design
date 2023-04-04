@@ -1,5 +1,5 @@
-const selectOption = [
-  {
+const selectOption: any = [
+  /*{
     label: '标签1',
     value: 'value1'
   },
@@ -10,13 +10,13 @@ const selectOption = [
   {
     label: '标签3',
     value: 'value3'
-  }
+  }*/
 ]
 const config = {
   type: 'fixed', // 选项类型 fixed固定选项；async动态选项
-  source: 0, // 0数据，1方法函数
+  source: 0, // 0数据，1方法函数，2接口字典
   request: 'get', // 请求类型
-  sourceFun: '' // 方法名或请求url
+  sourceFun: '' // 方法名或请求url或是对应字典key
 }
 export default [
   {

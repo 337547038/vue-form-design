@@ -1,4 +1,8 @@
-# 目录结构
+# 开发指南
+
+欢迎有兴趣的同学参与完善文档
+
+## 目录结构
 
 ```text
 nodejs // 模拟后端接口
@@ -17,14 +21,13 @@ src
      ├─components // 表单表格设计公共组件
      ├─dataList // 列表设计
      ├─dataScreen // 数据可视化大屏设计
+     ├─dataSource // 数据源设计
      ├─form // 表单设计
-     └─
-   └─export
-     ├─form.vue // 添加编辑表单文件，在表单设计处导出的vue文件，用作测试
-     └─list.vue // 表单列表文件，在表单设计处导出的vue文件，用作测试
+     └─index.vue 设计首页
+   ├─ system 系统管理相关页面
 ```
 
-# 快速上手
+## 快速上手
 
 进入项目安装依赖包
 
@@ -34,7 +37,7 @@ yarn install
 yarn run dev
 ```
 
-# nodejs模拟接口
+## nodejs模拟接口
 
 体验完整的流程可启动nodejs模拟接口数据，使用mock/json数据只能查看；
 
@@ -47,14 +50,9 @@ yarn install
 yarn dev
 ```
 
-浏览器进入 http://localhost:3000 开始创建表单
+浏览器进入 http://localhost:3000 开始体验
 
-![](./img/img1.png)
+## 代码模式
 
-# 代码编辑支持json和javascript两种模式
-
-代码编辑输入框可支持`json`或`javascript`，初始使用时可通过修改`/src/utils/form.ts`里的`EDITTYPE`的值
-
-
-> 如果是新项目，建议在此框架基础上开发即可
+代码编辑输入框可支持`json`或`javascript`两种模式，初始使用时可通过修改`/src/utils/form.ts`里的`EDITTYPE`的值
 

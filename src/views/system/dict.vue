@@ -281,6 +281,7 @@
         click: () => {
           dialog.visible = true
           dialog.type = 1
+          dialog.editId = ''
           nextTick(() => {
             formEl.value.resetFields()
           })
@@ -327,7 +328,10 @@
         icon: 'delete',
         visible: '$.isSystem!==1'
       }
-    ]
+    ],
+    config: {
+      expand: true
+    }
   })
   const searchData = ref({
     list: [
@@ -340,6 +344,32 @@
         name: 'name',
         item: {
           label: '字典名称'
+        }
+      },
+      {
+        type: 'select',
+        control: {
+          modelValue: '',
+          appendToBody: true
+        },
+        options: [
+          {
+            label: '正常',
+            value: '1'
+          },
+          {
+            label: '停用',
+            value: '0'
+          }
+        ],
+        config: {
+          type: 'fixed',
+          source: 0,
+          request: 'get',
+          sourceFun: ''
+        },
+        item: {
+          label: '状态'
         }
       },
       {

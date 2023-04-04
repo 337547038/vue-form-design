@@ -163,13 +163,13 @@
                     <template #dropdown>
                       <el-dropdown-menu>
                         <template
-                          v-for="(item, index) in tableData.operateBtn.slice(1)"
+                          v-for="(m, index) in tableData.operateBtn.slice(1)"
                           :key="index"
                         >
                           <el-dropdown-item
-                            v-if="getOperateVisible(item, scope.row)"
-                            @click="operateBtnClick(item, scope.row)"
-                            >{{ item.label }}</el-dropdown-item
+                            v-if="getOperateVisible(m, scope.row)"
+                            @click="operateBtnClick(m, scope.row)"
+                            >{{ m.label }}</el-dropdown-item
                           >
                         </template>
                       </el-dropdown-menu>
@@ -213,7 +213,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import Tooltip from '../../components/tooltip.vue'
   import { getRequest } from '@/api'
-  import { ElMessage } from 'element-plus'
+  import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormData, TableData } from '../../types'
   import { dateFormatting } from '@/utils'
   import ListTreeSide from './listTreeSide.vue'
@@ -250,7 +250,7 @@
   )
   const emits = defineEmits<{
     (e: 'selectionChange', row: any): void
-    (e: 'btnClick', btn: any, row?: any): void // 列表上面添加删除按钮事件
+    (e: 'btnClick', btn: any, row?: any): void // 列表上面及表格列表里添加删除按钮事件
   }>()
   const route = useRoute()
   const router = useRouter()
@@ -272,7 +272,7 @@
   })
   // 可折叠查询表单
   const searchFormExpand = computed(() => {
-    return props.searchData.config?.expand
+    return props.tableData.config?.expand
   })
   const columnsFilter = computed(() => {
     if (!state.columnsCheck.length) {
@@ -446,7 +446,18 @@
     if (btn.key === 'edit') {
       addOrEdit(row)
     } else if (btn.key === 'del') {
-      delClick(row.id)
+      if (btn.tip) {
+        // 有删除提示
+        ElMessageBox.confirm(btn.tip, '温馨提示', {
+          confirmButtonText: '删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          delClick(row.id)
+        })
+      } else {
+        delClick(row.id)
+      }
     }
   }
   // 根据条件显示操作按钮

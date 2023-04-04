@@ -329,16 +329,6 @@
             sourceFun = sourceFun.replace(string, val)
             // 如有需要可从sourceFun里提取url参数放入到newData中
           }
-          //let queryParams = config.value.params || {}
-          // 转换路由参数{query:'$route.query.id'}将字符串转为路由实际参数
-          /*if (Object.keys(queryParams)) {
-            for (const key in queryParams) {
-              if (queryParams[key].indexOf('$route.query.') === 0) {
-                const query = queryParams[key].substring(13)
-                queryParams[key] = route.query[query]
-              }
-            }
-          }*/
           // 处理请求前的数据
           //let newData = Object.assign({}, data || {}, queryParams)
           let newData = data || {}
@@ -355,7 +345,7 @@
           ;(axios as any)
             [config.value.request](sourceFun, newData)
             .then((res: any) => {
-              if (res.data.code === 200) {
+              if (res.data.code === 1) {
                 // 请求成功
                 const result = res.data.data
                 let formatResult: any = result

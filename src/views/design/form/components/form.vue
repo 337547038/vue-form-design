@@ -52,7 +52,7 @@
       addUrl?: string // 表单数据新增提交保存url
       editUrl?: string // 表单数据修改保存提交url
       beforeSubmit?: Function // 表单提交前数据处理，可对提交数据处理，新增和保存都会触发
-      afterSubmit?: Function // 表单提交后，默认会跳转到表单设计列表，可return false阻止跳转
+      afterSubmit?: Function // 表单提交后，默认提示提交结果，可return false阻止提示
       value?: { [key: string]: any } // 表单初始值，同setValue
       options?: { [key: string]: any } // 表单组件选项，同setOptions
       dict?: object // 固定匹配的字典
@@ -100,7 +100,7 @@
   // 注册window事件
   const setWindowEvent = (bool?: boolean) => {
     if (props.formData.list.length > 0) {
-      const formName = props.formData.form.name
+      const formName = props.formData.form?.name
       if (!formName) {
         // 导出.vue时，name可以没有
         return
@@ -234,8 +234,8 @@
   }
   // 追加移除style样式
   const appendRemoveStyle = (type?: boolean) => {
-    const { form = {}, config = {} } = props.formData
-    const styleId: any = document.getElementById(form.name + 'Style')
+    const { config = {} } = props.formData
+    const styleId: any = document.getElementById('formStyle')
     if (styleId && type) {
       // 存在时直接修改，不用多次插入
       styleId.innerText = config.style
@@ -243,7 +243,8 @@
     }
     if (config.style && type) {
       const styleEl = document.createElement('style')
-      styleEl.id = form && form.name + 'Style'
+      styleEl.id = 'formStyle'
+      styleEl.type = 'text/css'
       styleEl.appendChild(document.createTextNode(config.style))
       document.head.appendChild(styleEl)
     }
@@ -288,7 +289,7 @@
       return
     }
     loading.value = true
-    const newPrams: any = Object.assign(
+    const newParams: any = Object.assign(
       {
         formId: props.formId,
         id: props.id
@@ -296,21 +297,22 @@
       params || {}
     )
     // 同时可使用props或是events里的事件，根据使用使用其中一种即可
-    let newPrams2
+    let newParams2
     const beforeRequest = props.formData.events?.beforeRequest
     if (typeof beforeRequest === 'function') {
-      newPrams2 = beforeRequest(newPrams, route)
+      newParams2 = beforeRequest(newParams, route)
     }
     if (typeof props.beforeRequest === 'function') {
-      newPrams2 = props.beforeRequest(newPrams, route)
+      newParams2 = props.beforeRequest(newParams, route)
     }
-    if (newPrams2 === false) {
+    if (newParams2 === false) {
       // 停止数据请求
       return
     }
-    getRequest(requestUrl, newPrams2 ?? newPrams)
+    getRequest(requestUrl, newParams2 ?? newParams)
       .then((res) => {
         // console.log(res)
+        loading.value = false
         const result = res.data
         if (result) {
           let formatResult: any = result
@@ -334,7 +336,6 @@
             }
           })
         }
-        loading.value = false
       })
       .catch((res: any) => {
         loading.value = false

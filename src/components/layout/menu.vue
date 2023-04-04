@@ -85,12 +85,12 @@
           {
             title: '部门管理',
             icon: 'tree',
-            path: ''
+            path: '/system/dept'
           },
           {
             title: '岗位管理',
             icon: 'post',
-            path: ''
+            path: '/system/post'
           },
           {
             title: '字典管理',
@@ -100,7 +100,7 @@
           {
             title: '登录日志',
             icon: 'log2',
-            path: ''
+            path: '/system/log'
           },
           {
             title: '操作日志',

@@ -7,7 +7,11 @@
       :searchData="searchData"
       :tableData="tableData"
       :beforeRequest="beforeRequest"
-    />
+    >
+      <template #sourceName="{ row }">
+        <div>{{ row.sourceName }}/{{ row.source }}</div>
+      </template>
+    </ak-list>
     <el-dialog
       v-model="dialog.visible"
       title="设置"
@@ -45,9 +49,9 @@
       { label: '勾选', type: 'selection' },
       { prop: 'id', label: 'ID' },
       { prop: 'name', label: '表单名称', width: '150px' },
-      { prop: 'source', label: '数据源ID', width: '90px' },
-      { prop: 'sourceName', label: '数据源名称', width: '100px' },
-      { prop: 'category', label: '分类', config: { dictKey: 'category' } },
+      /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
+      { prop: 'sourceName', label: '数据源名称/ID', width: '130px' },
+      { prop: 'category', label: '分类', config: { dictKey: 'form' } },
       {
         prop: 'status',
         label: '状态',
@@ -82,7 +86,6 @@
         size: 'small',
         click: () => {
           toFormDesign({})
-          return false
         }
       },
       { label: '删除', key: 'del', size: 'small' }
@@ -108,7 +111,6 @@
         label: '设置',
         key: 'set',
         click: (row: any) => {
-          // todo 弹窗没完善
           dialog.visible = true
           nextTick(() => {
             dialog.row = row
@@ -127,14 +129,16 @@
         click: (row: any) => {
           // 跳转到表单设计编辑页
           toFormDesign(row)
-          return false
         }
       },
       {
         label: '删除',
         key: 'del'
       }
-    ]
+    ],
+    config: {
+      expand: true
+    }
   })
   const toFormDesign = (row: any) => {
     router.push({
@@ -152,7 +156,18 @@
         config: {},
         name: 'name',
         item: {
-          label: '名称'
+          label: '表单名称'
+        }
+      },
+      {
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        name: 'sourceName',
+        item: {
+          label: '数据源名称'
         }
       },
       {
@@ -204,26 +219,12 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          // todo
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
+          type: 'async',
+          source: 2,
           request: 'get',
-          sourceFun: ''
+          sourceFun: 'form'
         },
         name: 'category',
         item: {
@@ -236,26 +237,12 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          // todo
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
+          type: 'async',
+          source: 2,
           request: 'get',
-          sourceFun: ''
+          sourceFun: 'status'
         },
         name: 'status',
         item: {
@@ -266,8 +253,7 @@
         type: 'div',
         control: {},
         config: {
-          textAlign: 'center',
-          inline: true
+          textAlign: 'center'
         },
         list: [
           {
@@ -276,6 +262,9 @@
               label: '修改',
               type: 'primary',
               key: 'submit'
+            },
+            config: {
+              span: 0
             }
           },
           {
@@ -283,6 +272,9 @@
             control: {
               label: '取消',
               key: 'reset'
+            },
+            config: {
+              span: 0
             }
           }
         ]
@@ -301,7 +293,6 @@
       dialog.row = {}
       tableListEl.value.getListData() // 重新拉数据
     }
-    return false
   }
   const beforeSubmit = (params: any) => {
     params.id = dialog.row.id

@@ -46,7 +46,7 @@ router.post('/list', async (req, res) => {
   if (whereTemp.length) {
     where = ` WHERE ${whereTemp.join(' AND ')}`
   }
-  const sql = `SELECT (SELECT name FROM ${datasource} where id=d.source) as sourceName,source,id,name,status,creatDate,updateDate FROM \`design\` as d ${where} Limit ${start},${pageSize}`
+  const sql = `SELECT (SELECT name FROM ${datasource} where id=d.source) as sourceName,source,id,name,status,creatDate,updateDate,category FROM \`design\` as d ${where} Limit ${start},${pageSize}`
   const countSql = 'select count(id) as num from `design`' + where
   const count = await sqlQuery(countSql)
   sqlQuery(sql, [], res, (result) => {

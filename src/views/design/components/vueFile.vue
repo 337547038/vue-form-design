@@ -38,7 +38,7 @@
           // 使用自定义校验方法
           item.customRules.forEach((c: any) => {
             if (c.type === 'methods' && c.methods) {
-              rulesMethods += `// todo ${item.item.label}校验方法
+              rulesMethods += `// todo 请完善${item.item.label}校验方法
   provide("${c.methods}", (rule, value, callback) => {
     if (value === '') {
       callback(new Error('Please input the password again'))
@@ -52,17 +52,16 @@
           })
         }
         if (
-          item.config &&
-          item.config.type === 'async' &&
-          item.config.source === 1 &&
-          item.config.sourceFun
+          item.config?.type === 'async' &&
+          item.config?.source === 1 &&
+          item.config?.sourceFun
         ) {
-          // 单选多选下拉等方法取值
+          // 单选多选下拉等方法设值
           // const optionsValue = ref([{label: "选项1", value: '1'}])
           // provide("getCheckbox", optionsValue)
-          sourceFun += `    // todo ${item.item.label}获取选项值\n`
-          sourceFun += `    const ${item.name}Option = ref([{label: "选项1", value: '1'}])\n`
-          sourceFun += `    provide("${item.config.sourceFun}", ${item.name}Option)\n`
+          sourceFun += `// todo ${item.item.label}设置选项值\n`
+          sourceFun += `　const ${item.name}Option = ref([{label: "选项1", value: '1'}])\n`
+          sourceFun += `　provide("${item.config.sourceFun}", ${item.name}Option)\n`
         }
       })
     return {
@@ -73,49 +72,42 @@
   const open = (obj: any) => {
     visible.value = true
     const getHtml = getObjHtml(obj)
-    // 判断有没配置有提交按钮
-    const hasBtn = obj.config?.confirm
-    let submitBtn = ``
-    let submitHtml = ''
-    // let submitUrl = ''
-    if (!hasBtn) {
-      submitBtn = `    <el-button type="primary" @click="submit">提交</el-button>`
-      submitHtml = `    const submit = () => {
-      formName.value.validate((valid, fields) => {
-        console.log(valid)
-        console.log(fields) // 校验通过时返回当前表单的值
-        if (valid) {
-          alert('submit')
-        } else {
-          console.log('error submit')
-          return false
-        }
-      })
-    }`
-      // submitUrl = `:submitUrl="submitUrl"`
-    }
     const html = `<template>
   <div>
-    <ak-form :formData="formData" ref="formName" :requestUrl="requestUrl" :submitUrl="submitUrl">
+    <ak-form
+      ref="formNameEl"
+      :type="formType"
+      :formData="formData"
+      requestUrl=""
+      addUrl=""
+      editUrl=""
+      :beforeSubmit="beforeSubmit">
     </ak-form>
-    ${submitBtn}
   </div>
 </template>
-<script setup>
-    import { ref } from 'vue'
-    const formData = ref(${objToStringify(obj)})
-    ${getHtml.rulesMethods}
-    ${getHtml.sourceFun}
-    // 表单控件值改变事件
-    /*provide('${constControlChange}', ({key, value}) => {
-      console.log(key)
-      console.log(value)
-    })*/
-    const submitUrl = ref(false) // 表单提交url
-    const requestUrl = ref(false) // 获取表单初始数据
-    const formName = ref()
-    ${submitHtml}
-    <\/script>`
+<script setup lang="ts">
+  import { ref, computed, provide } from 'vue'
+  const formNameEl = ref()
+  const formData = ref(${objToStringify(obj)})
+    // todo 存在编辑时，可根据路由等参数设置当前表单模式　1新增　2编辑
+  const formType = computed(() => {
+     return 1
+  })
+  ${getHtml.rulesMethods}
+  ${getHtml.sourceFun}
+  // 表单提交时参数处理
+  const beforeSubmit = (params: any)=>{
+    //　如编辑时添加参数
+    //  params.id='xxx'
+    return params
+  }
+  // 表单组件值改变事件
+  /*provide('${constControlChange}', ({key, value}) => {
+     console.log(key)
+     console.log(value)
+  })*/
+
+<\/script>`
     nextTick(() => {
       editor.value = aceEdit(html, 'editJsonCopy', 'html')
     })
@@ -124,17 +116,13 @@
   const openTable = (obj: any) => {
     visible.value = true
     const html = `<template>
-  <div class="form-list-page">
+  <div>
     <ak-list
       ref="tableListEl"
-      :requestUrl="requestUrl"
+      requestUrl=""
+      deleteUrl=""
       :searchData="searchData"
       :tableData="tableData">
-      <!--<template #__control="scope">
-        <el-button type="primary" link @click="btnClick(scope.row.id,'show')">查看</el-button>
-        <el-button type="primary" link @click="btnClick(scope.row.id,'edit')">编辑</el-button>
-        <el-button type="primary" link @click="btnClick(scope.row.id,'del')">删除</el-button>
-      </template>-->
     </ak-list>
   </div>
 </template>
@@ -145,20 +133,8 @@
     // const route = useRoute()
     // const router = useRouter()
     // const tableListEl = ref()
+    const searchData = ref({})
     const tableData = ref(${objToStringify(obj)})
-    const searchData = ref({}) // 筛选表单
-    const requestUrl = ref('')
-    /*const btnClick = (id, type) => {
-      switch (type) {
-        case 'show':
-          break
-        case 'edit':
-          break
-        case 'del':
-          // tableListEl.value.getListData() // 调用组件内部方法重新拉数据
-          break
-      }
-    }*/
 <\/script>`
     nextTick(() => {
       editor.value = aceEdit(html, 'editJsonCopy', 'html')
@@ -185,25 +161,6 @@
       clipboard.onClick(e)
     })
   }
-  // 导出echarts
-  const openEcharts = (obj: any) => {
-    visible.value = true
-    const html = `<template>
-  <div>
-    <ak-echarts :data="data"></ak-echarts>
-  </div>
-</template>
-
-<script setup>
-  import { ref } from 'vue'
-
-  const data = ref(${objToStringify(obj)})
-<\/script>
-`
-    nextTick(() => {
-      editor.value = aceEdit(html, 'editJsonCopy', 'html')
-    })
-  }
   // 导出文件
   const dialogExport = () => {
     const content = 'data:text/csv;charset=utf-8,' + editor.value?.getValue()
@@ -216,7 +173,6 @@
   }
   defineExpose({
     open,
-    openTable,
-    openEcharts
+    openTable
   })
 </script>

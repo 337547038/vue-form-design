@@ -115,7 +115,10 @@
           router.push({ path: '/design/form', query: { source: row.id } })
         }
       }
-    ]
+    ],
+    config: {
+      expand: true
+    }
   })
   // 筛选表单
   const searchData = ref({
@@ -166,9 +169,6 @@
     ],
     form: {
       size: 'small'
-    },
-    config: {
-      expand: true
     }
   })
   const formData = ref({

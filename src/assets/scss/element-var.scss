@@ -2,5 +2,7 @@
 :root {
   /*--el-border-base: 1px solid red*/
   --el-menu-item-height:44px;
-  --el-header-height:40
+  .el-header{
+    --el-header-height:40px
+  }
 }
