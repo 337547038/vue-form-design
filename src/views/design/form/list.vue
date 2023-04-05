@@ -151,7 +151,8 @@
       {
         type: 'input',
         control: {
-          modelValue: ''
+          modelValue: '',
+          placeholder: '请输入表单名称'
         },
         config: {},
         name: 'name',
@@ -162,7 +163,8 @@
       {
         type: 'input',
         control: {
-          modelValue: ''
+          modelValue: '',
+          placeholder: '请输入数据源名称'
         },
         config: {},
         name: 'sourceName',

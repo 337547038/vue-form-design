@@ -217,7 +217,7 @@ $mainColor: #66b1ff;
     .control-btn {padding: 10px 0;
       margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center
     }
-    .tip {border: 1px dotted #ddd;padding: 3px 5px;border-radius: 5px;color: #999;text-align: center}
+    .tip {border: 1px dotted #ddd;padding: 3px 5px;border-radius: 5px;color: #999;text-align: center;cursor: pointer}
     .el-table__header {
       th {
         .cell {position: relative;}

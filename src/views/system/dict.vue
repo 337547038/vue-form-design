@@ -338,7 +338,8 @@
       {
         type: 'input',
         control: {
-          modelValue: ''
+          modelValue: '',
+          placeholder: '请输入字典名称'
         },
         config: {},
         name: 'name',

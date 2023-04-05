@@ -37,29 +37,64 @@ opt = [
 
 ## 操作按钮
 
+点击列表页按钮会触发`btnClick`事件
+
+### 列表上方按钮
+
 显示于列表左上方的按钮，可以编辑框编辑代码，其中key=add/del会执行内置事件。如：
 
 ```javascript
 opt = [
   {
-    label:'导出',
-    click:()=>{
+    label: '导出',
+    click: () => {
       // 导出逻辑
     }
   },
   {
     label: "新增",
-    key: "add",
+    key: "add", // add到新增页
     type: "primary",
     size: "small",
     icon: "plus"
   },
   {
     label: "批量删除",
-    key: "del",
+    key: "del", // 执行内置删除事件
     type: "danger",
     size: "small",
-    icon: "delete"
+    icon: "delete",
+    click: () => {
+      // 添加了add/del时，同时可以作相关逻辑判断。return false可阻止事件
+    }
+  }]
+```
+
+### 列表操作按钮
+
+列表操作列按钮，如编辑、查看、删除等。其中key=edit/del会执行内置事件，方法同列表上方按钮。
+
+**visible**
+
+该属性可用于根据当前行数据决定是否显示，例如当数据status=1时显示按钮为禁用，=0时显示启用。支持运符串，其中$为当前行数据
+
+```javascript
+opt = [
+  {
+    label: "查看",
+    click:(row)=>{
+      // 查看逻辑，row为当前行数据
+    },
+    visible:'$.status===1' // 根据条件是否显示当前行按钮，即行数据status=1时可显示查看
+  },
+  {
+    label: "编辑",
+    key: "edit" // 打开编辑页
+  },
+  {
+    label: "删除",
+    key: "del", // 执行删除操作
+    tip:'确定删除提示'
   }]
 ```
 

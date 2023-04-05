@@ -639,7 +639,8 @@
         ]
         dialogOpen(state.tableData.operateBtn || btnObj, {
           type: type,
-          title: '可设置多个操作按钮，其中key=edit/del有内置处理事件'
+          title:
+            '可设置多个操作按钮，其中key=edit/del有内置处理事件，还可根据条件显示与隐藏'
         })
         break
       case 'controlBtn':
