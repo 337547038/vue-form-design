@@ -4,11 +4,11 @@ import routesPage from '~pages'
 
 console.log(routesPage)
 const routes = [
-  {
-    path: '/test',
-    name: '/test',
-    component: () => import('../views/test.vue')
-  },
+  // {
+  //   path: '/test',
+  //   name: '/test',
+  //   component: () => import('../views/test.vue')
+  // },
   {
     path: '/layout',
     redirect: '/',

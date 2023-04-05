@@ -51,3 +51,13 @@ export function loadScript(src: string) {
     document.head.appendChild(script)
   })
 }
+// 随机数字符串
+export const randomString = (len: number) => {
+  len = len || 32
+  const str = 'ABCDEFGHIJKMNOPQSTWXYZabcdefghijklmnopqrstwxyz1234567890'
+  let n = ''
+  for (let i = 0; i < len; i++) {
+    n += str.charAt(Math.floor(Math.random() * str.length))
+  }
+  return n
+}

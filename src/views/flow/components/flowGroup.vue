@@ -1,55 +1,67 @@
 <!-- Created by 337547038  -->
 <template>
   <div class="flow-group" :class="{ 'flow-branch': isBranch }">
-    <div class="flow-branch-btn" v-if="isBranch">
+    <div class="flow-branch-btn" v-if="isBranch && !type">
       <el-button size="small" type="primary" plain round @click="addBranchClick"
-        >添加分支</el-button
-      >
+        >添加条件
+      </el-button>
     </div>
     <div class="flow-row">
-      <div class="flow-item" v-for="(item, i) in flowBranch" :key="i">
-        <span class="mask-left" v-if="(i === 0) & isBranch"></span>
+      <div class="flow-col" v-for="(item, i) in flowBranch" :key="i">
+        <span class="mask-left" v-if="i === 0 && isBranch"></span>
         <span
           class="mask-right"
-          v-if="(i === flowBranch.length - 1) & isBranch"
+          v-if="i === flowBranch.length - 1 && isBranch"
         ></span>
-        <div class="flow-box">
+        <div class="flow-item" @click="itemClick(item, i)">
           <div class="title" :class="`bg-${item.nodeType}`">
             <i :class="getIcon(item)"></i>
             <span
-              >{{ title[item.nodeType]
-              }}<span v-if="item.nodeType === 3">{{ index }}</span></span
+              >{{ nodeTypeName[item.nodeType]
+              }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span
             >
             <i
               class="icon-close close"
-              @click="delClick(i)"
-              v-if="item.nodeType !== 1"
+              @click="delClick(item)"
+              v-if="
+                item.nodeType !== 1 &&
+                !type &&
+                !(i === flowBranch.length - 1 && isBranch)
+              "
             ></i>
           </div>
-          <div class="text">{{ getContent(item) }}</div>
+          <div class="text" :title="getContent(item)">
+            <div>{{ getContent(item) }}</div></div
+          >
         </div>
-        <popover @click="addNodeClick($event, i)" />
+        <popover @click="addNodeClick($event, item)" v-if="!type" />
         <flow-group
-          v-for="(group, j) in item.children"
+          v-for="(group, j) in getChildrenNode(item)"
           :key="j"
           :data="group"
-          :index="j"
-          :data-list="item.children"
+          :data-list="dataList"
+          :type="type"
+          @click-event="clickEvent"
         />
       </div>
     </div>
-    <popover v-if="isBranch" @click="addNodeClick($event, index)" />
+    <popover v-if="isBranch && !type" @click="addNodeClick($event, data)" />
+    <drawer ref="drawerEl" />
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import popover from './popover.vue'
+  import type { NodeList, EmitsEvent } from '../types'
+  import Popover from './popover.vue'
+  import Drawer from './drawer.vue'
+  import { nodeTypeName, userTypeList } from './dict'
+
   const props = withDefaults(
     defineProps<{
-      data: any
-      dataList: any
-      index: number
+      data: any // 当前数据
+      dataList: any // 所有节点数据
+      type: number // 展示模式
     }>(),
     {
       data: () => {
@@ -61,11 +73,10 @@
     }
   )
   const emits = defineEmits<{
-    (e: 'addNodeClick', nodeType: number, index: number): void
+    (e: 'clickEvent', data: EmitsEvent): void
   }>()
-  //const title = { 1: '发起人', 2: '审批人', 3: '抄送人', 4: '条件组',5:'条件分支' } // todo
-  const title = { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' }
-  const getIcon = (obj: any) => {
+  const drawerEl = ref()
+  const getIcon = (obj: NodeList) => {
     switch (obj.nodeType) {
       case 1:
       case 2:
@@ -75,65 +86,78 @@
     }
     return ''
   }
-  const getContent = (obj: any) => {
-    if (obj.content) {
-      return obj.content
+  const getContent = (obj: NodeList) => {
+    let userType = ''
+    if (obj.userType) {
+      userType = (userTypeList as any)[obj.userType] + ':'
     }
-    return '' // todo
-
-    // if (obj.nodeType === 3) {
-    //   return '修改审批条件'
-    // } else {
-    //   return '指定审批人'
-    // }
+    // 不是选了具体人员时
+    if (['1', '2', '3'].includes(obj.userType as string)) {
+      return userType
+    }
+    if (obj.content) {
+      return userType + obj.content
+    }
+    if (obj.nodeType === 5) {
+      return '修改审批条件'
+    } else if (obj.nodeType === 3) {
+      return '指定抄送人'
+    } else {
+      return '指定审批人'
+    }
   }
   const flowBranch = computed(() => {
-    // 只有类型3才有分支
-    return isBranch.value ? props.data.children : [props.data]
+    if (isBranch.value) {
+      return props.dataList.filter(
+        (i: NodeList) => i.parentId === props.data.id
+      )
+    } else {
+      return [props.data]
+    }
   })
   const isBranch = computed(() => {
     return props.data.nodeType === 4
   })
+  const getChildrenNode = (obj: NodeList) => {
+    return props.dataList.filter((i: NodeList) => i.parentId === obj.id)
+  }
   // 添加条件分支
   const addBranchClick = () => {
-    const children = ref(props.data.children)
-    // 添加到最后面的前一个
-    const len = children.value?.length
-    children.value.splice(len - 1, 0, { nodeType: 5, content: 'a' })
+    emits('clickEvent', { event: 'addBranch', id: props.data.id })
   }
   // 添加节点
-  const addNodeClick = (nodeType: number, index: number) => {
-    let dataList: any = []
-    const newObj: any = { nodeType: nodeType }
-    if (nodeType === 4) {
-      Object.assign(newObj, {
-        children: [{ nodeType: 5 }, { nodeType: 5 }]
-      })
-    }
-    if (props.data.nodeType === 4) {
-      // 添加到当前的children里
-      dataList = ref(props.data.children[index])
-      if (!dataList.value.children) {
-        dataList.value.children = [newObj]
-      } else {
-        dataList.value.children.unshift(newObj)
-      }
-    } else {
-      // 在当前节点后面添加
-      dataList = ref(props.dataList)
-      dataList.value.splice(index + 1, 0, newObj)
-    }
+  const addNodeClick = (nodeType: number, obj: NodeList) => {
+    emits('clickEvent', {
+      event: 'addNode',
+      id: obj.id,
+      parentId: obj.parentId,
+      nodeType: obj.nodeType,
+      addType: nodeType // 新增节点类型
+    })
   }
   // 删除节点
-  const delClick = (index: number) => {
-    if (isBranch.value && props.data.children?.length > 2) {
-      // 从children里删除第index个，小于两个时直接整个分支
-      const dataList = ref(props.data.children)
-      dataList.value.splice(index, 1)
+  const delClick = (obj: NodeList) => {
+    emits('clickEvent', {
+      event: 'del',
+      id: obj.id,
+      nodeType: obj.nodeType,
+      parentId: obj.parentId
+    })
+  }
+  const clickEvent = (data: EmitsEvent) => {
+    emits('clickEvent', data)
+  }
+  const itemClick = (data: NodeList, index: number) => {
+    if (
+      data.nodeType === 1 ||
+      (data.nodeType === 5 && index === flowBranch.value.length - 1)
+    ) {
+      // 发起人节点和条件最后一个节点不能设置
     } else {
-      // 从dataList里删除第props.index个
-      const dataList = ref(props.dataList)
-      dataList.value.splice(props.index, 1)
+      drawerEl.value.open(data, index)
     }
+  }
+  const drawerConfirm = (obj: any) => {
+    console.log(obj.userType)
   }
 </script>

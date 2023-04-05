@@ -72,7 +72,7 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
     background: #f0f2f5;
     padding: 10px;
     overflow: hidden;
-    > div {border-radius: 5px;padding: 10px 15px;background: #fff;
+    > div:first-child {border-radius: 5px;padding: 10px 15px;background: #fff;overflow-x: auto; // 横向滚动条放在这里
     &.bg-none{background: none;}
     }
   }
