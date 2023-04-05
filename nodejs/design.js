@@ -1,39 +1,40 @@
 const express = require('express')
 const router = express.Router()
 const sqlQuery = require('./db')
-// 新增/修改
+// 新增
 router.post('/save', (req, res) => {
   const query = req.body
   let param = {}
   let sql = ''
-  let message = '新增成功'
-  if (query.id) {
-    // 修改
-    sql = 'update `design-form` set ? where id=?'
-    Object.assign(query, { updateDate: new Date() })
-    param = [query, query.id]
-    message = '修改成功'
-  } else {
-    // 新增
-    sql = 'insert into `design-form` set ?'
-    Object.assign(query, { updateDate: new Date(), creatDate: new Date() })
-    param = query
-  }
+  sql = 'insert into `design` set ?'
+  Object.assign(query, { updateDate: new Date(), creatDate: new Date() })
+  param = query
   sqlQuery(sql, param, res, (result) => {
     res.json({
-      code: 200,
+      code: 1,
       data: result,
-      message: message
+      message: '新增成功'
     })
   })
 })
+// 列表
 router.post('/list', async (req, res) => {
-  const { pageInfo = {}, type, status, name } = req.body
+  const { pageInfo = {}, category, status, name, type } = req.body
   const { pageIndex = 1, pageSize = 20 } = pageInfo
   const start = (pageIndex - 1) * pageSize
   const whereTemp = []
+  let datasource = ''
   if (type) {
     whereTemp.push(`type=${type}`)
+    if (type === 1) {
+      // 表单时
+      datasource = 'datasource'
+    } else {
+      datasource = 'design'
+    }
+  }
+  if (category) {
+    whereTemp.push(`category=${category}`)
   }
   if (status !== undefined && status !== '') {
     whereTemp.push(`status=${status}`)
@@ -41,20 +42,19 @@ router.post('/list', async (req, res) => {
   if (name) {
     whereTemp.push(`name like '%${name}%'`)
   }
-  let where = 'WHERE id is not null'
+  let where = ' WHERE id is not null'
   if (whereTemp.length) {
-    where = ` WHERE ${whereTemp.join('AND')}`
+    where = ` WHERE ${whereTemp.join(' AND ')}`
   }
-  const sql = `SELECT formId,id,name,status,type,creatDate,updateDate FROM \`design-form\` ${where} Limit ${start},${pageSize}`
-  const countSql = 'select count(id) as num from `design-form`' + where
+  const sql = `SELECT (SELECT name FROM ${datasource} where id=d.source) as sourceName,source,id,name,status,creatDate,updateDate,category FROM \`design\` as d ${where} Limit ${start},${pageSize}`
+  const countSql = 'select count(id) as num from `design`' + where
   const count = await sqlQuery(countSql)
   sqlQuery(sql, [], res, (result) => {
     res.json({
-      code: 200,
+      code: 1,
       data: {
         dict: {
-          status: { 0: '禁用', 1: '启用' },
-          type: { 1: '表单', 2: '表格' }
+          status: { 0: '禁用', 1: '启用' }
         },
         list: result,
         pageInfo: {
@@ -65,7 +65,8 @@ router.post('/list', async (req, res) => {
     })
   })
 })
-router.post('/formById', (req, res) => {
+// 修改部分内容
+router.post('/change', (req, res) => {
   const id = req.body.id
   if (!id) {
     return res.json({
@@ -73,12 +74,24 @@ router.post('/formById', (req, res) => {
       message: 'id不能为空'
     })
   }
-  const sql = `SELECT * FROM \`design-form\` WHERE id=${id}`
-  sqlQuery(sql, [], res, (result) => {
+  const changeField = [
+    'name',
+    'category',
+    'roleId',
+    'icon',
+    'showMenu',
+    'status'
+  ]
+  let params = {}
+  changeField.forEach((item) => {
+    params[item] = req.body[item]
+  })
+  const sql = 'update `design` set ? where id=?'
+  sqlQuery(sql, [params, id], res, () => {
     res.json({
-      code: 200,
-      data: result[0] || [],
-      message: '成功'
+      code: 1,
+      data: [],
+      message: '修改成功'
     })
   })
 })
@@ -90,29 +103,76 @@ router.post('/delete', (req, res) => {
       message: 'id不能为空'
     })
   }
-  const sql = `DELETE FROM \`design-form\` WHERE id=${id}`
+  let where = `id=${id}`
+  if (id.toString().includes(',')) {
+    // 批量删除
+    where = `id in(${id})`
+  }
+  const sql = `DELETE FROM \`design\` WHERE ${where}`
   sqlQuery(sql, [], res, () => {
     res.json({
-      code: 200,
+      code: 1,
       message: '删除成功'
     })
   })
 })
-router.post('/changeStatus', (req, res) => {
+
+router.post('/id', (req, res) => {
   const id = req.body.id
-  const status = req.body.status
-  if (!id || status === '' || status === undefined) {
+  if (!id) {
     return res.json({
       code: 0,
-      message: 'id和状态不能为空'
+      message: 'id不能为空'
     })
   }
-  const sql = 'update `design-form` set ? where id=?'
-  sqlQuery(sql, [{ status: status }, id], res, () => {
+  const sql = `SELECT data,listData,dict,name,source,category FROM \`design\` WHERE id=${id}`
+  sqlQuery(sql, [], res, (result) => {
     res.json({
-      code: 200,
+      code: 1,
+      data: result[0] || [],
+      message: '成功'
+    })
+  })
+})
+router.post('/edit', (req, res) => {
+  const query = req.body
+  let param = {}
+  let sql = ''
+  if (!query.id) {
+    return res.json({
+      code: 0,
+      message: 'id不能为空'
+    })
+  }
+  // 修改
+  sql = 'update `design` set ? where id=?'
+  Object.assign(query, { updateDate: new Date() })
+  param = [query, query.id]
+
+  sqlQuery(sql, param, res, (result) => {
+    res.json({
+      code: 1,
+      data: result,
       message: '修改成功'
     })
   })
 })
+// 根据表单id获取对应的列表
+// router.post('/listById', (req, res) => {
+//   const id = req.body.id
+//   if (!id) {
+//     return res.json({
+//       code: 0,
+//       message: 'id不能为空'
+//     })
+//   }
+//   const sql = `SELECT source,data,listData,dict,name,source,category FROM \`design\` WHERE type=2 and status=1 and source=${id}`
+//   sqlQuery(sql, [], res, (result) => {
+//     res.json({
+//       code: 1,
+//       data: result[0] || {},
+//       message: '成功'
+//     })
+//   })
+// })
 module.exports = router

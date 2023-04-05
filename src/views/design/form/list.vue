@@ -1,0 +1,313 @@
+<template>
+  <div>
+    <ak-list
+      ref="tableListEl"
+      requestUrl="designList"
+      deleteUrl="designDelete"
+      :searchData="searchData"
+      :tableData="tableData"
+      :beforeRequest="beforeRequest"
+    >
+      <template #sourceName="{ row }">
+        <div>{{ row.sourceName }}/{{ row.source }}</div>
+      </template>
+    </ak-list>
+    <el-dialog
+      v-model="dialog.visible"
+      title="设置"
+      width="480px"
+      :before-close="beforeClose"
+    >
+      <ak-form
+        ref="formEl"
+        :formData="dialogFormData"
+        :type="2"
+        editUrl="designChange"
+        :afterSubmit="afterSubmit"
+        :beforeSubmit="beforeSubmit"
+        @btn-click="cancelClick"
+      />
+    </el-dialog>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { useRouter } from 'vue-router'
+  import { nextTick, reactive, ref } from 'vue'
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '表单管理' }])
+  const router = useRouter()
+  const dialog = reactive({
+    visible: false,
+    row: {}
+  })
+  const formEl = ref()
+  const tableListEl = ref()
+  const tableData = ref({
+    columns: [
+      { label: '勾选', type: 'selection' },
+      { prop: 'id', label: 'ID' },
+      { prop: 'name', label: '表单名称', width: '150px' },
+      /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
+      { prop: 'sourceName', label: '数据源名称/ID', width: '130px' },
+      { prop: 'category', label: '分类', config: { dictKey: 'form' } },
+      {
+        prop: 'status',
+        label: '状态',
+        config: {
+          dictKey: 'status',
+          tagList: {
+            0: 'info',
+            1: 'success'
+          }
+        }
+      },
+      { prop: 'creatName', label: '创建人' },
+      {
+        prop: 'creatDate',
+        label: '创建时间',
+        width: 200,
+        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+      },
+      {
+        prop: 'updateDate',
+        label: '修改时间',
+        width: 200,
+        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+      },
+      { prop: 'editName', label: '最后修改' },
+      { label: '操作', prop: '__control', width: '220px', fixed: 'right' }
+    ],
+    controlBtn: [
+      {
+        label: '新增',
+        type: 'primary',
+        size: 'small',
+        click: () => {
+          toFormDesign({})
+        }
+      },
+      { label: '删除', key: 'del', size: 'small' }
+    ],
+    operateBtn: [
+      // {
+      //   label: '启用',
+      //   key: 'status',
+      //   visible: '$.status===0',
+      //   click: (row: any) => {
+      //     changeStatus(row, 1)
+      //   }
+      // },
+      // {
+      //   label: '禁用',
+      //   key: 'status',
+      //   visible: '$.status===1',
+      //   click: (row: any) => {
+      //     changeStatus(row, 0)
+      //   }
+      // },
+      {
+        label: '设置',
+        key: 'set',
+        click: (row: any) => {
+          dialog.visible = true
+          nextTick(() => {
+            dialog.row = row
+            formEl.value.setValue(row)
+          })
+        }
+      },
+      {
+        label: '创建列表',
+        click: (row: any) => {
+          router.push({ path: '/design/dataList', query: { form: row.id } })
+        }
+      },
+      {
+        label: '编辑',
+        click: (row: any) => {
+          // 跳转到表单设计编辑页
+          toFormDesign(row)
+        }
+      },
+      {
+        label: '删除',
+        key: 'del'
+      }
+    ],
+    config: {
+      expand: true
+    }
+  })
+  const toFormDesign = (row: any) => {
+    router.push({
+      path: '/design/form',
+      query: { id: row.id } // 根据id获取已设计的数据
+    })
+  }
+  const searchData = ref({
+    list: [
+      {
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        name: 'name',
+        item: {
+          label: '表单名称'
+        }
+      },
+      {
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        name: 'sourceName',
+        item: {
+          label: '数据源名称'
+        }
+      },
+      {
+        type: 'button',
+        control: {
+          label: '查询',
+          key: 'submit',
+          type: 'primary'
+        }
+      },
+      {
+        type: 'button',
+        control: {
+          label: '重置',
+          key: 'reset'
+        }
+      }
+    ],
+    form: {
+      labelWidth: '',
+      class: '',
+      size: 'default'
+    },
+    config: {}
+  })
+  const dialogFormData = ref({
+    list: [
+      {
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        name: 'name',
+        item: {
+          label: '表单名称'
+        },
+        customRules: [
+          {
+            type: 'required',
+            message: '请输入表单名称',
+            trigger: 'blur'
+          }
+        ]
+      },
+      {
+        type: 'select',
+        control: {
+          modelValue: '',
+          appendToBody: true
+        },
+        options: [],
+        config: {
+          type: 'async',
+          source: 2,
+          request: 'get',
+          sourceFun: 'form'
+        },
+        name: 'category',
+        item: {
+          label: '分类'
+        }
+      },
+      {
+        type: 'select',
+        control: {
+          modelValue: '',
+          appendToBody: true
+        },
+        options: [],
+        config: {
+          type: 'async',
+          source: 2,
+          request: 'get',
+          sourceFun: 'status'
+        },
+        name: 'status',
+        item: {
+          label: '启用状态'
+        }
+      },
+      {
+        type: 'div',
+        control: {},
+        config: {
+          textAlign: 'center'
+        },
+        list: [
+          {
+            type: 'button',
+            control: {
+              label: '修改',
+              type: 'primary',
+              key: 'submit'
+            },
+            config: {
+              span: 0
+            }
+          },
+          {
+            type: 'button',
+            control: {
+              label: '取消',
+              key: 'reset'
+            },
+            config: {
+              span: 0
+            }
+          }
+        ]
+      }
+    ],
+    form: {
+      labelWidth: '140px',
+      class: '',
+      size: 'default',
+      name: 'formDialog'
+    }
+  })
+  const afterSubmit = (res: any, type: string) => {
+    if (type === 'success') {
+      dialog.visible = false
+      dialog.row = {}
+      tableListEl.value.getListData() // 重新拉数据
+    }
+  }
+  const beforeSubmit = (params: any) => {
+    params.id = dialog.row.id
+  }
+  const cancelClick = (type: string) => {
+    if (type === 'reset') {
+      dialog.visible = false
+    }
+  }
+  const beforeRequest = (params: any) => {
+    params.type = 1 // 表单类型为1
+    return params
+  }
+  const beforeClose = (done?: any) => {
+    //formEl.value.resetFields() // 重置表单，否则再次打开时会保留上一次的内容
+    done && done()
+  }
+</script>

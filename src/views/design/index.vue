@@ -3,12 +3,12 @@
   <div class="bg-none design-index">
     <h2>开始创建一个页面</h2>
     <div class="content">
-      <div class="item" @click="$router.push({ path: '/form' })">
+      <div class="item" @click="$router.push({ path: '/design/form' })">
         <img src="../../assets/img/form.png" alt="" />
         <h3>表单设计</h3>
         <p>快速信息搜集</p>
       </div>
-      <div class="item" @click="$router.push({ path: '/design/list' })">
+      <div class="item" @click="$router.push({ path: '/design/dataList' })">
         <img src="../../assets/img/form-list.png" alt="" />
         <h3>列表页设计</h3>
         <p>展示管理数据</p>
@@ -18,7 +18,7 @@
         <h3>数据统计</h3>
         <p>展示数据报表</p>
       </div>
-      <div class="item" @click="$router.push({ path: '/design/screen' })">
+      <div class="item" @click="$router.push({ path: '/design/dataScreen' })">
         <img src="../../assets/img/data.png" alt="" />
         <h3>数据大屏</h3>
         <p>业务数据统计展示</p>
@@ -32,7 +32,11 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '新建设计' }])
+</script>
 <style lang="scss">
   .design-index {
     text-align: center;

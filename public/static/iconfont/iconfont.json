@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1766470",
+      "name": "符号-按钮",
+      "font_class": "button",
+      "unicode": "e690",
+      "unicode_decimal": 59024
+    },
+    {
+      "icon_id": "1150901",
+      "name": "设计",
+      "font_class": "design",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "12771491",
+      "name": "数据源管理",
+      "font_class": "data-source",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "6321263",
+      "name": "审批",
+      "font_class": "sp",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "12911863",
+      "name": "抄送",
+      "font_class": "cs",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "18170243",
+      "name": "代码,分支,分流,分叉",
+      "font_class": "branch",
+      "unicode": "e993",
+      "unicode_decimal": 59795
+    },
+    {
       "icon_id": "5371107",
       "name": "文档",
       "font_class": "doc",

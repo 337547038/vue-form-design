@@ -19,11 +19,7 @@ export default defineConfig({
         { dir: 'src/docs', baseRoute: '/docs' }
       ],
       extensions: ['md', 'vue'],
-      exclude: [
-        'components/*.vue',
-        '**/components/*.vue',
-        '**/components/*/*.vue'
-      ]
+      exclude: ['**/components/*.vue', '**/**/README.md']
     })
   ],
   resolve: {

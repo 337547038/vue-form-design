@@ -1,7 +1,5 @@
 # AKList 内容列表
 
-适用于导出vue文件，组件已全局注册
-
 ```html
 <ak-list :tableData="tableData"></ak-list>
 ```
@@ -10,16 +8,19 @@
 
 ### Props
 
-| 参数            | 类型                     | 说明                         |
-|---------------|------------------------|----------------------------|
-| tableData     | object                 | 设计表格配置数据                   |
-| searchData    | object                 | 列表页条件筛选表单数据，同表单的`formData` |
-| beforeRequest | function(params,route) | 请求列表前参数处理方法，可对请求参数处理       |
-| afterResponse | function               | 请求完成后列表数据处理方法              |
-| showPage      | boolean/true           | 是否显示分页信息                   |
-| requestUrl    | string                 | 请求的api接口方法                 |
-| dict          | object                 | 用于匹配的字典数据，一般不设置，从接口获取      |
-| tree          | object                 | 列表左侧栏树数据                   |
+| 参数                | 类型                     | 说明                         |
+|-------------------|------------------------|----------------------------|
+| tableData         | object                 | 设计表格配置数据                   |
+| searchData        | object                 | 列表页条件筛选表单数据，同表单的`formData` |
+| beforeRequest     | function(params,route) | 请求列表前参数处理方法，可对请求参数处理       |
+| afterResponse     | function               | 请求完成后列表数据处理方法              |
+| showPage          | boolean/true           | 是否显示分页信息                   |
+| requestUrl        | string                 | 请求的api接口方法                 |
+| deleteUrl         | string                 | 删除的api接口方法                 |
+| dict              | object                 | 用于匹配的字典数据，一般不设置，从接口获取      |
+| fixedBottomScroll | boolean/true           | 横向滚动条固定在浏览器底部              |
+| autoLoad          | boolean/true           | 初始时是否自动请求加载数据              |
+| treeData          | object                 | 列表左侧栏树数据                   |
 
 ### Methods
 
@@ -38,13 +39,14 @@
 
 ### tableData
 
-| 参数                   | 类型       | 说明                     |
-|----------------------|----------|------------------------|
-| tableProps           | Object   | 表格配置                   |
-| columns              | Array    | 表格列配置                  |
-| controlBtn           | Array    | 新增/删除按钮                |
-| events.beforeRequest | Function | 同`props.beforeRequest` |
-| events.afterResponse | Function | 同`props.afterResponse` |
+| 参数                   | 类型       | 说明                           |
+|----------------------|----------|------------------------------|
+| tableProps           | Object   | 表格配置                         |
+| columns              | Array    | 表格列配置                        |
+| controlBtn           | Array    | 列表上方按钮，如新增/删除                |
+| operateBtn           | Array    | 操作拦按钮设置，仅对props='__control'列 |
+| events.beforeRequest | Function | 同`props.beforeRequest`       |
+| events.afterResponse | Function | 同`props.afterResponse`       |
 
 ### tree
 

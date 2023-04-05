@@ -1,11 +1,18 @@
 {
-  "code": 200,
-  "data": [
-    {
-      "id": 1,
-      "name": "组件测试",
-      "tableName": "component-test"
+  "code": 1,
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "name": "组件测试",
+        "tableName": "component-test",
+        "creatName": "admin",
+        "creatDate": "2088-08-08"
+      }
+    ],
+    "pageInfo": {
+      "total": 1
     }
-  ],
+  },
   "message": "成功"
 }
