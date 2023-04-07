@@ -9,7 +9,9 @@
       :beforeRequest="beforeRequest"
     >
       <template #sourceName="{ row }">
-        <div>{{ row.sourceName }}/{{ row.source }}</div>
+        <router-link :to="`/design/form?id=${row.id}`"
+          >{{ row.sourceName }}/{{ row.source }}</router-link
+        >
       </template>
     </ak-list>
     <el-dialog v-model="dialog.visible" title="设置" width="480px">
@@ -29,8 +31,9 @@
 
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
-  import { ref, reactive, nextTick } from 'vue'
+  import { ref, reactive, nextTick, markRaw } from 'vue'
   // import { ElMessage } from 'element-plus'
+  import iconfont from '@/components/iconfont.vue'
   const router = useRouter()
   const dialog = reactive({
     visible: false,
@@ -99,22 +102,6 @@
           toFormDesign(row)
         }
       },
-      // {
-      //   label: '启用',
-      //   key: 'status',
-      //   visible: '$.status===0',
-      //   click: (row: any) => {
-      //     changeStatus(row, 1)
-      //   }
-      // },
-      // {
-      //   label: '禁用',
-      //   key: 'status',
-      //   visible: '$.status===1',
-      //   click: (row: any) => {
-      //     changeStatus(row, 0)
-      //   }
-      // },
       {
         label: '设置',
         click: (row: any) => {
@@ -231,10 +218,8 @@
         },
         options: [],
         config: {
-          type: 'async',
-          source: 2,
-          request: 'get',
-          sourceFun: 'list'
+          optionsType: 3,
+          optionsFun: 'list'
         },
         name: 'category',
         item: {
@@ -250,10 +235,8 @@
         options: [],
         config: {
           // todo
-          type: 'async',
-          source: 2,
-          request: 'get',
-          sourceFun: 'list'
+          optionsType: 3,
+          optionsFun: 'list'
         },
         name: 'role',
         item: {
@@ -261,14 +244,16 @@
         }
       },
       {
-        type: 'input',
+        type: 'component',
         control: {
           modelValue: ''
         },
-        config: {},
+        config: {
+          componentName: markRaw(iconfont)
+        },
         name: 'icon',
         item: {
-          label: 'icon图标' // todo
+          label: 'icon图标'
         }
       },
       {
@@ -279,10 +264,8 @@
         },
         options: [],
         config: {
-          type: 'async',
-          source: 2,
-          request: 'get',
-          sourceFun: 'status'
+          optionsType: 3,
+          optionsFun: 'status'
         },
         name: 'status',
         item: {
@@ -341,7 +324,7 @@
       source: ''
     }
   })
-  const afterSubmit = (res: any, type: string) => {
+  const afterSubmit = (type: string) => {
     if (type === 'success') {
       dialog.visible = false
       dialog.row = {}

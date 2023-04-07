@@ -64,10 +64,7 @@
           }
         ],
         config: {
-          type: 'fixed',
-          source: 0,
-          request: 'get',
-          sourceFun: ''
+          optionsType: 0
         },
         name: 'select1679750228669',
         item: {

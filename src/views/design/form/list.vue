@@ -223,10 +223,8 @@
         },
         options: [],
         config: {
-          type: 'async',
-          source: 2,
-          request: 'get',
-          sourceFun: 'form'
+          optionsType: 3,
+          optionsFun: 'form'
         },
         name: 'category',
         item: {
@@ -241,10 +239,8 @@
         },
         options: [],
         config: {
-          type: 'async',
-          source: 2,
-          request: 'get',
-          sourceFun: 'status'
+          optionsType: 3,
+          optionsFun: 'status'
         },
         name: 'status',
         item: {
@@ -289,7 +285,7 @@
       name: 'formDialog'
     }
   })
-  const afterSubmit = (res: any, type: string) => {
+  const afterSubmit = (type: string) => {
     if (type === 'success') {
       dialog.visible = false
       dialog.row = {}

@@ -14,6 +14,7 @@
 | searchData        | object                 | 列表页条件筛选表单数据，同表单的`formData` |
 | beforeRequest     | function(params,route) | 请求列表前参数处理方法，可对请求参数处理       |
 | afterResponse     | function               | 请求完成后列表数据处理方法              |
+| beforeDelete      | function(params,route) | 删除请求前事件                    |
 | showPage          | boolean/true           | 是否显示分页信息                   |
 | requestUrl        | string                 | 请求的api接口方法                 |
 | deleteUrl         | string                 | 删除的api接口方法                 |
@@ -39,14 +40,15 @@
 
 ### tableData
 
-| 参数                   | 类型       | 说明                           |
-|----------------------|----------|------------------------------|
-| tableProps           | Object   | 表格配置                         |
-| columns              | Array    | 表格列配置                        |
-| controlBtn           | Array    | 列表上方按钮，如新增/删除                |
-| operateBtn           | Array    | 操作拦按钮设置，仅对props='__control'列 |
-| events.beforeRequest | Function | 同`props.beforeRequest`       |
-| events.afterResponse | Function | 同`props.afterResponse`       |
+| 参数                   | 类型         | 说明                           |
+|----------------------|------------|------------------------------|
+| tableProps           | Object     | 表格配置                         |
+| columns              | Array      | 表格列配置                        |
+| controlBtn           | Array      | 列表上方按钮，如新增/删除                |
+| operateBtn           | Array      | 操作拦按钮设置，仅对props='__control'列 |
+| events.beforeRequest | Function   | 同`props.beforeRequest`       |
+| events.afterResponse | Function   | 同`props.afterResponse`       |
+| events.beforeDelete  | Function 　 | 同`props.beforeDelete`        |
 
 ### tree
 
@@ -54,7 +56,7 @@
 |---------------|----------------------|----------------------|
 | show          | boolean              | 是否显示                 |
 | name          | string               | 唯一标识                 |
-| request       | string               | 数据接口请求方式，get/post，必填 |
-| sourceFun     | string               | 数据接口请求地址，必填          |
+| method        | string               | 数据接口请求方式，get/post，必填 |
+| optionsFun    | string               | 数据接口请求地址，必填          |
 | beforeRequest | Function(data,route) | 接口请求前数据参数处理方式        |
 | afterResponse | Function             | 接口请求后数据参数处理方式        |

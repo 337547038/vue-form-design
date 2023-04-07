@@ -51,17 +51,13 @@
             }
           })
         }
-        if (
-          item.config?.type === 'async' &&
-          item.config?.source === 1 &&
-          item.config?.sourceFun
-        ) {
+        if (item.config?.optionsType === 2 && item.config?.optionsFun) {
           // 单选多选下拉等方法设值
           // const optionsValue = ref([{label: "选项1", value: '1'}])
           // provide("getCheckbox", optionsValue)
           sourceFun += `// todo ${item.item.label}设置选项值\n`
           sourceFun += `　const ${item.name}Option = ref([{label: "选项1", value: '1'}])\n`
-          sourceFun += `　provide("${item.config.sourceFun}", ${item.name}Option)\n`
+          sourceFun += `　provide("${item.config.optionsFun}", ${item.name}Option)\n`
         }
       })
     return {
@@ -96,7 +92,7 @@
   ${getHtml.rulesMethods}
   ${getHtml.sourceFun}
   // 表单提交时参数处理
-  const beforeSubmit = (params: any)=>{
+  const beforeSubmit = (params)=>{
     //　如编辑时添加参数
     //  params.id='xxx'
     return params
@@ -114,6 +110,100 @@
   }
   // 打开弹窗，导出表格数据
   const openTable = (obj: any) => {
+    const openDialog = obj.config?.openType === 'dialog'
+    const dialogWidth = obj.config?.dialogWidth || '600px'
+    let formHtml = ''
+    let formContent = ''
+    let listBtn = ''
+    if (openDialog) {
+      // 弹窗打开
+      listBtn = `@btn-click="listBtnClick"`
+      formHtml = `<el-dialog
+      destroy-on-close
+      v-model="dialog.visible"
+      :title="dialog.title"
+      :width="${dialogWidth}"
+      :before-close="beforeClose"
+    >
+      <ak-form
+        ref="formEl"
+        :formData="formData"
+        :dict="dialog.dict"
+        :type="dialog.formType"
+        requestUrl=""
+        addUrl=""
+        editUrl=""
+        :beforeSubmit="beforeSubmit"
+        :afterSubmit="afterSubmit"
+        @btn-click="dialogBtnClick"
+      ></ak-form>
+    </el-dialog>`
+      formContent = `const formEl = ref()
+  // todo 表单数据可从设计表单导出vue文件或保存生成脚本
+  const formData = ref({list:[],form:{},config:{}})
+  const dialog = reactive({
+    visible: false,
+    title: '',
+    formType: 1,
+    dict: {},
+    editId: ''
+  })
+  const listBtnClick = (btn, row) => {
+    // 使用弹窗方式打开新增编辑
+    if (btn.key === 'add' || btn.key === 'edit') {
+      // 打开弹窗
+      dialog.visible = true
+      dialog.title = btn.key === 'add' ? '新增' : '编辑'
+      dialog.formType = btn.key === 'add' ? 1 : 2
+      dialog.editId = row && row.id
+      if (btn.key === 'add' && formData.value.config?.addLoad) {
+        // 添加时需要加载数据
+        nextTick(() => {
+          formEl.value.getData()
+        })
+      }
+      // 编辑，根据id加载
+      if (btn.key === 'edit') {
+        nextTick(() => {
+          formEl.value.getData({ id: row.id })
+        })
+      }
+    }
+  }
+  //　提交表单前事件
+  const beforeSubmit = (params) => {
+    if(dialog.formType===2){ // 编辑模式下添加参数
+      params.id = dialog.editId
+    }
+    return params
+  }
+  //　提交表单后事件
+  const afterSubmit = (type) => {
+    if (type === 'success') {
+      //　添加成功，刷新列表数据
+      closeResetDialog()
+      listEl.value.getListData()
+    }
+  }
+  //　关闭弹窗时
+  const beforeClose = (done) => {
+    closeResetDialog()
+    done && done()
+  }
+  // 关闭弹窗并重置表单，否则下次打开会保留上次数据
+  const closeResetDialog = () => {
+    dialog.visible = false
+    dialog.editId = ''
+    formEl.value.resetFields() // 重置表单，否则再次打开时会保留上一次的内容
+  }
+  //　点击弹窗取消按钮时
+  const dialogBtnClick = (type) => {
+    if (type === 'reset') {
+      closeResetDialog()
+    }
+  }
+  `
+    }
     visible.value = true
     const html = `<template>
   <div>
@@ -122,19 +212,22 @@
       requestUrl=""
       deleteUrl=""
       :searchData="searchData"
-      :tableData="tableData">
+      :tableData="tableData"
+      ${listBtn}>
     </ak-list>
+    ${formHtml}
   </div>
 </template>
 
 <script setup>
-    // import {useRoute, useRouter} from 'vue-router'
-    import { ref } from 'vue'
-    // const route = useRoute()
-    // const router = useRouter()
-    // const tableListEl = ref()
-    const searchData = ref({})
-    const tableData = ref(${objToStringify(obj)})
+  // import {useRoute, useRouter} from 'vue-router'
+  import { ref } from 'vue'
+  // const route = useRoute()
+  // const router = useRouter()
+  // const tableListEl = ref()
+  const searchData = ref({})
+  const tableData = ref(${objToStringify(obj)})
+  ${formContent}
 <\/script>`
     nextTick(() => {
       editor.value = aceEdit(html, 'editJsonCopy', 'html')

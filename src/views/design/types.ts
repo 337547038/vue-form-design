@@ -57,8 +57,8 @@ export interface TableData {
     show: boolean
     beforeRequest?: Function
     afterResponse?: Function
-    request: string
-    sourceFun: string
+    method: string
+    optionsFun: string
     name: string
   }
   operateBtn?: any

@@ -2,7 +2,11 @@
 
 ## 基础字段
 
-  表单设计基本常用组件，直接拖动设计区域，设置好相应的属性配置即可，各组件使用见系统管理各栏目
+表单设计基本常用组件，直接拖动设计区域，设置好相应的属性配置即可，各组件使用见系统管理各栏目
+
+**•树形控件**
+
+使用方法详见[系统管理部门管理](/#/design/dataSource)　新增弹窗
 
 ## 高级字段
 
@@ -12,7 +16,11 @@
 
 **•自定义组件**
 
-自定义组件需全局注册，`导出vue文件`使用可使用当前页面导入的 todo
+自定义组件需全局注册，`导出vue文件`使用可使用当前页面导入的。
+
+使用方法详见 [列表页设计管理](/#/design/dataList/list) 设置弹窗
+
+![](./img/use-form4.png)
 
 ## 布局字段
 
@@ -29,6 +37,7 @@
 **创建新模板**
 
 src/views/design/form/template目录下新建ts文件，将设计生成的json/javascript代码复制保存即可新增模板，格式如下：
+
 ```javascript
 export const imgPath = 'demo.png' // 预览图
 export const title = '标题' // 标题
@@ -68,7 +77,8 @@ export const formData = {} // 生成的代码
 
 **•字段标识**
 
-表单控件唯一标识，即表单控件元素的name值。在提交表单时根据此标识提交。如用户名标识为name，则提交表单为{name:'xx'}。其中get[formName]ControlByName(name)中的name即为此标识，可快速根据此标识查找到当前组件。若不需提交表单和查找等，可为空
+表单控件唯一标识，即表单控件元素的name值。在提交表单时根据此标识提交。如用户名标识为name，则提交表单为{name:'xx'}。其中get[formName]ControlByName(name)
+中的name即为此标识，可快速根据此标识查找到当前组件。若不需提交表单和查找等，可为空
 
 **•帮助信息**
 
@@ -88,7 +98,9 @@ export const formData = {} // 生成的代码
 
 **•联动条件**
 
-编写联动条件表达式，可使用&&和||等运算符，当满足条件时可将该组件设置为显示/隐藏或者是启用/禁用。其中`$`表示当前表单的值。例如表单中有name=sex的单选值及name=age的文本输入，即当sex选中了1和age输入框的值大于20时条件成立
+编写联动条件表达式，可使用&&和||等运算符，当满足条件时可将该组件设置为显示/隐藏或者是启用/禁用。其中`$`
+表示当前表单的值。例如表单中有name=sex的单选值及name=age的文本输入，即当sex选中了1和age输入框的值大于20时条件成立
+
 ```text
 $.sex===1&&$.age>20
 ```
@@ -99,27 +111,76 @@ $.sex===1&&$.age>20
 
 即可选择的值为固定值，由前端页面在设计时固定，不能修改。点击`新增`按钮，输入标签和值即可，可添加多个
 
-**2.动态选项**
-
-•数据源
+**2.数据源**
 
 当前组件选项通过指定的URL来获取。
 
-可通过配置`beforeRequest`来添加指定请求参数配置，同时可使用`afterResponse`事件编辑方法对获取到的数据进行处理，最后再return回去。这两方法表单配置的`beforeRequest`和`afterResponse`
+可通过配置`beforeRequest`来添加指定请求参数配置，同时可使用`afterResponse`事件编辑方法对获取到的数据进行处理，最后再return回去。这两方法同表单配置的`beforeRequest`
+和`afterResponse`
 
-当选择为数据源时，数据源接口URL sourceFun可带一个动态参数，如/api?id=${key}，其中${key}会被转换为数据列表中name=key的值。并且name=key 的组件中，当modelValue发生改变时会重新请求；
+```javascript
+//　beforeRequest
+opt = (data, route, form) => {
+  // data表求的数据　route 页面路由信息　form当前表单值
+  return data
+}
+```
 
-•方法函数
+当选择为数据源时，数据源接口URL optionsFun可带一个动态参数，如/api?id=${key}，key可以是当前表单任意name=key的组件，并且当该组件值发生改变时会重新请求；可实现联动功能，如：
+
+```javascript
+[
+  {
+    type: "select",
+    control:
+      {
+        modelValue: "",
+        appendToBody: true
+      },
+    options: [],
+    config:
+      {
+        optionsType: 0
+      },
+    name: "province",
+    item:
+      {
+        label: "省份"
+      }
+  },
+  {
+    type: "select",
+    control:
+      {
+        modelValue: "",
+        appendToBody: true
+      },
+    options: [],
+    config:
+      {
+        optionsType: 1,
+        optionsFun: "/api/getCity?id=${province}", // 当province组件改变时，重新请求
+        method: "get"
+      },
+    name: "city",
+    item:
+      {
+        label: "城市"
+      }
+  }]
+```
+
+**3.方法函数**
 
 该方法适合于将当前表单`导出为vue文件`格式，通过在页面中编写代码将选项值传给当前组件。也可使用[setOptions](/#/docs/form)方法设置。在导出时会自动生成示例代码，如：
+
 ```javascript
 provide('methodsName', {label: 'x', value: 'xx'})
 ```
 
-•接口字典
+**4.接口字典**
 
 当复杂表单中存在大量需要配置选项的组件时，每个组件都从指定URL获取，这是不太现实的，一大堆的请求会让你怀疑人生不说，还浪费服务器资源。对此可以设计表单时预设一些固定的选项值或者在接口里返回。可以`表单配置-设置字典数据`配置
-　　
 
 ### 校验设置
 

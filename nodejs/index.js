@@ -53,6 +53,7 @@ const source = require('./source')
 app.use('/api/dataSource', source)
 
 // 系统管理字典管理
-const dict = require('./dict')
-app.use('/api/dict', dict)
+const system = require('./system')
+app.use('/api/system', system)
+
 // https://blog.csdn.net/weixin_42934729/article/details/125233590

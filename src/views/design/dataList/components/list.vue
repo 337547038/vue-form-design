@@ -283,6 +283,7 @@
       })
     }
   })
+  // 列显示隐藏设置
   const columnsSetting = computed(() => {
     return props.tableData.config?.columnsSetting ?? true
   })
@@ -316,6 +317,7 @@
     // 优先使用config配置的
     const getUrl = props.tableData.config?.requestUrl || props.requestUrl
     if (!getUrl) {
+      console.error(new Error('请先设置请求requestUrl'))
       return
     }
     if (page) {
@@ -367,7 +369,7 @@
         if (formatResult === false) {
           return
         }
-        state.tableDataList = formatResult?.list
+        state.tableDataList = formatResult?.list || formatResult // 兼容下可以不返回list
         setTimeout(() => {
           fixedBottomScroll()
         }, 200) // 加个延时主要是等待列表渲染完，即列表查询区域等，计算才准确。
@@ -395,10 +397,14 @@
   const handleCurrentChange = (page: number) => {
     getListData(page)
   }
-  const addOrEdit = (row: any) => {
+  const addOrEdit = (btn: any, row?: any) => {
+    //　数据添加编辑打开方式为弹窗时，这里不处理
+    if (props.tableData.config?.openType === 'dialog') {
+      return false
+    }
     router.push({
       path: `/design/form/form`,
-      query: { form: props.formId, id: row.id }
+      query: { form: props.formId, id: row?.id }
     })
   }
   // 删除 idList支持多个 ,params为附近参数
@@ -444,7 +450,7 @@
       }
     }
     if (btn.key === 'edit') {
-      addOrEdit(row)
+      addOrEdit(btn, row)
     } else if (btn.key === 'del') {
       if (btn.tip) {
         // 有删除提示
@@ -479,7 +485,7 @@
     }
     if (row.key === 'add') {
       // 跳到新增页
-      addOrEdit({})
+      addOrEdit(row)
     } else if (row.key === 'del') {
       // 批量删除
       if (state.selectionChecked.length) {
@@ -532,6 +538,9 @@
     if (isFixedBottomScroll.value) {
       nextTick(() => {
         const tableEl = container.value
+        if (!tableEl) {
+          return
+        }
         const tableBodyWrapDom = tableEl.querySelector('.el-scrollbar__wrap') // table父一级
         const tableBodyDom = tableEl.querySelector('.el-table__body') // table
         const { top: tableBodyDomTop } =
@@ -552,9 +561,9 @@
             windowHeight - tableBodyDomTop - 10,
             tableHeight
           )
-          console.log(
-            `window.innerHeight:${windowHeight},tableBodyDomTop:${tableBodyDomTop},tableBodyDom.offsetHeight:${tableHeight}`
-          )
+          // console.log(
+          //   `window.innerHeight:${windowHeight},tableBodyDomTop:${tableBodyDomTop},tableBodyDom.offsetHeight:${tableHeight}`
+          // )
           tableBodyWrapDom.style.minHeight = '60px'
           tableBodyWrapDom.style.height = wrapHeight + 10 + 'px'
           // 需要用marginBottom填充，以保持列表原有高度，避免页面的纵向滚动条变化导致页面滚动的不流畅

@@ -125,101 +125,78 @@
                 v-model="controlData.config.addAll"
               />
             </el-form-item>
-            <el-tabs v-model="controlData.config.type">
-              <el-tab-pane label="固定选项" name="fixed">
-                <div v-if="controlData.type !== 'cascader'">
-                  <el-form-item
-                    v-for="(item, index) in controlData.options"
-                    :key="index"
-                  >
-                    <el-col :span="10">
-                      <el-input placeholder="选项标签" v-model="item.label" />
-                    </el-col>
-                    <el-col :span="10" :offset="1">
-                      <el-input placeholder="选项值" v-model="item.value" />
-                    </el-col>
-                    <el-col :span="2" :offset="1">
-                      <i class="icon-del" @click="delSelectOption(index)"></i>
-                    </el-col>
-                  </el-form-item>
-                </div>
-                <el-form-item>
-                  <el-button @click="addSelectOption"
-                    >{{ controlData.type === 'cascader' ? '编辑' : '新增' }}
-                  </el-button>
-                </el-form-item>
-              </el-tab-pane>
-              <el-tab-pane name="async">
-                <template #label>
-                  <el-tooltip
-                    content="选用动态选项时请删除固定选项数据"
-                    placement="top"
-                  >
-                    <span
-                      >动态选项<el-icon> <QuestionFilled /> </el-icon
-                    ></span>
-                  </el-tooltip>
-                </template>
-                <el-radio-group
-                  class="option-radio"
-                  v-model="controlData.config.source"
-                  @change="controlData.config.sourceFun = ''"
+            <el-form-item label="选项数据源">
+              <el-select
+                v-model="controlData.config.optionsType"
+                @change="controlData.config.optionsFun = ''"
+              >
+                <el-option :value="0" label="固定选项" />
+                <el-option :value="1" label="数据源" />
+                <el-option :value="2" label="方法函数" />
+                <el-option :value="3" label="接口字典" />
+              </el-select>
+            </el-form-item>
+            <template v-if="controlData.config.optionsType === 0">
+              <div v-if="controlData.type !== 'cascader'">
+                <el-form-item
+                  v-for="(item, index) in controlData.options"
+                  :key="index"
                 >
-                  <el-radio :label="0">数据源</el-radio>
-                  <el-radio :label="1"
-                    >方法函数
-                    <el-tooltip
-                      content="适用于导出为单独的vue文件，在当前文件使用provide形式将方法传递，也可使用setOptions方法"
-                      placement="top"
-                    >
-                      <el-icon>
-                        <QuestionFilled />
-                      </el-icon>
-                    </el-tooltip>
-                  </el-radio>
-                  <el-radio :label="2"
-                    >接口字典
-                    <el-tooltip
-                      content="从当前数据接口dict里匹配，可减少请求数，实际项目也不是每个选项都有单独的接口。此设置需要开启表单属性-添加时获取请求"
-                      placement="top"
-                    >
-                      <el-icon>
-                        <QuestionFilled />
-                      </el-icon>
-                    </el-tooltip>
-                  </el-radio>
-                </el-radio-group>
-                <el-form-item>
-                  <el-input
-                    v-model="controlData.config.sourceFun"
-                    :placeholder="
-                      getOptionPlaceholder(controlData.config.source)
-                    "
-                  >
-                    <template #prepend v-if="!controlData.config.source">
-                      <el-select
-                        v-model="controlData.config.request"
-                        style="width: 80px"
-                      >
-                        <el-option label="get" value="get" />
-                        <el-option label="post" value="post" />
-                      </el-select>
-                    </template>
-                  </el-input>
+                  <el-col :span="10">
+                    <el-input placeholder="选项标签" v-model="item.label" />
+                  </el-col>
+                  <el-col :span="10" :offset="1">
+                    <el-input placeholder="选项值" v-model="item.value" />
+                  </el-col>
+                  <el-col :span="2" :offset="1">
+                    <i class="icon-del" @click="delSelectOption(index)"></i>
+                  </el-col>
                 </el-form-item>
-                <template v-if="controlData.config.source === 0">
-                  <el-form-item>
-                    <el-button
-                      @click="optionsEvent('optionsParams', '请求前处理事件')"
-                      >beforeRequest
-                    </el-button>
-                    <el-button @click="optionsEvent('optionsResult')"
-                      >afterResponse
-                    </el-button>
-                  </el-form-item>
-                </template>
-              </el-tab-pane>
-            </el-tabs>
+              </div>
+              <el-form-item>
+                <el-button @click="addSelectOption"
+                  >{{ controlData.type === 'cascader' ? '编辑' : '新增' }}
+                </el-button>
+              </el-form-item>
+            </template>
+            <template v-else>
+              <el-form-item>
+                <el-input
+                  v-model="controlData.config.optionsFun"
+                  :placeholder="
+                    getOptionPlaceholder(controlData.config.optionsType)
+                  "
+                >
+                  <template
+                    #prepend
+                    v-if="controlData.config.optionsType === 1"
+                  >
+                    <el-select
+                      v-model="controlData.config.method"
+                      style="width: 80px"
+                    >
+                      <el-option label="get" value="get" />
+                      <el-option label="post" value="post" />
+                    </el-select>
+                  </template>
+                </el-input>
+              </el-form-item>
+
+              <el-form-item v-if="controlData.config.optionsType === 1">
+                <el-button
+                  @click="
+                    optionsEvent(
+                      'optionsParams',
+                      '请求前处理事件，参数(data,route,form) data请求参数,route页面路由,form表单值'
+                    )
+                  "
+                  >beforeRequest
+                </el-button>
+                <el-button @click="optionsEvent('optionsResult')"
+                  >afterResponse
+                </el-button>
+              </el-form-item>
+            </template>
           </div>
           <template
             v-if="
@@ -455,7 +432,7 @@
 
 <script lang="ts" setup>
   import { reactive, computed, toRefs, ref, watch, inject } from 'vue'
-  import { useRoute } from 'vue-router'
+  //import { useRoute } from 'vue-router'
   import { getRequest } from '@/api'
   import { useDesignFormStore } from '@/store/designForm'
   import validate from './validate'
@@ -486,7 +463,7 @@
   }>()
   const { formConfig, formData } = toRefs(props)
   const store = useDesignFormStore()
-  // const route = useRoute()
+  //const route = useRoute()
   const controlData = computed(() => {
     return store.controlAttr
   })
@@ -975,7 +952,7 @@
       },*/
         {
           label: '组件名',
-          value: config.template,
+          value: config.componentName,
           placeholder: '全局注册的组件名称',
           path: 'config.componentName',
           vShow: ['component']
@@ -1276,7 +1253,7 @@
   }
   // 属性设置相关结束
   // 多选固定选项删除
-  const delSelectOption = (index: number, type: string) => {
+  const delSelectOption = (index: number, type?: string) => {
     if (type === 'tabs') {
       controlData.value.columns.splice(index, 1)
     } else {
@@ -1510,11 +1487,11 @@
   // 返回选项配置提示
   const getOptionPlaceholder = (type: number) => {
     switch (type) {
-      case 0:
-        return '数据源接口URL'
       case 1:
-        return '方法名称'
+        return '数据源接口URL,可带参数'
       case 2:
+        return '方法名称'
+      case 3:
         return '字典key，默认为字段标识'
     }
     return ''

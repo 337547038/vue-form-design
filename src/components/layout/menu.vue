@@ -159,7 +159,7 @@
           contentList.value.push({
             title: item.name,
             icon: item.icon || '',
-            path: `/design/dataList/content?id=${item.id}&form=${item.source}`
+            path: `/design/dataList/content?id=${item.id}`
           })
         })
         window.sessionStorage.setItem(

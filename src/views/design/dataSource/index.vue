@@ -45,7 +45,6 @@
     id: ''
   })
   const tableData = ref({
-    tableProps: {},
     columns: [
       { label: '勾选', type: 'selection' },
       { prop: 'id', label: '编号' },
@@ -221,10 +220,8 @@
         },
         options: [],
         config: {
-          type: 'async',
-          source: 2,
-          request: 'get',
-          sourceFun: 'source' // 使用字典选项，字典key为source
+          optionsType: 3,
+          optionsFun: 'source' // 使用字典选项，字典key为source
         },
         name: 'category',
         item: {
@@ -342,10 +339,7 @@
               }
             ],
             config: {
-              type: 'fixed',
-              source: 0,
-              request: 'get',
-              sourceFun: ''
+              optionsType: 0
             },
             name: 'type',
             item: {
@@ -509,7 +503,7 @@
     return params
   }
   // 提交完成事件
-  const afterSubmit = (res: any, type: string) => {
+  const afterSubmit = (type: string) => {
     if (type === 'success') {
       dialog.visible = false
       tableListEl.value.getListData()

@@ -16,14 +16,13 @@ const getTableNameByFormId = async (formId) => {
 }
 router.post('/save', async (req, res) => {
   const query = req.body
-  const bodyParams = req.body.params // 放params避免和表单字段重名
-  if (!bodyParams.formId) {
+  if (!query.formId) {
     return res.json({
       code: 0,
       message: '数据源id不能为空'
     })
   }
-  const tableName = await getTableNameByFormId(bodyParams.formId)
+  const tableName = await getTableNameByFormId(query.formId)
   if (!tableName) {
     return res.json({
       code: 0,
@@ -31,10 +30,10 @@ router.post('/save', async (req, res) => {
     })
   }
   let sql = 'insert into `' + tableName + '` set ?'
-  const param = Object.assign(query, {})
-  // 对应的表没有_source这样插入会报错，这里删除
-  delete param.params
-  sqlQuery(sql, param, res, (result) => {
+  //const param = Object.assign(query, {})
+  // 对应的表没有formId这样插入会报错，这里删除
+  delete query.formId
+  sqlQuery(sql, query, res, (result) => {
     res.json({
       code: 1,
       data: result,
@@ -154,19 +153,18 @@ router.post('/id', async (req, res) => {
 
 router.post('/edit', async (req, res) => {
   const query = req.body
-  const bodyParams = req.body.params
-  if (!bodyParams.formId || !bodyParams.id) {
+  if (!query.formId || !query.id) {
     return res.json({
       code: 0,
       message: 'formId和id不能为空'
     })
   }
-  const tableName = await getTableNameByFormId(bodyParams.formId)
+  const tableName = await getTableNameByFormId(query.formId)
   let sql = 'update `' + tableName + '` set ? where id=?'
   // 这种通用的，没有updateDate字段时会报错
   // Object.assign(query, { updateDate: new Date() })
-  delete query.params // 使用这种sql语句不能有多余的字段，删除不需要保存的
-  const param = [query, bodyParams.id]
+  delete query.formId
+  const param = [query, query.id]
   sqlQuery(sql, param, res, (result) => {
     res.json({
       code: 1,

@@ -260,7 +260,7 @@
   const sourceFunKey = computed(() => {
     const iReg = new RegExp('(?<=\\${)(.*?)(?=})', 'g')
     //const iReg = new RegExp('\\${.*?}', 'g') // 结果会包含开头和结尾=>${name}
-    const apiUrl = config.value.sourceFun
+    const apiUrl = config.value.optionsFun
     const replace = apiUrl?.match(iReg)
     return replace && replace[0]
   })
@@ -306,14 +306,22 @@
   // 有inject，这方法不能放异步
   // data 根据条件搜索，select远程搜索里data有值
   const getAxiosOptions = (data?: any) => {
-    if (config.value.type === 'async') {
-      let sourceFun = config.value.sourceFun
-      if (config.value.source === 1 && sourceFun) {
+    const {
+      optionsType,
+      optionsFun,
+      method = 'get',
+      afterResponse,
+      beforeRequest
+    } = config.value
+    if (optionsType !== 0) {
+      let sourceFun = optionsFun
+      if (optionsType === 2 && sourceFun) {
         // 使用动态选项方法函数获取options数据项，父级使用provide方法注入
         const injectValue = inject(sourceFun, [])
         options.value = isRef(injectValue) ? injectValue.value : injectValue
       }
-      if (config.value.source === 0 && sourceFun) {
+      // 接口数据源
+      if (optionsType === 1 && sourceFun) {
         // 当前控件为动态获取数据，防多次加载，先从本地取。data=true时直接请求
         const key = 'getOptions_fun_' + md5(sourceFun)
         const storage = window.sessionStorage.getItem(key)
@@ -332,27 +340,28 @@
           // 处理请求前的数据
           //let newData = Object.assign({}, data || {}, queryParams)
           let newData = data || {}
-          if (typeof config.value.beforeRequest === 'function') {
-            newData = config.value.beforeRequest(newData, route) ?? data
+          if (typeof beforeRequest === 'function') {
+            newData =
+              beforeRequest(newData, route, injectData.value.model) ?? data
           }
           if (newData === false) {
             return
           }
-          if (config.value.request === 'get') {
+          if (method === 'get') {
             newData = { params: newData }
           }
           // request.get('url',data)
           ;(axios as any)
-            [config.value.request](sourceFun, newData)
+            [method](sourceFun, newData)
             .then((res: any) => {
               if (res.data.code === 1) {
                 // 请求成功
                 const result = res.data.data
                 let formatResult: any = result
                 // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
-                if (typeof config.value.afterResponse === 'function') {
+                if (typeof afterResponse === 'function') {
                   // 没有return时，使用原来的，相当于没处理
-                  formatResult = config.value.afterResponse(result) ?? result
+                  formatResult = afterResponse(result) ?? result
                 }
                 if (formatResult === false) {
                   return
@@ -486,8 +495,8 @@
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
   const formDict = inject(constFormDict) as any
   const setFormDict = (val: any) => {
-    if (val && config.value.source === 2 && config.value.type === 'async') {
-      const opt = val[config.value.sourceFun] || val[props.data.name]
+    if (val && config.value.optionsType === 3) {
+      const opt = val[config.value.optionsFun] || val[props.data.name]
       if (opt !== undefined) {
         options.value = formatData(opt)
       }

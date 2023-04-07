@@ -157,7 +157,7 @@
       drawerEl.value.open(data, index)
     }
   }
-  const drawerConfirm = (obj: any) => {
-    console.log(obj.userType)
-  }
+  // const drawerConfirm = (obj: any) => {
+  //   console.log(obj.userType)
+  // }
 </script>

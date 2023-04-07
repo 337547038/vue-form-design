@@ -79,7 +79,6 @@
     config: {}
   })
   const tableData = ref({
-    tableProps: {},
     columns: [
       { label: '多选', type: 'selection' },
       { label: '序号', type: 'index', width: '70px' },

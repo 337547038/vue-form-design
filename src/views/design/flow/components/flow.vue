@@ -20,9 +20,9 @@
   import { randomString } from '@/utils'
   import type { NodeList, EmitsEvent } from '../types'
   import FlowGroup from './flowGroup.vue'
-  import { useRoute, useRouter } from 'vue-router'
+  import { useRoute } from 'vue-router'
 
-  const props = withDefaults(
+  withDefaults(
     defineProps<{
       direction?: 'horizontal' | 'vertical'
       type?: number

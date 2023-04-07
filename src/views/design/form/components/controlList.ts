@@ -13,10 +13,7 @@ const selectOption: any = [
   }*/
 ]
 const config = {
-  type: 'fixed', // 选项类型 fixed固定选项；async动态选项
-  source: 0, // 0数据，1方法函数，2接口字典
-  request: 'get', // 请求类型
-  sourceFun: '' // 方法名或请求url或是对应字典key
+  optionsType: 0 // 0固定　1数据源　2方法函数　3　接口字典
 }
 export default [
   {
@@ -155,7 +152,9 @@ export default [
           data: [],
           renderAfterExpand: false
         },
-        config: {}
+        config: {
+          optionsType: 0
+        }
       },
       {
         type: 'txt',

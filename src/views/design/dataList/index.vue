@@ -92,7 +92,7 @@
           >
           <el-table
             :data="[{}]"
-            v-bind="state.tableData.tableProps"
+            v-bind="state.tableData.tableProps || {}"
             ref="tableEl"
           >
             <template
@@ -264,12 +264,15 @@
                   v-model="state.tableData.config.deleteUrl"
                 />
               </el-form-item>
-              <el-form-item>
+              <el-form-item class="event-btn">
                 <el-button @click="editOpenDrawer('beforeRequest')"
                   >beforeRequest
                 </el-button>
                 <el-button @click="editOpenDrawer('afterResponse')"
                   >afterResponse
+                </el-button>
+                <el-button @click="editOpenDrawer('beforeDelete')"
+                  >beforeDelete
                 </el-button>
               </el-form-item>
             </el-tab-pane>
@@ -321,7 +324,7 @@
   const router = useRouter()
   const state = reactive({
     tableData: {
-      tableProps: {}, //表格所有参数
+      // tableProps: {}, //表格所有参数
       columns: [],
       config: {}
     },
@@ -349,7 +352,8 @@
   const tooltip = reactive({
     dict: "数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式JSON：sex:{0:'男',1:'女'}",
     afterResponse: '提示：获取列表初始数据后事件，可对请求返回数据进行处理',
-    beforeRequest: '提示：获取列表初始数据前事件，可修改请求参数'
+    beforeRequest: '提示：获取列表初始数据前事件，可修改请求参数',
+    beforeDelete: '提示：可对删除前提交参数处理'
   })
   const drawerBeforeClose = () => {
     drawer.visible = false
@@ -397,7 +401,17 @@
         ],
         key: 'openType',
         path: 'config',
-        clearable: true
+        clearable: true,
+        hide: !state.formId
+      },
+      {
+        label: '窗口宽度',
+        placeholder: '弹窗宽度',
+        value: state.tableData.config?.dialogWidth,
+        type: 'input',
+        key: 'dialogWidth',
+        path: 'config',
+        hide: state.tableData.config?.openType !== 'dialog'
       },
       {
         label: '横向滚动固定在底部',
@@ -493,6 +507,10 @@
     }
     if (obj.key === 'formId') {
       // 列表数据源选择时，需查当前表单所有字段
+      if (!val && state.tableData.config?.openType === 'dialog') {
+        // 没有选数据源时，将数据添加编辑打开方式改为默认，直接删除属性
+        delete state.tableData.config.openType
+      }
       getFormField(obj.value)
     }
   }
@@ -601,13 +619,14 @@
         dialogOpen(state.dict || {}, { type: type, title: tooltip.dict })
         break
       case 'tableConfig':
-        dialogOpen(state.tableData.tableProps, {
+        dialogOpen(state.tableData.tableProps || {}, {
           type: type,
           title: 'el-table的相关属性'
         })
         break
       case 'beforeRequest':
       case 'afterResponse':
+      case 'beforeDelete':
         const newData = state.tableData.events || {}
         dialogOpen(newData[type], { type: type, title: tooltip[type] })
         break
@@ -617,8 +636,8 @@
           tree = {
             show: true,
             name: '唯一标识', // 唯一标识
-            request: 'post',
-            sourceFun: '请求url'
+            method: 'post',
+            optionsFun: '请求url'
           }
         }
         dialogOpen(tree, {
@@ -677,6 +696,7 @@
         editData = json2string(obj, true)
         break
       case 'beforeRequest':
+      case 'beforeDelete':
         if (!obj) {
           editData = beforeRequest
         }
@@ -710,10 +730,15 @@
         break
       case 'beforeRequest':
       case 'afterResponse':
+      case 'beforeDelete':
         if (!state.tableData.events) {
           state.tableData.events = {}
         }
         state.tableData.events[drawer.type] = val
+        break
+      case 'tableConfig':
+        //if(state.tableData.p)
+        state.tableData.tableProps = val
         break
     }
     drawerBeforeClose()
@@ -830,6 +855,7 @@
         })
         router.push({ path: '/design/dataList/list' })
         state.loading = false
+        window.sessionStorage.removeItem('formMenuList') // 清空菜单数据
       })
       .catch((res: any) => {
         ElMessage.error(res.message || '保存异常')

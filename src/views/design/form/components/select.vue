@@ -54,9 +54,8 @@
     return !!(
       props.control.remote &&
       props.control.filterable &&
-      props.config.source === 0 &&
-      props.config.type === 'async' &&
-      props.config.sourceFun
+      props.config.optionsType === 1 &&
+      props.config.optionsFun
     )
   })
   const change = (val: string | number) => {

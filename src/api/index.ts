@@ -1,8 +1,8 @@
 import request from '../utils/request'
 import form from './form'
 import dataList from './dataList'
-import dict from './dict'
-const allApi: any = Object.assign(form, dataList, dict)
+import system from './system'
+const allApi: any = Object.assign(form, dataList, system)
 export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
   let url = allApi[apiKey] || apiKey
   // 解决动态url 如/api/delete/id(id为动态时)
@@ -13,14 +13,25 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
       url = url.replace(key, options.apiKey[key])
     }
   }
-  const obj: any = Object.assign(
+  let obj: any = Object.assign(
     {
       url: '/api/' + url, // 添加个前缀
-      method: 'POST', // github演示json格式时需要使用get
+      method: 'POST',
       data
     },
     options
   )
+  // github演示时使用下面地址
+  if (window.location.host.indexOf('github') !== -1) {
+    obj = Object.assign(
+      {
+        url: './mock/' + url + '.json',
+        method: 'GET',
+        data
+      },
+      options
+    )
+  }
   return request(obj)
 }
 export const uploadUrl = allApi.upload

@@ -1,6 +1,11 @@
 <!-- Created by 337547038  -->
 <template>
-  <el-popover placement="bottom" :width="500" trigger="click">
+  <el-popover
+    placement="bottom"
+    :width="500"
+    trigger="click"
+    v-model:visible="visible"
+  >
     <div class="iconfont-list">
       <ul>
         <li
@@ -24,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import iconfontJson from '../../public/static/iconfont/iconfont.json'
 
   const props = withDefaults(
@@ -38,6 +43,7 @@
   const emits = defineEmits<{
     (e: 'update:modelValue', value: string | string[]): void
   }>()
+  const visible = ref(false)
   const value = computed({
     get() {
       if (props.colorPicker) {
@@ -71,6 +77,7 @@
     } else {
       emits('update:modelValue', newVal)
     }
+    visible.value = false
   }
 </script>
 <style lang="scss">

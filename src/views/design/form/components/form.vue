@@ -57,8 +57,6 @@
       options?: { [key: string]: any } // 表单组件选项，同setOptions
       dict?: object // 固定匹配的字典
       isSearch?: boolean // 列表里作为筛选使用
-      formId?: string | number // 所属表单id，用于保存和编辑时的参数，导出vue形式不需要
-      id?: string | number // 获取初始数据和编辑提交时使用，导出vue形式不需要
     }>(),
     {
       type: 1, // 1新增；2修改；3查看（表单模式） ；4查看； 5设计
@@ -278,24 +276,18 @@
         resetFields() // 重置
         break
       case 'cancel': // 取消返回，
-        router.router.go(-1) //这个刷新后可能会失败
+        router.go(-1) //这个刷新后可能会失败
         break
     }
   })
   // 获取表单数据，编辑时，外部调用
-  const getData = (params: any) => {
+  const getData = (params = {}) => {
     const requestUrl = props.formData.config?.requestUrl || props.requestUrl
     if (props.type === 5 || !requestUrl || props.isSearch) {
       return
     }
     loading.value = true
-    const newParams: any = Object.assign(
-      {
-        formId: props.formId,
-        id: props.id
-      },
-      params || {}
-    )
+    const newParams: any = params
     // 同时可使用props或是events里的事件，根据使用使用其中一种即可
     let newParams2
     const beforeRequest = props.formData.events?.beforeRequest
@@ -328,7 +320,7 @@
           if (formatResult === false) {
             return
           }
-          setValue(formatResult.result)
+          setValue(formatResult.result || formatResult)
           nextTick(() => {
             // 将dict保存，可用于从接口中设置表单组件options。
             if (formatResult.dict) {
@@ -342,30 +334,23 @@
         return ElMessage.error(res.message)
       })
   }
-  const submit = () => {
+  const submit = (params = {}) => {
     const addUrl = props.formData.config?.addUrl || props.addUrl
     const editUrl = props.formData.config?.editUrl || props.editUrl
     const apiUrl = props.type === 1 ? addUrl : editUrl
     if (props.isSearch || !apiUrl || loading.value) {
+      if (!props.isSearch && !apiUrl) {
+        console.error(
+          new Error('请在表单设计处配置接口事件url或选择数据源或设置props')
+        )
+      }
       // 列表里作为筛选时，不提交表单
       return
     }
     validate((valid: boolean, fields: any) => {
       if (valid) {
-        // 请求参数附加条件
-        let addParams: any = {}
-        if (props.type === 2 && props.id) {
-          addParams.id = props.id
-        }
-        if (props.formId) {
-          addParams.formId = props.formId
-        }
-        // addParams包多一层防止跟表单字段重名冲突
-        let formatParams = fields
+        let formatParams = Object.assign({}, fields, params)
         let submitParams
-        if (Object.keys(addParams).length) {
-          formatParams = Object.assign({}, fields, { params: addParams })
-        }
         const beforeSubmit = props.formData.events?.beforeSubmit
         if (typeof beforeSubmit === 'function') {
           submitParams = beforeSubmit(formatParams, route)
@@ -380,22 +365,22 @@
         // 提交保存表单
         getRequest(apiUrl, submitParams ?? formatParams)
           .then((res: any) => {
-            afterSubmit(res, 'success')
+            afterSubmit('success', res)
           })
           .catch((res) => {
-            afterSubmit(res, 'fail')
+            afterSubmit('fail', res)
           })
       }
     })
   }
   // 不管成功失败，有事件时都需要执行回调
-  const afterSubmit = (res: any, type: string) => {
+  const afterSubmit = (type: string, res: any) => {
     const afterSubmit = props.formData.events?.afterSubmit
     let notReturn
     if (typeof afterSubmit === 'function') {
-      notReturn = afterSubmit(res, type)
+      notReturn = afterSubmit(type, res)
     } else if (typeof props.afterSubmit === 'function') {
-      notReturn = props.afterSubmit(res, type)
+      notReturn = props.afterSubmit(type, res)
     }
     loading.value = false
     // 不管结果，重置表单，防再次打开时保留上一次的值

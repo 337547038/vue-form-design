@@ -6,22 +6,23 @@
       :formData="state.formData"
       :type="formType"
       :dict="state.dict"
-      :formId="state.formId"
-      :id="state.id"
       requestUrl="getFormContent"
       addUrl="saveFormContent"
       editUrl="editFormContent"
+      :beforeSubmit="beforeSubmit"
+      :afterSubmit="afterSubmit"
     />
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, reactive, onMounted, computed } from 'vue'
-  import { useRoute } from 'vue-router'
+  import { useRoute, useRouter } from 'vue-router'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { string2json, stringToObj } from '@/utils/form'
   const route = useRoute().query
+  const router = useRouter()
   const formEl = ref()
   const state = reactive({
     formData: {
@@ -57,13 +58,23 @@
           state.dict = string2json(result.dict)
           // 编辑时加载表单初始数据。或设置了添加时获取请求
           if (route.id || state.formData.config?.addLoad) {
-            formEl.value.getData()
+            formEl.value.getData({ formId: state.formId, id: route.id })
           }
         }
       })
       .catch((res: any) => {
         ElMessage.error(res.message || '非法操作..')
       })
+  }
+  const beforeSubmit = (params: any) => {
+    params.formId = state.formId
+    params.id = route.id
+    return params
+  }
+  const afterSubmit = (type: string) => {
+    if (type === 'success') {
+      router.go(-1)
+    }
   }
   onMounted(() => {
     getFormData()

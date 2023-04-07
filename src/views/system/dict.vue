@@ -102,10 +102,7 @@
             }
           ],
           config: {
-            type: 'fixed',
-            source: 0,
-            request: 'get',
-            sourceFun: ''
+            optionsType: 0
           },
           name: 'status',
           item: {
@@ -246,7 +243,6 @@
     }
   })
   const tableData = ref({
-    tableProps: {},
     columns: [
       { label: '多选', type: 'selection' },
       { label: '序号', type: 'index', width: '70px' },
@@ -364,10 +360,7 @@
           }
         ],
         config: {
-          type: 'fixed',
-          source: 0,
-          request: 'get',
-          sourceFun: ''
+          optionsType: 0
         },
         item: {
           label: '状态'
