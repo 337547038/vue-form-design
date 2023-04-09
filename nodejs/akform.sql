@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: 2023-04-07 11:46:28
--- 服务器版本： 10.1.29-MariaDB
--- PHP Version: 7.2.0
+-- 主机： 127.0.0.1
+-- 生成日期： 2023-04-09 14:50:00
+-- 服务器版本： 10.4.18-MariaDB
+-- PHP 版本： 7.4.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -19,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `akform`
+-- 数据库： `akform`
 --
 
 -- --------------------------------------------------------
@@ -114,7 +113,7 @@ CREATE TABLE `department` (
   `id` int(4) NOT NULL,
   `parentId` int(4) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
-  `sort` int(2) NOT NULL DEFAULT '0',
+  `sort` int(2) NOT NULL DEFAULT 0,
   `status` int(2) NOT NULL,
   `remark` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='部门';
@@ -147,7 +146,7 @@ CREATE TABLE `design` (
   `type` int(11) NOT NULL COMMENT '表单和列表两种类型 1 表单 2 列表',
   `data` text NOT NULL COMMENT '设计生成的字符串内容',
   `listData` text NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '1' COMMENT '是否启用 1启用（默认） 0禁用',
+  `status` int(11) NOT NULL DEFAULT 1 COMMENT '是否启用 1启用（默认） 0禁用',
   `updateDate` datetime NOT NULL COMMENT '更新时间',
   `creatDate` datetime NOT NULL COMMENT '创建时间',
   `dict` text NOT NULL COMMENT '用于匹配的字典数据',
@@ -165,7 +164,7 @@ CREATE TABLE `design` (
 
 INSERT INTO `design` (`id`, `source`, `name`, `type`, `data`, `listData`, `status`, `updateDate`, `creatDate`, `dict`, `category`, `creatName`, `editName`, `roleId`, `icon`, `showMenu`) VALUES
 (18, 10, '测试表单', 1, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"name\",item:{label:\"名称\"}},{type:\"button\",control:{label:\"保存\",key:\"submit\",type:\"primary\"},config:{span:0},name:\"button1679965255355\"},{type:\"button\",control:{label:\"取消\",key:\"cancel\"},config:{span:0},name:\"button1679995013800\"}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1679887559665\",showColon:false},config:{addLoad:true}}', '', 1, '2023-04-07 15:35:15', '2023-03-27 11:27:08', '{}', 1, '', '', 0, '', 0),
-(19, 18, '测试列表', 2, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"input1679896728698\",item:{label:\"单行文本\"}},{type:\"input\",control:{modelValue:\"\"},config:{},name:\"name\",item:{label:\"名称\"}},{type:\"button\",control:{label:\"查询\",key:\"submit\",type:\"primary\"},config:{span:0},name:\"button1679902087541\"},{type:\"button\",control:{label:\"重置\",key:\"reset\"},config:{span:0},name:\"button1679902105375\"}],form:{labelWidth:\"\",class:\"\",size:\"small\",name:\"form1679888374862\"},config:{addLoad:true}}', '{tableProps:{},columns:[{label:\"多选\",prop:\"__selection\",type:\"selection\"},{label:\"序号\",prop:\"__index\",type:\"index\",width:\"70px\"},{prop:\"name\",label:\"名称\",help:\"\"},{label:\"操作\",prop:\"__control\"}],config:{requestUrl:\"\",deleteUrl:\"\",openType:\"page\",dialogWidth:\"400px\"},controlBtn:[{label:\"新增\",key:\"add\",type:\"primary\",size:\"small\"},{label:\"批量删除\",key:\"del\",type:\"danger\",size:\"small\"}],operateBtn:[{label:\"编辑\",key:\"edit\"},{label:\"删除\",key:\"del\"}],treeData:{show:false}}', 1, '2023-04-07 15:17:37', '2023-03-27 11:37:39', '{}', 1, '', '', 0, '', 0),
+(19, 18, '测试列表', 2, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"input1679896728698\",item:{label:\"单行文本\"}},{type:\"input\",control:{modelValue:\"\"},config:{},name:\"name\",item:{label:\"名称\"}},{type:\"button\",control:{label:\"查询\",key:\"submit\",type:\"primary\"},config:{span:0},name:\"button1679902087541\"},{type:\"button\",control:{label:\"重置\",key:\"reset\"},config:{span:0},name:\"button1679902105375\"}],form:{labelWidth:\"\",class:\"\",size:\"small\",name:\"form1679888374862\"},config:{addLoad:true}}', '{tableProps:{},columns:[{label:\"多选\",prop:\"__selection\",type:\"selection\"},{label:\"序号\",prop:\"__index\",type:\"index\",width:\"70px\"},{prop:\"name\",label:\"名称\",help:\"\"},{label:\"操作\",prop:\"__control\"}],config:{requestUrl:\"\",deleteUrl:\"\",openType:\"page\",dialogWidth:\"400px\"},controlBtn:[{label:\"新增\",key:\"add\",type:\"primary\",size:\"small\"},{label:\"批量删除\",key:\"del\",type:\"danger\",size:\"small\"}],operateBtn:[{label:\"编辑\",key:\"edit\"},{label:\"删除\",key:\"del\"}],treeData:{show:true,treeProps:{props:{label:\"name\"}},name:\"treeName\",method:\"post\",requestUrl:\"deptList\",afterResponse:\"deptTree\"}}', 1, '2023-04-08 14:41:37', '2023-03-27 11:37:39', '{}', 1, '', '', 0, '', 1),
 (20, 11, '表单a3', 1, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"title\",item:{label:\"标题\"}},{type:\"button\",control:{label:\"保存\",type:\"primary\",key:\"submit\"},config:{span:0},name:\"button1680164221003\"},{type:\"button\",control:{label:\"重置\",key:\"reset\"},config:{span:0},name:\"button1680164230444\"}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1680164203799\"},config:{}}', '', 1, '2023-03-30 16:17:59', '2023-03-30 16:17:59', '{}', 0, '', '', 0, '', 0),
 (22, 11, '无数据源测试', 1, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"input1680164473875\",item:{label:\"单行文本\"}},{type:\"radio\",control:{modelValue:\"\"},options:[{label:\"标签1\",value:\"value1\"},{label:\"标签2\",value:\"value2\"},{label:\"标签3\",value:\"value3\"}],config:{type:\"fixed\",source:0,request:\"get\",sourceFun:\"\"},name:\"radio1680164474988\",item:{label:\"单选框组\"}},{type:\"textarea\",control:{modelValue:\"\"},config:{},name:\"textarea1680164476164\",item:{label:\"多行文本\"}},{type:\"button\",control:{label:\"保存\",key:\"submit\",type:\"primary\"},config:{},name:\"button1680226593779\"}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1680164472124\"},config:{addUrl:\"a\",editUrl:\"b\",requestUrl:\"c\"}}', '', 1, '2023-03-31 10:10:31', '2023-03-30 16:21:38', '{}', 0, '', '', 0, '', 0),
 (24, 22, '所选表单没有数据源', 2, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"input1680164473875\",item:{label:\"单行文本\"}},{type:\"button\",control:{label:\"查询\",type:\"primary\",key:\"submit\"},config:{},name:\"button1680164874666\"}],form:{labelWidth:\"\",class:\"\",size:\"default\",name:\"form1680164870036\"},config:{}}', '{tableProps:{},columns:[{label:\"多选\",type:\"selection\"},{prop:\"input1680164473875\",label:\"单行文本\",help:\"\"},{prop:\"radio1680164474988\",label:\"单选框组\",help:\"\"},{prop:\"textarea1680164476164\",label:\"多行文本\",help:\"\"},{label:\"操作\",prop:\"__control\"}],config:{requestUrl:\"dictList\"},controlBtn:[{label:\"新增\",key:\"add\",type:\"primary\",size:\"small\",icon:\"plus\"},{label:\"批量删除\",key:\"del\",type:\"danger\",size:\"small\",icon:\"delete\"}]}', 1, '2023-03-31 10:23:48', '2023-03-30 16:27:24', '{}', 0, '', '', 0, '', 0);
@@ -197,50 +196,100 @@ INSERT INTO `dict` (`id`, `name`, `type`, `status`, `remark`, `children`, `updat
 (22, '数据源分类', 'source', 1, '', '[{\"label\":\"表单\",\"value\":\"0\"},{\"label\":\"流程表单\",\"value\":\"1\"}]', '2023-03-30 13:48:40', 1),
 (23, '列表分类', 'list', 1, '方便管理列表', '[{\"label\":\"分类1\",\"value\":\"1\"}]', '2023-03-31 15:38:54', 1);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for dumped tables
+-- 表的结构 `menu`
+--
+
+CREATE TABLE `menu` (
+  `id` int(4) NOT NULL,
+  `parentId` int(4) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `icon` varchar(20) NOT NULL,
+  `sort` int(2) NOT NULL,
+  `path` varchar(50) NOT NULL,
+  `status` int(2) NOT NULL,
+  `remark` varchar(100) NOT NULL,
+  `type` int(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- 转存表中的数据 `menu`
+--
+
+INSERT INTO `menu` (`id`, `parentId`, `name`, `icon`, `sort`, `path`, `status`, `remark`, `type`) VALUES
+(1, 0, '内容管理', 'icon-doc', 0, '', 1, '', 1),
+(2, 0, '设计管理', 'icon-design', 2, '', 1, '', 1),
+(3, 0, '系统管理', 'icon-sys', 4, '', 1, '', 1),
+(4, 0, '系统工具', 'icon-tool', 6, '', 1, '', 1),
+(5, 4, '新建设计', 'icon-creat', 0, '/design', 1, '', 1),
+(6, 4, '表单数据源', 'icon-data-source', 2, '/design/dataSource', 1, '', 1),
+(7, 4, '帮助文档', 'icon-doc', 4, '/docs', 1, '', 1),
+(8, 3, '用户管理', 'icon-user', 0, '/system/user', 1, '', 1),
+(9, 3, '角色管理', 'icon-role', 2, '/system/role', 1, '', 1),
+(10, 3, '菜单管理', 'icon-menu', 4, '/system/menu', 1, '', 1),
+(11, 3, '部门管理', 'icon-tree', 6, '/system/dept', 1, '', 1),
+(12, 3, '岗位管理', 'icon-post', 8, '/system/post', 1, '', 1),
+(13, 3, '字典管理', 'icon-dict', 10, '/system/dict', 1, '', 1),
+(14, 3, '登录日志', 'icon-log2', 12, '/system/log', 1, '', 1),
+(15, 3, '操作日志', 'icon-log', 14, '/system/log', 1, '', 1),
+(16, 2, '表单设计管理', 'icon-form', 0, '/design/form/list', 1, '', 1),
+(17, 2, '列表页设计管理', 'icon-list', 0, '/design/dataList/list', 1, '', 1),
+(18, 2, '数据统计图管理', 'icon-line', 0, '', 1, '', 1),
+(19, 2, '数据大屏管理', 'icon-data', 0, '', 1, '', 1),
+(20, 2, '流程配置管理', 'icon-tree', 0, '', 1, '', 1);
+
+--
+-- 转储表的索引
 --
 
 --
--- Indexes for table `ak-a3`
+-- 表的索引 `ak-a3`
 --
 ALTER TABLE `ak-a3`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ak-te002`
+-- 表的索引 `ak-te002`
 --
 ALTER TABLE `ak-te002`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ak-test001`
+-- 表的索引 `ak-test001`
 --
 ALTER TABLE `ak-test001`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `datasource`
+-- 表的索引 `datasource`
 --
 ALTER TABLE `datasource`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `department`
+-- 表的索引 `department`
 --
 ALTER TABLE `department`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `design`
+-- 表的索引 `design`
 --
 ALTER TABLE `design`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `dict`
+-- 表的索引 `dict`
 --
 ALTER TABLE `dict`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 表的索引 `menu`
+--
+ALTER TABLE `menu`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -288,6 +337,12 @@ ALTER TABLE `design`
 --
 ALTER TABLE `dict`
   MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- 使用表AUTO_INCREMENT `menu`
+--
+ALTER TABLE `menu`
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
