@@ -55,7 +55,7 @@ router.afterEach((to: any) => {
   if (navList) {
     const navListJson = JSON.parse(navList)
     const list: any = []
-    getNavName(navListJson, navListJson, to, list)
+    getNavName(navListJson, to, list)
     console.log('list', list)
     layoutStore.changeBreadcrumb(list)
     /*layoutStore.changeBreadcrumb([
@@ -64,20 +64,42 @@ router.afterEach((to: any) => {
     ])*/
   }
 })
-const getNavName = (dataList: any, data: any, to: any, list: any) => {
-  data.forEach((item: any) => {
-    // 内容管理是带id的
-    if (
-      item.path === to.path ||
-      (item.parentId === 1 && to.fullPath.indexOf(item.path) !== -1)
-    ) {
-      list.push({ label: item.name, path: item.path })
-      // 查找上一级
-      getNavParentName(dataList, item.parentId, list)
-    } else if (item.children) {
-      getNavName(dataList, item.children, to, list)
+const getNavName = (dataList: any, to: any, list: any) => {
+  for (let i = 0; i < dataList.length; i++) {
+    const obj = dataList[i]
+    if (obj.path === to.path) {
+      list.push({ label: obj.name, path: obj.path })
+      return true
+    } else if (obj.children) {
+      list.push({ label: obj.name, path: obj.path })
+      const result = getNavName(obj.children, to, list)
+      if (result) {
+        return
+      }
     }
-  })
+  }
+  // try {
+  //   data.forEach((item: any) => {
+  //     // 内容管理是带id的
+  //     if (item.parentId === 0) {
+  //       list = []
+  //     }
+  //     if (
+  //       item.path === to.path ||
+  //       (item.parentId === 1 && to.fullPath.indexOf(item.path) !== -1)
+  //     ) {
+  //       list.push({ label: item.name, path: item.path })
+  //       throw new Error('end forEach')
+  //       // 查找上一级
+  //       // getNavParentName(dataList, item.parentId, list)
+  //     } else if (item.children) {
+  //       list.push({ label: item.name, path: item.path })
+  //       getNavName(dataList, item.children, to, list)
+  //     }
+  //   })
+  // } catch (e) {
+  //   //if (e.message === 'end forEach') throw e
+  // }
 }
 // todo 这里目前只支持向上查找一级
 const getNavParentName = (data: any, parentId: number, list: any) => {
