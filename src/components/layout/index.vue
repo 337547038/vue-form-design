@@ -17,6 +17,7 @@
       </el-header>
       <!--      <TagViews :navList="navList" v-if="!fullScreen" />-->
       <el-main class="common-main">
+        <!-- todo 引入transition后有时浏览器会出现[Violation] ‘requestAnimationFrame‘ handler took xx ms <transition name="fade-transform" mode="out-in">-->
         <router-view v-slot="{ Component }" v-if="reloadFlag">
           <keep-alive :include="keepAliveInclude">
             <component :is="Component" />
@@ -41,10 +42,9 @@
   // import TagViews from './tagViews.vue'
   import Menu from './menu.vue'
   import CommonHeader from './header.vue'
-
   const store = useLayoutStore()
   const isCollapse = ref(false)
-  const fullScreen = ref(true) // todo default false
+  const fullScreen = ref(false) // todo default false
   //const reloadFlag = ref<boolean>(true)
   const navList = ref([])
   const reloadFlag = computed({

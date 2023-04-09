@@ -40,6 +40,7 @@
     constSetFormValue,
     constFormBtnEvent
   } from '../../utils'
+  import formatResult from '@/utils/formatResult'
 
   const props = withDefaults(
     defineProps<{
@@ -48,10 +49,10 @@
       disabled?: boolean // 禁用表单提交
       requestUrl?: string // 编辑数据请求url
       beforeRequest?: Function // 请求编辑数据前参数处理方法，可对请求参数处理
-      afterResponse?: Function // 请求数据加载完成后数据处理方法，可对返回数据处理
+      afterResponse?: Function | string // 请求数据加载完成后数据处理方法，可对返回数据处理
       addUrl?: string // 表单数据新增提交保存url
       editUrl?: string // 表单数据修改保存提交url
-      beforeSubmit?: Function // 表单提交前数据处理，可对提交数据处理，新增和保存都会触发
+      beforeSubmit?: Function | string // 表单提交前数据处理，可对提交数据处理，新增和保存都会触发
       afterSubmit?: Function // 表单提交后，默认提示提交结果，可return false阻止提示
       value?: { [key: string]: any } // 表单初始值，同setValue
       options?: { [key: string]: any } // 表单组件选项，同setOptions
@@ -307,24 +308,28 @@
         loading.value = false
         const result = res.data
         if (result) {
-          let formatResult: any = result
+          let formatRes: any = result
           // 比较适用通用表单，保存在服务端
           const afterResponse = props.formData.events?.afterResponse
-          if (typeof afterResponse === 'function') {
-            formatResult = afterResponse(result) ?? result
+          if (typeof afterResponse === 'string' && afterResponse) {
+            formatRes = formatResult(result, afterResponse)
+          } else if (typeof afterResponse === 'function') {
+            formatRes = afterResponse(result) ?? result
           }
           // 比较适用于导出vue文件
-          if (typeof props.afterResponse === 'function') {
-            formatResult = props.afterResponse(result) ?? result
+          if (typeof props.afterResponse === 'string' && props.afterResponse) {
+            formatRes = formatResult(result, props.afterResponse)
+          } else if (typeof props.afterResponse === 'function') {
+            formatRes = props.afterResponse(result) ?? result
           }
-          if (formatResult === false) {
+          if (formatRes === false) {
             return
           }
-          setValue(formatResult.result || formatResult)
+          setValue(formatRes.result || formatRes)
           nextTick(() => {
             // 将dict保存，可用于从接口中设置表单组件options。
-            if (formatResult.dict) {
-              resultDict.value = formatResult.dict
+            if (formatRes.dict) {
+              resultDict.value = formatRes.dict
             }
           })
         }
@@ -352,10 +357,14 @@
         let formatParams = Object.assign({}, fields, params)
         let submitParams
         const beforeSubmit = props.formData.events?.beforeSubmit
-        if (typeof beforeSubmit === 'function') {
+        if (beforeSubmit && typeof beforeSubmit === 'string') {
+          submitParams = formatResult(formatParams, beforeSubmit)
+        } else if (typeof beforeSubmit === 'function') {
           submitParams = beforeSubmit(formatParams, route)
         }
-        if (typeof props.beforeSubmit === 'function') {
+        if (props.beforeSubmit && typeof props.beforeSubmit === 'string') {
+          submitParams = formatResult(formatParams, props.beforeSubmit)
+        } else if (typeof props.beforeSubmit === 'function') {
           submitParams = props.beforeSubmit(formatParams, route)
         }
         if (submitParams === false) {

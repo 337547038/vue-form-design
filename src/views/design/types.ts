@@ -42,7 +42,7 @@ export interface FormData {
   }
   events?: {
     beforeRequest?: Function
-    afterResponse?: Function
+    afterResponse?: Function | string
     beforeSubmit?: Function
     afterSubmit?: Function
   }
@@ -56,9 +56,9 @@ export interface TableData {
   treeData?: {
     show: boolean
     beforeRequest?: Function
-    afterResponse?: Function
+    afterResponse?: Function | string
     method: string
-    optionsFun: string
+    requestUrl: string
     name: string
   }
   operateBtn?: any

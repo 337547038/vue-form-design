@@ -43,14 +43,14 @@ router.post('/save', async (req, res) => {
 })
 
 router.post('/list', async (req, res) => {
-  const { pageInfo = {}, params = {} } = req.body
-  if (!params.formId) {
+  const { pageInfo = {}, formId = {} } = req.body
+  if (!formId) {
     return res.json({
       code: 0,
       message: 'formId不能为空'
     })
   }
-  const tableName = await getTableNameByFormId(params.formId)
+  const tableName = await getTableNameByFormId(formId)
   if (!tableName) {
     return res.json({
       code: 0,

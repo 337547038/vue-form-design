@@ -6,5 +6,9 @@ export default {
   deptSave: 'system/dept/save',
   deptEdit: 'system/dept/edit',
   deptList: 'system/dept/list',
-  deptDelete: 'system/dept/delete'
+  deptDelete: 'system/dept/delete',
+  menuSave: 'system/menu/save',
+  menuEdit: 'system/menu/edit',
+  menuList: 'system/menu/list',
+  menuDelete: 'system/menu/delete'
 }

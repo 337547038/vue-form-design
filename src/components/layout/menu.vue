@@ -13,12 +13,13 @@
 
 <script setup lang="ts">
   import MenuItem from './menuItem.vue'
-  import { ref, onMounted, computed } from 'vue'
-  // import { useRoute } from 'vue-router'
+  import { ref, onMounted } from 'vue'
+  // import { useRouter } from 'vue-router'
   // import { useLayoutStore } from '@/store/layout'
   import { getRequest } from '@/api'
+  import formatResult from '@/utils/formatResult'
 
-  // const router = useRouter()
+  //const router = useRouter()
   // const route = useRoute()
   // const layoutStore = useLayoutStore()
 
@@ -31,7 +32,22 @@
   const emits = defineEmits<{
     (e: 'getMenuList', val: any): void
   }>()
-  const contentList = ref([])
+  const navList = ref([])
+  const getNavList = () => {
+    const sessionList = window.sessionStorage.getItem('formMenuList')
+    if (sessionList) {
+      navList.value = JSON.parse(sessionList)
+      return
+    }
+    getRequest('menuList', {}).then((res: any) => {
+      navList.value = formatResult(res.data, 'deptTree')
+      window.sessionStorage.setItem(
+        'formMenuList',
+        JSON.stringify(navList.value)
+      )
+    })
+  }
+  /*
   const navList = computed(() => {
     return [
       {
@@ -70,17 +86,17 @@
           {
             title: '用户管理',
             icon: 'user',
-            path: ''
+            path: '/system/user'
           },
           {
             title: '角色管理',
             icon: 'role',
-            path: ''
+            path: '/system/role'
           },
           {
             title: '菜单管理',
             icon: 'menu',
-            path: ''
+            path: '/system/menu'
           },
           {
             title: '部门管理',
@@ -131,47 +147,13 @@
         ]
       }
     ]
-  })
+  })*/
   const select = () => {
-    console.log('select')
-  }
-  // 获取创建的表单导航，存下storage不用每次刷新请求
-  const initForm = () => {
-    const sessionList = window.sessionStorage.getItem('formMenuList')
-    if (sessionList) {
-      contentList.value = JSON.parse(sessionList)
-      return
-    }
-    // 搜索条件为启用的，类型为表单
-    const params = {
-      pageInfo: {
-        pageSize: 100,
-        pageIndex: 1
-      },
-      status: 1,
-      type: 2
-    }
-    getRequest('designList', params).then((res) => {
-      const result = res.data?.list
-      contentList.value = []
-      if (result) {
-        result.forEach((item: any) => {
-          contentList.value.push({
-            title: item.name,
-            icon: item.icon || '',
-            path: `/design/dataList/content?id=${item.id}`
-          })
-        })
-        window.sessionStorage.setItem(
-          'formMenuList',
-          JSON.stringify(contentList.value)
-        )
-      }
-    })
+    // console.log('select')
   }
   onMounted(() => {
     // 将导航信息传给tagViews，根据path匹配出显示的title
     emits('getMenuList', navList.value)
-    initForm()
+    getNavList()
   })
 </script>

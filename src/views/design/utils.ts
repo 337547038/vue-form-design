@@ -41,15 +41,7 @@ export const beforeRequest =
   '  // data经过处理后返回\n' +
   '  return data\n' +
   '}'
-// eslint-disable-next-line
-// export const beforeRequest1 = (data: any, route: any) => {
-//   // data经过处理后返回
-//   return data
-// }
-export const afterResponse = 'opt=(data)=>{\nreturn data\n}'
-// export const afterResponse1 = (data: any) => {
-//   return data
-// }
+export const afterResponse = 'opt=(res)=>{\nreturn res\n}'
 
 // provide 方法定义的key
 const prefix = 'AK'

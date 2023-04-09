@@ -275,10 +275,12 @@
       {
         type: 'switch',
         control: {
-          modelValue: false
+          modelValue: 1,
+          activeValue: 1,
+          inactiveValue: 0
         },
         config: {},
-        name: 'menuShow',
+        name: 'showMenu',
         item: {
           label: '是否在菜单中显示'
         }

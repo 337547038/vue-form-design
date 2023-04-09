@@ -103,3 +103,16 @@ a{color: #409eff;text-decoration: none}
 .el-popper {
   max-width: 400px;
 }
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .3s;
+}
+.fade-transform-enter-from{opacity: .3;transform: translateX(-30px)}
+.fade-transform-enter-active {
+}
+.fade-transform-enter-to{transform: translateX(0);opacity: 1}
+
+.fade-transform-leave-active {
+  opacity: 0;
+  transform: translateX(30px);
+}

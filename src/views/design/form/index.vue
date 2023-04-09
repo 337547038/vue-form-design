@@ -76,11 +76,11 @@
     string2json,
     stringToObj
   } from '@/utils/form'
-  import { useLayoutStore } from '@/store/layout'
+  // import { useLayoutStore } from '@/store/layout'
   import { FormData } from '../types'
 
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
+  // const layoutStore = useLayoutStore()
+  // layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
   const store = useDesignFormStore()
   const router = useRouter()

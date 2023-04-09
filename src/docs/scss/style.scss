@@ -64,14 +64,30 @@ a {text-decoration: none}
     &.visible{transform: translateX(0);
     .button{right: 5px;transform: scale(.8);left:auto}}
   }*/
-  .left-fade-enter-active {
-    transition: all 1.2s ease;
+  /*.left-fade-enter-active {
+    //transition: all 1.2s ease;
   }
   .left-fade-leave-active {
-    transition: all .1s cubic-bezier(2.0, 0.5, 0.8, 1.0);
-  }
-  .left-fade-leave-to, .left-fade-enter-from {
+    //transition: all .1s cubic-bezier(2.0, 0.5, 0.8, 1.0);
+  }*/
+  /*.left-fade-leave-to, .left-fade-enter-from {
     transform: translateX(-20px);
     opacity: .2;
+  }*/
+
+
+  .left-fade-leave-active,
+  .left-fade-enter-active {
+    transition: all .3s;
+  }
+  .left-fade-enter-active {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  .left-fade-enter-to{transform: translateX(0);opacity: 1}
+
+  .left-fade-leave-active {
+    opacity: 0;
+    transform: translateX(30px);
   }
 }

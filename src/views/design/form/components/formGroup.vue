@@ -399,7 +399,7 @@
     }
   }
   onUnmounted(() => {
-    console.log('formGroup onUnmounted')
+    // console.log('formGroup onUnmounted')
     dataList.value = {}
     //formOtherData.value = {}
     store.setActiveKey('')

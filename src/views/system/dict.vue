@@ -36,9 +36,9 @@
 
 <script setup lang="ts">
   import { ref, reactive, nextTick } from 'vue'
-  import { useLayoutStore } from '@/store/layout'
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '系统管理' }, { label: '字典管理' }])
+  // import { useLayoutStore } from '@/store/layout'
+  // const layoutStore = useLayoutStore()
+  // layoutStore.changeBreadcrumb([{ label: '系统管理' }, { label: '字典管理' }])
   const tableListEl = ref()
   const formEl = ref()
   const formEl2 = ref()
@@ -259,7 +259,7 @@
           dictKey: 'status'
         }
       },
-      { label: '说明', prop: 'remark' },
+      // { label: '说明', prop: 'remark' },
       {
         label: '更新时间',
         prop: 'updateTime',

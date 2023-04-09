@@ -82,7 +82,7 @@
           :data="state.tableDataList"
           v-bind="tableData.tableProps"
           @selection-change="selectionChange"
-          ref="table"
+          ref="tableEl"
         >
           <template
             v-for="item in columnsFilter"
@@ -257,12 +257,12 @@
   const router = useRouter()
   const container = ref()
   const searchFormEl = ref()
-  const table = ref()
+  const tableEl = ref()
   const state = reactive({
     loading: false,
     tableDataList: [], // 表格行数据
     currentPage: 1,
-    pageSize: props.tableData.config?.pageSize || 20,
+    pageSize: 20,
     total: 0,
     selectionChecked: [],
     dict: {}, // 接口返回的
@@ -553,9 +553,6 @@
           return
         }
         const tableBodyWrapDom = tableEl.querySelector('.el-scrollbar__wrap') // table父一级
-        if (!tableBodyWrapDom) {
-          return
-        }
         const tableBodyDom = tableEl.querySelector('.el-table__body') // table
         const { top: tableBodyDomTop } =
           tableBodyWrapDom.getBoundingClientRect()
@@ -618,7 +615,6 @@
   })
   defineExpose({
     getListData,
-    delClick,
-    table
+    delClick
   })
 </script>

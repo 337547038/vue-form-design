@@ -298,7 +298,7 @@ const beforeRequest = (params, route) => {
 
 **5.afterResponse：**
 
-同props.afterResponse，即requestUrl请求结果返回时。可对返回的数据进行处理，如
+同props.afterResponse，即`requestUrl`请求结果返回时。可对返回的数据进行处理，如
 
 ```javascript
 const afterResponse = (result) => {
@@ -306,6 +306,18 @@ const afterResponse = (result) => {
   return result // return false时不处理请求结果
 }
 ```
+
+当处理逻辑比较复杂时，通过在线编辑器编辑`afterResponse`处理逻辑明显是不适合的，此时可设置为字符串格式，即设置一个key。则会自执行本地`/utils/formatResult`方法，如：
+
+```javascript
+// const afterResponse = 'formatTest'
+const formatResult = (res: any, key: string) => {
+  // key即为formatTest，可根据设置的key设置不同的处理方法
+  return res
+}
+```
+
+使用实例可见用户管理部门侧栏等
 
 **6.beforeSubmit：**
 

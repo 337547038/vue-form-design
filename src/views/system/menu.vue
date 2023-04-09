@@ -1,46 +1,59 @@
 <template>
   <div>
     <ak-list
+      v-if="refreshTable"
       ref="tableListEl"
-      requestUrl="deptList"
-      deleteUrl="deptDelete"
+      requestUrl="menuList"
+      deleteUrl="menuDelete"
       :searchData="searchData"
       :tableData="tableData"
-      :afterResponse="afterResponse"
-    />
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="400px">
+      afterResponse="deptTree"
+      :dict="dict"
+    >
+      <template #icon="{ row }">
+        <i :class="row.icon"></i>
+      </template>
+    </ak-list>
+    <el-dialog v-model="dialog.visible" :title="dialog.title" width="680px">
       <ak-form
         ref="formNameEl"
         :type="dialog.formType"
         :formData="formData"
-        addUrl="deptSave"
-        editUrl="deptEdit"
+        addUrl="menuSave"
+        editUrl="menuEdit"
         :beforeSubmit="beforeSubmit"
         :afterSubmit="afterSubmit"
         @btn-click="btnClick"
+        :dict="dict"
       />
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-  // import {useRoute, useRouter} from 'vue-router'
-  import { ref, reactive, nextTick } from 'vue'
+  import { ref, reactive, nextTick, markRaw } from 'vue'
+  import iconfont from '@/components/iconfont.vue'
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
   const tableListEl = ref()
   const formNameEl = ref()
-  const departmentTree = ref([]) // 上级部门
+  const dict = {
+    menuType: { 1: '菜单', 2: '按钮' }
+  }
+  //const defaultExpandAll = ref(false)
+  const refreshTable = ref(true)
   const searchData = ref({
     list: [
       {
         type: 'input',
         control: {
           modelValue: '',
-          placeholder: '请输入部门名称'
+          placeholder: '请输入菜单名称'
         },
         config: {},
         name: 'name',
         item: {
-          label: '部门名称'
+          label: '菜单名称'
         }
       },
       {
@@ -61,7 +74,7 @@
       {
         type: 'button',
         control: {
-          label: '查询',
+          label: '搜索',
           key: 'submit',
           type: 'primary'
         },
@@ -70,86 +83,111 @@
       {
         type: 'button',
         control: {
-          label: '清空',
+          label: '重置',
           key: 'reset'
         },
         config: {}
       }
     ],
     form: {
-      labelWidth: '',
-      class: '',
       size: 'default'
-    },
-    config: {}
+    }
   })
   const tableData = ref({
     tableProps: {
-      rowKey: 'id'
+      rowKey: 'id',
+      defaultExpandAll: false
     },
     columns: [
-      { label: '部门名称', prop: 'name' },
+      { label: '菜单名称', prop: 'name' },
+      {
+        label: '地址',
+        prop: 'path'
+      },
+      {
+        label: '图标',
+        prop: 'icon',
+        width: 60
+      },
       {
         label: '排序',
-        prop: 'sort'
+        prop: 'sort',
+        width: 60
+      },
+      {
+        label: '类型',
+        prop: 'type',
+        width: 70,
+        config: { dictKey: 'menuType', tagList: { 1: 'success', 2: 'info' } }
       },
       {
         label: '状态',
         prop: 'status',
+        width: 70,
         config: { dictKey: 'status', tagList: { 1: 'success', 2: 'info' } }
       },
-      { label: '操作', prop: '__control' }
+      { label: '操作', prop: '__control', width: 140 }
     ],
     controlBtn: [
       {
         label: '新增',
         type: 'primary',
-        size: 'small',
         icon: 'plus',
         click: () => {
           dialog.visible = true
-          dialog.title = '新增部门'
+          dialog.title = '新增菜单'
           dialog.formType = 1
-          setParentIdData()
+        }
+      },
+      {
+        label: '展开折叠',
+        click: () => {
+          tableData.value.tableProps.defaultExpandAll = true
+          refreshTable.value = false
+          nextTick(() => {
+            refreshTable.value = true
+          })
         }
       }
     ],
     operateBtn: [
       {
+        visible: '$.parentId!==1',
         label: '新增',
         click: (row: any) => {
           dialog.visible = true
-          dialog.title = '新增部门'
+          dialog.title = '新增菜单'
           dialog.formType = 1
           nextTick(() => {
             formNameEl.value.setValue({ parentId: row.id })
           })
-          setParentIdData()
         }
       },
       {
+        //visible: '$.parentId!==1',
         label: '编辑',
         click: (row: any) => {
+          if (row.parentId === 1) {
+            router.push({ path: '/design/dataList/list' })
+            return
+          }
           dialog.visible = true
-          dialog.title = '编辑部门'
+          dialog.title = '编辑菜单'
           dialog.formType = 2
           dialog.editId = row.id
-          //　这里有个问题parentId默认treeSelect显示有异常
-          if (row.parentId === 0) {
-            row.parentId = ''
-          }
           nextTick(() => {
             formNameEl.value.setValue(row)
           })
-          setParentIdData()
         }
       },
       {
         label: '删除',
-        key: 'del'
+        key: 'del',
+        visible: '$.parentId!==0&&$.parentId!==1' // 一级不让删
       }
     ],
     config: {
+      pageSize: 100,
       fixedBottomScroll: false
     }
   })
@@ -163,32 +201,56 @@
   const formData = ref({
     list: [
       {
-        type: 'treeSelect',
+        type: 'input',
         control: {
           modelValue: '',
-          data: [],
-          renderAfterExpand: false,
-          props: {
-            label: 'name'
-          },
-          checkStrictly: true, // 可选任意级
-          placeholder: '请选择上级部门'
+          disabled: true,
+          placeholder: '父级'
         },
-        config: {
-          optionsType: 0
-        },
+        config: {},
         name: 'parentId',
-        item: { label: '上级部门' }
+        item: { label: '父级ID' }
+      },
+      {
+        type: 'radio',
+        control: { modelValue: 1 },
+        options: [],
+        config: {
+          optionsType: 3,
+          optionsFun: 'menuType'
+        },
+        name: 'type',
+        item: { label: '类型' }
       },
       {
         type: 'input',
-        control: { modelValue: '', placeholder: '请输入部门名称' },
+        control: { modelValue: '', placeholder: '请输入菜单名称' },
         config: {},
         name: 'name',
-        item: { label: '部门名称' },
+        item: { label: '菜单名称' },
         customRules: [
-          { type: 'required', message: '部门名称不能为空', trigger: 'blur' }
+          { type: 'required', message: '菜单名称不能为空', trigger: 'blur' }
         ]
+      },
+      {
+        type: 'input',
+        control: { modelValue: '', placeholder: '请输入访问地址/类型标识' },
+        config: {},
+        name: 'path',
+        item: { label: '访问地址' }
+      },
+      {
+        type: 'component',
+        control: {
+          modelValue: ''
+        },
+        config: {
+          componentName: markRaw(iconfont)
+        },
+        name: 'icon',
+        item: {
+          label: 'icon图标'
+        }
       },
       {
         type: 'inputNumber',
@@ -213,7 +275,9 @@
         control: {
           modelValue: ''
         },
-        config: {},
+        config: {
+          span: 24
+        },
         name: 'remark',
         item: {
           label: '备注'
@@ -222,7 +286,7 @@
       {
         type: 'div',
         control: {},
-        config: { textAlign: 'center' },
+        config: { textAlign: 'center', span: 24 },
         list: [
           {
             type: 'button',
@@ -238,6 +302,7 @@
       }
     ],
     form: {
+      class: 'form-row-2',
       labelWidth: '100px',
       size: 'default'
     },
@@ -266,31 +331,6 @@
   }
   // 处理表格数据，转换为可折叠表格
   const afterResponse = (result: any) => {
-    const list = result.list
-    let temp: any = []
-    transformDataList(list, 0, temp)
-    departmentTree.value = temp
-    return temp
-  }
-  const transformDataList = (data: any, parentId: number, temp: any) => {
-    data.forEach((item: any) => {
-      item.value = item.id // tree组件只能修改label取值，不能指定value，这里添加一个
-      if (item.parentId === parentId) {
-        const childrenList = data.filter((ch: any) => {
-          return ch.parentId === item.id
-        })
-        if (childrenList?.length) {
-          item.children = []
-          transformDataList(data, item.id, item.children)
-        }
-        temp.push(item)
-      }
-    })
-  }
-  // 设置部门下拉选择
-  const setParentIdData = () => {
-    nextTick(() => {
-      formNameEl.value.setOptions({ parentId: departmentTree.value })
-    })
+    return result
   }
 </script>

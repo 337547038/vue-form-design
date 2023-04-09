@@ -34,9 +34,9 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { nextTick, reactive, ref } from 'vue'
-  import { useLayoutStore } from '@/store/layout'
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '表单管理' }])
+  // import { useLayoutStore } from '@/store/layout'
+  // const layoutStore = useLayoutStore()
+  // layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '表单管理' }])
   const router = useRouter()
   const dialog = reactive({
     visible: false,

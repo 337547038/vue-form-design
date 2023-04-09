@@ -1,21 +1,28 @@
 <template>
   <div class="tree-sidebar">
-    <el-input v-model="filterText" placeholder="输入关键字进行过滤" />
-    <el-tree
-      ref="treeRef"
-      class="filter-tree"
-      :data="state.treeData"
-      default-expand-all
-      :filter-node-method="filterNode"
-      @node-click="nodeClick"
+    <el-input
+      v-model="filterText"
+      placeholder="输入关键字进行查找"
+      @change="inputChange"
     />
+    <div v-loading="loading">
+      <el-tree
+        ref="treeRef"
+        class="filter-tree"
+        v-bind="data.treeProps"
+        :data="state.treeData"
+        default-expand-all
+        :highlight-current="true"
+        @node-click="nodeClick"
+    /></div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, reactive, onMounted } from 'vue'
-  import axios from '@/utils/request'
+  import { ref, reactive, onMounted } from 'vue'
+  import { getRequest } from '@/api'
   import { useRoute } from 'vue-router'
+  import formatResult from '@/utils/formatResult'
 
   interface Tree {
     id: number
@@ -26,69 +33,72 @@
   const props = withDefaults(
     defineProps<{
       data: any
-      formId?: string
     }>(),
     {
       data: () => {
         return []
-      },
-      formId: ''
+      }
     }
   )
   const emits = defineEmits<{
     (e: 'nodeClick', row: string | number): void
   }>()
   const route = useRoute()
-  const treeRef = ref()
+  // const treeRef = ref()
   const filterText = ref('')
+  const loading = ref(false)
   const state = reactive({
     treeData: []
   })
-  /*const defaultProps = {
-    children: 'children',
-    label: 'label'
-  }*/
-  watch(filterText, (val: string) => {
-    treeRef.value!.filter(val)
-  })
-
-  const filterNode = (value: string, data: Tree) => {
-    if (!value) return true
-    return data.label.includes(value)
+  const inputChange = () => {
+    const name = props.data.name
+    if (!name) {
+      console.error(new Error('请设置侧栏树name值'))
+      return
+    }
+    loading.value = true
+    init(name)
   }
   const nodeClick = (data: Tree) => {
     emits('nodeClick', data.id || data.label)
   }
-  const init = () => {
-    const { request, sourceFun, beforeRequest, afterResponse } = props.data
-    if (request && sourceFun) {
+  const init = (name?: string) => {
+    const {
+      requestUrl,
+      method = 'post',
+      beforeRequest,
+      afterResponse
+    } = props.data
+    if (requestUrl && method) {
       // 处理请求前的数据
-      const newData: any = { formId: props.formId }
-      let formatData = newData
+      const params = name ? { [name]: filterText.value } : {}
+      //console.log('params', params)
+      let formatData: any = params
       if (typeof beforeRequest === 'function') {
-        formatData = beforeRequest(newData, route) ?? newData
+        formatData = beforeRequest(params, route)
       }
       if (formatData === false) {
         return
       }
-      if (request === 'get') {
+      if (method === 'get') {
         formatData = { params: formatData }
       }
-      ;(axios as any)
-        [request](sourceFun, formatData)
+      const options = { method: method }
+      getRequest(requestUrl, formatData, options)
         .then((res: any) => {
-          if (res.data.code === 200) {
-            // 请求成功
-            let result = res.data.data
-            // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
-            if (typeof afterResponse === 'function') {
-              result = afterResponse(result)
-            }
-            state.treeData = result
+          let result = res.data
+          // 这里做数据转换，很多时候后端并不能提供完全符合当前组件的数据
+          if (afterResponse && typeof afterResponse === 'string') {
+            result = formatResult(result, afterResponse)
+          } else if (typeof afterResponse === 'function') {
+            result = afterResponse(result)
           }
+          state.treeData = result
+          loading.value = false
         })
         .catch(() => {
           state.treeData = []
+          loading.value = false
         })
     }
   }

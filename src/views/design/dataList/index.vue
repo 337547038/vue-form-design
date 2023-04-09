@@ -233,9 +233,18 @@
                   @input="tableListAttrChange(item)"
                 />
               </el-form-item>
-              <el-form-item v-show="state.treeData.show">
+              <el-form-item
+                v-show="state.tableData.treeData?.show"
+                class="event-btn"
+              >
                 <el-button @click="editOpenDrawer('tree')"
                   >编辑侧栏树属性
+                </el-button>
+                <el-button @click="editOpenDrawer('treeBeforeRequest')"
+                  >beforeRequest
+                </el-button>
+                <el-button @click="editOpenDrawer('treeAfterResponse')"
+                  >afterResponse
                 </el-button>
               </el-form-item>
               <el-form-item class="event-btn">
@@ -351,7 +360,8 @@
   })
   const tooltip = reactive({
     dict: "数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式JSON：sex:{0:'男',1:'女'}",
-    afterResponse: '提示：获取列表初始数据后事件，可对请求返回数据进行处理',
+    afterResponse:
+      '提示：获取列表初始数据后事件，可对请求返回数据进行处理，也可为字符串，如opt="formatTest"',
     beforeRequest: '提示：获取列表初始数据前事件，可修改请求参数',
     beforeDelete: '提示：可对删除前提交参数处理'
   })
@@ -461,7 +471,7 @@
       },
       {
         label: '开启侧栏树',
-        value: state.treeData.show,
+        value: state.tableData.treeData?.show,
         key: 'tree',
         type: 'switch'
       }
@@ -493,7 +503,6 @@
   })
   const tableListAttrChange = (obj: any, val?: any) => {
     if (obj.key === 'tree') {
-      state.treeData.show = val
       if (!state.tableData.treeData) {
         state.tableData.treeData = {}
       }
@@ -635,14 +644,30 @@
         if (Object.keys(tree).length === 1) {
           tree = {
             show: true,
-            name: '唯一标识', // 唯一标识
+            treeProps: {}, // tree props
+            name: '唯一标识', // 唯一标识，用于
             method: 'post',
-            optionsFun: '请求url'
+            requestUrl: ''
           }
         }
         dialogOpen(tree, {
           title: '更多参数详见ak-list组件',
           type: type
+        })
+        break
+      case 'treeBeforeRequest':
+        const treeData = state.tableData.treeData?.beforeRequest
+        dialogOpen(treeData, {
+          type: type,
+          title: '侧栏树请求前处理事件，可对参数作处理'
+        })
+        break
+      case 'treeAfterResponse':
+        const treeData2 = state.tableData.treeData?.afterResponse
+        dialogOpen(treeData2, {
+          type: type,
+          title:
+            '侧栏树请求返回事件，可对返回数据处理；也可为字符串，如opt="formatTest"'
         })
         break
       case 'operateBtn':
@@ -697,11 +722,13 @@
         break
       case 'beforeRequest':
       case 'beforeDelete':
+      case 'treeBeforeRequest':
         if (!obj) {
           editData = beforeRequest
         }
         break
       case 'afterResponse':
+      case 'treeAfterResponse':
         if (!obj) {
           editData = afterResponse
         }
@@ -739,6 +766,12 @@
       case 'tableConfig':
         //if(state.tableData.p)
         state.tableData.tableProps = val
+        break
+      case 'treeBeforeRequest':
+        state.tableData.treeData.beforeRequest = val
+        break
+      case 'treeAfterResponse':
+        state.tableData.treeData.afterResponse = val
         break
     }
     drawerBeforeClose()

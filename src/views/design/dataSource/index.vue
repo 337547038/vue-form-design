@@ -32,9 +32,9 @@
   import { useRouter } from 'vue-router'
   import { ref, reactive, nextTick } from 'vue'
   import { ElMessage } from 'element-plus'
-  import { useLayoutStore } from '@/store/layout'
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单数据源' }])
+  // import { useLayoutStore } from '@/store/layout'
+  // const layoutStore = useLayoutStore()
+  // layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单数据源' }])
   const router = useRouter()
   const tableListEl = ref()
   const formEl = ref()

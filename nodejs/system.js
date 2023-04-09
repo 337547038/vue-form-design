@@ -45,7 +45,61 @@ router.post('/dept/list', async (req, res) => {
   await commList(req, res, 'department')
 })
 /*************************部门管理结束*********************/
-const commList = async (req, res, tableName, whereParams = []) => {
+
+/*************************菜单管理结束*********************/
+router.post('/menu/save', async (req, res) => {
+  commSave(req, res, 'menu')
+})
+router.post('/menu/edit', async (req, res) => {
+  commEdit(req, res, 'menu')
+})
+router.post('/menu/delete', async (req, res) => {
+  commDel(req, res, 'menu')
+})
+router.post('/menu/list', async (req, res) => {
+  const { name, status } = req.body
+  const whereParams = []
+  if (name) {
+    whereParams.push(`name=${name}`)
+  }
+  if (status) {
+    whereParams.push(`status=${status}`)
+  }
+  let where = 'WHERE id is not null'
+  if (whereParams.length) {
+    where = ` WHERE ${whereParams.join('AND')} `
+  }
+  where += ` order by sort asc`
+  const sql = `SELECT * FROM \`menu\` ${where}`
+  sqlQuery(sql, [], res, (result) => {
+    let allResult = result
+    // 获取内容管理的
+    const contentSql =
+      'SELECT id,icon,name,status FROM `design` WHERE showMenu=1 and type=2'
+    sqlQuery(contentSql, [], res, (list) => {
+      if (list && list.length) {
+        list.forEach((item) => {
+          allResult.push({
+            path: `/design/dataList/content?id=${item.id}`,
+            parentId: 1,
+            type: 1,
+            ...item
+          })
+        })
+      }
+      return res.json({
+        code: 1,
+        data: {
+          list: allResult
+        },
+        message: '成功'
+      })
+    })
+  })
+})
+/*************************菜单管理结束*********************/
+
+const commList = async (req, res, tableName, whereParams = [], order) => {
   const { pageInfo = {} } = req.body
   const { pageIndex = 1, pageSize = 20 } = pageInfo
   const start = (pageIndex - 1) * pageSize
@@ -53,7 +107,7 @@ const commList = async (req, res, tableName, whereParams = []) => {
   if (whereParams.length) {
     where = ` WHERE ${whereParams.join('AND')} `
   }
-  where += ' order by id desc'
+  where += ` order by ${order || 'id desc'}`
   const sql = `SELECT * FROM \`${tableName}\` ${where} Limit ${start},${pageSize}`
   const countSql = `select count(id) as num from \`${tableName}\`` + where
   const count = await sqlQuery(countSql)

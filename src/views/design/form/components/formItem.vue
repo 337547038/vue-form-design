@@ -164,7 +164,6 @@
 </template>
 
 <script lang="ts" setup>
-  import axios from '@/utils/request'
   import {
     inject,
     onMounted,
@@ -192,6 +191,8 @@
   import AKSelect from './select.vue'
   import { uploadUrl } from '@/api'
   import { useRoute } from 'vue-router'
+  import formatResult from '@/utils/formatResult'
+  import { getRequest } from '@/api'
 
   const props = withDefaults(
     defineProps<{
@@ -309,7 +310,7 @@
     const {
       optionsType,
       optionsFun,
-      method = 'get',
+      method = 'post',
       afterResponse,
       beforeRequest
     } = config.value
@@ -350,29 +351,26 @@
           if (method === 'get') {
             newData = { params: newData }
           }
-          // request.get('url',data)
-          ;(axios as any)
-            [method](sourceFun, newData)
+          getRequest(sourceFun, newData, { method: method })
             .then((res: any) => {
-              if (res.data.code === 1) {
-                // 请求成功
-                const result = res.data.data
-                let formatResult: any = result
-                // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
-                if (typeof afterResponse === 'function') {
-                  // 没有return时，使用原来的，相当于没处理
-                  formatResult = afterResponse(result) ?? result
-                }
-                if (formatResult === false) {
-                  return
-                }
-                if (props.data.type === 'treeSelect') {
-                  control.value.data = formatResult
-                } else {
-                  options.value = formatResult
-                }
-                window.sessionStorage.setItem(key, JSON.stringify(formatResult)) //缓存，例如子表添加时不用每添加一行就请求一次
+              const result = res.data.data
+              let formatRes: any = result
+              // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
+              if (typeof afterResponse === 'string' && afterResponse) {
+                formatRes = formatResult(result, afterResponse)
+              } else if (typeof afterResponse === 'function') {
+                // 没有return时，使用原来的，相当于没处理
+                formatRes = afterResponse(result) ?? result
               }
+              if (formatRes === false) {
+                return
+              }
+              if (props.data.type === 'treeSelect') {
+                control.value.data = formatRes
+              } else {
+                options.value = formatRes
+              }
+              window.sessionStorage.setItem(key, JSON.stringify(formatRes)) //缓存，例如子表添加时不用每添加一行就请求一次
             })
             .catch((res: any) => {
               if (props.data.type === 'treeSelect') {
@@ -603,7 +601,7 @@
     getAxiosOptions()
   })
   onUnmounted(() => {
-    console.log('formItem onUnmounted')
+    // console.log('formItem onUnmounted')
     formOptions.value = ''
     config.value = ''
     control.value = ''

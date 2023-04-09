@@ -33,9 +33,9 @@
 </template>
 
 <script setup>
-  import { useLayoutStore } from '@/store/layout'
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '新建设计' }])
+  // import { useLayoutStore } from '@/store/layout'
+  // const layoutStore = useLayoutStore()
+  // layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '新建设计' }])
 </script>
 <style lang="scss">
   .design-index {

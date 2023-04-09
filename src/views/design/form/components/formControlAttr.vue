@@ -192,7 +192,13 @@
                   "
                   >beforeRequest
                 </el-button>
-                <el-button @click="optionsEvent('optionsResult')"
+                <el-button
+                  @click="
+                    optionsEvent(
+                      'optionsResult',
+                      '请求返回结束处理；，也可为字符串，如opt=formatTest'
+                    )
+                  "
                   >afterResponse
                 </el-button>
               </el-form-item>
@@ -404,7 +410,7 @@
                 @click="
                   eventClick(
                     'afterResponse',
-                    '获取表单初始数据后事件，可对请求返回数据进行处理'
+                    '获取表单初始数据后事件，可对请求返回数据进行处理；也可为字符串，如opt=formatTest'
                   )
                 "
                 >afterResponse
@@ -413,7 +419,7 @@
                 @click="
                   eventClick(
                     'beforeSubmit',
-                    '表单数据提交前事件，可对提交数据进行处理'
+                    '表单数据提交前事件，可对提交数据进行处理；也可为字符串，如opt=formatTest'
                   )
                 "
                 >beforeSubmit

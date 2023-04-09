@@ -43,9 +43,9 @@
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { string2json, stringToObj } from '@/utils/form'
-  import { useLayoutStore } from '@/store/layout'
+  /*import { useLayoutStore } from '@/store/layout'
   const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '内容管理' }, { label: '表单管理' }])
+  layoutStore.changeBreadcrumb([{ label: '内容管理' }, { label: '表单管理' }])*/
   const route = useRoute()
   // url参数说明：
   // id 获取当前设计的列表字段，查询条件等配置

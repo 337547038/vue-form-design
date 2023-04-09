@@ -36,9 +36,9 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { getRequest } from '@/api'
-  import { useLayoutStore } from '@/store/layout'
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([])
+  // import { useLayoutStore } from '@/store/layout'
+  // const layoutStore = useLayoutStore()
+  // layoutStore.changeBreadcrumb([])
   const initDict = () => {
     getRequest('dictList', { status: 1 }).then((res: any) => {
       const result = res.data.list
