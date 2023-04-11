@@ -1,0 +1,33 @@
+{
+  "code": 1,
+  "data": {
+    "list": [
+      {
+        "category": 0,
+        "status": 1,
+        "creatDate": "",
+        "creatName": "admin",
+        "id": 13,
+        "name": "客户信息管理",
+        "remark": "客户信息管理",
+        "tableName": "ak-customer",
+        "updateDate": ""
+      },
+      {
+        "category": 0,
+        "status": 1,
+        "creatDate": "",
+        "creatName": "admin",
+        "id": 12,
+        "name": "组件字段示例",
+        "remark": "组件字段示例",
+        "tableName": "ak-test",
+        "updateDate": ""
+      }
+    ],
+    "pageInfo": {
+      "total": 2
+    }
+  },
+  "message": "成功"
+}

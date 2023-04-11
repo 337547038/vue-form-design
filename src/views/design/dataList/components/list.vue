@@ -515,7 +515,7 @@
     if (scope.row.$index !== -1) {
       // 表格没数据时也会引用，此时$index=-1，应该是组件ui问题
       const val = scope.row[item.prop]
-      if (type === 'formatter') {
+      if (type === 'formatter' && val) {
         // 时间日期类格式化
         return dateFormatting(val, item.config?.formatter)
       } else {
