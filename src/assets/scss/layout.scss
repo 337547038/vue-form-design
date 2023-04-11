@@ -38,19 +38,20 @@ a{color: #409eff;text-decoration: none}
     .logo {
       display: flex;
       align-items: center;
-      font-size: 16px;
+      font-size: 14px;
       height: 40px;
       justify-content: center;
       cursor: pointer;
       img {
-        width: 20px;
-        height: 20px;
+        width: 14px;
+        height: 14px;
       }
     }
     .el-menu {
       border-right: 0;
       .icon{margin-right: 5px;font-size: 15px;opacity: .8}
     }
+    .el-sub-menu .el-menu-item{min-width: 180px}
   }
   .common-header {
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);

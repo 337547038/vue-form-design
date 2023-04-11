@@ -6,7 +6,7 @@
 
 **•树形控件**
 
-使用方法详见[系统管理部门管理](/#/design/dataSource)　新增弹窗
+使用方法详见[系统管理部门管理](/#/design/dataSource) 新增弹窗
 
 ## 高级字段
 
@@ -16,9 +16,22 @@
 
 **•自定义组件**
 
-自定义组件需全局注册，`导出vue文件`使用可使用当前页面导入的。
+自定义组件需全局注册，`导出vue文件`使用可使用当前页面导入的。组件需要v-model才级实现更新
 
-使用方法详见 [列表页设计管理](/#/design/dataList/list) 设置弹窗
+引入当前页面组件时建议使用markRaw，如：
+
+```javascript
+// import component from 'xxx.vue'
+config: {
+  componentName: markRaw(component)
+}
+```
+
+使用方法详见：
+
+[列表页设计管理](/#/design/dataList/list) 设置弹窗
+
+[系统管理-角色管理](/#/system/role) 新增编辑角色菜单权限
 
 ![](./img/use-form4.png)
 
@@ -113,10 +126,27 @@ $.sex===1&&$.age>20
 
 **2.数据源**
 
-当前组件选项通过指定的URL来获取。
+当前组件选项通过指定的URL来获取。URL可以为完整的地址，也可以是api里设定的key
+
+**指定label/value属性值**
+
+选项数据需要的数据格式为label/value值形式，很多时候接口返回的数据并不是我们想要的，如:
+
+```javascript
+// 接口返回为name/id形式时，可设置label="name",value="id"
+const result =[{name:'name',id:'1'}]
+// 转换后的数据
+const format =[{label:'name',value:'1'}]
+```
+注意：设置了`afterResponse`时这三个参数无效
+
+**尝试转换value数据类型**
+
+当表单组件对应的值的数字时，这里回显则会异常，这时可以尝试将value转为string或number形式
+
 
 可通过配置`beforeRequest`来添加指定请求参数配置，同时可使用`afterResponse`事件编辑方法对获取到的数据进行处理，最后再return回去。这两方法同表单配置的`beforeRequest`
-和`afterResponse`
+和`afterResponse`。
 
 ```javascript
 //　beforeRequest
@@ -159,7 +189,7 @@ opt = (data, route, form) => {
     config:
       {
         optionsType: 1,
-        optionsFun: "/api/getCity?id=${province}", // 当province组件改变时，重新请求
+        optionsFun: "/api/getCity?id=${province}", // 当province组件改变时，重新请求。返回数据必须为[{label:'x',value:'xx'}]格式，否则需进行转换
         method: "get"
       },
     name: "city",
@@ -169,6 +199,8 @@ opt = (data, route, form) => {
       }
   }]
 ```
+
+使用可见表单设计或列表设计页的权限角色[权限角色](/#/design/dataList/list)
 
 **3.方法函数**
 

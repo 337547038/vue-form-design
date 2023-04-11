@@ -189,7 +189,6 @@
   import type { FormList } from '../../types'
   import { constFormOtherData, constFormBtnEvent } from '../../utils'
   import md5 from 'md5'
-
   const props = withDefaults(
     defineProps<{
       data: FormList[]

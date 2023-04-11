@@ -1,5 +1,5 @@
 export default {
-  dictSave: 'system/dict/save', // 保存设计的表单
+  dictSave: 'system/dict/save',
   dictList: 'system/dict/list',
   dictDelete: 'system/dict/delete',
   dictEdit: 'system/dict/edit',
@@ -10,5 +10,13 @@ export default {
   menuSave: 'system/menu/save',
   menuEdit: 'system/menu/edit',
   menuList: 'system/menu/list',
-  menuDelete: 'system/menu/delete'
+  menuDelete: 'system/menu/delete',
+  roleSave: 'system/role/save',
+  roleEdit: 'system/role/edit',
+  roleList: 'system/role/list',
+  roleDelete: 'system/role/delete',
+  userSave: 'system/user/save',
+  userEdit: 'system/user/edit',
+  userList: 'system/user/list',
+  userDelete: 'system/user/delete'
 }

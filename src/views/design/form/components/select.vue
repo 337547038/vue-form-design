@@ -2,9 +2,8 @@
   <el-select
     v-bind="control"
     :disabled="disabled"
-    :modelValue="modelValue"
+    v-model="value"
     :loading="state.loading"
-    @change="change"
     :remoteMethod="remoteMethod"
   >
     <el-option v-if="config.addAll" value="" label="全部" />
@@ -12,7 +11,7 @@
       v-for="item in options"
       :key="item.value"
       :label="item.label"
-      :value="formatNumber(item.value)"
+      :value="item.value"
     />
   </el-select>
 </template>
@@ -38,8 +37,21 @@
   )
   const emits = defineEmits<{
     (e: 'change', val: string | number): void
-    (e: 'update:modelValue', val: string | number): void
+    (e: 'update:modelValue', val: any): void
   }>()
+  const value = computed({
+    get() {
+      return props.modelValue
+    },
+    set(newVal: any) {
+      if (props.type === 'slot') {
+        emits('change', newVal)
+      } else {
+        emits('update:modelValue', newVal)
+      }
+    }
+  })
+  // const options1 = [{ label: '11', value: 1 }]
   const state = reactive({
     loading: false // 远程搜索加载状态
   })
@@ -58,13 +70,13 @@
       props.config.optionsFun
     )
   })
-  const change = (val: string | number) => {
-    if (props.type === 'slot') {
-      emits('change', val)
-    } else {
-      emits('update:modelValue', val)
-    }
-  }
+  // const change = (val: string | number) => {
+  //   if (props.type === 'slot') {
+  //     emits('change', val)
+  //   } else {
+  //     emits('update:modelValue', val)
+  //   }
+  // }
   // 远程搜索
   const remoteMethod = (name: string) => {
     if (isRemote.value) {

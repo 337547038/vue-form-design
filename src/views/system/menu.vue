@@ -7,7 +7,7 @@
       deleteUrl="menuDelete"
       :searchData="searchData"
       :tableData="tableData"
-      afterResponse="deptTree"
+      afterResponse="transformDataToChild"
       :dict="dict"
     >
       <template #icon="{ row }">

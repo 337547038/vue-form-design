@@ -20,7 +20,7 @@ export const aceEdit = (data: any, id?: string, type?: string | undefined) => {
 // 将字符类数字转为数值类
 export const formatNumber = (val: any) => {
   // 将字符类数字转为数值类
-  if (val && /^\d+(\.\d+)?$/.test(val.toString())) {
+  if (typeof val === 'string' && /^\d+(\.\d+)?$/.test(val.toString())) {
     // 为数字
     return Number(val)
   } else {

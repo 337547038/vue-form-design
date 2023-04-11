@@ -40,7 +40,7 @@
       return
     }
     getRequest('menuList', {}).then((res: any) => {
-      navList.value = formatResult(res.data, 'deptTree')
+      navList.value = formatResult(res.data, 'transformDataToChild')
       window.sessionStorage.setItem(
         'formMenuList',
         JSON.stringify(navList.value)

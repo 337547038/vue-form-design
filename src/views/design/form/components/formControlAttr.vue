@@ -13,6 +13,7 @@
                 v-model="item.value"
                 :filterable="item.path === 'name'"
                 :allow-create="item.path === 'name'"
+                :clearable="item.clearable"
                 @change="controlChange(item, $event)"
               >
                 <el-option
@@ -181,7 +182,27 @@
                   </template>
                 </el-input>
               </el-form-item>
-
+              <template v-if="controlData.config.optionsType === 1">
+                <el-form-item label="指定label属性值">
+                  <el-input
+                    v-model="controlData.config.label"
+                    placeholder="返回数据中没有label时可设置"
+                  />
+                </el-form-item>
+                <el-form-item label="指定value属性值">
+                  <el-input
+                    v-model="controlData.config.value"
+                    placeholder="返回数据中没有value时可设置"
+                  />
+                </el-form-item>
+                <el-form-item label="尝试转换value值为">
+                  <el-select v-model="controlData.config.transformData">
+                    <el-option value="">不转换</el-option>
+                    <el-option value="number">number</el-option>
+                    <el-option value="string">string</el-option>
+                  </el-select>
+                </el-form-item>
+              </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
                 <el-button
                   @click="
@@ -626,7 +647,8 @@
             warning: 'warning',
             danger: 'danger'
           },
-          vShow: ['button']
+          vShow: ['button'],
+          clearable: true
         },
         {
           label: '按钮名称',

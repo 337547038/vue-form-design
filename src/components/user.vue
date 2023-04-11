@@ -6,7 +6,11 @@
     </template>
   </el-input>
   <el-dialog title="用户选择" v-model="visible" :append-to-body="true">
-    <div class="user-select-dialog"> </div>
+    <div class="expand-user-dialog">
+      <div class="sidebar-tree"></div>
+      <div class="table-list"></div>
+      <div class="has-select"></div>
+    </div>
   </el-dialog>
 </template>
 

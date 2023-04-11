@@ -111,7 +111,9 @@ formData = {
         {
           optionsType:0, // 0固定选项　1数据源　2方法函数　3字典
           optioinsFun:'', //　接口url、方法名、字典key
-          method: "get" // optionsType=1时的数据请求方式
+          method: "get", // optionsType=1时的数据请求方式
+          value:'', // 指定value的属性,仅optionsType＝1有效
+          label:'' // 指定label的属性,仅optionsType＝1有效
         },
       item:
         {

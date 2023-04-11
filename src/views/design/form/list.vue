@@ -239,6 +239,26 @@
         },
         options: [],
         config: {
+          optionsType: 1,
+          optionsFun: 'roleList', //　可以为url也可以为api中的key
+          method: 'post',
+          label: 'name', //　指定name为label的值
+          value: 'id', //　指定id为value的值
+          help: '哪些角色可以查看'
+        },
+        name: 'role',
+        item: {
+          label: '权限角色'
+        }
+      },
+      {
+        type: 'select',
+        control: {
+          modelValue: '',
+          appendToBody: true
+        },
+        options: [],
+        config: {
           optionsType: 3,
           optionsFun: 'status'
         },

@@ -122,7 +122,7 @@
       destroy-on-close
       v-model="dialog.visible"
       :title="dialog.title"
-      :width="${dialogWidth}"
+      width="${dialogWidth}"
       :before-close="beforeClose"
     >
       <ak-form
@@ -156,6 +156,7 @@
       dialog.title = btn.key === 'add' ? '新增' : '编辑'
       dialog.formType = btn.key === 'add' ? 1 : 2
       dialog.editId = row && row.id
+
       if (btn.key === 'add' && formData.value.config?.addLoad) {
         // 添加时需要加载数据
         nextTick(() => {
@@ -165,6 +166,8 @@
       // 编辑，根据id加载
       if (btn.key === 'edit') {
         nextTick(() => {
+       　 // todo 当表单内容字段比较少，所需值从列表数据就可以获取
+       　　// formEl.value.setValue(row)
           formEl.value.getData({ id: row.id })
         })
       }
@@ -182,7 +185,7 @@
     if (type === 'success') {
       //　添加成功，刷新列表数据
       closeResetDialog()
-      listEl.value.getListData()
+      tableListEl.value.getListData()
     }
   }
   //　关闭弹窗时
@@ -221,10 +224,10 @@
 
 <script setup>
   // import {useRoute, useRouter} from 'vue-router'
-  import { ref } from 'vue'
+  import { ref, nextTick,reactive } from 'vue'
   // const route = useRoute()
   // const router = useRouter()
-  // const tableListEl = ref()
+  const tableListEl = ref()
   const searchData = ref({})
   const tableData = ref(${objToStringify(obj)})
   ${formContent}

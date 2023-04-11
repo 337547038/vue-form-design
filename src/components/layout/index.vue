@@ -1,13 +1,13 @@
 <template>
   <el-container class="common-layout">
     <el-aside
-      :width="isCollapse ? '64px' : '200px'"
+      :width="isCollapse ? '44px' : '180px'"
       class="common-sidebar"
       v-if="!fullScreen"
     >
       <div class="logo" @click="$router.push({ path: '/' })"
         ><img src="@/assets/logo.png" alt="" />
-        <span v-show="!isCollapse">AK管理系统</span></div
+        <span v-show="!isCollapse">AK低代码快速开发平台</span></div
       >
       <Menu :collapse="isCollapse" @get-menu-list="getMenuList" />
     </el-aside>
@@ -44,7 +44,7 @@
   import CommonHeader from './header.vue'
   const store = useLayoutStore()
   const isCollapse = ref(false)
-  const fullScreen = ref(false) // todo default false
+  const fullScreen = ref(false)
   //const reloadFlag = ref<boolean>(true)
   const navList = ref([])
   const reloadFlag = computed({
