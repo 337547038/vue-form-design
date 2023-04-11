@@ -10,45 +10,95 @@
       :beforeSubmit="beforeSubmit"
     />
   </div>
+  <el-button @click="setValue">button</el-button>
 </template>
 <script setup lang="ts">
   import { ref, computed, provide } from 'vue'
   const formNameEl = ref()
-  const formData = ref({
-    list: [
-      {
-        type: 'checkbox',
-        control: { modelValue: [] },
-        options: [],
-        config: {
-          type: 'async',
-          source: 1,
-          request: 'get',
-          sourceFun: 'fwfwfwef'
+  const formData = ref({ list: [], form: {}, config: {} })
+  setTimeout(() => {
+    formData.value = {
+      list: [
+        {
+          type: 'table',
+          list: [
+            {
+              type: 'input',
+              control: {
+                modelValue: ''
+              },
+              config: {},
+              name: 'ab',
+              item: {
+                label: '单行文本'
+              }
+            }
+          ],
+          tableData: [],
+          control: {
+            border: true
+          },
+          config: {
+            add: '添加一行',
+            addBtnText: 'add'
+          },
+          name: 'table'
         },
-        name: 'checkbox1680498538664',
-        item: { label: '多选框组' }
-      }
-    ],
-    form: {
-      labelWidth: '',
-      class: '',
-      size: 'default',
-      name: 'form1680492950296'
-    },
-    config: {}
-  })
+        {
+          type: 'input',
+          control: { modelValue: '1' },
+          config: {},
+          name: 'input1681128646765',
+          item: { label: '单行文本' }
+        },
+        {
+          type: 'select',
+          control: { modelValue: '', appendToBody: true },
+          options: [
+            {
+              label: 'a',
+              value: '1'
+            }
+          ],
+          config: { optionsType: 0 },
+          name: 'select1681128648591',
+          item: { label: '下拉选择框' }
+        },
+        {
+          type: 'title',
+          control: {
+            modelValue: '标题'
+          },
+          config: {}
+        },
+        {
+          type: 'txt',
+          control: {
+            modelValue: '555555'
+          },
+          config: {}
+        },
+        { type: 'button', control: { label: '保存' }, config: {} }
+      ],
+      form: { size: 'default' },
+      config: {}
+    }
+  }, 100)
+
   // todo 存在编辑时，可根据路由等参数设置当前表单模式　1新增　2编辑
   const formType = computed(() => {
     return 1
   })
 
-  // todo 多选框组设置选项值
-  const checkbox1680498538664Option = ref([{ label: '选项1', value: '1' }])
-  provide('fwfwfwef', checkbox1680498538664Option)
+  const setValue = () => {
+    formNameEl.value.setValue({
+      input1681128646765: '545',
+      select1681128648591: '1'
+    })
+  }
 
   // 表单提交时参数处理
-  const beforeSubmit = (params: any) => {
+  const beforeSubmit = (params) => {
     //　如编辑时添加参数
     //  params.id='xxx'
     return params

@@ -218,7 +218,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'list'
         },
         name: 'category',
@@ -235,7 +235,7 @@
         options: [],
         config: {
           // todo
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'list'
         },
         name: 'role',
@@ -264,7 +264,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',

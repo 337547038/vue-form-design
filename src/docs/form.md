@@ -29,9 +29,10 @@
 | options       | object                         | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                            |
 | dict          | object                         | 用于匹配的字典数据，一般不设置，从接口获取                                             |
 ### Events
-| 事件名      | 说明       |
-|----------|----------|
-| btnClick | 按钮组件点击事件 |
+| 事件名      | 说明                                                                      |
+|----------|-------------------------------------------------------------------------|
+| btnClick | 按钮组件点击事件                                                                |
+| change   | 表单组件值发生变化事件(key,value,data)。key：组件的name值，value：组件当前的值，data当前组件所在的list数据 |
 ### Methods
 
 | 方法                         | 说明                                      |
@@ -50,11 +51,6 @@
 | get[formName]ControlByName | 用于根据name值获取formData中的数据项(name:string)   |
 | get[formName]ValueByName   | 用于根据name值获取formData中的数据项的值(name:string) |
 
-### Provide
-
-| 方法              | 说明                             |
-|-----------------|--------------------------------|
-| AKControlChange | 表单控件值改变事件，返回{key, value, data} |
 
 ### Slot
 
@@ -109,7 +105,7 @@ formData = {
         }],
       config:
         {
-          optionsType:0, // 0固定选项　1数据源　2方法函数　3字典
+          optionsType:0, // 0固定选项　1数据源　2字典
           optioinsFun:'', //　接口url、方法名、字典key
           method: "get" // optionsType=1时的数据请求方式
         },

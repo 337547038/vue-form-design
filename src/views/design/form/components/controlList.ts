@@ -13,7 +13,7 @@ const selectOption: any = [
   }*/
 ]
 const config = {
-  optionsType: 0 // 0固定　1数据源　2方法函数　3　接口字典
+  optionsType: 0 // 0固定　1数据源　2　接口字典
 }
 export default [
   {

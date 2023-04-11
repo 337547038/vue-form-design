@@ -23,7 +23,7 @@
   import { ref, nextTick } from 'vue'
   import Clipboard from 'clipboard'
   import { ElMessage } from 'element-plus'
-  import { aceEdit, constControlChange } from '../utils'
+  import { aceEdit } from '../utils'
   import { objToStringify } from '@/utils/form'
 
   const visible = ref(false)
@@ -51,14 +51,14 @@
             }
           })
         }
-        if (item.config?.optionsType === 2 && item.config?.optionsFun) {
+        /*if (item.config?.optionsType === 2 && item.config?.optionsFun) {
           // 单选多选下拉等方法设值
           // const optionsValue = ref([{label: "选项1", value: '1'}])
           // provide("getCheckbox", optionsValue)
           sourceFun += `// todo ${item.item.label}设置选项值\n`
           sourceFun += `　const ${item.name}Option = ref([{label: "选项1", value: '1'}])\n`
           sourceFun += `　provide("${item.config.optionsFun}", ${item.name}Option)\n`
-        }
+        }*/
       })
     return {
       rulesMethods: rulesMethods,
@@ -97,11 +97,6 @@
     //  params.id='xxx'
     return params
   }
-  // 表单组件值改变事件
-  /*provide('${constControlChange}', ({key, value}) => {
-     console.log(key)
-     console.log(value)
-  })*/
 
 <\/script>`
     nextTick(() => {

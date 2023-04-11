@@ -29,7 +29,6 @@
 <script lang="ts" setup>
   import { toRef, onMounted, inject, watch } from 'vue'
   import FormItem from './formItem.vue'
-  import { constSetFormValue } from '../../utils'
 
   const props = withDefaults(
     defineProps<{
@@ -61,16 +60,16 @@
       tableDataNew.value.push(getRow())
     }
   }
-  // 使用setValue设值
-  const setFormValue = inject(constSetFormValue, {}) as any
-  watch(
-    () => setFormValue.value,
-    (val: any) => {
-      if (val[props.data.name] !== undefined) {
-        tableDataNew.value = val[props.data.name]
-      }
-    }
-  )
+  // 使用setValue设值 todo
+  // const setFormValue = inject(constSetFormValue, {}) as any
+  // watch(
+  //   () => setFormValue.value,
+  //   (val: any) => {
+  //     if (val[props.data.name] !== undefined) {
+  //       tableDataNew.value = val[props.data.name]
+  //     }
+  //   }
+  // )
   onMounted(() => {
     init()
   })

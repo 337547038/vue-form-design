@@ -21,7 +21,6 @@
           <div v-else>
             <form-item
               :tProp="`${data.name}.${scope.$index}.${item.name}`"
-              v-model="scope.row[item.name]"
               :data="item"
             />
           </div>
@@ -58,7 +57,6 @@
   import FormItem from './formItem.vue'
   import { watch, inject, toRef, computed } from 'vue'
   import Tooltip from '../../components/tooltip.vue'
-  import { constSetFormValue } from '../../utils'
   const props = withDefaults(
     defineProps<{
       data: any
@@ -97,12 +95,12 @@
   const delColumn = (index: number) => {
     tableDataNew.value.splice(index, 1)
   }
-  // 使用setValue设值
-  const setFormValue = inject(constSetFormValue, {}) as any
+  // 使用setValue设值 todo
+  /*const setFormValue = inject(constSetFormValue, {}) as any
   watch(
     () => setFormValue.value,
     (val: any) => {
       tableDataNew.value = val[props.data.name]
     }
-  )
+  )*/
 </script>
