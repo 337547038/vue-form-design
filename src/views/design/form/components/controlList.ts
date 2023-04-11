@@ -302,5 +302,20 @@ export default [
         list: []
       }
     ]
+  },
+  {
+    title: '扩展字段',
+    children: [
+      {
+        type: 'expand-user',
+        label: '选择用户',
+        icon: 'user',
+        control: {
+          // 组件所有属性
+          modelValue: ''
+        },
+        config: {} // 其他配置信息
+      }
+    ]
   }
 ]

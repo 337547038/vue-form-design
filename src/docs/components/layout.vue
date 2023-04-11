@@ -106,12 +106,21 @@
     },
     {
       title: '接口文档',
-      to: '/docs/api'
+      to: '/docs/api',
+      children: [
+        { title: '数据源设计', to: '/docs/api' },
+        { title: '表单设计', to: '/docs/api' },
+        { title: '列表页设计', to: '/docs/api' },
+        { title: '数据统计', to: '/docs/api' },
+        { title: '数据大屏', to: '/docs/api' },
+        { title: '流程设计', to: '/docs/api' }
+      ]
     },
     {
       title: '使用手册',
       to: '/docs/use',
       children: [
+        { title: '快速开始', to: '/docs/use-start' },
         { title: '数据源', to: '/docs/use-dataSource' },
         { title: 'ak-form', to: '/docs/use-form' },
         { title: 'ak-list', to: '/docs/use-list' }

@@ -133,7 +133,8 @@
             'datePicker',
             'cascader',
             'component',
-            'treeSelect'
+            'treeSelect',
+            'expand-user'
           ].includes(data.type)
         "
         :is="currentComponent"
@@ -164,7 +165,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { inject, onMounted, computed, watch, ref, onUnmounted } from 'vue'
+  import {
+    inject,
+    onMounted,
+    computed,
+    watch,
+    ref,
+    onUnmounted,
+    isRef,
+    markRaw
+  } from 'vue'
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
   import Tooltip from '../../components/tooltip.vue'
@@ -172,6 +182,7 @@
   import { FormItem, FormList } from '../../types'
   import { formatNumber } from '../../utils'
   import validate from './validate'
+  import ExpandUser from './expand/user.vue'
   import {
     constControlChange,
     constSetFormOptions,
@@ -272,6 +283,9 @@
       // 自定义组件
       return config.value.componentName
     }
+    if (props.data.type === 'expand-user') {
+      return markRaw(ExpandUser)
+    }
     return `el-${props.data.type}`
   })
   // 控制编辑模式下是否可用
@@ -306,18 +320,24 @@
       optionsFun,
       method = 'post',
       afterResponse,
-      beforeRequest
+      beforeRequest,
+      label,
+      value
     } = config.value
     if (optionsType !== 0) {
       let sourceFun = optionsFun
       // 接口数据源
       if (optionsType === 1 && sourceFun) {
         // 当前控件为动态获取数据，防多次加载，先从本地取。data=true时直接请求
-        const key = 'getOptions_fun_' + md5(sourceFun)
+        const key = 'getOptions_' + props.data.name + md5(sourceFun + data)
         const storage = window.sessionStorage.getItem(key)
-        // console.log(storage)
         if (storage && !data) {
-          options.value = JSON.parse(storage)
+          const val = JSON.parse(storage)
+          if (props.data.type === 'treeSelect') {
+            control.value.data = val
+          } else {
+            options.value = val
+          }
         } else {
           // 从url里提取一个动态值,${name}形式提取name
           if (sourceFunKey.value) {
@@ -342,7 +362,7 @@
           }
           getRequest(sourceFun, newData, { method: method })
             .then((res: any) => {
-              const result = res.data.data
+              const result = res.data.list || res.data
               let formatRes: any = result
               // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
               if (typeof afterResponse === 'string' && afterResponse) {
@@ -350,16 +370,38 @@
               } else if (typeof afterResponse === 'function') {
                 // 没有return时，使用原来的，相当于没处理
                 formatRes = afterResponse(result) ?? result
+              } else if (label || value) {
+                // 没有设置afterResponse时，这里将数据转换为[{label:'',value:''}]形式。只处理一级
+                formatRes = []
+                // function transformData(val: any) {
+                //   const tr = config.value.transformData
+                //   if (tr === 'number') {
+                //     return formatNumber(val)
+                //   }
+                //   if (tr === 'string') {
+                //     return val && val.toString()
+                //   }
+                //   return val
+                // }
+                result.forEach((item: any) => {
+                  formatRes.push({
+                    label: item[label] || item.label,
+                    value: item[value] || item.value
+                  })
+                })
               }
               if (formatRes === false) {
                 return
               }
+              console.log('formatRes', formatRes)
               if (props.data.type === 'treeSelect') {
                 control.value.data = formatRes
               } else {
                 options.value = formatRes
               }
-              window.sessionStorage.setItem(key, JSON.stringify(formatRes)) //缓存，例如子表添加时不用每添加一行就请求一次
+              if (typeof formatRes === 'object') {
+                window.sessionStorage.setItem(key, JSON.stringify(formatRes)) //缓存，例如子表添加时不用每添加一行就请求一次
+              }
             })
             .catch((res: any) => {
               if (props.data.type === 'treeSelect') {
@@ -445,12 +487,13 @@
   // 执行表单的setValue方法，对组件设值
   // value转换，保存时设置了数组转换转换的，这里要做恢复处理。另外对于部分组件v-model必须要是数字类型，这里兼容接口返回或数据转换后格式问题，主要为字符串类型的数字，即转换为对应组件所需的样式
   const transformValue = (val: any) => {
-    if (['radio', 'checkbox', 'select'].includes(props.data.type)) {
-      // 这些类型需要尝试转为数字
-      return formatNumber(val)
-    } else {
-      return val
-    }
+    // if (['radio', 'checkbox', 'select'].includes(props.data.type)) {
+    //   // 这些类型需要尝试转为数字
+    //   return formatNumber(val)
+    // } else {
+    //   return val
+    // }
+    return val
   }
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
   const setFormDict = (val: any) => {

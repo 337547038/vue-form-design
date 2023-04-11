@@ -515,7 +515,7 @@
     if (scope.row.$index !== -1) {
       // 表格没数据时也会引用，此时$index=-1，应该是组件ui问题
       const val = scope.row[item.prop]
-      if (type === 'formatter') {
+      if (type === 'formatter' && val) {
         // 时间日期类格式化
         return dateFormatting(val, item.config?.formatter)
       } else {
@@ -599,6 +599,10 @@
       })
     }
   }
+  // 可根据条件设置表单初始查询值
+  const setSearchFormValue = (obj: { [key: string]: string[] }) => {
+    searchFormEl.value.setValue(obj)
+  }
   // 列显示隐藏设置收起时，这里可将设置保存于服务端或本地
   const popoverHideClick = () => {}
   onMounted(() => {
@@ -619,6 +623,7 @@
   defineExpose({
     getListData,
     delClick,
-    table
+    table,
+    setSearchFormValue
   })
 </script>

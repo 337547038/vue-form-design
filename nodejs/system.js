@@ -99,6 +99,36 @@ router.post('/menu/list', async (req, res) => {
 })
 /*************************菜单管理结束*********************/
 
+/*************************角色管理结束*********************/
+router.post('/role/save', async (req, res) => {
+  commSave(req, res, 'role')
+})
+router.post('/role/edit', async (req, res) => {
+  commEdit(req, res, 'role')
+})
+router.post('/role/delete', async (req, res) => {
+  commDel(req, res, 'role')
+})
+router.post('/role/list', async (req, res) => {
+  await commList(req, res, 'role')
+})
+/*************************角色管理结束*********************/
+
+/*************************用户管理结束*********************/
+router.post('/user/save', async (req, res) => {
+  commSave(req, res, 'user')
+})
+router.post('/user/edit', async (req, res) => {
+  commEdit(req, res, 'user')
+})
+router.post('/user/delete', async (req, res) => {
+  commDel(req, res, 'user')
+})
+router.post('/user/list', async (req, res) => {
+  await commList(req, res, 'user')
+})
+/*************************用户管理结束*********************/
+
 const commList = async (req, res, tableName, whereParams = [], order) => {
   const { pageInfo = {} } = req.body
   const { pageIndex = 1, pageSize = 20 } = pageInfo

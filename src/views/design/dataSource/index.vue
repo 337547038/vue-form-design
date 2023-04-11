@@ -71,7 +71,7 @@
           dictKey: 'status'
         }
       },
-      { prop: 'updateName', label: '创建人' },
+      { prop: 'creatName', label: '创建人' },
       {
         prop: 'updateDate',
         label: '修改时间',
@@ -245,7 +245,7 @@
       {
         type: 'switch',
         control: {
-          modelValue: false,
+          modelValue: 1,
           activeValue: 1,
           inactiveValue: 0
         },

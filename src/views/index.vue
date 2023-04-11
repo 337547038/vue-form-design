@@ -34,17 +34,16 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { onMounted } from 'vue'
   import { getRequest } from '@/api'
-  // import { useLayoutStore } from '@/store/layout'
-  // const layoutStore = useLayoutStore()
-  // layoutStore.changeBreadcrumb([])
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
   const initDict = () => {
     getRequest('dictList', { status: 1 }).then((res: any) => {
       const result = res.data.list
       let temp: any = {}
       if (result) {
-        console.log(result)
+        // console.log(result)
         result.forEach((item: any) => {
           const children = item.children
           if (children) {
@@ -62,6 +61,7 @@
   }
   onMounted(() => {
     initDict() // todo 这个应该是每次登录进来就加载一次
+    router.push({ path: '/design' })
   })
 </script>
 <style scoped lang="scss">

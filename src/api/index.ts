@@ -1,8 +1,7 @@
 import request from '../utils/request'
 import form from './form'
-import dataList from './dataList'
 import system from './system'
-const allApi: any = Object.assign(form, dataList, system)
+const allApi: any = Object.assign(form, system)
 export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
   let url = allApi[apiKey] || apiKey
   // 解决动态url 如/api/delete/id(id为动态时)
@@ -22,12 +21,26 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
     options
   )
   // github演示时使用下面地址
-  if (window.location.host.indexOf('github') !== -1) {
+  if (window.location.host.indexOf('localhost') !== -1) {
+    let id = ''
+    if (url.indexOf('/id') !== -1 && data.id) {
+      id = data.id
+    }
+    if (
+      url.includes('/save') ||
+      url.includes('/edit') ||
+      url.includes('/delete') ||
+      url.includes('/creat') ||
+      url.includes('/change') ||
+      url.includes('/single')
+    ) {
+      url = 'ok'
+    }
     obj = Object.assign(
       {
-        url: './mock/' + url + '.json',
+        url: `./mock/${url}${id}.json`,
         method: 'GET',
-        data
+        params: data
       },
       options
     )

@@ -80,10 +80,6 @@
         state.tableData = stringToObj(result.listData)
         state.dict = string2json(result.dict)
         state.source = result.source
-        layoutStore.changeBreadcrumb([
-          { label: '内容管理' },
-          { label: result.name }
-        ])
         // 获取列表数据
         nextTick(() => {
           listEl.value.getListData()

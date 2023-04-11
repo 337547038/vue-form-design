@@ -2,7 +2,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 // @ts-ignore
 import routesPage from '~pages'
 import { useLayoutStore } from '@/store/layout'
-import ControlList from '@/views/design/form/components/controlList'
 
 console.log(routesPage)
 const routes = [
@@ -48,67 +47,46 @@ const router = createRouter({
   //console.log(from)
 })*/
 router.afterEach((to: any) => {
+  // 导航位置处理
   const layoutStore = useLayoutStore()
-  //const path = to.path
-  //console.log('topath', to)
   const navList = window.sessionStorage.getItem('formMenuList')
   if (navList) {
     const navListJson = JSON.parse(navList)
     const list: any = []
     getNavName(navListJson, to, list)
-    console.log('list', list)
-    layoutStore.changeBreadcrumb(list)
-    /*layoutStore.changeBreadcrumb([
-      { label: '设计管理' },
-      { label: '表单管理0' }
-    ])*/
+    const spliceList = []
+    if (list?.length) {
+      for (let i = list.length - 1; i >= 0; i--) {
+        // console.log(list[i])
+        spliceList.unshift(list[i])
+        if (list[i].parentId === 0) {
+          break
+        }
+      }
+    }
+    layoutStore.changeBreadcrumb(spliceList)
   }
 })
 const getNavName = (dataList: any, to: any, list: any) => {
+  if (!dataList) {
+    return
+  }
   for (let i = 0; i < dataList.length; i++) {
     const obj = dataList[i]
-    if (obj.path === to.path) {
-      list.push({ label: obj.name, path: obj.path })
+    // 内容管理是带id的
+    if (
+      obj.path === to.path ||
+      (obj.parentId === 1 && to.fullPath.indexOf(obj.path) !== -1)
+    ) {
+      list.push({ label: obj.name, path: obj.path, parentId: obj.parentId })
       return true
     } else if (obj.children) {
-      list.push({ label: obj.name, path: obj.path })
+      list.push({ label: obj.name, path: obj.path, parentId: obj.parentId })
       const result = getNavName(obj.children, to, list)
       if (result) {
         return
       }
     }
   }
-  // try {
-  //   data.forEach((item: any) => {
-  //     // 内容管理是带id的
-  //     if (item.parentId === 0) {
-  //       list = []
-  //     }
-  //     if (
-  //       item.path === to.path ||
-  //       (item.parentId === 1 && to.fullPath.indexOf(item.path) !== -1)
-  //     ) {
-  //       list.push({ label: item.name, path: item.path })
-  //       throw new Error('end forEach')
-  //       // 查找上一级
-  //       // getNavParentName(dataList, item.parentId, list)
-  //     } else if (item.children) {
-  //       list.push({ label: item.name, path: item.path })
-  //       getNavName(dataList, item.children, to, list)
-  //     }
-  //   })
-  // } catch (e) {
-  //   //if (e.message === 'end forEach') throw e
-  // }
-}
-// todo 这里目前只支持向上查找一级
-const getNavParentName = (data: any, parentId: number, list: any) => {
-  data.forEach((item: any) => {
-    if (item.id === parentId) {
-      list.unshift({ label: item.name, path: item.path })
-    } else if (item.children && item.parentId !== 1) {
-      //getNavParentName(item.children, parentId, list)
-    }
-  })
 }
 export default router
