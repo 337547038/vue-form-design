@@ -65,7 +65,7 @@
           <div class="form-table" v-if="type === 5">
             <form-group :data="element.list" data-type="not-nested" />
           </div>
-          <child-table v-else :data="element" :type="type" />
+          <child-table v-else :data="element" />
         </template>
         <template v-else-if="element.type === 'grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -127,7 +127,7 @@
             data-type="not-nested"
             v-if="type === 5"
           />
-          <flex-box :data="element" :type="type" v-else />
+          <flex-box :data="element" v-else />
           <el-button
             style="position: relative; top: -28px; left: 10px"
             v-if="element.config.add && type === 5"

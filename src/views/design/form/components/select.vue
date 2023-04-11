@@ -11,7 +11,7 @@
       v-for="item in options"
       :key="item.value"
       :label="item.label"
-      :value="item.value"
+      :value="transformOption(item.value)"
     />
   </el-select>
 </template>
@@ -23,7 +23,7 @@
       control: any
       modelValue?: null
       disabled?: boolean
-      formatNumber: Function
+      transformOption: Function
       options: any
       config?: any
       type?: string

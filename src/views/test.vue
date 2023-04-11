@@ -93,7 +93,8 @@
   const setValue = () => {
     formNameEl.value.setValue({
       input1681128646765: '545',
-      select1681128648591: '1'
+      select1681128648591: '1',
+      table: [{ ab: 1 }]
     })
   }
 

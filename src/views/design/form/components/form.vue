@@ -158,17 +158,14 @@
   }
 
   // 表单组件值改变事件 tProp为子表格相关
-  provide(constControlChange, ({ key, value, data, tProp }: any) => {
-    if (key || tProp) {
-      if (tProp) {
-        // 表格
-        // model.value.table[0].ab = value
-        const props = tProp.split('.')
-        model.value[props[0]][props[1]][props[2]] = value
-      } else if (key) {
+  provide(constControlChange, ({ key, value, data, tProps }: any) => {
+    if (key) {
+      if (!tProps) {
+        // 表格和弹性布局不是这里更新，只触change
         model.value[key] = value
       }
-      emits('change', { key, value, data })
+      // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分
+      emits('change', { key, value, data, tProps })
     }
   })
   const dictForm = computed(() => {

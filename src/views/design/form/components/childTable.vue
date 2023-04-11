@@ -20,6 +20,7 @@
           }}</div>
           <div v-else>
             <form-item
+              v-model="scope.row[item.name]"
               :tProp="`${data.name}.${scope.$index}.${item.name}`"
               :data="item"
             />
@@ -55,12 +56,12 @@
 
 <script setup lang="ts">
   import FormItem from './formItem.vue'
-  import { watch, inject, toRef, computed } from 'vue'
+  import { inject, computed } from 'vue'
   import Tooltip from '../../components/tooltip.vue'
+  import { constFormProps } from '../../utils'
   const props = withDefaults(
     defineProps<{
       data: any
-      type: number
     }>(),
     {
       data: () => {
@@ -68,12 +69,20 @@
       }
     }
   )
-  const tableDataNew: any = toRef(props.data, 'tableData')
+  const formProps = inject(constFormProps, {}) as any
+
+  //const tableDataNew: any = toRef(props.data, 'tableData')
+  //const tableDataNew: any = toRef(formProps.value.model, props.data.name)
+  const tableDataNew = computed(() => {
+    return formProps.value.model[props.data.name]
+  })
+  const type = computed(() => {
+    return formProps.value.type
+  })
   // 如果编辑页禁用时，则返回true
   const editDisabled = computed(() => {
-    return !!(props.type === 2 && props.data.config?.editDisabled)
+    return formProps.value.type === 2 && props.data.config?.editDisabled
   })
-  // const tableDataNew: any = ref(props.tableData)
   const addColumn = () => {
     const temp: any = {}
     if (props.data.list) {
@@ -95,12 +104,4 @@
   const delColumn = (index: number) => {
     tableDataNew.value.splice(index, 1)
   }
-  // 使用setValue设值 todo
-  /*const setFormValue = inject(constSetFormValue, {}) as any
-  watch(
-    () => setFormValue.value,
-    (val: any) => {
-      tableDataNew.value = val[props.data.name]
-    }
-  )*/
 </script>

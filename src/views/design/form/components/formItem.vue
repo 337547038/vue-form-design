@@ -28,7 +28,7 @@
               :modelValue="getInputSlot(config.prepend, 'value')"
               :options="getInputSlot(config.prepend, 'options')"
               :config="getInputSlot(config.prepend, 'config')"
-              :format-number="formatNumber"
+              :transform-option="transformOption"
               type="slot"
               @change="inputSlotChange"
             />
@@ -43,7 +43,7 @@
               :modelValue="getInputSlot(config.append, 'value')"
               :options="getInputSlot(config.append, 'options')"
               :config="getInputSlot(config.append, 'config')"
-              :format-number="formatNumber"
+              :transform-option="transformOption"
               type="slot"
               @change="inputSlotChange"
             />
@@ -66,7 +66,7 @@
       >
         <el-radio
           :key="index"
-          :label="formatNumber(item.value)"
+          :label="transformOption(item.value)"
           v-for="(item, index) in options"
         >
           {{ item.label }}
@@ -81,7 +81,7 @@
         <el-checkbox
           v-for="(item, index) in options"
           :key="index"
-          :label="formatNumber(item.value)"
+          :label="transformOption(item.value)"
           >{{ item.label }}
         </el-checkbox>
       </el-checkbox-group>
@@ -95,7 +95,7 @@
         :options="options"
         :config="config"
         :remote-method="getAxiosOptions"
-        :formatNumber="formatNumber"
+        :transformOption="transformOption"
       />
       <el-upload
         class="upload-style"
@@ -172,7 +172,6 @@
     watch,
     ref,
     onUnmounted,
-    isRef,
     markRaw
   } from 'vue'
   import md5 from 'md5'
@@ -198,17 +197,24 @@
   const props = withDefaults(
     defineProps<{
       data: FormList
+      modelValue?: any // 子表和弹性布局时时有传
       tProp?: string // 子表时的form-item的prop值，用于子表校验用
     }>(),
     {}
   )
+  const emits = defineEmits<{
+    (e: 'update:modelValue', val: any): void
+  }>()
   const route = useRoute()
   const formProps = inject(constFormProps, {}) as any
   const type = computed(() => {
     return formProps.value.type
   })
+  const config = computed(() => {
+    return props.data.config || {}
+  })
   // const { config, control, options = ref([]) } = toRefs(props.data)
-  const config = ref(props.data.config)
+  // const config = ref(props.data.config)
   const control = ref(props.data.control)
   const options = ref(props.data.options)
   const changeEvent = inject(constControlChange, '') as any
@@ -224,12 +230,33 @@
   // todo upload需特殊处理
   const value = computed({
     get() {
-      return transformValue(formProps.value.model[props.data.name])
+      if (props.tProp) {
+        // 表格和弹性布局
+        return props.modelValue
+      } else {
+        return formProps.value.model[props.data.name]
+      }
     },
     set(newVal: any) {
+      if (props.tProp) {
+        emits('update:modelValue', newVal)
+      }
       updateModel(newVal)
     }
   })
+  // 选择数据转换
+  const transformOption = (val: string | number) => {
+    switch (config.value.transformData) {
+      case 'number':
+        return formatNumber(val)
+      case 'string':
+        if (val && typeof val === 'string') {
+          return val.toString()
+        }
+        return val
+    }
+    return val
+  }
   const fileList = ref([]) // 图片上传列表
   // todo
   // const setFileList = (val: any) => {
@@ -253,7 +280,7 @@
   watch(
     () => props.data,
     (val: FormList) => {
-      config.value = val.config || {}
+      //config.value = val.config || {}
       control.value = val.control || {}
       options.value = val.options || []
     },
@@ -373,16 +400,6 @@
               } else if (label || value) {
                 // 没有设置afterResponse时，这里将数据转换为[{label:'',value:''}]形式。只处理一级
                 formatRes = []
-                // function transformData(val: any) {
-                //   const tr = config.value.transformData
-                //   if (tr === 'number') {
-                //     return formatNumber(val)
-                //   }
-                //   if (tr === 'string') {
-                //     return val && val.toString()
-                //   }
-                //   return val
-                // }
                 result.forEach((item: any) => {
                   formatRes.push({
                     label: item[label] || item.label,
@@ -483,17 +500,6 @@
       return temp
     }
     return obj
-  }
-  // 执行表单的setValue方法，对组件设值
-  // value转换，保存时设置了数组转换转换的，这里要做恢复处理。另外对于部分组件v-model必须要是数字类型，这里兼容接口返回或数据转换后格式问题，主要为字符串类型的数字，即转换为对应组件所需的样式
-  const transformValue = (val: any) => {
-    // if (['radio', 'checkbox', 'select'].includes(props.data.type)) {
-    //   // 这些类型需要尝试转为数字
-    //   return formatNumber(val)
-    // } else {
-    //   return val
-    // }
-    return val
   }
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
   const setFormDict = (val: any) => {
@@ -606,9 +612,8 @@
   })
   onUnmounted(() => {
     // console.log('formItem onUnmounted')
-    formOptions.value = ''
-    config.value = ''
-    control.value = ''
-    options.value = ''
+    // formOptions.value = ''
+    // control.value = ''
+    // options.value = ''
   })
 </script>
