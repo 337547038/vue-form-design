@@ -2,9 +2,9 @@
 <template>
   <div class="table-list-comm" v-loading="state.loading" ref="container">
     <list-tree-side
-      v-if="treeData.show"
       :data="treeData"
       @node-click="treeNodeClick"
+      v-if="treeData.show"
     />
     <div class="table-list">
       <div class="table-search" v-if="searchData?.list?.length">
@@ -75,6 +75,7 @@
         </div>
       </div>
       <div
+        v-if="columnsFilter?.length"
         class="table-main"
         :class="{ 'hide-vertical-scroll': isFixedBottomScroll }"
       >
@@ -271,6 +272,9 @@
     tableScrollMargin: 0,
     columnsCheck: []
   })
+  const treeData = computed(() => {
+    return props.tableData.treeData || {}
+  })
   // 可折叠查询表单
   const searchFormExpand = computed(() => {
     return props.searchData?.list?.length && props.tableData.config?.expand
@@ -296,9 +300,6 @@
       storageDict = JSON.parse(storage)
     }
     return Object.assign(storageDict, props.dict, state.dict)
-  })
-  const treeData = computed(() => {
-    return props.tableData.treeData || {}
   })
   const isFixedBottomScroll = computed(() => {
     // 如果数据里没配置，则使用props
