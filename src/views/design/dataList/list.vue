@@ -218,7 +218,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'list'
         },
         name: 'category',
@@ -234,6 +234,7 @@
         },
         options: [],
         config: {
+          // todo
           optionsType: 1,
           optionsFun: 'roleList', //　可以为url也可以为api中的key
           method: 'post',
@@ -267,7 +268,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',

@@ -33,12 +33,11 @@
   import { useRoute, useRouter } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import {
-    constFormDict,
-    constFormOtherData,
     constGetControlByName,
     constSetFormOptions,
-    constSetFormValue,
-    constFormBtnEvent
+    constFormBtnEvent,
+    constControlChange,
+    constFormProps
   } from '../../utils'
   import formatResult from '@/utils/formatResult'
 
@@ -76,22 +75,11 @@
   )
   const emits = defineEmits<{
     (e: 'btnClick', type: string): void
+    (e: 'change', val: any): void // 表单组件值发生变化时
   }>()
   const route = useRoute()
   const router = useRouter()
-  // router.afterEach((to: any, from: any) => {
-  //   // 保存来路路由信息，在保留后用于返回
-  //   const routerInfo = {
-  //     path: from.path,
-  //     query: from.query,
-  //     params: from.params
-  //   }
-  //   // 保存session防刷新丢失
-  //   window.sessionStorage.setItem(
-  //     'currentRouterInfo',
-  //     JSON.stringify(routerInfo)
-  //   )
-  // })
+
   const loading = ref(false)
   let timer = 0
   let eventName = ''
@@ -121,7 +109,7 @@
     }
   }
   watch(
-    () => props.formData,
+    () => props.formData.config,
     () => {
       if (timer < 2) {
         setWindowEvent() // 简单判断下，这里不是每次都更新
@@ -133,11 +121,22 @@
   )
   setWindowEvent()
   // 设置全局事件结束
-  const model = computed(() => {
-    const obj = {}
+  const resultDict = ref({})
+  // 处理表单值开始
+  const model = ref({})
+  // 获取表单初始model值
+  const getInitModel = () => {
+    let obj = {}
     forEachGetFormModel(props.formData.list, obj)
-    return obj
-  })
+    model.value = obj
+  }
+  watch(
+    () => props.formData.list,
+    () => {
+      // formData从接口获取时
+      getInitModel()
+    }
+  )
   // 从表单数据里提取表单所需的model
   const forEachGetFormModel = (list: FormList[], obj: any) => {
     list.forEach((item: any) => {
@@ -157,16 +156,38 @@
       }
     })
   }
-  // 子组件formGroup为递归组件
-  const cFOD = computed(() => {
-    return {
-      type: props.type,
-      model: model,
-      hideField: props.formData.config?.hideField as [],
-      showColon: props.formData.form.showColon
+
+  // 表单组件值改变事件 tProp为子表格相关
+  provide(constControlChange, ({ key, value, data, tProps }: any) => {
+    if (key) {
+      if (!tProps) {
+        // 表格和弹性布局不是这里更新，只触change
+        model.value[key] = value
+      }
+      // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分
+      emits('change', { key, value, data, tProps })
     }
   })
-  provide(constFormOtherData, cFOD)
+  const dictForm = computed(() => {
+    const storage = window.localStorage.getItem('akFormDict')
+    let storageDict = {}
+    if (storage) {
+      storageDict = JSON.parse(storage)
+    }
+    return Object.assign(storageDict, props.dict, resultDict.value)
+  })
+  // 表单参数
+  const formProps = computed(() => {
+    return {
+      model: model.value,
+      type: props.type,
+      hideField: props.formData.config?.hideField as [],
+      showColon: props.formData.form.showColon,
+      dict: dictForm.value
+    }
+  })
+  provide(constFormProps, formProps)
+
   // 提供一个方法，用于根据name从formData.list里查找数据
   const getNameForEach = (data: any, name: string) => {
     let temp = {}
@@ -220,10 +241,10 @@
     }
   }
   // 对表单设置初始值
-  const setValueObj = ref({})
-  provide(constSetFormValue, setValueObj)
   const setValue = (obj: { [key: string]: any }) => {
-    setValueObj.value = obj || {}
+    // setValueObj.value = obj || {}
+    // 直接更新model值即可
+    model.value = obj
   }
   // 对表单选择项快速设置
   const setFormOptions = ref({})
@@ -252,17 +273,7 @@
       styleId && styleId.parentNode.removeChild(styleId)
     }
   }
-  // 接口返回的字贼胆
-  const resultDict = ref({})
-  const dictForm = computed(() => {
-    const storage = window.localStorage.getItem('akFormDict')
-    let storageDict = {}
-    if (storage) {
-      storageDict = JSON.parse(storage)
-    }
-    return Object.assign(storageDict, props.dict, resultDict.value)
-  })
-  provide(constFormDict, dictForm)
+
   // 按钮组件事件
   provide(constFormBtnEvent, (obj: any) => {
     emits('btnClick', obj.key)
@@ -429,6 +440,7 @@
     setValue(Object.assign(model.value, obj || {})) // 这才能清空组件显示的值
   }
   onMounted(() => {
+    getInitModel()
     nextTick(() => {
       appendRemoveStyle(true)
     })

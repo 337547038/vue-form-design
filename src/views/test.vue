@@ -10,27 +10,93 @@
       :beforeSubmit="beforeSubmit"
     />
   </div>
+  <el-button @click="setValue">button</el-button>
 </template>
 <script setup lang="ts">
   import { ref, computed, provide } from 'vue'
   const formNameEl = ref()
-  const formData = ref({
-    list: [
-      {
-        type: 'expand-user',
-        control: { modelValue: '' },
-        config: {},
-        name: 'expand-user1681198237593',
-        item: { label: '选择用户' }
-      }
-    ],
-    form: { size: 'default' },
-    config: {}
-  })
+  const formData = ref({ list: [], form: {}, config: {} })
+  setTimeout(() => {
+    formData.value = {
+      list: [
+        {
+          type: 'table',
+          list: [
+            {
+              type: 'input',
+              control: {
+                modelValue: ''
+              },
+              config: {},
+              name: 'ab',
+              item: {
+                label: '单行文本'
+              }
+            }
+          ],
+          tableData: [],
+          control: {
+            border: true
+          },
+          config: {
+            add: '添加一行',
+            addBtnText: 'add'
+          },
+          name: 'table'
+        },
+        {
+          type: 'input',
+          control: { modelValue: '1' },
+          config: {},
+          name: 'input1681128646765',
+          item: { label: '单行文本' }
+        },
+        {
+          type: 'select',
+          control: { modelValue: '', appendToBody: true },
+          options: [
+            {
+              label: 'a',
+              value: '1'
+            }
+          ],
+          config: { optionsType: 0 },
+          name: 'select1681128648591',
+          item: { label: '下拉选择框' }
+        },
+        {
+          type: 'title',
+          control: {
+            modelValue: '标题'
+          },
+          config: {}
+        },
+        {
+          type: 'txt',
+          control: {
+            modelValue: '555555'
+          },
+          config: {}
+        },
+        { type: 'button', control: { label: '保存' }, config: {} }
+      ],
+      form: { size: 'default' },
+      config: {}
+    }
+  }, 100)
+
   // todo 存在编辑时，可根据路由等参数设置当前表单模式　1新增　2编辑
   const formType = computed(() => {
     return 1
   })
+
+  const setValue = () => {
+    formNameEl.value.setValue({
+      input1681128646765: '545',
+      select1681128648591: '1',
+      table: [{ ab: 1 }]
+    })
+  }
 
   // 表单提交时参数处理
   const beforeSubmit = (params) => {

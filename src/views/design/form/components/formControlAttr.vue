@@ -133,8 +133,7 @@
               >
                 <el-option :value="0" label="固定选项" />
                 <el-option :value="1" label="数据源" />
-                <el-option :value="2" label="方法函数" />
-                <el-option :value="3" label="接口字典" />
+                <el-option :value="2" label="接口字典" />
               </el-select>
             </el-form-item>
             <template v-if="controlData.config.optionsType === 0">

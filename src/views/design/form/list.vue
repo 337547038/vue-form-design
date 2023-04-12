@@ -223,7 +223,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'form'
         },
         name: 'category',
@@ -259,7 +259,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',

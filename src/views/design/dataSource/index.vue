@@ -220,7 +220,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'source' // 使用字典选项，字典key为source
         },
         name: 'category',

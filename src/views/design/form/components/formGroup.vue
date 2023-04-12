@@ -65,7 +65,7 @@
           <div class="form-table" v-if="type === 5">
             <form-group :data="element.list" data-type="not-nested" />
           </div>
-          <child-table v-else :data="element" :type="type" />
+          <child-table v-else :data="element" />
         </template>
         <template v-else-if="element.type === 'grid'">
           <el-row class="form-row" :class="[element.className]">
@@ -127,7 +127,7 @@
             data-type="not-nested"
             v-if="type === 5"
           />
-          <flex-box :data="element" :type="type" v-else />
+          <flex-box :data="element" v-else />
           <el-button
             style="position: relative; top: -28px; left: 10px"
             v-if="element.config.add && type === 5"
@@ -147,11 +147,7 @@
             ></div
           >
         </template>
-        <form-item
-          v-else
-          :data="element"
-          v-model="element.control.modelValue"
-        />
+        <form-item v-else :data="element" />
         <template v-if="type === 5">
           <div class="drag-control">
             <div class="item-control">
@@ -187,7 +183,7 @@
   import FlexBox from './flexBox.vue'
   import { useDesignFormStore } from '@/store/designForm'
   import type { FormList } from '../../types'
-  import { constFormOtherData, constFormBtnEvent } from '../../utils'
+  import { constFormBtnEvent, constFormProps } from '../../utils'
   import md5 from 'md5'
   const props = withDefaults(
     defineProps<{
@@ -203,10 +199,10 @@
     (e: 'update:data', value: FormList[]): void
   }>()*/
   const store = useDesignFormStore()
-  const formOtherData = inject(constFormOtherData, {}) as any
+  const formProps = inject(constFormProps, {}) as any
 
   const type = computed(() => {
-    return formOtherData.value.type
+    return formProps.value.type
   })
   const state = reactive({
     clone: true, // 允许clone
@@ -293,7 +289,11 @@
     }
     //　不需要name的组件
     let nameObj = {}
-    if (!needItem.includes(obj.type)) {
+    const needNameString = JSON.stringify(needItem)
+      .replace('table', '')
+      .replace('flex', '')
+    const needName = JSON.parse(needNameString)
+    if (!needName.includes(obj.type)) {
       nameObj = {
         name: obj.type + key
       }
@@ -347,7 +347,7 @@
     const linkResult = el.config.linkResult
     if (key && value && type.value !== 5) {
       const Fn = new Function('$', `return (${value})`)
-      const pass = Fn(formOtherData.value.model.value)
+      const pass = Fn(formProps.value.model)
       if (linkResult === 'disabled') {
         // 设置为disabled后返回显示状态
         dataList.value[index].control.disabled = pass
@@ -360,7 +360,7 @@
   }
   // 根据表单设置不显示指定字段
   const linksIf = (obj: FormList) => {
-    const { type } = formOtherData.value
+    const { type } = formProps.value
     const { config: { disabledAdd, disabledEdit, disabledDetail } = {} } = obj
     if (type === 1) {
       if (disabledAdd) {
@@ -379,7 +379,7 @@
       }
     }
     // 如果当前字段的name值存在于表单数据的vIf中，则不显示
-    const vIf: string | string[] = formOtherData.value.hideField
+    const vIf: string | string[] = formProps.value.hideField
     if (vIf?.length > 0 && obj.name) {
       return vIf.indexOf(obj.name) === -1 // 存在时返回false隐藏
     }
@@ -400,7 +400,6 @@
   onUnmounted(() => {
     // console.log('formGroup onUnmounted')
     dataList.value = {}
-    //formOtherData.value = {}
     store.setActiveKey('')
     store.setControlAttr({})
   })

@@ -27,14 +27,13 @@
 </template>
 
 <script lang="ts" setup>
-  import { toRef, onMounted, inject, watch } from 'vue'
+  import { onMounted, inject, computed } from 'vue'
   import FormItem from './formItem.vue'
-  import { constSetFormValue } from '../../utils'
+  import { constFormProps } from '../../utils'
 
   const props = withDefaults(
     defineProps<{
       data: any
-      type: number
     }>(),
     {
       data: () => {
@@ -42,7 +41,13 @@
       }
     }
   )
-  const tableDataNew: any = toRef(props.data, 'tableData')
+  const formProps = inject(constFormProps, {}) as any
+  const tableDataNew = computed(() => {
+    return formProps.value.model[props.data.name]
+  })
+  const type = computed(() => {
+    return formProps.value.type
+  })
   const getRow = () => {
     let temp: any = {}
     props.data.list.forEach((item: any) => {
@@ -61,16 +66,6 @@
       tableDataNew.value.push(getRow())
     }
   }
-  // 使用setValue设值
-  const setFormValue = inject(constSetFormValue, {}) as any
-  watch(
-    () => setFormValue.value,
-    (val: any) => {
-      if (val[props.data.name] !== undefined) {
-        tableDataNew.value = val[props.data.name]
-      }
-    }
-  )
   onMounted(() => {
     init()
   })

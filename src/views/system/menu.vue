@@ -63,7 +63,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',
@@ -216,7 +216,7 @@
         control: { modelValue: 1 },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'menuType'
         },
         name: 'type',
@@ -264,7 +264,7 @@
         control: { modelValue: 1 },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',
