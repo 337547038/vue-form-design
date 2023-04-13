@@ -118,7 +118,6 @@
       v-model="dialog.visible"
       :title="dialog.title"
       width="${dialogWidth}"
-      :before-close="beforeClose"
     >
       <ak-form
         ref="formEl"
@@ -183,16 +182,11 @@
       tableListEl.value.getListData()
     }
   }
-  //　关闭弹窗时
-  const beforeClose = (done) => {
-    closeResetDialog()
-    done && done()
-  }
   // 关闭弹窗并重置表单，否则下次打开会保留上次数据
   const closeResetDialog = () => {
     dialog.visible = false
     dialog.editId = ''
-    formEl.value.resetFields() // 重置表单，否则再次打开时会保留上一次的内容
+    // formEl.value.resetFields() // 重置表单
   }
   //　点击弹窗取消按钮时
   const dialogBtnClick = (type) => {

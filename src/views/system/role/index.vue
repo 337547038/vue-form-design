@@ -13,7 +13,6 @@
       v-model="dialog.visible"
       :title="dialog.title"
       width="420px"
-      :before-close="beforeClose"
     >
       <ak-form
         ref="formEl"
@@ -60,7 +59,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           addAll: '全部',
           optionsFun: 'status'
         },
@@ -117,7 +116,8 @@
         key: 'edit',
         click: (row: any) => {
           nextTick(() => {
-            formEl.value.setValue(row)
+            console.log(row)
+            //formEl.value.setValue(row) // 可以这里使用click处理，也可以放listBtnClick里处理
           })
         }
       },
@@ -167,7 +167,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',
@@ -221,7 +221,7 @@
             type: 'button',
             control: {
               label: '取消',
-              key: 'reset'
+              key: 'none'
             },
             config: {
               span: 0
@@ -260,7 +260,8 @@
       // 编辑，根据id加载
       if (btn.key === 'edit') {
         nextTick(() => {
-          formEl.value.getData({ id: row.id })
+          formEl.value.setValue(row)
+          //formEl.value.getData({ id: row.id })
         })
       }
     }
@@ -281,20 +282,15 @@
       tableListEl.value.getListData()
     }
   }
-  //　关闭弹窗时
-  const beforeClose = (done: any) => {
-    closeResetDialog()
-    done && done()
-  }
   // 关闭弹窗并重置表单，否则下次打开会保留上次数据
   const closeResetDialog = () => {
     dialog.visible = false
     dialog.editId = ''
-    formEl.value.resetFields() // 重置表单，否则再次打开时会保留上一次的内容
+    //formEl.value.resetFields() // 重置表单
   }
   //　点击弹窗取消按钮时
   const dialogBtnClick = (type: string) => {
-    if (type === 'reset') {
+    if (type === 'none') {
       closeResetDialog()
     }
   }

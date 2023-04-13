@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const query = require('./db')
+// const query = require('./db')
 
 // 修改不用重启
 // npm install nodemon -g

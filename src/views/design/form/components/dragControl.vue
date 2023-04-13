@@ -55,6 +55,7 @@
   import UseTemplate from './template.vue'
   import { getRequest } from '@/api'
   import { stringToObj } from '@/utils/form'
+  import { jsonParseStringify } from '@/utils'
 
   const props = withDefaults(
     defineProps<{
@@ -104,7 +105,7 @@
     }
   })
   const clone = (origin: any) => {
-    return JSON.parse(JSON.stringify(origin))
+    return jsonParseStringify(origin)
   }
   watch(
     () => props.formId,
@@ -127,7 +128,7 @@
   const selectChange = (obj: FormList, val: boolean) => {
     if (val) {
       // 勾选时追加
-      const newObj = JSON.parse(JSON.stringify(obj))
+      const newObj = jsonParseStringify(obj)
       delete newObj.rules
       delete newObj.customRules
       emits('clickCheck', newObj)

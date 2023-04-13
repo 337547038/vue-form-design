@@ -180,7 +180,7 @@
   const closeResetDialog = () => {
     dialog.visible = false
     dialog.editId = ''
-    formEl.value.resetFields() // 重置表单，否则再次打开时会保留上一次的内容
+    formEl.value.resetFields() // 重置表单
   }
   /*****弹窗口相关结束****/
   onMounted(() => {

@@ -14,7 +14,6 @@
       v-model="dialog.visible"
       :title="dialog.title"
       width="600px"
-      :before-close="beforeClose"
     >
       <ak-form
         ref="formEl"
@@ -34,6 +33,7 @@
 <script setup>
   import { useRoute } from 'vue-router'
   import { ref, nextTick, reactive, onMounted } from 'vue'
+  import { jsonParseStringify } from '@/utils'
   const route = useRoute()
   // const router = useRouter()
   const tableListEl = ref()
@@ -83,7 +83,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',
@@ -212,14 +212,24 @@
         ]
       },
       {
+        type: 'input',
+        control: {
+          modelValue: '',
+          placeholder: '请输入用户昵称'
+        },
+        config: {},
+        name: 'nickName',
+        item: {
+          label: '用户昵称'
+        }
+      },
+      {
         type: 'password',
         control: {
           modelValue: '',
           placeholder: '请输入登录密码'
         },
-        config: {
-          disabledEdit: true
-        },
+        config: {},
         name: 'password',
         item: {
           label: '登录密码'
@@ -233,16 +243,37 @@
         ]
       },
       {
-        type: 'input',
-        control: {
-          modelValue: '',
-          placeholder: '请输入用户昵称'
-        },
+        type: 'password',
+        control: { modelValue: '', placeholder: '请输入确认登录密码' },
         config: {},
-        name: 'nickName',
+        name: 'password2',
         item: {
-          label: '用户昵称'
-        }
+          label: '确认密码',
+          rules: [
+            {
+              validator: (rule, value, callback) => {
+                // 获取密码的值
+                const val = getuserFormValueByName('password')
+                console.log(val)
+                if (value === '') {
+                  callback(new Error('请输入密码'))
+                } else if (value !== val) {
+                  callback(new Error('两次密码不一样'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'change'
+            }
+          ]
+        },
+        customRules: [
+          {
+            type: 'required',
+            message: '请输入确认密码',
+            trigger: 'blur'
+          }
+        ]
       },
       {
         type: 'input',
@@ -303,7 +334,7 @@
         },
         options: [],
         config: {
-          optionsType: 3,
+          optionsType: 2,
           optionsFun: 'status'
         },
         name: 'status',
@@ -380,7 +411,8 @@
     form: {
       size: 'default',
       class: 'form-row-2',
-      labelWidth: '100px'
+      labelWidth: '100px',
+      name: 'userForm'
     },
     config: {}
   })
@@ -415,7 +447,9 @@
           } else {
             row.role = []
           }
-          formEl.value.setValue(row)
+          // 将密码值设给确认密码框
+          row.password2 = row.password
+          formEl.value.setValue(jsonParseStringify(row))
           //formEl.value.getData({ id: row.id })
         })
       }
@@ -431,6 +465,7 @@
       // 编辑模式下添加参数
       params.id = dialog.editId
     }
+    delete params.password2 // 确认密码无需提交
     return params
   }
   //　提交表单后事件
@@ -441,16 +476,11 @@
       tableListEl.value.getListData()
     }
   }
-  //　关闭弹窗时
-  const beforeClose = (done) => {
-    closeResetDialog()
-    done && done()
-  }
   // 关闭弹窗并重置表单，否则下次打开会保留上次数据
   const closeResetDialog = () => {
     dialog.visible = false
     dialog.editId = ''
-    formEl.value.resetFields() // 重置表单，否则再次打开时会保留上一次的内容
+    // formEl.value.resetFields() // 重置表单
   }
   //　点击弹窗取消按钮时
   const dialogBtnClick = (type) => {
@@ -461,11 +491,11 @@
   onMounted(() => {
     if (route.query.role) {
       // 根据url参数设置查询表单初始值
-      tableListEl.value.setSearchFormValue({ role: route.query.role })
-      // 等查询表单设值完整后，再加载列表数据，这样便可获取到查询条件
-      nextTick(() => {
-        tableListEl.value.getListData()
-      })
+      tableListEl.value.setSearchFormValue({ role: parseInt(route.query.role) })
     }
+    // 等查询表单设值完整后，再加载列表数据，这样便可获取到查询条件
+    nextTick(() => {
+      tableListEl.value.getListData()
+    })
   })
 </script>

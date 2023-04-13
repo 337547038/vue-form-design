@@ -21,28 +21,22 @@
         v-if="['input', 'password'].includes(data.type)"
       >
         <template #prepend v-if="config.prepend">
-          <div v-if="getInputSlot(config.prepend, 'vIf')">
+          <div v-if="getInputSlot('p')">
             <AKSelect
-              :control="getInputSlot(config.prepend, 'control')"
+              :data="getInputSlot('p')"
               :disabled="editDisabled"
-              :modelValue="getInputSlot(config.prepend, 'value')"
-              :options="getInputSlot(config.prepend, 'options')"
-              :config="getInputSlot(config.prepend, 'config')"
               :transform-option="transformOption"
-              type="slot"
               @change="inputSlotChange"
+              type="slot"
             />
           </div>
           <span v-else>{{ config.prepend }}</span>
         </template>
         <template #append v-if="config.append">
-          <div v-if="getInputSlot(config.append, 'vIf')">
+          <div v-if="getInputSlot()">
             <AKSelect
-              :control="getInputSlot(config.append, 'control')"
+              :data="getInputSlot()"
               :disabled="editDisabled"
-              :modelValue="getInputSlot(config.append, 'value')"
-              :options="getInputSlot(config.append, 'options')"
-              :config="getInputSlot(config.append, 'config')"
               :transform-option="transformOption"
               type="slot"
               @change="inputSlotChange"
@@ -89,11 +83,10 @@
         v-if="
           data.type === 'select' || (type === 5 && data.type === 'inputSlot')
         "
-        :control="control"
+        :data="data"
         :disabled="editDisabled"
         v-model="value"
         :options="options"
-        :config="config"
         :remote-method="getAxiosOptions"
         :transformOption="transformOption"
       />
@@ -141,7 +134,6 @@
         v-bind="control"
         :disabled="editDisabled"
         :options="options"
-        :filter-method="filterMethod"
         v-model="value"
       />
       <template v-if="data.type === 'tinymce'">
@@ -179,7 +171,7 @@
   import Tooltip from '../../components/tooltip.vue'
   import TinymceEdit from './tinymce.vue'
   import { FormItem, FormList } from '../../types'
-  import { formatNumber } from '../../utils'
+  import { formatNumber, objectToArray } from '../../utils'
   import validate from './validate'
   import ExpandUser from './expand/user.vue'
   import {
@@ -193,6 +185,7 @@
   import { useRoute } from 'vue-router'
   import formatResult from '@/utils/formatResult'
   import { getRequest } from '@/api'
+  import { debounce } from '@/utils'
 
   const props = withDefaults(
     defineProps<{
@@ -213,8 +206,6 @@
   const config = computed(() => {
     return props.data.config || {}
   })
-  // const { config, control, options = ref([]) } = toRefs(props.data)
-  // const config = ref(props.data.config)
   const control = ref(props.data.control)
   const options = ref(props.data.options)
   const changeEvent = inject(constControlChange, '') as any
@@ -244,18 +235,19 @@
       updateModel(newVal)
     }
   })
-  // 选择数据转换
-  const transformOption = (val: string | number) => {
-    switch (config.value.transformData) {
-      case 'number':
-        return formatNumber(val)
-      case 'string':
-        if (val && typeof val === 'string') {
-          return val.toString()
-        }
+  // 选择数据转换，默认尝试转数字
+  const transformOption = (val: string | number, type?: string) => {
+    switch (config.value.transformData || type) {
+      case 'none':
         return val
+      case 'string':
+        try {
+          return val.toString()
+        } catch (e) {
+          return val
+        }
     }
-    return val
+    return formatNumber(val)
   }
   const fileList = ref([]) // 图片上传列表
   // todo
@@ -277,17 +269,18 @@
   //   }
   // }
   // todo setFileList(props.modelValue)
-  watch(
-    () => props.data,
-    (val: FormList) => {
-      //config.value = val.config || {}
-      control.value = val.control || {}
-      options.value = val.options || []
-    },
-    {
-      /*deep: true */
-    }
-  )
+
+  // watch(
+  //   () => props.data,
+  //   (val: FormList) => {
+  //     console.log('watchok')
+  //     control.value = val.control || {}
+  //     options.value = val.options || []
+  //   },
+  //   {
+  //     /*deep: true */
+  //   }
+  // )
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
   const getControlByName = inject(constGetControlByName) as any
   const sourceFunKey = computed(() => {
@@ -339,9 +332,8 @@
     }
     return temp
   })
-  // 有inject，这方法不能放异步
   // data 根据条件搜索，select远程搜索里data有值
-  const getAxiosOptions = (data?: any) => {
+  const getAxiosOptions = debounce((data?: any) => {
     const {
       optionsType,
       optionsFun,
@@ -368,11 +360,9 @@
         } else {
           // 从url里提取一个动态值,${name}形式提取name
           if (sourceFunKey.value) {
-            const control = getControlByName(sourceFunKey.value)
-            const val = control?.control.modelValue
+            const val = formProps.value.model[sourceFunKey.value]
             const string = '${' + sourceFunKey.value + '}'
             sourceFun = sourceFun.replace(string, val)
-            // 如有需要可从sourceFun里提取url参数放入到newData中
           }
           // 处理请求前的数据
           //let newData = Object.assign({}, data || {}, queryParams)
@@ -432,12 +422,11 @@
       }
       setFormDict(formProps.value.dict) // 表格里新增时行时需要重新设一次
     }
-  }
+  })
   watch(
     () => formProps.value.model[sourceFunKey.value],
     () => {
       getAxiosOptions()
-      // todo 需要优化下，每次改变都会请求一次，但方法内有inject又不能放异步处理
     }
   )
   // 处理自定义校验规则，将customRules转换后追加到rules里
@@ -487,35 +476,24 @@
     })
     return temp
   }
-  // 将{key:value}转[{label:'key',value:'value'}]
-  const formatData = (obj: any) => {
-    if (Object.prototype.toString.call(obj) === '[object Object]') {
-      const temp: any = []
-      for (const key in obj) {
-        temp.push({
-          label: obj[key],
-          value: key
-        })
-      }
-      return temp
-    }
-    return obj
-  }
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
   const setFormDict = (val: any) => {
     if (val && config.value.optionsType === 2) {
-      const opt = val[config.value.optionsFun] || val[props.data.name]
+      const opt = val[config.value.optionsFun]
       if (opt !== undefined) {
-        options.value = formatData(opt)
+        options.value = objectToArray(opt)
       }
     }
   }
+  // 从接口返回的dict会在这里触发
   watch(
     () => formProps.value.dict,
     (val: any) => {
       setFormDict(val)
     },
-    { deep: true }
+    {
+      /*deep: true*/
+    }
   )
   // 对单选多选select设置options
   const formOptions = inject(constSetFormOptions, {}) as any
@@ -527,9 +505,9 @@
       if (val && opt !== undefined) {
         if (props.data.type === 'treeSelect') {
           // 树结构的参数为data
-          control.value.data = formatData(opt)
+          control.value.data = objectToArray(opt)
         } else {
-          options.value = formatData(opt)
+          options.value = objectToArray(opt)
         }
       }
     }
@@ -563,50 +541,38 @@
     control.value.onError && control.value.onError(err, file, fileList)
   }
   /****input slot处理***/
-  let inputSlotControl: any = {}
-  const getInputSlot = (slot: string, key: string) => {
+  const getInputSlot = (key?: string) => {
+    const slot = key === 'p' ? config.value.prepend : config.value.append
     const has = slot.indexOf('key:') === 0
     if (!has) {
       return false
     }
     const slotKey = slot.replace('key:', '')
     const control = getControlByName(slotKey)
-    if (!control) {
+    if (!control || Object.keys(control)?.length === 0) {
       return false
     }
-    inputSlotControl = control // 暂存
-    switch (key) {
-      case 'vIf': // 存在slot
-        return !!control
-      case 'control':
-        return control.control
-      case 'options':
-        return control.options
-      case 'config':
-        return control.config
-      case 'value':
-        return control.control.modelValue
-    }
+    return control
   }
-  const inputSlotChange = (val: string | number) => {
-    inputSlotControl.control.modelValue = val
+  const inputSlotChange = (val: string | number, name: string) => {
     changeEvent &&
       changeEvent({
-        key: inputSlotControl.name,
+        key: name,
         value: val,
-        data: inputSlotControl
+        data: {},
+        tProp: ''
       })
   }
   /****input slot处理结束***/
   // treeSelect
-  const filterMethod = (val: string) => {
-    if (props.data.type === 'treeSelect') {
-      // 请求参数名，可使用config.queryName传进来
-      const queryName = config.value.queryName || 'name'
-      control.value.filterMethod && control.value.filterMethod(val)
-      getAxiosOptions({ [queryName]: val })
-    }
-  }
+  // const filterMethod = (val: string) => {
+  //   if (props.data.type === 'treeSelect') {
+  //     // 请求参数名，可使用config.queryName传进来
+  //     const queryName = config.value.queryName || 'name'
+  //     control.value.filterMethod && control.value.filterMethod(val)
+  //     getAxiosOptions({ [queryName]: val })
+  //   }
+  // }
   onMounted(() => {
     getAxiosOptions()
   })

@@ -411,8 +411,8 @@
         ],
         key: 'openType',
         path: 'config',
-        clearable: true,
-        hide: !state.formId
+        clearable: true
+        //hide: !state.formId
       },
       {
         label: '窗口宽度',
@@ -839,19 +839,20 @@
     getRequest('designById', { id: id }).then((res) => {
       console.log('获取当前数据下所有字段')
       const content = stringToObj(res.data.data)
+      console.log('content', content)
       filterFiled(content)
     })
   }
-  const excludeType = ['txt', 'title', 'table', 'component', 'upload']
+  const excludeType = ['txt', 'title', 'table', 'component', 'upload', 'button']
   const filterFiled = (obj: any) => {
     obj?.list.forEach((item: FormList) => {
       if (item.type === 'grid' || item.type === 'tabs') {
         item.columns.forEach((col: FormList) => {
           filterFiled(col)
         })
-      } else if (item.type === 'card') {
+      } else if (['card', 'div'].includes(item.type)) {
         filterFiled(item)
-      } else if (excludeType.indexOf(item.type) === -1) {
+      } else if (excludeType.indexOf(item.type) === -1 && item.name) {
         state.formFieldList.push({
           prop: item.name,
           label: item.item?.label,

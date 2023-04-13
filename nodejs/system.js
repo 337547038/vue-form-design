@@ -65,7 +65,7 @@ router.post('/menu/list', async (req, res) => {
   if (status) {
     whereParams.push(`status=${status}`)
   }
-  let where = 'WHERE id is not null'
+  let where = ' WHERE id is not null'
   if (whereParams.length) {
     where = ` WHERE ${whereParams.join('AND')} `
   }

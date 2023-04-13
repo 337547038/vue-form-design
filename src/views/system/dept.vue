@@ -8,7 +8,12 @@
       :tableData="tableData"
       :afterResponse="afterResponse"
     />
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="400px">
+    <el-dialog
+      v-model="dialog.visible"
+      :title="dialog.title"
+      width="400px"
+      destroy-on-close
+    >
       <ak-form
         ref="formNameEl"
         :type="dialog.formType"

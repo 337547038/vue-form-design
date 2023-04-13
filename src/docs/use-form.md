@@ -360,3 +360,17 @@ const formatResult = (res: any, key: string) => {
 **7.afterSubmit：**
 
 同props.afterSubmit。表单提交后返回处理事件，方法跟afterResponse一样
+
+### 全局方法
+
+**get[formName]ControlByName**
+
+　formName　为设计表单时表单配置-表单标识。注意：使用此方法必须设置表单标识
+
+　根据name值获取formData中的数据项(name:string)
+
+**get[formName]ValueByName**
+
+根据name值获取当前表单对应的值
+
+实例可参考[系统工具-用户管理密码校验](/#/system/user)

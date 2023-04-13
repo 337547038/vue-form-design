@@ -7,7 +7,12 @@
       :searchData="searchData"
       :tableData="tableData"
     />
-    <el-dialog v-model="dialog.visible" title="添加字典" width="400px">
+    <el-dialog
+      v-model="dialog.visible"
+      title="添加字典"
+      width="400px"
+      destroy-on-close
+    >
       <ak-form
         ref="formEl"
         :formData="dialog.formData"
@@ -17,10 +22,14 @@
         :beforeSubmit="beforeSubmit"
         :afterSubmit="afterSubmit"
         @btn-click="cancelClick"
-        :id="dialog.id"
       />
     </el-dialog>
-    <el-dialog v-model="dialog2.visible" title="设置字典数据" width="400px">
+    <el-dialog
+      v-model="dialog2.visible"
+      title="设置字典数据"
+      width="400px"
+      destroy-on-close
+    >
       <ak-form
         ref="formEl2"
         :formData="dialog2.formData"
@@ -51,7 +60,8 @@
         {
           type: 'input',
           control: {
-            modelValue: ''
+            modelValue: '',
+            placeholder: '请输入字典名称'
           },
           config: {},
           name: 'name',
@@ -69,7 +79,8 @@
         {
           type: 'input',
           control: {
-            modelValue: ''
+            modelValue: '',
+            placeholder: '请输入字典标识'
           },
           config: {
             editDisabled: true
@@ -106,7 +117,7 @@
           },
           name: 'status',
           item: {
-            label: '状态'
+            label: '状态0'
           }
         },
         {
@@ -158,7 +169,8 @@
           type: 'input',
           control: {
             modelValue: '',
-            disabled: true
+            disabled: true,
+            placeholder: '请输入字典名称'
           },
           config: {},
           name: 'name',
@@ -279,7 +291,7 @@
           dialog.type = 1
           dialog.editId = ''
           nextTick(() => {
-            formEl.value.resetFields()
+            // formEl.value.resetFields()
           })
         }
       },

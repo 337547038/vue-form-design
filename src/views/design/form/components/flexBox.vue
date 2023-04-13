@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, inject, computed } from 'vue'
+  import { onMounted, inject, computed, nextTick } from 'vue'
   import FormItem from './formItem.vue'
   import { constFormProps } from '../../utils'
 
@@ -62,11 +62,13 @@
     tableDataNew.value.splice(index, 1)
   }
   const init = () => {
-    if (tableDataNew.value.length === 0) {
+    if (tableDataNew.value?.length === 0) {
       tableDataNew.value.push(getRow())
     }
   }
   onMounted(() => {
-    init()
+    nextTick(() => {
+      init()
+    })
   })
 </script>

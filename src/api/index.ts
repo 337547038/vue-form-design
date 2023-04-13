@@ -47,7 +47,7 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
   }
   return request(obj)
 }
-export const uploadUrl = allApi.upload
+export const uploadUrl = '/api/' + allApi.upload
 /*export function uploadFiledTinymce(data, url) {
   return request({
     url: url || '/upload/single',

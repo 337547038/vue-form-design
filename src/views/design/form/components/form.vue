@@ -40,6 +40,7 @@
     constFormProps
   } from '../../utils'
   import formatResult from '@/utils/formatResult'
+  import { jsonParseStringify } from '@/utils'
 
   const props = withDefaults(
     defineProps<{
@@ -141,7 +142,7 @@
   const forEachGetFormModel = (list: FormList[], obj: any) => {
     list.forEach((item: any) => {
       if (['table', 'flex'].includes(item.type)) {
-        obj[item.name] = item.tableData
+        obj[item.name] = jsonParseStringify(item.tableData)
       } else if (['grid', 'tabs'].includes(item.type)) {
         item.columns.forEach((col: any) => {
           forEachGetFormModel(col.list, obj)
@@ -151,21 +152,21 @@
       } else {
         const excludeType = ['title', 'divider', 'txt', 'button']
         if (excludeType.indexOf(item.type) === -1) {
-          obj[item.name] = item.control.modelValue
+          obj[item.name] = jsonParseStringify(item.control.modelValue)
         }
       }
     })
   }
 
   // 表单组件值改变事件 tProp为子表格相关
-  provide(constControlChange, ({ key, value, data, tProps }: any) => {
+  provide(constControlChange, ({ key, value, data, tProp }: any) => {
     if (key) {
-      if (!tProps) {
+      if (!tProp) {
         // 表格和弹性布局不是这里更新，只触change
         model.value[key] = value
       }
       // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分
-      emits('change', { key, value, data, tProps })
+      emits('change', { key, value, data, tProp })
     }
   })
   const dictForm = computed(() => {
@@ -174,7 +175,8 @@
     if (storage) {
       storageDict = JSON.parse(storage)
     }
-    return Object.assign(storageDict, props.dict, resultDict.value)
+    // 全局的、当前表单配置的以及接口返回的
+    return Object.assign({}, storageDict, props.dict, resultDict.value)
   })
   // 表单参数
   const formProps = computed(() => {
@@ -242,9 +244,8 @@
   }
   // 对表单设置初始值
   const setValue = (obj: { [key: string]: any }) => {
-    // setValueObj.value = obj || {}
     // 直接更新model值即可
-    model.value = obj
+    model.value = jsonParseStringify(obj) // 防止列表直接使用set方法对弹窗表单编辑，当重置表单时当前行数据被清空
   }
   // 对表单选择项快速设置
   const setFormOptions = ref({})
@@ -296,6 +297,7 @@
   const getData = (params = {}) => {
     const requestUrl = props.formData.config?.requestUrl || props.requestUrl
     if (props.type === 5 || !requestUrl || props.isSearch) {
+      console.error('执行了获取数据方法，但配置有误！')
       return
     }
     loading.value = true
@@ -339,7 +341,7 @@
           setValue(formatRes.result || formatRes)
           nextTick(() => {
             // 将dict保存，可用于从接口中设置表单组件options。
-            if (formatRes.dict) {
+            if (formatRes.dict && Object.keys(formatRes.dict).length) {
               resultDict.value = formatRes.dict
             }
           })
@@ -404,7 +406,7 @@
     }
     loading.value = false
     // 不管结果，重置表单，防再次打开时保留上一次的值
-    resetFields()
+    // resetFields()
     if (notReturn === false) {
       // 有返回false时则不提示
       return
@@ -434,10 +436,9 @@
   )
   // ------------------------数据处理结束------------------------
   // 重置表单方法
-  // obj 需要重新设置的值，例如子表resetFields方法没办法清除。即setValue
-  const resetFields = (obj?: { [key: string]: any }) => {
+  const resetFields = () => {
     ruleForm.value.resetFields()
-    setValue(Object.assign(model.value, obj || {})) // 这才能清空组件显示的值
+    // setValue(Object.assign(model.value, obj || {})) // 这才能清空组件显示的值
   }
   onMounted(() => {
     getInitModel()

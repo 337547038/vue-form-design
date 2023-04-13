@@ -16,7 +16,7 @@
       v-model="dialog.visible"
       title="设置"
       width="480px"
-      :before-close="beforeClose"
+      destroy-on-close
     >
       <ak-form
         ref="formEl"
@@ -34,9 +34,6 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { nextTick, reactive, ref } from 'vue'
-  // import { useLayoutStore } from '@/store/layout'
-  // const layoutStore = useLayoutStore()
-  // layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '表单管理' }])
   const router = useRouter()
   const dialog = reactive({
     visible: false,
@@ -70,13 +67,13 @@
         width: 200,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
-      {
-        prop: 'updateDate',
-        label: '修改时间',
-        width: 200,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
-      },
-      { prop: 'editName', label: '最后修改' },
+      // {
+      //   prop: 'updateDate',
+      //   label: '修改时间',
+      //   width: 200,
+      //   config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+      // },
+      // { prop: 'editName', label: '最后修改' },
       { label: '操作', prop: '__control', width: '220px', fixed: 'right' }
     ],
     controlBtn: [
@@ -314,6 +311,7 @@
   }
   const beforeSubmit = (params: any) => {
     params.id = dialog.row.id
+    return params
   }
   const cancelClick = (type: string) => {
     if (type === 'reset') {
@@ -323,9 +321,5 @@
   const beforeRequest = (params: any) => {
     params.type = 1 // 表单类型为1
     return params
-  }
-  const beforeClose = (done?: any) => {
-    //formEl.value.resetFields() // 重置表单，否则再次打开时会保留上一次的内容
-    done && done()
   }
 </script>

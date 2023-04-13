@@ -43,7 +43,7 @@
   import Menu from './menu.vue'
   import CommonHeader from './header.vue'
   const store = useLayoutStore()
-  const isCollapse = ref(false)
+  const isCollapse = ref(true)
   const fullScreen = ref(false)
   //const reloadFlag = ref<boolean>(true)
   const navList = ref([])

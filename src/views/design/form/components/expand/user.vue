@@ -1,6 +1,7 @@
 <!-- Created by 337547038  -->
 <template>
   <el-input
+    :disabled="disabled"
     v-model="value"
     placeholder="请选择用户或输入用户名称"
     @click="openDialog"
@@ -95,6 +96,7 @@
     defineProps<{
       modelValue?: string
       multiple?: boolean //是否多选
+      disabled?: boolean
     }>(),
     {
       multiple: false

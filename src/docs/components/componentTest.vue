@@ -1,6 +1,6 @@
 <template>
   <el-row style="flex-wrap: nowrap">
-    <el-input v-model="value" />
+    <el-input v-model="value" :placeholder="placeholder" />
     <el-button @click="visibleClick">选择</el-button>
   </el-row>
   <el-dialog v-model="state.visible" title="详细地址" width="800px">
@@ -24,6 +24,7 @@
       modelValue?: string
       disabled?: boolean
       options?: any
+      placeholder?: string
     }>(),
     {}
   )

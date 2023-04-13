@@ -59,6 +59,7 @@
   import { inject, computed } from 'vue'
   import Tooltip from '../../components/tooltip.vue'
   import { constFormProps } from '../../utils'
+  import { jsonParseStringify } from '@/utils'
   const props = withDefaults(
     defineProps<{
       data: any
@@ -91,7 +92,7 @@
           temp[item.name] = item.control.modelValue
         }
       })
-      tableDataNew.value.push(JSON.parse(JSON.stringify(temp)))
+      tableDataNew.value.push(jsonParseStringify(temp))
     }
   }
   const getText = (text: any) => {

@@ -11,7 +11,7 @@
       v-model="dialog.visible"
       :title="dialog.title"
       width="800px"
-      :before-close="beforeClose"
+      destroy-on-close
     >
       <ak-form
         ref="formEl"
@@ -32,9 +32,6 @@
   import { useRouter } from 'vue-router'
   import { ref, reactive, nextTick } from 'vue'
   import { ElMessage } from 'element-plus'
-  // import { useLayoutStore } from '@/store/layout'
-  // const layoutStore = useLayoutStore()
-  // layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单数据源' }])
   const router = useRouter()
   const tableListEl = ref()
   const formEl = ref()
@@ -508,17 +505,11 @@
       dialog.visible = false
       tableListEl.value.getListData()
     }
-    beforeClose()
   }
   // 添加编辑窗口取消
   const cancelClick = (type?: string) => {
     if (type === 'reset') {
       dialog.visible = false
-      beforeClose()
     }
-  }
-  const beforeClose = (done?: any) => {
-    formEl.value.resetFields({ tableData: [] }) // 重置表单，否则再次打开时会保留上一次的内容
-    done && done()
   }
 </script>

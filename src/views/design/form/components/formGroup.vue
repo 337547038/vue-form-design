@@ -57,6 +57,7 @@
         </template>
         <template v-else-if="element.type === 'txt'">
           <div
+            v-bind="element.control"
             :class="[element.config.className]"
             v-html="element.control.modelValue"
           ></div>
@@ -72,7 +73,7 @@
             <el-col
               class="form-col"
               :class="{
-                'active-col': activeKey === col.name,
+                'active-col': activeKey === getGroupName(col),
                 [col.className]: col.className
               }"
               v-bind="col.attr"
@@ -147,6 +148,9 @@
             ></div
           >
         </template>
+        <template v-else-if="element.type === 'inputSlot' && type !== 5">
+          <!--  除设计外其他无需处理-->
+        </template>
         <form-item v-else :data="element" />
         <template v-if="type === 5">
           <div class="drag-control">
@@ -185,6 +189,7 @@
   import type { FormList } from '../../types'
   import { constFormBtnEvent, constFormProps } from '../../utils'
   import md5 from 'md5'
+  import { jsonParseStringify } from '@/utils'
   const props = withDefaults(
     defineProps<{
       data: FormList[]
@@ -231,7 +236,7 @@
     }
     if (action === 'clone') {
       const key = item.type + new Date().getTime().toString()
-      const newItem = JSON.parse(JSON.stringify(item))
+      const newItem = jsonParseStringify(item)
       dataList.value.splice(index, 0, Object.assign(newItem, { name: key }))
     } else if (action === 'del') {
       dataList.value.splice(index, 1)
@@ -256,31 +261,29 @@
     const obj: any = dataList.value[newIndex]
     const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
     if (isNested === 'not-nested' && notNested(obj.type)) {
-      // 卡片也不能嵌套
       dataList.value.splice(newIndex, 1)
       return
     }
     if (!obj) {
       return
     }
-    const label = obj.label
+    const label = obj.label || obj.item.label
     delete obj.label
     delete obj.icon
     let objectItem = {}
     // 不需要添加item的项
-    const needItem = [
+    const notNeedItem = [
       'txt',
       'title',
       'button',
       'table',
       'grid',
       'tabs',
-      'card',
       'flex',
       'divider',
       'div'
     ]
-    if (!needItem.includes(obj.type)) {
+    if (!notNeedItem.includes(obj.type)) {
       objectItem = {
         item: {
           label: label
@@ -289,11 +292,17 @@
     }
     //　不需要name的组件
     let nameObj = {}
-    const needNameString = JSON.stringify(needItem)
-      .replace('table', '')
-      .replace('flex', '')
-    const needName = JSON.parse(needNameString)
-    if (!needName.includes(obj.type)) {
+    const notNeedName = [
+      'txt',
+      'title',
+      'button',
+      'grid',
+      'tabs',
+      'divider',
+      'div',
+      'card'
+    ]
+    if (!notNeedName.includes(obj.type) && !obj.name) {
       nameObj = {
         name: obj.type + key
       }
@@ -302,7 +311,6 @@
     groupClick(obj)
   }
   const getGroupName = (item: any) => {
-    // console.log('getGroupName', md5(JSON.stringify(item)))
     if (item.name) {
       return item.name
     } else {
@@ -315,10 +323,7 @@
     if (type.value !== 5) {
       return
     }
-    if (ele === 'gridChild') {
-      // if (!item.name) {
-      //   item.name = 'gridChild' + new Date().getTime().toString()
-      // }
+    if (ele) {
       item.type = ele
     }
     store.setActiveKey(getGroupName(item))
@@ -391,7 +396,7 @@
     // 0: '提交表单',
     // 1: '重置表单',
     // 2: '取消返回',
-    // 3: '无动作'
+    // 3: '无动作(自定义)'
     if (type.value !== 5) {
       // 非设计模式才触发事件
       injectBtnEvent && injectBtnEvent(control)

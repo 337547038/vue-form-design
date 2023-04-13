@@ -14,7 +14,12 @@
         >
       </template>
     </ak-list>
-    <el-dialog v-model="dialog.visible" title="设置" width="480px">
+    <el-dialog
+      v-model="dialog.visible"
+      title="设置"
+      width="480px"
+      destroy-on-close
+    >
       <ak-form
         ref="formEl"
         :formData="dialogFormData"
@@ -339,6 +344,7 @@
   }
   const beforeSubmit = (params: any) => {
     params.id = dialog.row.id
+    return params
   }
   const cancelClick = (type: string) => {
     if (type === 'reset') {

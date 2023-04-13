@@ -35,13 +35,33 @@ export const formatToString = (val: any) => {
     return val
   }
 }
+// 将{key:value}转[{label:'key',value:'value'}]
+export const objectToArray = (obj: any) => {
+  if (Object.prototype.toString.call(obj) === '[object Object]') {
+    const temp: any = []
+    for (const key in obj) {
+      temp.push({
+        label: obj[key],
+        value: key
+      })
+    }
+    return temp
+  }
+  return obj
+}
 // 定义两个空方法，用于在编辑事件时作为默认值
 export const beforeRequest =
   'opt=(data, route) => {\n' +
   '  // data经过处理后返回\n' +
+  "  console.log('beforeRequest',data)\n" +
   '  return data\n' +
   '}'
-export const afterResponse = 'opt=(res)=>{\nreturn res\n}'
+export const afterResponse =
+  'opt=(res) => {\n' +
+  '  // res返回数据\n' +
+  "  console.log('afterResponse',res)\n" +
+  '  return res\n' +
+  '}'
 
 // provide 方法定义的key
 const prefix = 'AK'

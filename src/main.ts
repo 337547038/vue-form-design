@@ -27,5 +27,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // 注册一个全局组件用于自定义组件测试
-/*import componentTest from '@/docs/components/componentTest.vue'
-app.component('ComponentTest', componentTest)*/
+import componentTest from '@/docs/components/componentTest.vue'
+app.component('ComponentTest', componentTest)

@@ -194,13 +194,6 @@
                     placeholder="返回数据中没有value时可设置"
                   />
                 </el-form-item>
-                <el-form-item label="尝试转换value值为">
-                  <el-select v-model="controlData.config.transformData">
-                    <el-option value="">不转换</el-option>
-                    <el-option value="number">number</el-option>
-                    <el-option value="string">string</el-option>
-                  </el-select>
-                </el-form-item>
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
                 <el-button
@@ -223,6 +216,16 @@
                 </el-button>
               </el-form-item>
             </template>
+            <el-form-item label="尝试转换value值为">
+              <el-select
+                v-model="controlData.config.transformData"
+                placeholder="默认为number"
+              >
+                <el-option value="none">不转换</el-option>
+                <el-option value="number">number</el-option>
+                <el-option value="string">string</el-option>
+              </el-select>
+            </el-form-item>
           </div>
           <template
             v-if="
@@ -274,7 +277,7 @@
                   v-if="item.type === 'rules'"
                 />
                 <el-input
-                  placeholder="方法名称"
+                  placeholder="方法名称，此方法仅适用于导出vue文件"
                   v-model="item.methods"
                   v-if="item.type === 'methods'"
                 />
@@ -664,7 +667,7 @@
             submit: '提交表单',
             reset: '重置表单',
             cancel: '取消返回',
-            none: '无动作'
+            none: '无动作(自定义)'
           },
           vShow: ['button']
         },
@@ -1230,18 +1233,14 @@
         if (val) {
           // 将类型改为inputSlot
           controlData.value.type = 'inputSlot'
-          controlData.value.item.showLabel = true
-          // console.log(obj)
           ElMessage.success(
             `请在对应的Input输入框属性前后缀设置key:${controlData.value.name}`
           )
         } else {
           controlData.value.type = 'select'
-          controlData.value.item.showLabel = false
         }
-        // 清空设计区已选择的组件，再一次选择时字段标识才会变
         // 这里会报错Cannot set properties of null (setting 'checked')
-        // setAttrList()
+        // 因value:type===inputSlot，这里使用了v-model，影响不大暂不处理
         break
     }
     if (obj.path) {

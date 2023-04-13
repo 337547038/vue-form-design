@@ -14,7 +14,12 @@
         <i :class="row.icon"></i>
       </template>
     </ak-list>
-    <el-dialog v-model="dialog.visible" :title="dialog.title" width="680px">
+    <el-dialog
+      v-model="dialog.visible"
+      :title="dialog.title"
+      width="680px"
+      destroy-on-close
+    >
       <ak-form
         ref="formNameEl"
         :type="dialog.formType"
@@ -40,7 +45,6 @@
   const dict = {
     menuType: { 1: '菜单', 2: '按钮' }
   }
-  //const defaultExpandAll = ref(false)
   const refreshTable = ref(true)
   const searchData = ref({
     list: [
@@ -142,7 +146,8 @@
       {
         label: '展开折叠',
         click: () => {
-          tableData.value.tableProps.defaultExpandAll = true
+          tableData.value.tableProps.defaultExpandAll =
+            !tableData.value.tableProps.defaultExpandAll
           refreshTable.value = false
           nextTick(() => {
             refreshTable.value = true
@@ -328,9 +333,5 @@
     if (type === 'reset') {
       dialog.visible = false
     }
-  }
-  // 处理表格数据，转换为可折叠表格
-  const afterResponse = (result: any) => {
-    return result
   }
 </script>

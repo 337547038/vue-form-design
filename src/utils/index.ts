@@ -61,3 +61,11 @@ export const randomString = (len: number) => {
   }
   return n
 }
+
+export const jsonParseStringify = (val: any) => {
+  if (typeof val === 'object') {
+    return JSON.parse(JSON.stringify(val))
+  } else {
+    return val
+  }
+}
