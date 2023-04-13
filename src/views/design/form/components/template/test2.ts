@@ -11,8 +11,7 @@ export const formData = {
       config: {},
       name: 'input',
       item: {
-        label: '单行文本',
-        showLabel: false
+        label: '单行文本'
       }
     },
     {
@@ -35,15 +34,11 @@ export const formData = {
         }
       ],
       config: {
-        type: 'fixed',
-        source: 0,
-        request: 'get',
-        sourceFun: ''
+        optionsType: 0
       },
       name: 'radio1667180102980',
       item: {
-        label: '单选框组',
-        showLabel: false
+        label: '单选框组'
       }
     },
     {
@@ -66,10 +61,7 @@ export const formData = {
         }
       ],
       config: {
-        type: 'fixed',
-        source: 0,
-        request: 'get',
-        sourceFun: ''
+        optionsType: 0
       },
       name: 'checkbox1667180107698',
       item: {
@@ -98,15 +90,11 @@ export const formData = {
         }
       ],
       config: {
-        type: 'fixed',
-        source: 0,
-        request: 'get',
-        sourceFun: ''
+        optionsType: 0
       },
       name: 'select1667180110029',
       item: {
-        label: '下拉选择框',
-        showLabel: false
+        label: '下拉选择框'
       }
     },
     {
@@ -118,8 +106,7 @@ export const formData = {
       config: {},
       name: 'datePicker1667180115571',
       item: {
-        label: '日期选择器',
-        showLabel: false
+        label: '日期选择器'
       }
     },
     {
@@ -130,8 +117,7 @@ export const formData = {
       config: {},
       name: 'switch1667180126483',
       item: {
-        label: '开关',
-        showLabel: false
+        label: '开关'
       }
     }
   ],
@@ -140,9 +126,5 @@ export const formData = {
     class: '',
     size: 'default',
     name: 'form1663920704871'
-  },
-  config: {
-    title: 'form1663920704871',
-    formId: ''
   }
 }

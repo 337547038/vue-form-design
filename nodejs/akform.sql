@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: 2023-04-13 05:58:32
--- 服务器版本： 10.1.29-MariaDB
--- PHP Version: 7.2.0
+-- 主机： 127.0.0.1
+-- 生成日期： 2023-04-13 16:15:36
+-- 服务器版本： 10.4.18-MariaDB
+-- PHP 版本： 7.4.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -19,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `akform`
+-- 数据库： `akform`
 --
 
 -- --------------------------------------------------------
@@ -79,7 +78,7 @@ CREATE TABLE `ak-test` (
 --
 
 INSERT INTO `ak-test` (`id`, `text`, `textarea`, `radio`, `checkbox`, `select1`, `creatTime`, `color`, `status`, `number`, `cascader`, `rate`, `slider`, `tree`, `table`, `components`, `upload`, `tinymce`, `flex`, `userName`, `prepend`, `append`, `password`, `input1`, `input2`) VALUES
-(1, '单行文本', '多行文本', 1, '1', '10', '0000-00-00 00:00:00', '#741010', 1, 1, '', 3, '30', '', '', '广东省广州市越秀区北京街道广州市人民政府', '', '<p>富文本内容</p>', '', 'user,admin', '1', '', '123', '1', 0);
+(1, '单行文本', '多行文本', 1, '1', '10', '2024-11-30 16:00:00', '#741010', 1, 1, '', 3, '30', '', '', '广东省广州市越秀区北京街道广州市人民政府', '', '<p>富文本内容</p>', '', 'user,admin', '1', '', '123', '1', 0);
 
 -- --------------------------------------------------------
 
@@ -119,7 +118,7 @@ CREATE TABLE `department` (
   `id` int(4) NOT NULL,
   `parentId` int(4) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
-  `sort` int(2) NOT NULL DEFAULT '0',
+  `sort` int(2) NOT NULL DEFAULT 0,
   `status` int(2) NOT NULL,
   `remark` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='部门';
@@ -152,7 +151,7 @@ CREATE TABLE `design` (
   `type` int(11) NOT NULL COMMENT '表单和列表两种类型 1 表单 2 列表',
   `data` text NOT NULL COMMENT '设计生成的字符串内容',
   `listData` text NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '1' COMMENT '是否启用 1启用（默认） 0禁用',
+  `status` int(11) NOT NULL DEFAULT 1 COMMENT '是否启用 1启用（默认） 0禁用',
   `updateDate` datetime NOT NULL COMMENT '更新时间',
   `creatDate` datetime NOT NULL COMMENT '创建时间',
   `dict` text NOT NULL COMMENT '用于匹配的字典数据',
@@ -169,8 +168,8 @@ CREATE TABLE `design` (
 --
 
 INSERT INTO `design` (`id`, `source`, `name`, `type`, `data`, `listData`, `status`, `updateDate`, `creatDate`, `dict`, `category`, `creatName`, `editName`, `roleId`, `icon`, `showMenu`) VALUES
-(25, 12, '组件示例', 1, '{list:[{type:\"txt\",control:{modelValue:\"组件示例演示，可快速轻松实现功能复杂的各类型表单\",style:{color:\"red\"}},config:{span:24}},{type:\"title\",control:{modelValue:\"基础字段\"},config:{span:24}},{type:\"input\",control:{modelValue:\"\",placeholder:\"请输入\"},config:{},name:\"text\",item:{label:\"单行文本\"}},{type:\"password\",control:{modelValue:\"\"},config:{},name:\"password\",item:{label:\"密码框\"},customRules:[]},{type:\"password\",control:{modelValue:\"\"},config:{},name:\"password2\",item:{label:\"确认密码\",rules:[{validator:(rule, value, callback) =>\n        {\n          // 获取密码的值\n          const val = getcomponentsValueByName(\'password\')\n          console.log(val)\n          if (value === \'\')\n          {\n            callback(new Error(\'请输入密码\'))\n          }\n          else if (value !== val)\n          {\n            callback(new Error(\'两次密码不一样\'))\n          }\n          else\n          {\n            callback()\n          }\n        },trigger:\"change\"}]},customRules:[{type:\"required\",message:\"请输入确认密码\",trigger:\"blur\"}]},{type:\"switch\",control:{modelValue:false},config:{},name:\"status\",item:{label:\"状态开关\"}},{type:\"tabs\",columns:[{label:\"常用\",list:[{type:\"select\",control:{modelValue:\"\",appendToBody:true},options:[],config:{optionsType:1,optionsFun:\"deptList\",method:\"post\",label:\"name\",value:\"id\",transformData:\"string\"},name:\"select1\",item:{label:\"下拉选择\"}},{type:\"radio\",control:{modelValue:\"\"},options:[],config:{optionsType:2,optionsFun:\"status\"},name:\"radio\",item:{label:\"单选组\"}},{type:\"datePicker\",control:{modelValue:\"\",type:\"date\"},config:{},name:\"creatTime\",item:{label:\"时间\"}},{type:\"checkbox\",control:{modelValue:[]},options:[{label:\"电脑\",value:\"1\"},{label:\"音乐\",value:\"2\"},{label:\"旅游\",value:\"3\"}],config:{optionsType:0,transformData:\"string\"},name:\"checkbox\",item:{label:\"多选组\"}}]},{label:\"其他\",list:[{type:\"colorPicker\",control:{modelValue:\"\"},config:{},name:\"color\",item:{label:\"取色器\"}},{type:\"rate\",control:{modelValue:0},config:{},name:\"rate\",item:{label:\"评分\"}},{type:\"inputNumber\",control:{modelValue:0},config:{},name:\"number\",item:{label:\"计时器\"}},{type:\"cascader\",control:{modelValue:[]},options:[],config:{optionsType:0},name:\"cascader\",item:{label:\"级联\"}},{type:\"slider\",control:{modelValue:0},config:{},name:\"slider\",item:{label:\"滑块\"}},{type:\"treeSelect\",control:{modelValue:\"\",data:[],renderAfterExpand:false},config:{optionsType:0},name:\"tree\",item:{label:\"树形控件\"}}]}],control:{},config:{span:24}},{type:\"textarea\",control:{modelValue:\"\"},config:{span:24},name:\"textarea\",item:{label:\"多行文本\"}},{type:\"upload\",control:{modelValue:\"\",listType:\"text\"},config:{btnText:\"选择文件\"},name:\"upload\",item:{label:\"上传图片\"}},{type:\"card\",list:[{type:\"component\",control:{modelValue:\"\",placeholder:\"请选择地理位置\"},config:{componentName:\"ComponentTest\"},name:\"components\",item:{label:\"选择位置\"}},{type:\"expand-user\",control:{modelValue:\"\"},config:{},name:\"userName\",item:{label:\"选择用户\"}}],control:{},config:{span:24},item:{label:\"自定义及扩展组件\"}},{type:\"title\",control:{modelValue:\"复合型输入框\"},config:{span:24}},{type:\"inputSlot\",control:{modelValue:\"\",appendToBody:true},options:[{label:\"小时\",value:\"1\"},{label:\"分钟\",value:\"2\"},{label:\"天\",value:\"3\"}],config:{optionsType:0,transformData:\"string\"},name:\"prepend\",item:{label:\"前缀\"}},{type:\"input\",control:{modelValue:\"\"},config:{append:\"key:prepend\"},name:\"input1\",item:{label:\"文本框1\"}},{type:\"tinymce\",control:{modelValue:\"\"},config:{span:24},name:\"tinymce\",item:{label:\"富文本\"}},{type:\"div\",control:{},config:{span:24,textAlign:\"center\"},list:[{type:\"button\",control:{label:\"保存\",type:\"primary\",key:\"submit\"},config:{span:0}},{type:\"button\",control:{label:\"返回\",key:\"cancel\"},config:{span:0}}]}],form:{size:\"default\",labelWidth:\"120px\",class:\"form-row-2\",name:\"components\"},config:{},events:{afterResponse:(res) =>\n    {\n      const result = res.result\n      if (result.checkbox)\n      {\n        result.checkbox = result.checkbox.split(\',\')\n      }\n      else\n      {\n        result.checkbox = []\n      }\n      if (result.slider)\n      {\n        result.slider = parseInt(result.slider)\n      }\n      else\n      {\n        result.slider = 0\n      }\n      result.password2 = result.password // 设置确认密码\n      console.log(res)\n      return res\n    },beforeSubmit:(data, route) =>\n    {\n      // data经过处理后返回\n      if (data.password2)\n      {\n        delete data.password2\n      }\n      // 转字符串\n      if (data.checkbox)\n      {\n        data.checkbox = data.checkbox.join(\',\')\n      }\n      else\n      {\n        data.checkbox = \'\'\n      }\n      console.log(\'beforeRequest\', data)\n      return data\n    }}}', '', 1, '2023-04-13 11:58:07', '2023-04-12 09:36:19', '{\"test\":{\"0\":\"test1\",\"1\":\"test2\"}}', 1, '', '', 0, '', 0),
-(26, 25, '组件示例', 2, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"text\",item:{label:\"单行文本\"}},{type:\"button\",control:{label:\"查询\",type:\"primary\",key:\"submit\"},config:{}},{type:\"button\",control:{label:\"重置\",key:\"reset\"},config:{}}],form:{size:\"default\"},config:{}}', '{columns:[{label:\"多选\",type:\"selection\"},{label:\"序号\",type:\"index\",width:\"70px\"},{prop:\"text\",label:\"单行文本\",help:\"\"},{label:\"操作\",prop:\"__control\"}],config:{expand:true},operateBtn:[{label:\"编辑\",key:\"edit\"},{label:\"删除\",key:\"del\"}],controlBtn:[{label:\"新增\",key:\"add\",type:\"primary\",size:\"small\",icon:\"plus\"},{label:\"批量删除\",key:\"del\",type:\"danger\",size:\"small\",icon:\"delete\"}]}', 1, '2023-04-12 10:01:14', '2023-04-12 09:59:35', '{}', 0, '', '', 0, 'icon-doc', 1);
+(25, 12, '组件示例', 1, '{list:[{type:\"txt\",control:{modelValue:\"组件示例演示，可快速轻松实现功能复杂的各类型表单\",style:{color:\"red\"}},config:{span:24}},{type:\"title\",control:{modelValue:\"基础字段\"},config:{span:24}},{type:\"input\",control:{modelValue:\"\",placeholder:\"请输入\"},config:{},name:\"text\",item:{label:\"单行文本\"}},{type:\"password\",control:{modelValue:\"\"},config:{},name:\"password\",item:{label:\"密码框\"},customRules:[]},{type:\"password\",control:{modelValue:\"\"},config:{},name:\"password2\",item:{label:\"确认密码\",rules:[{validator:(rule, value, callback) =>\n        {\n          // 获取密码的值\n          const val = getcomponentsValueByName(\'password\')\n          console.log(val)\n          if (value === \'\')\n          {\n            callback(new Error(\'请输入密码\'))\n          }\n          else if (value !== val)\n          {\n            callback(new Error(\'两次密码不一样\'))\n          }\n          else\n          {\n            callback()\n          }\n        },trigger:\"change\"}]},customRules:[{type:\"required\",message:\"请输入确认密码\",trigger:\"blur\"}]},{type:\"switch\",control:{modelValue:false},config:{},name:\"status\",item:{label:\"状态开关\"}},{type:\"tabs\",columns:[{label:\"常用\",list:[{type:\"select\",control:{modelValue:\"\",appendToBody:true},options:[],config:{optionsType:1,optionsFun:\"deptList\",method:\"post\",label:\"name\",value:\"id\",transformData:\"string\"},name:\"select1\",item:{label:\"下拉选择\"}},{type:\"radio\",control:{modelValue:\"\"},options:[],config:{optionsType:2,optionsFun:\"status\"},name:\"radio\",item:{label:\"单选组\"}},{type:\"datePicker\",control:{modelValue:\"\",type:\"date\"},config:{},name:\"creatTime\",item:{label:\"时间\"}},{type:\"checkbox\",control:{modelValue:[]},options:[{label:\"电脑\",value:\"1\"},{label:\"音乐\",value:\"2\"},{label:\"旅游\",value:\"3\"}],config:{optionsType:0,transformData:\"string\"},name:\"checkbox\",item:{label:\"多选组\"}}]},{label:\"其他\",list:[{type:\"colorPicker\",control:{modelValue:\"\"},config:{},name:\"color\",item:{label:\"取色器\"}},{type:\"rate\",control:{modelValue:0},config:{},name:\"rate\",item:{label:\"评分\"}},{type:\"inputNumber\",control:{modelValue:0},config:{},name:\"number\",item:{label:\"计时器\"}},{type:\"cascader\",control:{modelValue:[]},options:[],config:{optionsType:0},name:\"cascader\",item:{label:\"级联\"}},{type:\"slider\",control:{modelValue:0},config:{},name:\"slider\",item:{label:\"滑块\"}},{type:\"treeSelect\",control:{modelValue:\"\",data:[],renderAfterExpand:false},config:{optionsType:0},name:\"tree\",item:{label:\"树形控件\"}}]}],control:{},config:{span:24}},{type:\"textarea\",control:{modelValue:\"\"},config:{span:24},name:\"textarea\",item:{label:\"多行文本\"}},{type:\"upload\",control:{modelValue:\"\",listType:\"text\"},config:{btnText:\"选择文件\"},name:\"upload\",item:{label:\"上传图片\"}},{type:\"card\",list:[{type:\"component\",control:{modelValue:\"\",placeholder:\"请选择地理位置\"},config:{componentName:\"ComponentTest\"},name:\"components\",item:{label:\"选择位置\"}},{type:\"expand-user\",control:{modelValue:\"\"},config:{},name:\"userName\",item:{label:\"选择用户\"}}],control:{},config:{span:24},item:{label:\"自定义及扩展组件\"}},{type:\"title\",control:{modelValue:\"复合型输入框\"},config:{span:24}},{type:\"inputSlot\",control:{modelValue:\"\",appendToBody:true},options:[{label:\"小时\",value:\"1\"},{label:\"分钟\",value:\"2\"},{label:\"天\",value:\"3\"}],config:{optionsType:0,transformData:\"string\"},name:\"prepend\",item:{label:\"前缀\"}},{type:\"input\",control:{modelValue:\"\"},config:{append:\"key:prepend\"},name:\"input1\",item:{label:\"文本框1\"}},{type:\"tinymce\",control:{modelValue:\"\"},config:{span:24},name:\"tinymce\",item:{label:\"富文本\"}},{type:\"div\",control:{},config:{span:24,textAlign:\"center\"},list:[{type:\"button\",control:{label:\"保存\",type:\"primary\",key:\"submit\"},config:{span:0}},{type:\"button\",control:{label:\"返回\",key:\"cancel\"},config:{span:0}}]}],form:{size:\"default\",labelWidth:\"120px\",class:\"form-row-2\",name:\"components\"},config:{},events:{afterResponse:(res) =>\n    {\n      const result = res.result\n      if (result.checkbox)\n      {\n        result.checkbox = result.checkbox.split(\',\')\n      }\n      else\n      {\n        result.checkbox = []\n      }\n      if (result.slider)\n      {\n        result.slider = parseInt(result.slider)\n      }\n      else\n      {\n        result.slider = 0\n      }\n      result.password2 = result.password // 设置确认密码\n      console.log(res)\n      return res\n    },beforeSubmit:(data, route) =>\n    {\n      // data经过处理后返回\n      if (data.password2)\n      {\n        delete data.password2\n      }\n      // 转字符串\n      if (data.checkbox)\n      {\n        data.checkbox = data.checkbox.join(\',\')\n      }\n      else\n      {\n        data.checkbox = \'\'\n      }\n      console.log(\'beforeRequest\', data)\n      return data\n    }}}', '', 1, '2023-04-13 11:58:07', '2023-04-12 09:36:19', '{\"test\":{\"0\":\"test1\",\"1\":\"test2\"}}', 1, '', '', 1, '', 0),
+(26, 25, '组件示例', 2, '{list:[{type:\"input\",control:{modelValue:\"\"},config:{},name:\"text\",item:{label:\"单行文本\"}},{type:\"button\",control:{label:\"查询\",type:\"primary\",key:\"submit\"},config:{}},{type:\"button\",control:{label:\"重置\",key:\"reset\"},config:{}}],form:{size:\"default\"},config:{}}', '{columns:[{label:\"多选\",type:\"selection\"},{label:\"序号\",type:\"index\",width:\"70px\"},{prop:\"text\",label:\"单行文本\",help:\"\"},{prop:\"creatTime\",label:\"时间\",help:\"\",config:{formatter:\"{y}-{m}-{d}\"}},{prop:\"select1\",label:\"下拉选择\",help:\"\"},{prop:\"userName\",label:\"选择用户\",help:\"\"},{prop:\"status\",label:\"状态开关\",help:\"\",config:{dictKey:\"status\",tagList:{1:\"success\",2:\"info\"}}},{label:\"操作\",prop:\"__control\"}],config:{expand:true},operateBtn:[{label:\"编辑\",key:\"edit\"},{label:\"删除\",key:\"del\"}],controlBtn:[{label:\"新增\",key:\"add\",type:\"primary\",size:\"small\",icon:\"plus\"},{label:\"批量删除\",key:\"del\",type:\"danger\",size:\"small\",icon:\"delete\"}]}', 1, '2023-04-13 21:02:53', '2023-04-12 09:59:35', '{}', 1, '', '', 1, 'icon-doc', 1);
 
 -- --------------------------------------------------------
 
@@ -293,59 +292,59 @@ INSERT INTO `user` (`id`, `userName`, `nickName`, `phone`, `status`, `role`, `pa
 (2, 'user', '会员', '', 1, '', '123456', 0, 0, '');
 
 --
--- Indexes for dumped tables
+-- 转储表的索引
 --
 
 --
--- Indexes for table `ak-customer`
+-- 表的索引 `ak-customer`
 --
 ALTER TABLE `ak-customer`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ak-test`
+-- 表的索引 `ak-test`
 --
 ALTER TABLE `ak-test`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `datasource`
+-- 表的索引 `datasource`
 --
 ALTER TABLE `datasource`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `department`
+-- 表的索引 `department`
 --
 ALTER TABLE `department`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `design`
+-- 表的索引 `design`
 --
 ALTER TABLE `design`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `dict`
+-- 表的索引 `dict`
 --
 ALTER TABLE `dict`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `menu`
+-- 表的索引 `menu`
 --
 ALTER TABLE `menu`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `role`
+-- 表的索引 `role`
 --
 ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `user`
+-- 表的索引 `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`);

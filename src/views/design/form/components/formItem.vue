@@ -479,7 +479,7 @@
   // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
   const setFormDict = (val: any) => {
     if (val && config.value.optionsType === 2) {
-      const opt = val[config.value.optionsFun]
+      const opt = val[config.value.optionsFun] || val[props.data.name] // 不填写默认为当前字段名
       if (opt !== undefined) {
         options.value = objectToArray(opt)
       }

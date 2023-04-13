@@ -1181,7 +1181,7 @@
     isSearch: designType === 'search',
     tooltip: {
       css: '当前表单应用页的样式，类似于.vue文件中的style scoped中的样式',
-      dict: "数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式：{0:'男',1:'女'}",
+      dict: '数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。json格式："sex":{"0":"男","1":"女"}',
       rules:
         "可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>",
       props: '可添加当前组件所有prop属性及事件方法'
@@ -1516,8 +1516,6 @@
       case 1:
         return '数据源接口URL,可带参数'
       case 2:
-        return '方法名称'
-      case 3:
         return '字典key，默认为字段标识'
     }
     return ''

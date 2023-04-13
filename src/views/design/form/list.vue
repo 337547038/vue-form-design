@@ -243,7 +243,7 @@
           value: 'id', //　指定id为value的值
           help: '哪些角色可以查看'
         },
-        name: 'role',
+        name: 'roleId',
         item: {
           label: '权限角色'
         }

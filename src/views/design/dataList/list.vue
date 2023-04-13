@@ -239,7 +239,6 @@
         },
         options: [],
         config: {
-          // todo
           optionsType: 1,
           optionsFun: 'roleList', //　可以为url也可以为api中的key
           method: 'post',
@@ -247,7 +246,7 @@
           value: 'id', //　指定id为value的值
           help: '哪些角色可以查看'
         },
-        name: 'role',
+        name: 'roleId',
         item: {
           label: '权限角色'
         }

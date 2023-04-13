@@ -8,7 +8,7 @@
       <div class="main-body">
         <div class="header">
           <div class="field">
-            <el-popover placement="bottom" :width="400" trigger="hover">
+            <el-popover placement="bottom" :width="420" trigger="hover">
               <template #reference>
                 <el-button type="primary" plain size="small"
                   >添加表格列字段</el-button
@@ -21,12 +21,13 @@
                   :key="index"
                 >
                   <h3>{{ item.label }}</h3>
-                  <el-checkbox
-                    :label="li.label"
-                    v-for="li in item.options"
-                    :key="li.prop"
-                    @change="fieldSelectClick(li, $event)"
-                  />
+                  <div class="list">
+                    <el-checkbox
+                      :label="li.label"
+                      v-for="li in item.options"
+                      :key="li.prop"
+                      @change="fieldSelectClick(li, $event)"
+                  /></div>
                 </div>
               </div>
             </el-popover>
@@ -94,6 +95,7 @@
             :data="[{}]"
             v-bind="state.tableData.tableProps || {}"
             ref="tableEl"
+            v-if="state.refreshTable"
           >
             <template
               v-for="item in state.tableData.columns"
@@ -178,7 +180,6 @@
                           v-model="tag.type"
                           @change="configChange"
                         >
-                          <el-option label="default" value="" />
                           <el-option label="success" value="success" />
                           <el-option label="info" value="info" />
                           <el-option label="warning" value="warning" />
@@ -349,7 +350,8 @@
     previewVisible: false,
     tabsName: 'second',
     formFieldList: [], // 表单数据源所有可选字段
-    dict: {}
+    dict: {},
+    refreshTable: true
   })
   const drawer = reactive({
     visible: false,
@@ -817,6 +819,14 @@
         const oldItem = state.tableData.columns[evt.oldIndex]
         state.tableData.columns.splice(evt.oldIndex, 1)
         state.tableData.columns.splice(evt.newIndex, 0, oldItem)
+        // 重染表格，否则点下面的设置对不上了
+        state.refreshTable = false
+        nextTick(() => {
+          state.refreshTable = true
+          nextTick(() => {
+            columnDrop() // 拖完后拖不到了，再执行一下
+          })
+        })
       }
     })
   }
@@ -843,7 +853,15 @@
       filterFiled(content)
     })
   }
-  const excludeType = ['txt', 'title', 'table', 'component', 'upload', 'button']
+  const excludeType = [
+    'txt',
+    'title',
+    'table',
+    'component',
+    'upload',
+    'button',
+    'tinymce'
+  ]
   const filterFiled = (obj: any) => {
     obj?.list.forEach((item: FormList) => {
       if (item.type === 'grid' || item.type === 'tabs') {

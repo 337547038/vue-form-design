@@ -86,17 +86,17 @@ $mainColor: #66b1ff;
     }
     .flex-item {flex: 2;}
   }
-  .group-txt{margin-bottom: 18px}
+  .group-txt {margin-bottom: 18px}
   .div-layout {
     /*&.inline {
       .drag {display: inline-flex}
       .group {width: auto;margin-right: 10px}
     }*/
     &.right {
-      .drag{text-align: right;justify-content: flex-end}
+      .drag {text-align: right;justify-content: flex-end}
     }
     &.center {
-      .drag{text-align: center;justify-content: center}
+      .drag {text-align: center;justify-content: center}
     }
     &.left {
 
@@ -107,7 +107,7 @@ $mainColor: #66b1ff;
   .el-select {
     .el-input__wrapper .el-input__suffix {position: absolute;right: 10px}
   }
-  .group{width: 100%}
+  .group {width: 100%}
   .drag {display: flex;flex-wrap: wrap}
   &.form-row-2 {
     .group {width: 50%}
@@ -168,6 +168,10 @@ $mainColor: #66b1ff;
     }
     &:hover {border-color: $mainColor;background: #ecf5ff}
     > div {margin-bottom: 0}
+    &:after{content: '';position: absolute;left: 0;top:0;right: 0;bottom: 0;opacity: 0;z-index: 1;display: block;}
+    &.group-grid,&.group-tabs,&.group-card,&.group-flex,&.group-div{
+      &:after{display: none}
+    }
   }
   .group-inputSlot {border-color: #eebe77;display: inline-block;
     &:hover, &.active {border-color: #eebe77 !important;}
@@ -212,7 +216,7 @@ $mainColor: #66b1ff;
     .table-tip {color: #999;padding: 30px 0;line-height: 22px}
     .search-box {position: relative;
       &:after {content: '';width: 100%;height: 100%;position: absolute;left: 0;right: 0;bottom: 0;top: 0;z-index: 2;cursor: pointer;}
-      .group{width: auto;margin-right: 10px}
+      .group {width: auto;margin-right: 10px}
     }
     .control-btn {padding: 10px 0;
       margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center
@@ -236,10 +240,15 @@ $mainColor: #66b1ff;
 }
 .table-field-list {
   h3 {font-size: 14px}
+  .item {margin-bottom: 20px}
+  .list {display: flex;justify-content: flex-start;flex-wrap: wrap;
+    label {width: 25%;margin: 0}
+  }
 }
 .table-list-comm {display: flex;justify-content: space-between;
-  .tree-sidebar {width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px;flex-shrink:0;
-  .el-input{margin-bottom: 10px}}
+  .tree-sidebar {width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px;flex-shrink: 0;
+    .el-input {margin-bottom: 10px}
+  }
   .table-list {flex: 1;}
   .table-main {margin-bottom: 20px;
     &.hide-vertical-scroll { // 固定了横向滚动条时，禁用表格固定头部的滚动
@@ -253,7 +262,7 @@ $mainColor: #66b1ff;
     .drag {display: flex;flex-wrap: wrap;
       > div {margin-right: 10px}
     }
-    .group{width: auto}
+    .group {width: auto}
     .search-icon {margin-left: 10px;height: 30px;cursor: pointer;position: absolute;right: 0;top: 0}
     .autoHeight-enter-active,
     .autoHeight-leave-active {

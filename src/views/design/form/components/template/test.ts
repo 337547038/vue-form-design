@@ -11,19 +11,11 @@ export const formData = {
       config: {},
       name: 'input1663920706618',
       item: {
-        label: '单行文本',
-        showLabel: false
+        label: '单行文本'
       }
     }
   ],
   form: {
-    labelWidth: '',
-    class: '',
-    size: 'default',
-    name: 'form1663920704871'
-  },
-  config: {
-    title: 'form1663920704871',
-    formId: ''
+    size: 'default'
   }
 }
