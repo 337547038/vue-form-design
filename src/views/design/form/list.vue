@@ -44,10 +44,10 @@
   const tableData = ref({
     columns: [
       { label: '勾选', type: 'selection' },
-      { prop: 'id', label: 'ID' },
+      { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '表单名称', width: '150px' },
       /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
-      { prop: 'sourceName', label: '数据源名称/ID', width: '130px' },
+      { prop: 'sourceName', label: '数据源名称/ID', width: '150px' },
       { prop: 'category', label: '分类', config: { dictKey: 'form' } },
       {
         prop: 'status',

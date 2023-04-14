@@ -97,11 +97,13 @@
         v-bind="control"
         :name="control.file || 'file'"
         :disabled="editDisabled"
-        v-model:file-list="fileList"
+        :file-list="fileList"
         :class="{
-          limit: control.limit <= control.modelValue.length
+          limit: control.limit <= fileList.length
         }"
         :on-error="uploadError"
+        :on-success="uploadSuccess"
+        :on-remove="uploadRemove"
       >
         <el-button type="primary" v-if="config.btnText"
           >{{ config.btnText }}
@@ -113,7 +115,14 @@
           </div>
         </template>
       </el-upload>
-
+      <component
+        v-if="['cascader', 'treeSelect'].includes(data.type)"
+        :is="currentComponent"
+        v-bind="control"
+        :disabled="editDisabled"
+        :options="options"
+        v-model="value"
+      />
       <component
         v-if="
           [
@@ -124,16 +133,13 @@
             'colorPicker',
             'timePicker',
             'datePicker',
-            'cascader',
             'component',
-            'treeSelect',
             'expand-user'
           ].includes(data.type)
         "
         :is="currentComponent"
         v-bind="control"
         :disabled="editDisabled"
-        :options="options"
         v-model="value"
       />
       <template v-if="data.type === 'tinymce'">
@@ -218,7 +224,6 @@
         tProp: props.tProp
       })
   }
-  // todo upload需特殊处理
   const value = computed({
     get() {
       if (props.tProp) {
@@ -249,38 +254,7 @@
     }
     return formatNumber(val)
   }
-  const fileList = ref([]) // 图片上传列表
-  // todo
-  // const setFileList = (val: any) => {
-  //   // 这里兼容modelValue为字符串和数组两种
-  //   if (props.data.type === 'upload') {
-  //     if (val && typeof val === 'string') {
-  //       const temp: any = []
-  //       val.split(',').forEach((item: any) => {
-  //         temp.push({
-  //           name: '',
-  //           url: item
-  //         })
-  //       })
-  //       fileList.value = temp
-  //     } else if (typeof val === 'object') {
-  //       fileList.value = val
-  //     }
-  //   }
-  // }
-  // todo setFileList(props.modelValue)
 
-  // watch(
-  //   () => props.data,
-  //   (val: FormList) => {
-  //     console.log('watchok')
-  //     control.value = val.control || {}
-  //     options.value = val.options || []
-  //   },
-  //   {
-  //     /*deep: true */
-  //   }
-  // )
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
   const getControlByName = inject(constGetControlByName) as any
   const sourceFunKey = computed(() => {
@@ -512,34 +486,51 @@
       }
     }
   )
-  // 图片上传
-  watch(
-    () => fileList.value,
-    (val: any) => {
-      if (val && val.length) {
-        let temp: any = []
-        val.forEach((item: any) => {
-          if (item.response) {
-            // 新增数据
-            temp.push(item.response?.path)
-          } else {
-            // 原来
-            temp.push(item.url)
-          }
+  // ------------图片上传处理-----------
+  const fileList = computed(() => {
+    const imgVal = formProps.value.model[props.data.name]
+    if (imgVal && typeof imgVal === 'string') {
+      const temp: any = []
+      imgVal.split(',').forEach((item: string) => {
+        temp.push({
+          name: item,
+          url: item
         })
-        control.value.modelValue = temp.join(',')
-      } else {
-        control.value.modelValue = ''
+      })
+      return temp
+    }
+    return imgVal || [] // 这样可支持默认值为array([name:'',url:''这种形式])
+  })
+  // 上传成功时
+  const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
+    const oldList = []
+    fileList.value.forEach((item: any) => {
+      oldList.push(item.url)
+    })
+    oldList.push(response.path)
+    updateModel(oldList.join(','))
+    control.value.onSuccess &&
+      control.value.onSuccess(response, uploadFile, uploadFiles)
+  }
+  //　从列表移除
+  const uploadRemove = (uploadFile: any, uploadFiles: any) => {
+    const oldList: any = []
+    fileList.value.forEach((item: any) => {
+      if (item.url !== uploadFile.url) {
+        oldList.push(item.url)
       }
-    },
-    { deep: true }
-  )
+    })
+    updateModel(oldList.join(','))
+    control.value.onRemove && control.value.onRemove(uploadFile, uploadFiles)
+    // todo 需从服务端删除已上传图片时，这里需要发删除请求接口
+  }
   // 上传错误
   const uploadError = (err: any, file: any, fileList: any) => {
     // console.log('uploadError')
     ElMessage.error(file.name + '上传失败')
     control.value.onError && control.value.onError(err, file, fileList)
   }
+  // -------------图片上传结束----------------
   /****input slot处理***/
   const getInputSlot = (key?: string) => {
     const slot = key === 'p' ? config.value.prepend : config.value.append
@@ -576,10 +567,5 @@
   onMounted(() => {
     getAxiosOptions()
   })
-  onUnmounted(() => {
-    // console.log('formItem onUnmounted')
-    // formOptions.value = ''
-    // control.value = ''
-    // options.value = ''
-  })
+  onUnmounted(() => {})
 </script>

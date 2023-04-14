@@ -1,6 +1,6 @@
 <!-- Created by 337547038 -->
 <template>
-  <div>
+  <div v-loading="state.loading" style="min-height: 300px">
     <ak-form
       ref="formEl"
       :formData="state.formData"
@@ -21,6 +21,8 @@
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { string2json, stringToObj } from '@/utils/form'
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
   const route = useRoute().query
   const router = useRouter()
   const formEl = ref()
@@ -32,7 +34,8 @@
     },
     dict: {},
     formId: route.form,
-    id: route.id
+    id: route.id,
+    loading: true
   })
   const formType = computed(() => {
     // 带有参数id为编辑状态
@@ -60,9 +63,15 @@
           if (route.id || state.formData.config?.addLoad) {
             formEl.value.getData({ formId: state.formId, id: route.id })
           }
+          layoutStore.changeBreadcrumb([
+            { label: '内容管理' },
+            { label: result.name }
+          ])
         }
+        state.loading = false
       })
       .catch((res: any) => {
+        state.loading = false
         ElMessage.error(res.message || '非法操作..')
       })
   }

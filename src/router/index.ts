@@ -54,7 +54,7 @@ router.afterEach((to: any) => {
     const navListJson = JSON.parse(navList)
     const list: any = []
     getNavName(navListJson, to, list)
-    // console.log(list)
+    console.log(list)
     const spliceList = []
     if (list?.length) {
       for (let i = list.length - 1; i >= 0; i--) {

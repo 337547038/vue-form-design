@@ -23,7 +23,6 @@
     defineProps<{
       modelValue?: string
       disabled?: boolean
-      options?: any
       placeholder?: string
     }>(),
     {}

@@ -1,32 +1,23 @@
 {
   "code": 1,
   "data": {
+    "dict": {
+      "status": {
+        "0": "停用",
+        "1": "正常"
+      }
+    },
     "list": [
       {
-        "category": 0,
+        "id": 1,
+        "name": "管理员",
         "status": 1,
-        "creatDate": "",
-        "creatName": "admin",
-        "id": 13,
-        "name": "客户信息管理",
-        "remark": "客户信息管理",
-        "tableName": "ak-customer",
-        "updateDate": ""
-      },
-      {
-        "category": 0,
-        "status": 1,
-        "creatDate": "",
-        "creatName": "admin",
-        "id": 12,
-        "name": "组件字段示例",
-        "remark": "组件字段示例",
-        "tableName": "ak-test",
-        "updateDate": ""
+        "menuId": "2,16,17,18,20,19,3,8,9,10,11,12,13,14,15,4,5,6,7",
+        "remark": ""
       }
     ],
     "pageInfo": {
-      "total": 2
+      "total": 1
     }
   },
   "message": "成功"

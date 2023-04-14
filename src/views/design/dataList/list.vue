@@ -9,7 +9,7 @@
       :beforeRequest="beforeRequest"
     >
       <template #sourceName="{ row }">
-        <router-link :to="`/design/form?id=${row.id}`"
+        <router-link :to="`/design/form?id=${row.source}`"
           >{{ row.sourceName }}/{{ row.source }}</router-link
         >
       </template>
@@ -49,7 +49,7 @@
   const tableData = ref({
     columns: [
       { label: '勾选', type: 'selection' },
-      { prop: 'id', label: 'ID' },
+      { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '名称', width: '150px' },
       /*{ prop: 'source', label: '表单ID', width: '110px' },*/
       { prop: 'sourceName', label: '表单名称/ID', width: 150 },
@@ -134,7 +134,7 @@
         click: (row: any) => {
           router.push({
             path: '/design/dataList/content',
-            query: { id: row.id, form: row.source }
+            query: { id: row.id }
           })
         }
       },

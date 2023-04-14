@@ -594,7 +594,7 @@
   const tagAdd = () => {
     state.tagList.push({
       value: '',
-      type: 'default'
+      type: 'success'
     })
   }
   const configChange = () => {

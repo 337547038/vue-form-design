@@ -1,9 +1,9 @@
 <!-- Created by 337547038  -->
 <template>
   <el-input
-    :disabled="disabled"
-    v-model="value"
     placeholder="请选择用户或输入用户名称"
+    v-bind="$props"
+    v-model="value"
     @click="openDialog"
   >
     <template #append>
@@ -95,12 +95,9 @@
   const props = withDefaults(
     defineProps<{
       modelValue?: string
-      multiple?: boolean //是否多选
       disabled?: boolean
     }>(),
-    {
-      multiple: false
-    }
+    {}
   )
 
   const emits = defineEmits<{

@@ -202,6 +202,56 @@
           "empty": false,
           "remark": "",
           "enterable": true
+        },
+        {
+          "label": "前缀",
+          "name": "prepend",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "后缀",
+          "name": "append",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "密码框",
+          "name": "password",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "文本框2",
+          "name": "input1",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "文本框1",
+          "name": "input1",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
         }
       ]
     },

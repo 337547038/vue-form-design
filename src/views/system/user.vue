@@ -138,7 +138,7 @@
       { label: '多选', type: 'selection' },
       { label: '序号', type: 'index', width: '70px' },
       { label: '登录名称', prop: 'userName' },
-      { label: '昵称', prop: 'nickname' },
+      { label: '昵称', prop: 'nickName' },
       { label: '手机号码', prop: 'phone' },
       { label: '角色', prop: 'role' },
       {
@@ -427,10 +427,11 @@
     // 使用弹窗方式打开新增编辑
     if (btn.key === 'add' || btn.key === 'edit') {
       // 打开弹窗
+      const newRow = jsonParseStringify(row)
       dialog.visible = true
       dialog.title = btn.key === 'add' ? '新增' : '编辑'
       dialog.formType = btn.key === 'add' ? 1 : 2
-      dialog.editId = row && row.id
+      dialog.editId = newRow && newRow.id
       // if (btn.key === 'add' && formData.value.config?.addLoad) {
       //   // 添加时需要加载数据
       //   nextTick(() => {
@@ -440,16 +441,16 @@
       // 编辑，根据id加载
       if (btn.key === 'edit') {
         nextTick(() => {
-          console.log(row)
+          console.log(newRow)
           // 将角色数据转换下
-          if (row.role) {
-            row.role = row.role.split(',')
+          if (typeof newRow.role === 'string') {
+            newRow.role = newRow.role.split(',')
           } else {
-            row.role = []
+            newRow.role = []
           }
           // 将密码值设给确认密码框
-          row.password2 = row.password
-          formEl.value.setValue(jsonParseStringify(row))
+          newRow.password2 = newRow.password
+          formEl.value.setValue(newRow)
           //formEl.value.getData({ id: row.id })
         })
       }

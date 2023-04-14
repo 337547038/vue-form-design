@@ -21,10 +21,19 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
     options
   )
   // github演示时使用下面地址
-  if (window.location.host.indexOf('github') !== -1) {
+  if (window.location.host.indexOf('localhost') !== -1) {
     let id = ''
     if (url.indexOf('/id') !== -1 && data.id) {
-      id = data.id
+      id = data.id + ''
+    }
+    if (url.indexOf('/id') !== -1 && data.formId) {
+      id += data.formId
+    }
+    if (url.indexOf('design/list') !== -1 && data.type) {
+      id = data.type
+    }
+    if (url.indexOf('content/list') !== -1 && data.formId) {
+      id = data.formId
     }
     if (
       url.includes('/save') ||

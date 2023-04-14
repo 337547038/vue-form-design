@@ -217,7 +217,7 @@ export default [
         label: '图片/文件',
         icon: 'image',
         control: {
-          modelValue: []
+          modelValue: '' // 也可以是[{name:'',url:''}]形式
         },
         config: {}
       },

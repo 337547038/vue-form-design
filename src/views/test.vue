@@ -9,16 +9,20 @@
       editUrl=""
       :beforeSubmit="beforeSubmit"
     />
+    <el-button @click="setValue">setvalue</el-button>
   </div>
 </template>
 <script setup lang="ts">
   import { ref, computed, provide } from 'vue'
   const formNameEl = ref()
+  const setValue = () => {
+    formNameEl.value.setValue({ upload: '/ab/a.jpg' })
+  }
   const formData = ref({
     list: [
       {
         type: 'upload',
-        control: { modelValue: [] },
+        control: { modelValue: '' },
         config: {},
         name: 'upload',
         item: { label: '图片/文件' }
