@@ -13,7 +13,7 @@
           class="mask-right"
           v-if="i === flowBranch.length - 1 && isBranch"
         ></span>
-        <div class="flow-item" @click="itemClick(item, i)">
+        <div class="flow-item" @click="itemClick(item, i, flowBranch.length)">
           <div class="title" :class="`bg-${item.nodeType}`">
             <i :class="getIcon(item)"></i>
             <span
@@ -22,7 +22,7 @@
             >
             <i
               class="icon-close close"
-              @click="delClick(item)"
+              @click.stop="delClick(item)"
               v-if="
                 item.nodeType !== 1 &&
                 !type &&
@@ -46,28 +46,21 @@
       </div>
     </div>
     <popover v-if="isBranch && !type" @click="addNodeClick($event, data)" />
-    <drawer ref="drawerEl" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { computed, inject } from 'vue'
   import type { NodeList, EmitsEvent } from '../types'
   import Popover from './popover.vue'
-  import Drawer from './drawer.vue'
   import { nodeTypeName, userTypeList } from './dict'
 
   const props = withDefaults(
     defineProps<{
       data: any // 当前数据
-      dataList: any // 所有节点数据
-      type: number // 展示模式
     }>(),
     {
       data: () => {
-        return []
-      },
-      dataList: () => {
         return []
       }
     }
@@ -75,7 +68,13 @@
   const emits = defineEmits<{
     (e: 'clickEvent', data: EmitsEvent): void
   }>()
-  const drawerEl = ref()
+  const flowProps = inject('flowProps') as any
+  const dataList = computed(() => {
+    return flowProps.value.nodeData
+  })
+  const type = computed(() => {
+    return flowProps.value.type
+  })
   const getIcon = (obj: NodeList) => {
     switch (obj.nodeType) {
       case 1:
@@ -92,7 +91,7 @@
       userType = (userTypeList as any)[obj.userType] + ':'
     }
     // 不是选了具体人员时
-    if (['1', '2', '3'].includes(obj.userType as string)) {
+    if (['2', '3', '4'].includes(obj.userType as string)) {
       return userType
     }
     if (obj.content) {
@@ -108,9 +107,11 @@
   }
   const flowBranch = computed(() => {
     if (isBranch.value) {
-      return props.dataList.filter(
-        (i: NodeList) => i.parentId === props.data.id
-      )
+      return dataList.value
+        .filter((i: NodeList) => i.parentId === props.data.id)
+        .sort((a: any, b: any) => {
+          return b.priority - a.priority
+        })
     } else {
       return [props.data]
     }
@@ -119,7 +120,7 @@
     return props.data.nodeType === 4
   })
   const getChildrenNode = (obj: NodeList) => {
-    return props.dataList.filter((i: NodeList) => i.parentId === obj.id)
+    return dataList.value.filter((i: NodeList) => i.parentId === obj.id)
   }
   // 添加条件分支
   const addBranchClick = () => {
@@ -147,14 +148,15 @@
   const clickEvent = (data: EmitsEvent) => {
     emits('clickEvent', data)
   }
-  const itemClick = (data: NodeList, index: number) => {
+  const itemClick = (data: NodeList, index: number, length: number) => {
     if (
       data.nodeType === 1 ||
       (data.nodeType === 5 && index === flowBranch.value.length - 1)
     ) {
       // 发起人节点和条件最后一个节点不能设置
     } else {
-      drawerEl.value.open(data, index)
+      flowProps.value.openDrawer &&
+        flowProps.value.openDrawer(data, index, length)
     }
   }
   // const drawerConfirm = (obj: any) => {

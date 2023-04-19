@@ -21,7 +21,7 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
     options
   )
   // github演示时使用下面地址
-  if (window.location.host.indexOf('localhost') !== -1) {
+  if (window.location.host.indexOf('localhost1') !== -1) {
     let id = ''
     if (url.indexOf('/id') !== -1 && data.id) {
       id = data.id + ''
@@ -44,6 +44,9 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
       url.includes('/single')
     ) {
       url = 'ok'
+    }
+    if (options.method) {
+      delete options.method
     }
     obj = Object.assign(
       {

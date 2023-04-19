@@ -19,7 +19,7 @@
       >{{ data.config.delBtnText }}</el-button
     >
   </div>
-  <el-form-item v-if="data.config?.addBtnText && [1, 2].includes(type)">
+  <el-form-item v-if="data.config?.addBtnText && [1, 2, 5].includes(type)">
     <el-button class="flex-add-btn" size="small" @click="addRow"
       >{{ data.config.addBtnText }}
     </el-button>
@@ -53,6 +53,7 @@
     props.data.list.forEach((item: any) => {
       temp[item.name] = item.control.modelValue
     })
+    console.log(temp)
     return temp
   }
   const addRow = () => {

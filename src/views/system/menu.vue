@@ -36,8 +36,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, nextTick, markRaw } from 'vue'
-  import iconfont from '@/components/iconfont.vue'
+  import { ref, reactive, nextTick } from 'vue'
+  //import iconfont from '@/components/iconfont.vue'
   import { useRouter } from 'vue-router'
   const router = useRouter()
   const tableListEl = ref()
@@ -181,7 +181,7 @@
           dialog.formType = 2
           dialog.editId = row.id
           nextTick(() => {
-            formNameEl.value.setValue(row)
+            formNameEl.value.setValue(row, true)
           })
         }
       },
@@ -250,7 +250,8 @@
           modelValue: ''
         },
         config: {
-          componentName: markRaw(iconfont)
+          // componentName: markRaw(iconfont)
+          componentName: 'DiyIconfont'
         },
         name: 'icon',
         item: {

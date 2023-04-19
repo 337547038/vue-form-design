@@ -103,7 +103,7 @@ $mainColor: #66b1ff;
     }
   }
   // 设置默认下input和select一样宽
-  .el-input {width: auto;}
+  .el-select {width: 100%;}
   .el-select {
     .el-input__wrapper .el-input__suffix {position: absolute;right: 10px}
   }
@@ -161,7 +161,7 @@ $mainColor: #66b1ff;
     padding: 0;
     width: 100%;
   }
-  .group {border: 1px dashed #ddd;margin: 2px;padding: 5px;position: relative;min-height: 50px;
+  .group {border: 1px dashed #ddd;margin: 2px 2px 10px 2px;padding: 5px;position: relative;min-height: 50px;
     &.active {border: 3px solid $mainColor;position: relative;
       > .drag-control {display: block}
       > .tooltip {display: block;}
@@ -169,7 +169,7 @@ $mainColor: #66b1ff;
     &:hover {border-color: $mainColor;background: #ecf5ff}
     > div {margin-bottom: 0}
     &:after{content: '';position: absolute;left: 0;top:0;right: 0;bottom: 0;opacity: 0;z-index: 1;display: block;}
-    &.group-grid,&.group-tabs,&.group-card,&.group-flex,&.group-div{
+    &.group-grid,&.group-tabs,&.group-card,&.group-flex,&.group-div,&.group-table{
       &:after{display: none}
     }
   }

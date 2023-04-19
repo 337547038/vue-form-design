@@ -40,6 +40,7 @@
     constFormProps
   } from '../../utils'
   import formatResult from '@/utils/formatResult'
+  import formChangeValue from '@/utils/formChangeValue'
   import { jsonParseStringify } from '@/utils'
 
   const props = withDefaults(
@@ -165,6 +166,17 @@
         // 表格和弹性布局不是这里更新，只触change
         model.value[key] = value
       }
+      // 支持在线方式数据处理，如A组件值改变时，可自动修改B组件的值，可参考请假流程自动时长计算
+      if (props.formData.events?.change) {
+        model.value = props.formData.events.change(key, model.value)
+      }
+      const onFormChange = props.formData.events?.change
+      if (onFormChange && typeof onFormChange === 'string') {
+        model.value = formChangeValue(key, model.value, onFormChange)
+      } else if (onFormChange && typeof onFormChange === 'function') {
+        model.value = onFormChange(key, model.value)
+      }
+
       // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分
       emits('change', { key, value, data, tProp })
     }
@@ -243,9 +255,18 @@
     }
   }
   // 对表单设置初始值
-  const setValue = (obj: { [key: string]: any }) => {
-    // 直接更新model值即可
-    model.value = jsonParseStringify(obj) // 防止列表直接使用set方法对弹窗表单编辑，当重置表单时当前行数据被清空
+  const setValue = (obj: { [key: string]: any }, filter?: boolean) => {
+    // 分两种，false时将obj所有值合并到model，当obj有某些值不存于表单中，也会合并到model，当提交表单也会提交此值
+    // true则过滤没用的值，即存在当前表单的才合并
+    if (filter) {
+      for (const key in obj) {
+        if (model.value[key] !== undefined) {
+          model.value[key] = obj[key]
+        }
+      }
+    } else {
+      model.value = Object.assign({}, model.value, jsonParseStringify(obj)) // 防止列表直接使用set方法对弹窗表单编辑，当重置表单时当前行数据被清空
+    }
   }
   // 对表单选择项快速设置
   const setFormOptions = ref({})
@@ -380,6 +401,7 @@
         } else if (typeof props.beforeSubmit === 'function') {
           submitParams = props.beforeSubmit(formatParams, route)
         }
+        // console.log('okkk')
         if (submitParams === false) {
           return
         }
@@ -459,6 +481,7 @@
     getValue,
     validate,
     resetFields,
-    getData
+    getData,
+    submit
   })
 </script>

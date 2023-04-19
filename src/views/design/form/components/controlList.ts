@@ -198,7 +198,7 @@ export default [
           border: true
         },
         config: {
-          add: '添加一行'
+          addBtnText: '添加一行'
         }
       },
       {
@@ -283,7 +283,7 @@ export default [
         tableData: [], // 值集合
         control: {},
         config: {
-          add: '添加一行'
+          addBtnText: '添加一行'
         }
       },
       {

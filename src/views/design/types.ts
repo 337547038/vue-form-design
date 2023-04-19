@@ -45,6 +45,7 @@ export interface FormData {
     afterResponse?: Function | string
     beforeSubmit?: Function
     afterSubmit?: Function
+    change?: Function
   }
 }
 

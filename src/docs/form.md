@@ -35,14 +35,15 @@
 | change   | 表单组件值发生变化事件(key,value,data)。key：组件的name值，value：组件当前的值，data当前组件所在的list数据 |
 ### Methods
 
-| 方法                         | 说明                                      |
-|----------------------------|-----------------------------------------|
-| validate                   | 表单校验方法                                  |
-| getValue                   | 用于获取表单的值                                |
-| setValue                   | 对表单设置初始值                                |
-| setOptions                 | 对表单选择项快速设置                              |
-| resetFields                | 重置表单方法                                  |
-| getData                    | 加载表单初始数据(params:any)                    |
+| 方法          | 说明                                                               |
+|-------------|------------------------------------------------------------------|
+| validate    | 表单校验方法                                                           |
+| getValue    | 用于获取表单的值                                                         |
+| setValue    | 对表单设置初始值(model,filter:boolean) filter=true时将会过滤掉model中不属于当前表单的字段 |
+| setOptions  | 对表单选择项快速设置                                                       |
+| resetFields | 重置表单方法                                                           |
+| getData     | 加载表单初始数据(params:any)                                             |
+| submit      | 表单提交                                                             |
 
   两个全局特殊方法
 
@@ -107,9 +108,10 @@ formData = {
         {
           optionsType:0, // 0固定选项　1数据源　2字典
           optioinsFun:'', //　接口url、方法名、字典key
-          method: "get", // optionsType=1时的数据请求方式
+          method: "get", // optionsType=1时的数据请求方式，默认post
           value:'', // 指定value的属性,仅optionsType＝1有效
-          label:'' // 指定label的属性,仅optionsType＝1有效
+          label:'', // 指定label的属性,仅optionsType＝1有效
+          debug:true // optionsType＝1时会将请求结束保存在sessionStorage,减少不必要的请求，debug=true时不保存方便调试
         },
       item:
         {
@@ -145,6 +147,10 @@ formData = {
     afterSubmit: (type,res) => {
       // type=success/fail
       console.log(res)
+    },
+    change: (name, model) => {
+      // name当前组件的name,model当前表单的值
+      return model
     }
   }
 }

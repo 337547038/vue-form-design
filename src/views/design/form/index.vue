@@ -69,7 +69,7 @@
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { useRoute, useRouter } from 'vue-router'
-  import { afterResponse, beforeRequest } from '../utils'
+  import { afterResponse, beforeRequest, onChange } from '../utils'
   import {
     json2string,
     objToStringify,
@@ -315,22 +315,32 @@
         break
       case 'beforeRequest':
       case 'beforeSubmit':
+      case 'afterResponse':
+      case 'afterSubmit':
+      case 'change':
         const beforeData = state.formData.events || {}
         if (beforeData[type]) {
           editData = objToStringify(beforeData[type], true)
         } else {
-          editData = beforeRequest
+          if (['afterResponse', 'afterSubmit'].includes(type)) {
+            editData = afterResponse
+          } else if (type === 'change') {
+            editData = onChange
+          } else {
+            editData = beforeRequest
+          }
         }
         break
-      case 'afterResponse':
-      case 'afterSubmit':
-        const newData = state.formData.events || {}
-        if (newData[type]) {
-          editData = objToStringify(newData[type], true)
-        } else {
-          editData = afterResponse
-        }
-        break
+      // case 'afterResponse':
+      // case 'afterSubmit':
+      //   const newData = state.formData.events || {}
+      //   if (newData[type]) {
+      //     editData = objToStringify(newData[type], true)
+      //   } else {
+      //     editData = afterResponse
+      //   }
+      //   break
+
       case 'optionsParams':
         if (!content) {
           editData = beforeRequest

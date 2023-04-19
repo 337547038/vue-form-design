@@ -13,12 +13,17 @@
         <template v-if="nodeData.nodeType === 5">
           <el-form-item label="优先级">
             <el-select v-model="state.priority">
-              <el-option value="1">1</el-option>
+              <el-option
+                :value="item"
+                v-for="item in branchLen - 1"
+                :key="item"
+                >{{ item }}</el-option
+              >
             </el-select>
           </el-form-item>
           <el-form-item>
             <div>条件规则</div>
-            <el-input type="textarea" rows="5" v-model="state.rules" />
+            <el-input type="textarea" rows="5" v-model="state.content" />
           </el-form-item>
           <div class="tip">
             可使用运算符+-*/()&lt;&gt;=&&||符号编写条件规则，$代表当前流程表单所有值，如$.name即为流程表单输入字段名称为name的值。<br />
@@ -37,16 +42,24 @@
               >
             </el-radio-group>
           </el-form-item>
-          <el-form-item v-if="['0', '4'].includes(state.userType)">
-            <el-button type="primary" @click="selectClick"
-              >选择/修改{{ userTypeList[state.userType] }}</el-button
-            >
-          </el-form-item>
-          <el-form-item>
-            <el-tag v-for="item in state.userList" :key="item.label" closable>
-              {{ item.label }}
-            </el-tag>
-          </el-form-item>
+          <template v-if="['1', '5'].includes(state.userType)">
+            <el-form-item>
+              <el-button type="primary" @click="selectClick"
+                >选择/修改{{ userTypeList[state.userType] }}</el-button
+              >
+            </el-form-item>
+            <el-form-item>
+              <el-tag
+                style="margin-right: 5px"
+                v-for="(item, index) in userTagList"
+                :key="item"
+                closable
+                @close="tagClose(index)"
+              >
+                {{ item }}
+              </el-tag>
+            </el-form-item>
+          </template>
           <el-form-item label="审批方式">
             <el-radio-group v-model="state.flowType">
               <el-radio label="1">多人审批，采用依次审批</el-radio>
@@ -67,43 +80,66 @@
       </el-form>
     </div>
   </el-drawer>
+  <user-dialog v-model="state.content" ref="userDialogEl" />
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive } from 'vue'
+  import { ref, reactive, computed } from 'vue'
   import type { NodeList } from '../types'
   import { userTypeList } from './dict'
   // const emits = defineEmits<{
   //   (e: 'confirm', val: any): void
   // }>()
+  const userDialogEl = ref()
   const visible = ref(false)
   const state = reactive({
-    userType: '0',
-    flowType: '1',
-    userList: [],
-    priority: 0,
-    rules: ''
+    userType: '',
+    flowType: '', // 审批方式
+    content: '',
+    priority: 1
   })
   const nodeData = ref({})
-  const branchIndex = ref(0) // 条件分支时，当前为第几个
+  //const branchIndex = ref(0) // 条件分支时，当前为第几个
+  const branchLen = ref(1)
   // 打开成员或系统角色选择弹窗
-  const selectClick = () => {}
+  const userTagList = computed(() => {
+    if (state.content && ['1', '5'].includes(state.userType)) {
+      return state.content.split(',')
+    }
+    return []
+  })
+  const tagClose = (index: number) => {
+    const list = state.content.split(',')
+    list.splice(index, 1)
+    state.content = list.join(',')
+  }
+  const selectClick = () => {
+    userDialogEl.value.open()
+  }
   const confirmClick = () => {
     visible.value = false
     // 将数据合并到当前节点
     const newObj = {
       userType: state.userType,
       flowType: state.flowType,
-      content:
-        nodeData.value.nodeType === 5 ? state.rules : state.userList.join(','),
+      content: state.content,
       priority: state.priority
     }
     Object.assign(nodeData.value, newObj)
   }
-  const open = (data: NodeList, index: number) => {
+  const open = (data: NodeList, index: number, length: number) => {
     visible.value = true
     nodeData.value = data
-    branchIndex.value = index
+    if (data.nodeType === 5) {
+      // 条件
+      state.priority = data.priority || 0
+    } else {
+      // 其他
+      state.userType = data.userType || '1'
+      state.flowType = data.flowType || '1'
+    }
+    state.content = data.content || ''
+    branchLen.value = length
   }
   defineExpose({
     open

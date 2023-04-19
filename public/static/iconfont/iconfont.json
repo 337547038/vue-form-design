@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "33172809",
+      "name": "发起的",
+      "font_class": "apply",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "1206679",
+      "name": "工作台",
+      "font_class": "work",
+      "unicode": "e68c",
+      "unicode_decimal": 59020
+    },
+    {
+      "icon_id": "5388003",
+      "name": "待办任务_o",
+      "font_class": "todo",
+      "unicode": "ebb1",
+      "unicode_decimal": 60337
+    },
+    {
+      "icon_id": "7158013",
+      "name": "我发起的",
+      "font_class": "applyed",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "20438918",
+      "name": "我的已办",
+      "font_class": "done",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
       "icon_id": "1766470",
       "name": "符号-按钮",
       "font_class": "button",
