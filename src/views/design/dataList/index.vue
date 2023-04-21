@@ -328,6 +328,9 @@
   import type { FormList } from '../types'
   import { useRouter, useRoute } from 'vue-router'
   import { ElMessage } from 'element-plus'
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '列表页设计' }])
   const vueFileEl = ref()
   const container = ref()
   const routeQuery = useRoute().query
@@ -361,7 +364,7 @@
     codeType: ''
   })
   const tooltip = reactive({
-    dict: "数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式JSON：sex:{0:'男',1:'女'}",
+    dict: '数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式JSON："sex":{"0":"男","1":"女"}',
     afterResponse:
       '提示：获取列表初始数据后事件，可对请求返回数据进行处理，也可为字符串，如opt="formatTest"',
     beforeRequest: '提示：获取列表初始数据前事件，可修改请求参数',

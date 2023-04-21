@@ -72,13 +72,13 @@
         width: 200,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
-      {
-        prop: 'updateDate',
-        label: '修改时间',
-        width: 200,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
-      },
-      { prop: 'editName', label: '最后修改' },
+      // {
+      //   prop: 'updateDate',
+      //   label: '修改时间',
+      //   width: 200,
+      //   config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+      // },
+      // { prop: 'editName', label: '最后修改' },
       { label: '操作', prop: '__control', width: '110px', fixed: 'right' }
     ],
     controlBtn: [
