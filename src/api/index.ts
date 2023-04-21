@@ -45,6 +45,9 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
     ) {
       url = 'ok'
     }
+    if (options.method) {
+      delete options.method
+    }
     obj = Object.assign(
       {
         url: `./mock/${url}${id}.json`,

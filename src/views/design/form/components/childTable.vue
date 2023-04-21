@@ -34,7 +34,7 @@
       <el-table-column
         prop="del"
         label="操作"
-        v-if="type === 1 && data.config.delBtnText && !editDisabled"
+        v-if="[1, 2].includes(type) && data.config.delBtnText && !editDisabled"
       >
         <template #default="scope">
           <el-button link type="primary" @click="delColumn(scope.$index)"
@@ -45,7 +45,7 @@
     </el-table>
     <div
       class="table-btn"
-      v-if="type === 1 && data.config.addBtnText && !editDisabled"
+      v-if="[1, 2].includes(type) && data.config.addBtnText && !editDisabled"
     >
       <el-button size="small" @click="addColumn">{{
         data.config.addBtnText

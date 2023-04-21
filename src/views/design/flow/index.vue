@@ -4,36 +4,55 @@
     <div class="tools">
       <el-button type="primary" @click="saveClick">保存</el-button>
     </div>
-    <el-tabs v-model="tabName" class="flow-tabs">
-      <el-tab-pane label="基础信息" name="info">
-        <ak-form :formData="formData" />
+    <el-tabs v-model="tabName" class="flow-tabs" @tab-click="tabsClick">
+      <el-tab-pane label="基础信息" name="info" class="tabs-info">
+        <ak-form
+          ref="formEl"
+          :formData="formData"
+          :type="formType"
+          addUrl="designSave"
+          editUrl="designEdit"
+          requestUrl="designById"
+          :beforeSubmit="beforeSubmit"
+          :afterSubmit="afterSubmit"
+          :afterResponse="afterResponse"
+        />
       </el-tab-pane>
       <el-tab-pane label="审批流程" name="flow">
-        <flow />
+        <flow ref="flowEl" />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
+  import { ref, computed, onMounted, nextTick } from 'vue'
   import Flow from './components/flow.vue'
   import { useRoute, useRouter } from 'vue-router'
-  const routeQuery = useRoute().query
+  //import iconfont from '@/components/iconfont.vue'
+  import { objToStringify, stringToObj } from '@/utils/form'
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '流程设计' }])
+
+  const formEl = ref()
+  const flowEl = ref()
+  const routeQuery = useRoute()
   const router = useRouter()
-  const tabName = ref(routeQuery.tabs || 'info')
+  //const flowData = ref()
+  const tabName = ref(routeQuery.query.tabs || 'info')
   const formData = ref({
     list: [
       {
         type: 'input',
         control: {
-          modelValue: ''
+          modelValue: '',
+          placeholder: '请输入流程名称'
         },
         config: {},
-        name: 'input1679749921564',
+        name: 'name',
         item: {
-          label: '流程名称',
-          showLabel: false
+          label: '流程名称'
         },
         customRules: [
           {
@@ -49,61 +68,43 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          optionsType: 0
+          optionsType: 1,
+          optionsFun: 'designList',
+          method: 'post',
+          // debug: true,
+          label: 'name',
+          value: 'id',
+          beforeRequest: (data: any) => {
+            // data经过处理后返回
+            // console.log('beforeRequest', data)
+            data.type = 1
+            return data
+          }
         },
-        name: 'select1679750228669',
+        name: 'source',
         item: {
           label: '流程表单',
-          showLabel: false,
           rules: [
             {
               required: true,
-              message: '必填项',
-              trigger: 'change'
+              message: '请选择流程表单',
+              trigger: 'blur'
             }
           ]
         }
       },
       {
-        type: 'select',
+        type: 'switch',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: 1,
+          activeValue: 1,
+          inactiveValue: 0
         },
-        options: [
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
-          request: 'get',
-          sourceFun: ''
+          optionsType: 2
         },
         name: 'status',
         item: {
@@ -113,13 +114,16 @@
       {
         type: 'component',
         control: {
-          modelValue: ''
+          modelValue: '',
+          colorPicker: true
         },
-        config: {},
-        name: 'component1679749975848',
+        config: {
+          //componentName: markRaw(iconfont)
+          componentName: 'DiyIconfont'
+        },
+        name: 'icon',
         item: {
-          label: '流程图标',
-          showLabel: false
+          label: '流程图标'
         }
       },
       {
@@ -128,30 +132,14 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
-          request: 'get',
-          sourceFun: ''
+          optionsType: 2,
+          optionsFun: 'flow'
         },
-        name: 'select1679749959675',
+        name: 'category',
         item: {
-          label: '所在分组',
-          showLabel: false
+          label: '所在分组'
         }
       },
       {
@@ -160,27 +148,15 @@
           modelValue: '',
           appendToBody: true
         },
-        options: [
-          {
-            label: '标签1',
-            value: 'value1'
-          },
-          {
-            label: '标签2',
-            value: 'value2'
-          },
-          {
-            label: '标签3',
-            value: 'value3'
-          }
-        ],
+        options: [],
         config: {
-          type: 'fixed',
-          source: 0,
-          request: 'get',
-          sourceFun: ''
+          // debug: true,
+          optionsType: 1,
+          optionsFun: 'roleList',
+          label: 'name',
+          value: 'id'
         },
-        name: 'select1679750006572',
+        name: 'roleId',
         item: {
           label: '角色权限',
           showLabel: false
@@ -191,8 +167,10 @@
         control: {
           modelValue: ''
         },
-        config: {},
-        name: 'textarea1679750029874',
+        config: {
+          span: 24
+        },
+        name: 'remark',
         item: {
           label: '备注说明',
           showLabel: false
@@ -200,18 +178,70 @@
       }
     ],
     form: {
-      labelWidth: '80px',
-      class: '',
-      size: 'default',
-      name: 'form1679749919739'
-    },
-    config: {
-      title: 'form1679749919739',
-      formId: ''
+      class: 'form-row-2',
+      labelWidth: '110px',
+      size: 'default'
     }
   })
-  const saveClick = () => {
-    // 保存成功后，当前为基础信息时，带id跳转到审批流程
-    router.push({ path: '/design/flow', query: { id: 'id', tabs: 'flow' } })
+  const id = computed(() => {
+    return routeQuery.query.id
+  })
+  const formType = computed(() => {
+    return id.value ? 2 : 1
+  })
+  const tabsClick = (pane: any) => {
+    if (pane.paneName === 'info') {
+      //getInitData()
+    }
   }
+  const saveClick = () => {
+    formEl.value.submit()
+  }
+  const beforeSubmit = (params: any) => {
+    if (id.value) {
+      params.id = id.value
+    }
+    if (params.icon) {
+      params.icon = params.icon?.join(',')
+    }
+    params.type = 3
+    if (flowEl.value?.getValue) {
+      params.data = objToStringify(flowEl.value?.getValue())
+      //console.log('flowEl.value.getValue()', flowEl.value.getValue())
+    }
+    return params
+  }
+  const afterResponse = (res: any) => {
+    if (res.icon) {
+      res.icon = res.icon.split(',')
+    }
+    flowEl.value.setValue(stringToObj(res.data))
+    return res
+  }
+  const afterSubmit = (type: string, res: any) => {
+    // 保存成功后，当前为基础信息时，带id跳转到审批流程
+    if (type === 'success') {
+      if (tabName.value === 'info') {
+        tabName.value = 'flow'
+        if (!id.value) {
+          const id = res.data.insertId
+          router.push({ path: '/design/flow', query: { id: id, tabs: 'flow' } })
+          nextTick(() => {
+            getInitData()
+          })
+        }
+      } else {
+        // 到所有流程列表
+        router.push({ path: '/design/flow/list' })
+      }
+    }
+  }
+  const getInitData = () => {
+    if (id.value) {
+      formEl.value.getData({ id: id.value })
+    }
+  }
+  onMounted(() => {
+    getInitData()
+  })
 </script>

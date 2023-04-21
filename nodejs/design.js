@@ -23,15 +23,19 @@ router.post('/list', async (req, res) => {
   const { pageIndex = 1, pageSize = 20 } = pageInfo
   const start = (pageIndex - 1) * pageSize
   const whereTemp = []
-  let datasource = ''
-  if (type) {
-    whereTemp.push(`type=${type}`)
-    if (type === 1) {
-      // 表单时
-      datasource = 'datasource'
-    } else {
-      datasource = 'design'
-    }
+  if (!type) {
+    res.json({
+      code: 0,
+      data: [],
+      message: '类型不能为空'
+    })
+    return
+  }
+  whereTemp.push(`type=${type}`)
+  let datasource = 'design'
+  if (type === 1) {
+    // 表单时
+    datasource = 'datasource'
   }
   if (category) {
     whereTemp.push(`category=${category}`)
@@ -125,7 +129,7 @@ router.post('/id', (req, res) => {
       message: 'id不能为空'
     })
   }
-  const sql = `SELECT data,listData,dict,name,source,category FROM \`design\` WHERE id=${id}`
+  const sql = `SELECT data,listData,dict,name,source,category,status,remark,icon,roleId FROM \`design\` WHERE id=${id}`
   sqlQuery(sql, [], res, (result) => {
     res.json({
       code: 1,

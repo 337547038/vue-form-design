@@ -92,6 +92,13 @@ export const afterResponse =
   '  return res\n' +
   '}'
 
+export const onChange =
+  'opt=(key,model) => {\n' +
+  '  // name当前改变组件的值,model表单的值\n' +
+  "  console.log('onChange',key)\n" +
+  '  return model\n' +
+  '}'
+
 // provide 方法定义的key
 const prefix = 'AK'
 export const constControlChange = prefix + 'ControlChange' // 表单组件改变事件

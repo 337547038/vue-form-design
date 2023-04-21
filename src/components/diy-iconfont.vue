@@ -30,8 +30,9 @@
 
 <script setup lang="ts">
   import { computed, ref } from 'vue'
-  import iconfontJson from '../../public/static/iconfont/iconfont.json'
-
+  // 直接从public目录导入会报错Assets in public cannot be imported from JavaScript
+  //import iconfontJson from '../../public/static/iconfont/iconfont.json'
+  import iconfontJson from './iconfont.json'
   const props = withDefaults(
     defineProps<{
       modelValue?: string | string[]

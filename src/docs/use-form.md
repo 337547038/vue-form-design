@@ -361,6 +361,18 @@ const formatResult = (res: any, key: string) => {
 
 同props.afterSubmit。表单提交后返回处理事件，方法跟afterResponse一样
 
+**8.表单组件改变事件change:**
+
+同props.change，类似于其他事件也支持本地`/utils/formChangeValue`方法
+
+```javascript
+opt=(key,model) => {
+  // name当前改变组件的值,model表单的值
+  console.log('onChange',key)
+  return model
+}
+```
+
 ### 全局方法
 
 **get[formName]ControlByName**

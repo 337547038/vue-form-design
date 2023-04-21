@@ -2,11 +2,11 @@ export interface NodeList {
   id: string
   nodeType: number
   parentId: string
-  content?: string
-  order?: number
+  content?: string // 选择的用户
   userType?: string
   flowType?: string
   priority?: number
+  //rules?: string // 条件规则
 }
 export interface EmitsEvent {
   event: string

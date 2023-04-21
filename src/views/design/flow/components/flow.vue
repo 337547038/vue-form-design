@@ -6,23 +6,23 @@
         v-for="(item, index) in nodeList"
         :key="index"
         :data="item"
-        :data-list="nodeData"
-        :type="type"
         @click-event="clickEvent"
       />
       <div class="flow-end"> 结束</div>
     </div>
+    <drawer ref="drawerEl" v-if="type === 0" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
+  import { ref, computed, onMounted, provide } from 'vue'
   import { randomString } from '@/utils'
   import type { NodeList, EmitsEvent } from '../types'
   import FlowGroup from './flowGroup.vue'
-  import { useRoute } from 'vue-router'
+  import Drawer from './drawer.vue'
+  // import { useRoute } from 'vue-router'
 
-  withDefaults(
+  const props = withDefaults(
     defineProps<{
       direction?: 'horizontal' | 'vertical'
       type?: number
@@ -32,14 +32,32 @@
       type: 0 // 0设计模式，1显示查看模式
     }
   )
+  //const route = useRoute().query
+  const drawerEl = ref()
+  const openDrawer = (data: NodeList, index: number, length: number) => {
+    if (props.type === 1) {
+      return
+    }
+    drawerEl.value.open(data, index, length)
+  }
+  const flowProps = computed(() => {
+    return {
+      type: props.type,
+      nodeData: nodeData.value,
+      openDrawer: openDrawer
+    }
+  })
+  provide('flowProps', flowProps)
   const nodeData = ref([
     { id: 'start', nodeType: 1, parentId: '', content: '发起人' }
   ])
-  const route = useRoute().query
   const nodeList = computed(() => {
     return nodeData.value.filter((i: NodeList) => !i.parentId)
   })
   const clickEvent = (obj: EmitsEvent) => {
+    if (props.type === 1) {
+      return
+    }
     switch (obj.event) {
       case 'del':
         delClick(obj)
@@ -63,7 +81,8 @@
     nodeData.value.splice(lastNodeIndex, 0, {
       id: randomString(8),
       nodeType: 5,
-      parentId: id
+      parentId: id,
+      priority: 1
     })
   }
   // 添加节点
@@ -86,13 +105,15 @@
       nodeData.value.push({
         id: randomString(8),
         nodeType: 5,
-        parentId: id
+        parentId: id,
+        priority: 1
       })
       nodeData.value.push({
         id: randomString(8),
         nodeType: 5,
         parentId: id,
-        content: '其他条件进入此流程'
+        content: '其他条件进入此流程',
+        priority: 0
       })
     }
   }
@@ -131,10 +152,19 @@
       }
     }
   }
-  const getData = () => {}
-  onMounted(() => {
-    if (route.id) {
-      getData()
+  // const getData = () => {}
+  const getValue = () => {
+    return nodeData.value
+  }
+  const setValue = (obj: any) => {
+    if (obj) {
+      nodeData.value = obj
     }
+  }
+  onMounted(() => {
+    /*if (route.id) {
+      getData()
+    }*/
   })
+  defineExpose({ getValue, setValue })
 </script>

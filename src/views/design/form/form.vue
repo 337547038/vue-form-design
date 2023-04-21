@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted, computed } from 'vue'
+  import { ref, reactive, onMounted, computed, nextTick } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
@@ -68,7 +68,9 @@
             { label: result.name }
           ])
         }
-        state.loading = false
+        nextTick(() => {
+          state.loading = false
+        })
       })
       .catch((res: any) => {
         state.loading = false

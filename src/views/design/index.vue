@@ -2,6 +2,9 @@
 <template>
   <div class="bg-none design-index">
     <h2>开始创建一个页面</h2>
+    <el-button type="primary" link @click="$router.push({ path: '/docs' })"
+      >如何使用？</el-button
+    >
     <div class="content">
       <div class="item" @click="$router.push({ path: '/design/form' })">
         <img src="../../assets/img/form.png" alt="" />
@@ -60,10 +63,9 @@
     padding: 40px 0 !important;
     h2 {
       font-size: 16px;
-      margin-bottom: 40px;
     }
     .content {
-      padding: 0 100px;
+      padding: 40px 100px;
       display: flex;
       flex-wrap: wrap;
       .item {

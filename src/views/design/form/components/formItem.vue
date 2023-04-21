@@ -315,7 +315,8 @@
       afterResponse,
       beforeRequest,
       label,
-      value
+      value,
+      debug // =true可用于调试，不存sessionStorage
     } = config.value
     if (optionsType !== 0) {
       let sourceFun = optionsFun
@@ -324,7 +325,7 @@
         // 当前控件为动态获取数据，防多次加载，先从本地取。data=true时直接请求
         const key = 'getOptions_' + props.data.name + md5(sourceFun + data)
         const storage = window.sessionStorage.getItem(key)
-        if (storage && !data) {
+        if (storage && !data && !debug) {
           const val = JSON.parse(storage)
           if (props.data.type === 'treeSelect') {
             control.value.data = val
