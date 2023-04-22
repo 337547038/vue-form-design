@@ -375,7 +375,7 @@
               if (formatRes === false) {
                 return
               }
-              console.log('formatRes', formatRes)
+              // console.log('formatRes', formatRes)
               if (props.data.type === 'treeSelect') {
                 control.value.data = formatRes
               } else {

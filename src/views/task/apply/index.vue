@@ -63,7 +63,7 @@
     })
   }
   const click = (obj: any) => {
-    router.push({ path: '/task/apply/start', query: { id: obj.id } })
+    router.push({ path: '/task/apply/start', query: { flowId: obj.id } })
   }
   onMounted(() => {
     getListData()

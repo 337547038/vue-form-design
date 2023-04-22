@@ -280,7 +280,6 @@
       'grid',
       'tabs',
       'flex',
-      'divider',
       'div'
     ]
     if (!notNeedItem.includes(obj.type)) {

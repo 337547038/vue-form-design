@@ -210,6 +210,7 @@
           case 'beforeSubmit':
           case 'afterResponse':
           case 'afterSubmit':
+          case 'change':
             if (!state.formData.events) {
               state.formData.events = {}
             }

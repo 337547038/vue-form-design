@@ -1,9 +1,17 @@
 <!-- Created by 337547038 发起流程 -->
 <template>
-  <div class="container-apply-start">
+  <div class="container-apply-start" v-loading="loading">
     <el-tabs>
       <el-tab-pane label="表单信息">
-        <ak-form :formData="formData" :afterSubmit="afterSubmit" />
+        <ak-form
+          :formData="formData"
+          :beforeSubmit="beforeSubmit"
+          :afterSubmit="afterSubmit"
+          :type="formType"
+          requestUrl="getFormContent"
+          addUrl="saveFormContent"
+          editUrl="editFormContent"
+        />
       </el-tab-pane>
       <el-tab-pane label="流程图" name="flow" class="flow-box">
         <div class="status">
@@ -22,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, nextTick, computed } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getRequest } from '@/api'
   import { stringToObj } from '@/utils/form'
@@ -34,22 +42,52 @@
     list: [],
     form: {}
   })
+  const loading = ref(true)
+  const formType = computed(() => {
+    return 1
+  })
+  const formId = ref()
   const getInitData = () => {
     const params = {
-      id: route.query.id
+      id: route.query.flowId
     }
+    // 获取设计的流程信息
     getRequest('designById', params).then((res: any) => {
       flowEl.value.setValue(stringToObj(res.data.data))
-      // 获取对应表单
+      // 获取流程表单信息
+      formId.value = res.data.source
       getRequest('designById', { id: res.data.source }).then((res: any) => {
         formData.value = stringToObj(res.data.data)
+        nextTick(() => {
+          loading.value = false
+        })
       })
     })
   }
-  const afterSubmit = (type: string) => {
-    // 这里还要提交流程记录 todo
+  // 表单提交
+  const beforeSubmit = (params: Record<string, any>) => {
+    params.formId = formId.value
+    return params
+  }
+  const afterSubmit = (type: string, res: any) => {
     if (type === 'success') {
-      router.push({ path: '/task/applyed' })
+      // 这里再插入发起的申请记录，这里和提交表单应为同一接口，先拆分处理了
+      const params = {
+        userId: 0, // 当前操作人用户id
+        flowId: route.query.flowId,
+        formId: res.data.insertId, // 保存表单信息的id
+        title: 'user的请假审批',
+        creatTime: new Date()
+      }
+      getRequest('flowSave', params)
+        .then(() => {
+          router.push({ path: '/task/applyed' })
+        })
+        .catch((res: any) => {
+          console.log(res)
+        })
+    } else {
+      console.log('提交失败')
     }
   }
   onMounted(() => {

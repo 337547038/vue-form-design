@@ -68,15 +68,29 @@
   const open = (obj: any) => {
     visible.value = true
     const getHtml = getObjHtml(obj)
+    const { addUrl, editUrl, requestUrl } = obj.config
+    if (requestUrl) {
+      // 从obj里删除使用props方式
+      delete obj.config.requestUrl
+    }
+    if (editUrl) {
+      // 从obj里删除使用props方式
+      delete obj.config.editUrl
+    }
+    if (addUrl) {
+      // 从obj里删除使用props方式
+      delete obj.config.addUrl
+    }
+
     const html = `<template>
   <div>
     <ak-form
       ref="formNameEl"
       :type="formType"
       :formData="formData"
-      requestUrl=""
-      addUrl=""
-      editUrl=""
+      requestUrl="${requestUrl}"
+      addUrl="${addUrl}"
+      editUrl="${editUrl}"
       :beforeSubmit="beforeSubmit">
     </ak-form>
   </div>
@@ -107,6 +121,16 @@
   const openTable = (obj: any) => {
     const openDialog = obj.config?.openType === 'dialog'
     const dialogWidth = obj.config?.dialogWidth || '600px'
+    const requestUrl = obj.config?.requestUrl
+    if (requestUrl) {
+      // 从obj里删除使用props方式
+      delete obj.config.requestUrl
+    }
+    const deleteUrl = obj.config?.deleteUrl
+    if (deleteUrl) {
+      // 从obj里删除使用props方式
+      delete obj.config.deleteUrl
+    }
     let formHtml = ''
     let formContent = ''
     let listBtn = ''
@@ -201,8 +225,8 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl=""
-      deleteUrl=""
+      requestUrl="${requestUrl}"
+      deleteUrl="${deleteUrl}"
       :searchData="searchData"
       :tableData="tableData"
       ${listBtn}>

@@ -1042,12 +1042,14 @@
           label: 'direction',
           type: 'select',
           dict: { horizontal: 'horizontal', vertical: 'vertical' },
+          placeholder: '分割线方向，默认horizontal',
           value: control.direction,
           path: 'control.direction',
           vShow: ['divider']
         },
         {
           label: 'border-style',
+          placeholder: '分隔符样式，默认solid',
           value: control.borderStyle,
           path: 'control.borderStyle',
           vShow: ['divider']

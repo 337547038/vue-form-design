@@ -178,7 +178,7 @@
       }
 
       // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分
-      emits('change', { key, value, data, tProp })
+      emits('change', { key, value, model: model.value, data, tProp })
     }
   })
   const dictForm = computed(() => {
