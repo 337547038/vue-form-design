@@ -6,7 +6,6 @@
   "description": "",
   "glyphs": [
     {
-<<<<<<< HEAD
       "icon_id": "3294800",
       "name": "设置边框",
       "font_class": "border",
@@ -28,8 +27,6 @@
       "unicode_decimal": 59393
     },
     {
-=======
->>>>>>> 429ebeeeae0f0bb9079c507d071f4c9f224ef040
       "icon_id": "33172809",
       "name": "发起的",
       "font_class": "apply",
