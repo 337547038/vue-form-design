@@ -49,6 +49,7 @@ const router = createRouter({
 router.afterEach((to: any) => {
   // 导航位置处理
   const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([])
   const navList = window.sessionStorage.getItem('formMenuList')
   if (navList) {
     const navListJson = JSON.parse(navList)

@@ -7,7 +7,7 @@ $mainColor: #66b1ff;
     .template {position: absolute;right: 12px;top: 0;padding: 8px;cursor: pointer}
   }
   ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
-    li {font-size: 14px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
+    li {font-size: 13px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
       i {margin-right: 5px}
       &:hover {
         color: $mainColor;border: 1px dashed $mainColor;cursor: move;

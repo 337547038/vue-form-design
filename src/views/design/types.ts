@@ -65,10 +65,13 @@ export interface TableData {
   operateBtn?: any
   config?: any
 }
-// 请求参数附加条件
-// export interface DataParams {
-//   get?: any
-//   add?: any
-//   edit?: any
-//   del?: any
-// }
+
+export interface OpenDrawer {
+  //visible: boolean
+  title?: string
+  direction?: string
+  content?: any
+  codeType?: string
+  callback?: Function | string
+  type?: string
+}

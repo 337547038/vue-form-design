@@ -37,7 +37,8 @@
     constSetFormOptions,
     constFormBtnEvent,
     constControlChange,
-    constFormProps
+    constFormProps,
+    appendOrRemoveStyle
   } from '../../utils'
   import formatResult from '@/utils/formatResult'
   import formChangeValue from '@/utils/formChangeValue'
@@ -277,6 +278,8 @@
   // 追加移除style样式
   const appendRemoveStyle = (type?: boolean) => {
     const { config = {} } = props.formData
+    appendOrRemoveStyle('formStyle', config.style || '', type)
+    /*const { config = {} } = props.formData
     const styleId: any = document.getElementById('formStyle')
     if (styleId && type) {
       // 存在时直接修改，不用多次插入
@@ -293,7 +296,7 @@
     if (!type) {
       // 移除
       styleId && styleId.parentNode.removeChild(styleId)
-    }
+    }*/
   }
 
   // 按钮组件事件

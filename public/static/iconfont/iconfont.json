@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3294800",
+      "name": "设置边框",
+      "font_class": "border",
+      "unicode": "e673",
+      "unicode_decimal": 58995
+    },
+    {
+      "icon_id": "11179879",
+      "name": "文字边框",
+      "font_class": "text2",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "21529713",
+      "name": "m-滚动文字",
+      "font_class": "stext",
+      "unicode": "e801",
+      "unicode_decimal": 59393
+    },
+    {
       "icon_id": "33172809",
       "name": "发起的",
       "font_class": "apply",
