@@ -25,7 +25,7 @@
     <div
       v-if="['text', 'border'].includes(data.type)"
       :style="getConfigStyle"
-      v-html="config.text"
+      v-html="newValue || config.text"
     ></div>
     <div v-if="data.type === 'sText'" :style="getConfigStyle">
       <my-marquee
@@ -35,14 +35,14 @@
         :direction="config.direction"
         :step="config.step"
       >
-        {{ config.text }}
+        {{ newValue || config.text }}
       </my-marquee>
     </div>
     <img
       class="default-img"
       v-if="data.type === 'image'"
       :src="config.src"
-      :style="config.style"
+      :style="getConfigStyle"
       alt="请选择或上传图片"
     />
     <div
@@ -52,50 +52,65 @@
     >
       <span v-if="!config.src">请选择或上传图片</span>
     </div>
-    <template v-if="data.type === 'table'">
-      <el-table v-bind="data.props" :data="data.tableData" style="width: 100%">
+    <div v-if="data.type === 'table'" ref="tableEl">
+      <el-table v-bind="config.props" :data="tableData" style="width: 100%">
         <el-table-column
           v-bind="col"
           v-for="col in data.columns"
           :key="col.prop"
         />
       </el-table>
-    </template>
+    </div>
     <now-time
       :style="getConfigStyle"
       v-if="data.type === 'clock'"
       :config="config"
     />
-    <div v-if="['line', 'bar', 'pie', 'echarts'].includes(data.type)"
-      >echarts</div
-    >
+    <component
+      v-if="['component'].includes(data.type)"
+      :is="config.component"
+      v-bind="config"
+    />
+    <echarts-init
+      :option="newValue || data.option"
+      :height="data.position.height"
+      :width="data.position.width"
+      v-if="['line', 'bar', 'pie', 'echarts'].includes(data.type)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, reactive } from 'vue'
+  import { ref, computed, onMounted, nextTick, watch } from 'vue'
   import NowTime from './nowTime.vue'
   import MyMarquee from './marquee.vue'
+  import EchartsInit from '../../components/echartsInt.vue'
   import md5 from 'md5'
+  import type { ScreenData } from '../types'
+  import { getRequest } from '@/api'
+  import formatScreen from '@/utils/formatScreen'
   const props = withDefaults(
     defineProps<{
-      data: any // todo　定义类型
+      data: ScreenData
       type?: number
       current?: string // 当前激活的项
     }>(),
     {
-      type: 1,
-      data: () => {
-        return {
-          config: {}
-        }
-      }
+      type: 1
+      // data: () => {
+      //   return {
+      //     type: '',
+      //     position: {},
+      //     config: {}
+      //   }
+      // }
     }
   )
-  const emits = defineEmits<{
-    (e: 'error', val: any): void
-    (e: 'success', res: any): void
-  }>()
+  // const emits = defineEmits<{
+  //   (e: 'error', val: any): void
+  //   (e: 'success', res: any): void
+  // }>()
+  const newValue = ref()
   const active = computed(() => {
     if (props.data.position) {
       return md5(JSON.stringify(props.data.position))
@@ -232,4 +247,106 @@
       document.onmousemove = null
     }
   }
+  // 表格相关
+  const tableData = computed(() => {
+    // 如果开启了轮播时，复制一份数据追加到最后
+    const option = newValue.value || props.data.option
+    if (config.value.carousel) {
+      return [...option, ...option]
+    }
+    return option
+  })
+  // 设置表格滚动
+  const tableEl = ref()
+  const setTableCarousel = () => {
+    if (
+      !config.value.carousel ||
+      !tableEl.value ||
+      props.data.type !== 'table'
+    ) {
+      return
+    }
+    const divData = tableEl.value.querySelector('.el-scrollbar__wrap')
+    function marquee() {
+      divData.scrollTop += 1
+      if (divData.clientHeight + divData.scrollTop === divData.scrollHeight) {
+        divData.scrollTop = divData.scrollTop - divData.scrollHeight / 2
+      }
+    }
+    let clear = setInterval(marquee, config.value.speed || 30)
+    tableEl.value.onmouseenter = function () {
+      clearInterval(clear)
+    }
+    tableEl.value.onmouseleave = function () {
+      clear = setInterval(marquee, config.value.speed || 30)
+    }
+  }
+  watch(
+    () => props.data.option,
+    () => {
+      nextTick(() => {
+        setTableCarousel()
+      })
+    },
+    { immediate: true }
+  )
+  // 设置表格滚动结束
+  // 获取动态数据相关
+  const getDataByType = computed(() => {
+    // 根据类型返回对应值
+    switch (props.data.type) {
+      case 'text':
+      case 'sText':
+        return config.value.text
+      case 'line':
+      case 'bar':
+      case 'pie':
+      case 'echarts':
+      case 'table':
+        return props.data.option
+    }
+    return ''
+  })
+  const getUrlData = () => {
+    if (
+      !['line', 'bar', 'pie', 'echarts', 'text', 'sText', 'table'].includes(
+        props.data.type
+      )
+    ) {
+      return // 不支持动态数据获取的return
+    }
+    const { optionsType, requestUrl, method = 'post' } = config.value
+    const { beforeRequest = '', afterResponse = '' } = props.data.events || {}
+    if (optionsType !== 1 || !requestUrl) {
+      return
+    }
+    let params = {}
+    if (beforeRequest && typeof beforeRequest === 'function') {
+      params = beforeRequest({})
+    }
+    getRequest(requestUrl, params, { method: method })
+      .then((res: any) => {
+        const result = res.data
+        newValue.value = result
+        if (afterResponse) {
+          if (typeof afterResponse === 'function') {
+            newValue.value = afterResponse(result, getDataByType.value)
+          }
+          if (typeof afterResponse === 'string') {
+            newValue.value = formatScreen(
+              afterResponse,
+              result,
+              getDataByType.value
+            )
+          }
+        }
+      })
+      .catch((res: any) => {
+        console.log(res)
+      })
+  }
+  // 获取动态数据相关结束
+  onMounted(() => {
+    getUrlData() // 从接口获取动态数据
+  })
 </script>

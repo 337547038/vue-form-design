@@ -1,6 +1,6 @@
 <!-- Created by 337547038 -->
 <template>
-  <div class="container-screen">
+  <div class="container-screen" v-loading="state.loading">
     <control-left :style="{ width: state.widthLeft }" />
     <div class="main-box">
       <head-tools @click="headToolsClick" />
@@ -114,6 +114,12 @@
   } from '@/utils/form'
   import { OpenDrawer } from '../types'
   import { appendOrRemoveStyle } from '../utils'
+  import { ElMessage } from 'element-plus'
+  import { getRequest } from '@/api'
+  import { useRoute, useRouter } from 'vue-router'
+
+  const route = useRoute()
+  const router = useRouter()
 
   const state = reactive({
     showLine: true,
@@ -125,7 +131,8 @@
     offset: [],
     translateX: 0,
     translateY: 0,
-    moveFlag: false
+    moveFlag: false,
+    loading: false
   })
   const current = ref()
   const configEl = ref()
@@ -364,12 +371,63 @@
         //　todo
         break
       case 'save':
-        //　todo
+        saveData()
         break
     }
   }
+  // 数据处理相关
+  const saveData = () => {
+    let params: any = {
+      data: objToStringify(screenData.value),
+      name: '未命名可视化大屏', // 表单名称，用于在显示所有已创建的表单列表里显示
+      type: 4 // 1表单 2列表 3流程　4大屏
+    }
+    let apiKey = 'designSave'
+    if (route.id) {
+      // 编辑状态 当前记录id
+      Object.assign(params, { id: route.id })
+      apiKey = 'designEdit'
+    }
+    state.loading = true
+    getRequest(apiKey, params)
+      .then((res: any) => {
+        ElMessage({
+          message: res.message || '保存成功！',
+          type: 'success'
+        })
+        // 根据不同情况跳转到不同地址
+        router.push({ path: '/design/dataScreen/list' })
+        state.loading = false
+      })
+      .catch((res: any) => {
+        ElMessage.error(res.message || '保存异常')
+        state.loading = false
+      })
+    canvasClick() // 清空右则属性相关
+  }
+  const getInitData = () => {
+    const id = route.id // 当前记录保存的id
+    if (!id) {
+      return
+    }
+    // 获取初始表单数据
+    state.loading = true
+    getRequest('designById', { id: id })
+      .then((res) => {
+        const result = res.data
+        screenData.value = stringToObj(result.data)
+        state.loading = false
+      })
+      .catch((res: any) => {
+        // console.log(res)
+        ElMessage.error(res.message || '加载异常')
+        state.loading = false
+      })
+  }
+  // 数据处理相关结束
   onMounted(() => {
     getInitScale()
     setContextmenu()
+    getInitData()
   })
 </script>

@@ -1,11 +1,7 @@
 <!-- Created by 337547038 -->
 <template>
   <div class="main-right">
-    <el-tabs
-      class="tabs"
-      model-value="screen"
-      v-if="Object.keys(current).length"
-    >
+    <el-tabs class="tabs" model-value="data" v-if="Object.keys(current).length">
       <el-tab-pane label="位置属性" name="screen">
         <el-form size="small">
           <el-form-item
@@ -78,9 +74,72 @@
               >编辑更多内联样式</el-button
             >
           </el-form-item>
+          <el-form-item v-if="['table'].includes(type)">
+            <el-button type="primary" @click="tablePropsEdit"
+              >表格属性</el-button
+            >
+            <el-button type="primary" @click="tableColumnEdit"
+              >Table-column</el-button
+            >
+          </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="数据" name="data" />
+      <el-tab-pane label="数据" name="data">
+        <el-form size="small">
+          <el-form-item label="数据类型">
+            <el-radio-group v-model="current.config.optionsType">
+              <el-radio :label="0">静态</el-radio>
+              <el-radio :label="1">动态</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="current.config.optionsType === 0">
+            <el-button type="primary" @click="editData">编辑数据</el-button>
+          </el-form-item>
+          <template
+            v-if="
+              [
+                'line',
+                'bar',
+                'pie',
+                'echarts',
+                'text',
+                'sText',
+                'table'
+              ].includes(type) && current.config.optionsType === 1
+            "
+          >
+            <el-form-item>
+              <el-input
+                v-model="current.config.requestUrl"
+                placeholder="接口URL或api中的key"
+              >
+                <template #prepend>
+                  <el-select
+                    v-model="current.config.method"
+                    style="width: 60px"
+                  >
+                    <el-option label="get" value="get" />
+                    <el-option label="post" value="post" />
+                  </el-select>
+                </template>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <h3>接口数据处理事件</h3>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="openEventsDrawer('beforeRequest')"
+                >beforeRequest</el-button
+              >
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="openEventsDrawer('afterResponse')"
+                >afterResponse</el-button
+              >
+            </el-form-item>
+          </template>
+        </el-form>
+      </el-tab-pane>
     </el-tabs>
     <el-tabs class="tabs" model-value="screen" v-else>
       <el-tab-pane label="大屏配置" name="screen">
@@ -99,9 +158,9 @@
               @input="configChange('height', $event)"
             />
           </el-form-item>
-          <el-form-item label="项目名称">
+          <!--          <el-form-item label="项目名称">
             <el-input placeholder="请输入项目名称" />
-          </el-form-item>
+          </el-form-item>-->
           <el-form-item class="color-picker" label="主色">
             <el-color-picker
               show-alpha
@@ -163,6 +222,7 @@
   import { uploadUrl } from '@/api'
   import type { Config } from '../types'
   import type { OpenDrawer } from '../../types'
+  //import { stringToObj } from '@/utils/form'
 
   const props = withDefaults(
     defineProps<{
@@ -404,6 +464,28 @@
             '{y}年{m}月{d}日 {h}:{i}:{s} 星期{a}':
               '{y}年{m}月{d}日 {h}:{i}:{s} 星期{a}'
           }
+        },
+        {
+          label: '组件名称',
+          value: config.component,
+          placeholder: '全局注册的组件名称',
+          key: 'component',
+          vShow: ['component']
+        },
+        {
+          type: 'switch',
+          label: '是否轮播', // 属性仅在设计模式有效
+          value: config.carousel,
+          key: 'carousel',
+          vShow: ['table']
+        },
+        {
+          type: 'number',
+          label: '滚动速度',
+          placeholder: '开启轮播有效',
+          value: config.speed,
+          key: 'speed',
+          vShow: ['table']
         }
       ].filter((item: any) => {
         let hasFilter = true
@@ -445,7 +527,7 @@
   // 打开图像option编辑
   const echartsEdit = () => {
     emits('openDrawer', {
-      type: 'echarts',
+      // type: 'echarts',
       content: current.value.option,
       title: '可参考echarts相关例子编辑',
       callback: (res: any) => {
@@ -456,7 +538,7 @@
   //　编辑内联样式
   const styleEdit = () => {
     emits('openDrawer', {
-      type: 'style',
+      // type: 'style',
       codeType: 'json',
       content: current.value.config?.style || {},
       title: '可输入更多的css样式，须为json格式',
@@ -464,6 +546,75 @@
         current.value.config.style = res
       }
     })
+  }
+  // 表格组件属性
+  const tablePropsEdit = () => {
+    emits('openDrawer', {
+      codeType: 'json',
+      content: current.value.config?.props || {},
+      title: '支持所有表格props属性，可参考el-table。json格式',
+      callback: (res: any) => {
+        current.value.config.props = res
+      }
+    })
+  }
+  const tableColumnEdit = () => {
+    let columns = current.value.columns
+    if (!columns || !columns.length) {
+      columns = [{ prop: '', label: '' }]
+    }
+    emits('openDrawer', {
+      codeType: 'json',
+      content: columns,
+      title: '表格列设置，可参考table-column属性',
+      callback: (res: any) => {
+        current.value.columns = res
+      }
+    })
+  }
+  const openEventsDrawer = (type: string) => {
+    let content = current.value.events && current.value.events[type]
+    if (!content) {
+      if (type === 'beforeRequest') {
+        content = (data: any) => {
+          // data经过处理后返回
+          console.log('beforeRequest', data)
+          return data
+        }
+      } else {
+        content = (data: any, option: any) => {
+          console.log('afterResponse', data, option)
+          return option
+        }
+      }
+    }
+    emits('openDrawer', {
+      content: content,
+      title:
+        type === 'beforeRequest'
+          ? '这里可处理请求前的参数，返回相应参数给接口'
+          : '接口数据处理。也可为字符串，如opt=formatTest',
+      callback: (res: any) => {
+        if (!current.value.events) {
+          current.value.events = {}
+        }
+        current.value.events[type] = res
+      }
+    })
+  }
+  // 编辑静态数据
+  const editData = () => {
+    if (type.value === 'table') {
+      emits('openDrawer', {
+        content: current.value.tableData,
+        title: '表格列表数据。根据设定的table-column列数据设置对应的数据',
+        callback: (res: any) => {
+          current.value.tableData = res
+        }
+      })
+    } else {
+      echartsEdit()
+    }
   }
   defineExpose({ setCurrent })
 </script>

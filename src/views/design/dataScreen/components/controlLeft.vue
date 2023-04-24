@@ -67,8 +67,8 @@
           label: '折线图',
           icon: 'line',
           position: {
-            width: 200,
-            height: 200
+            width: 400,
+            height: 300
           },
           option: {
             xAxis: {
@@ -91,8 +91,8 @@
           label: '柱状图',
           icon: 'bar',
           position: {
-            width: 200,
-            height: 200
+            width: 400,
+            height: 300
           },
           option: {
             xAxis: {
@@ -115,8 +115,8 @@
           label: '饼图',
           icon: 'pie',
           position: {
-            width: 200,
-            height: 200
+            width: 300,
+            height: 300
           },
           option: {
             series: [
@@ -139,8 +139,8 @@
           label: '通用图表',
           icon: '',
           position: {
-            width: 200,
-            height: 200
+            width: 400,
+            height: 300
           },
           option: {}
         }
@@ -155,9 +155,9 @@
           icon: 'table',
           position: {
             width: 500,
-            height: 40
+            height: 300
           },
-          tableData: [],
+          option: [],
           columns: []
         }
       ]
@@ -240,6 +240,21 @@
             width: 150,
             height: 30
           }
+        }
+      ]
+    },
+    {
+      label: '自定义组件',
+      children: [
+        {
+          type: 'component',
+          label: '自定义',
+          icon: 'component',
+          position: {
+            width: 200,
+            height: 200
+          },
+          config: {}
         }
       ]
     }
