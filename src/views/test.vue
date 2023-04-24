@@ -1,51 +1,26 @@
 <template>
   <div>
-    <ak-form
-      ref="formNameEl"
-      :type="formType"
-      :formData="formData"
-      requestUrl=""
-      addUrl=""
-      editUrl=""
-      :beforeSubmit="beforeSubmit"
-    />
-    <el-button @click="setValue">setvalue</el-button>
+    <Marquee width="100px" height="30px" :speed="1000" :step="30">
+      <div style="line-height: 30px">
+        <p>1.属性指定目</p>
+      </div>
+    </Marquee>
+    <!--    <div style="height: 450px;"
+    <div
+      style="height: 400px; width: 200px; background: #d9d9d9"
+      id="test"
+    ></div>
+    <div style="height: 800px"></div>-->
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, computed, provide } from 'vue'
-  const formNameEl = ref()
-  const setValue = () => {
-    formNameEl.value.setValue({ upload: '/ab/a.jpg' })
-  }
-  const formData = ref({
-    list: [
-      {
-        type: 'upload',
-        control: { modelValue: '' },
-        config: {},
-        name: 'upload',
-        item: { label: '图片/文件' }
-      }
-    ],
-    form: {
-      size: 'default',
-      labelWidth: '120px',
-      class: 'form-row-2',
-      name: 'components'
-    },
-    config: {},
-    events: {}
-  })
-  // todo 存在编辑时，可根据路由等参数设置当前表单模式　1新增　2编辑
-  const formType = computed(() => {
-    return 1
-  })
-
-  // 表单提交时参数处理
-  const beforeSubmit = (params) => {
-    //　如编辑时添加参数
-    //  params.id='xxx'
-    return params
-  }
+  import { ref, onMounted } from 'vue'
+  import Marquee from './design/dataScreen/components/marquee.vue'
+  // var observer = new IntersectionObserver((callback) => {
+  //   console.log('callback', callback)
+  // })
+  // onMounted(() => {
+  //   const id = document.getElementById('test')
+  //   observer.observe(id)
+  // })
 </script>

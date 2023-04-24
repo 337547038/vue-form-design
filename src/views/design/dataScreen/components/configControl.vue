@@ -258,6 +258,7 @@
           title: '位置信息'
         },
         {
+          type: 'number',
           label: 'width',
           value: position.width,
           placeholder: '请输入宽度',
@@ -265,6 +266,7 @@
           path: 'position'
         },
         {
+          type: 'number',
           label: 'height',
           value: position.height,
           placeholder: '请输入高度',
@@ -272,18 +274,21 @@
           path: 'position'
         },
         {
+          type: 'number',
           label: 'left',
           value: position.left,
           key: 'left',
           path: 'position'
         },
         {
+          type: 'number',
           label: 'top',
           value: position.top,
           key: 'top',
           path: 'position'
         },
         {
+          type: 'number',
           label: 'zIndex',
           value: position.zIndex,
           placeholder: '请输入层级',
@@ -329,11 +334,27 @@
           key: 'direction',
           vShow: ['sText'],
           options: {
-            1: '从左到右',
-            2: '从右到左',
-            3: '从上到下',
-            4: '从下到上'
+            left: '从左到右',
+            right: '从右到左',
+            top: '从上到下',
+            bottom: '从下到上'
           }
+        },
+        {
+          type: 'number',
+          label: '滚动速度',
+          placeholder: '滚动速度，数字越大速度越慢',
+          value: config.speed,
+          key: 'speed',
+          vShow: ['sText']
+        },
+        {
+          type: 'number',
+          label: '滚动步长',
+          placeholder: '每单位时间滚动的距离，默认1',
+          value: config.step,
+          key: 'step',
+          vShow: ['sText']
         },
         {
           type: 'textarea',
@@ -407,6 +428,9 @@
       }
       current.value.config.style[obj.key] = value
     } else {
+      if (obj.type === 'number') {
+        value = parseInt(value)
+      }
       current.value.config[obj.key] = value
     }
   }

@@ -3,7 +3,7 @@
   <div class="container-screen">
     <control-left :style="{ width: state.widthLeft }" />
     <div class="main-box">
-      <head-tools />
+      <head-tools @click="headToolsClick" />
       <div class="design-box" ref="designBoxEl">
         <a-ruler
           :scale="state.scale"
@@ -291,6 +291,9 @@
             screenData.value.config.style = editVal
             appendOrRemoveStyle('screenStyle', editVal, true)
             break
+          case 'json':
+            screenData.value = stringToObj(editVal)
+            break
           // case 'dict':
           //   state.formDict = string2json(editVal)
           //   break
@@ -339,6 +342,31 @@
     drawer.codeType = ''
     drawer.callback = ''
     drawer.content = ''
+  }
+  // 顶部工具栏点击事件
+  const headToolsClick = (type: string) => {
+    switch (type) {
+      case 'del':
+        screenData.value.list = []
+        canvasClick() // 清空右则属性相关
+        break
+      case 'eye':
+        //　todo
+        break
+      case 'json':
+        openDrawer({
+          type: 'json',
+          content: screenData.value,
+          title: '可编辑修改或将已生成的脚本粘贴进来'
+        })
+        break
+      case 'vue':
+        //　todo
+        break
+      case 'save':
+        //　todo
+        break
+    }
   }
   onMounted(() => {
     getInitScale()

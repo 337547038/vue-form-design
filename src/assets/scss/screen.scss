@@ -58,7 +58,7 @@
     position: absolute;
   }
   .resize-box {
-    position: absolute;left: 0;top: 0;width: 100%;height: 100%;border: 1px solid #409eff;z-index: 5;
+    position: absolute;left: 0;top: 0;width: 100%;height: 100%;border: 1px dotted #409eff;z-index: 5;
     span {width: 8px;height: 8px;display: block;border-radius: 50%;background: #409eff;position: absolute;border: 1px solid rgba(255, 255, 255, .8);
     }
     .rs1 {left: -4px;top: -4px;cursor: se-resize;}

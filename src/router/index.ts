@@ -5,11 +5,11 @@ import { useLayoutStore } from '@/store/layout'
 
 console.log(routesPage)
 const routes = [
-  // {
-  //   path: '/test',
-  //   name: '/test',
-  //   component: () => import('../views/test.vue')
-  // },
+  {
+    path: '/test',
+    name: '/test',
+    component: () => import('../views/test.vue')
+  },
   {
     path: '/layout',
     redirect: '/',

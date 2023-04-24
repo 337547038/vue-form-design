@@ -4,9 +4,9 @@
     class="group"
     :class="{
       ['group-' + data.type]: true,
-      [data.config?.class]: true
+      [data.config?.class]: data.config?.class
     }"
-    :style="style"
+    :style="positionStyle"
     @mousedown.prevent.stop="stopPropagation"
   >
     <div
@@ -23,10 +23,21 @@
       ></span>
     </div>
     <div
-      v-if="['text', 'sText', 'border'].includes(data.type)"
-      :style="config.style"
+      v-if="['text', 'border'].includes(data.type)"
+      :style="getConfigStyle"
       v-html="config.text"
     ></div>
+    <div v-if="data.type === 'sText'" :style="getConfigStyle">
+      <my-marquee
+        :width="`${data.position.width}px`"
+        :height="`${data.position.height}px`"
+        :speed="config.speed"
+        :direction="config.direction"
+        :step="config.step"
+      >
+        {{ config.text }}
+      </my-marquee>
+    </div>
     <img
       class="default-img"
       v-if="data.type === 'image'"
@@ -41,7 +52,6 @@
     >
       <span v-if="!config.src">请选择或上传图片</span>
     </div>
-    <div :style="config.style" v-if="data.type === 'clock'">当前时间</div>
     <template v-if="data.type === 'table'">
       <el-table v-bind="data.props" :data="data.tableData" style="width: 100%">
         <el-table-column
@@ -51,6 +61,11 @@
         />
       </el-table>
     </template>
+    <now-time
+      :style="getConfigStyle"
+      v-if="data.type === 'clock'"
+      :config="config"
+    />
     <div v-if="['line', 'bar', 'pie', 'echarts'].includes(data.type)"
       >echarts</div
     >
@@ -59,6 +74,8 @@
 
 <script setup lang="ts">
   import { ref, computed, reactive } from 'vue'
+  import NowTime from './nowTime.vue'
+  import MyMarquee from './marquee.vue'
   import md5 from 'md5'
   const props = withDefaults(
     defineProps<{
@@ -88,6 +105,15 @@
   const config = computed(() => {
     return props.data.config || {}
   })
+  // 组件自定配置编辑的样式+定位时的宽高
+  const getConfigStyle = computed(() => {
+    const { width, height } = props.data.position
+    return Object.assign(
+      {},
+      { width: width + 'px', height: height + 'px' },
+      config.value.style || {}
+    )
+  })
   const getBackground = computed(() => {
     let src = {}
     if (config.value.src) {
@@ -95,7 +121,8 @@
     }
     return Object.assign(config.value.style || {}, src)
   })
-  const style = computed(() => {
+  // 定位位置样式
+  const positionStyle = computed(() => {
     if (!props.data.position) {
       return {}
     }

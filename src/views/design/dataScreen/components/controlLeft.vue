@@ -171,7 +171,7 @@
           icon: 'text2',
           position: {
             width: 100,
-            height: 50
+            height: 30
           },
           config: {
             text: '文本内容'
@@ -183,7 +183,7 @@
           icon: 'stext',
           position: {
             width: 100,
-            height: 50
+            height: 30
           },
           config: {
             text: '滚动文本内容'
@@ -220,6 +220,11 @@
           position: {
             width: 100,
             height: 100
+          },
+          config: {
+            style: {
+              border: '1px solid #fff'
+            }
           }
         }
       ]
@@ -232,8 +237,8 @@
           label: '当前时间',
           icon: 'time',
           position: {
-            width: 100,
-            height: 50
+            width: 150,
+            height: 30
           }
         }
       ]
