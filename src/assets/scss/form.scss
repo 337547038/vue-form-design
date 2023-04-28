@@ -7,7 +7,7 @@ $mainColor: #66b1ff;
     .template {position: absolute;right: 12px;top: 0;padding: 8px;cursor: pointer}
   }
   ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
-    li {font-size: 14px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
+    li {font-size: 13px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
       i {margin-right: 5px}
       &:hover {
         color: $mainColor;border: 1px dashed $mainColor;cursor: move;
@@ -103,7 +103,7 @@ $mainColor: #66b1ff;
     }
   }
   // 设置默认下input和select一样宽
-  .el-input {width: auto;}
+  .el-select {width: 100%;}
   .el-select {
     .el-input__wrapper .el-input__suffix {position: absolute;right: 10px}
   }
@@ -161,7 +161,7 @@ $mainColor: #66b1ff;
     padding: 0;
     width: 100%;
   }
-  .group {border: 1px dashed #ddd;margin: 2px;padding: 5px;position: relative;min-height: 50px;
+  .group {border: 1px dashed #ddd;margin: 2px 2px 10px 2px;padding: 5px;position: relative;min-height: 50px;
     &.active {border: 3px solid $mainColor;position: relative;
       > .drag-control {display: block}
       > .tooltip {display: block;}
@@ -169,7 +169,7 @@ $mainColor: #66b1ff;
     &:hover {border-color: $mainColor;background: #ecf5ff}
     > div {margin-bottom: 0}
     &:after{content: '';position: absolute;left: 0;top:0;right: 0;bottom: 0;opacity: 0;z-index: 1;display: block;}
-    &.group-grid,&.group-tabs,&.group-card,&.group-flex,&.group-div{
+    &.group-grid,&.group-tabs,&.group-card,&.group-flex,&.group-div,&.group-table{
       &:after{display: none}
     }
   }
@@ -249,7 +249,7 @@ $mainColor: #66b1ff;
   .tree-sidebar {width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px;flex-shrink: 0;
     .el-input {margin-bottom: 10px}
   }
-  .table-list {flex: 1;}
+  .table-list {display: block;width: 100%}
   .table-main {margin-bottom: 20px;
     &.hide-vertical-scroll { // 固定了横向滚动条时，禁用表格固定头部的滚动
       .el-scrollbar__wrap {overflow: hidden;}

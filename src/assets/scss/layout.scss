@@ -99,7 +99,7 @@ a{color: #409eff;text-decoration: none}
     }
     .clear-tag {cursor: pointer}
   }
-  .quit-full {position: fixed;right: 10px;top: 10px;cursor: pointer}
+  .quit-full {position: fixed;right: 10px;top: 10px;cursor: pointer;z-index: 101}
 }
 // 设置el-tooltip最大宽度
 .el-popper {

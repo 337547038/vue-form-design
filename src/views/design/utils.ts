@@ -49,6 +49,35 @@ export const objectToArray = (obj: any) => {
   }
   return obj
 }
+/****
+ * 动态插入移除css
+ * @param id 标签id
+ * @param cssContent　要插入的css内容
+ * @param append true插入false移除
+ */
+export const appendOrRemoveStyle = (
+  id: string,
+  cssContent: string,
+  append?: boolean
+) => {
+  const styleId: any = document.getElementById(id)
+  if (styleId && append) {
+    // 存在时直接修改，不用多次插入
+    styleId.innerText = cssContent
+    return
+  }
+  if (cssContent && append) {
+    const styleEl = document.createElement('style')
+    styleEl.id = id
+    styleEl.type = 'text/css'
+    styleEl.appendChild(document.createTextNode(cssContent))
+    document.head.appendChild(styleEl)
+  }
+  if (!append || !cssContent) {
+    // 移除
+    styleId && styleId.parentNode.removeChild(styleId)
+  }
+}
 // 定义两个空方法，用于在编辑事件时作为默认值
 export const beforeRequest =
   'opt=(data, route) => {\n' +
@@ -61,6 +90,13 @@ export const afterResponse =
   '  // res返回数据\n' +
   "  console.log('afterResponse',res)\n" +
   '  return res\n' +
+  '}'
+
+export const onChange =
+  'opt=(key,model) => {\n' +
+  '  // name当前改变组件的值,model表单的值\n' +
+  "  console.log('onChange',key)\n" +
+  '  return model\n' +
   '}'
 
 // provide 方法定义的key

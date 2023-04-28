@@ -5,11 +5,17 @@ import { useLayoutStore } from '@/store/layout'
 
 console.log(routesPage)
 const routes = [
-  // {
-  //   path: '/test',
-  //   name: '/test',
-  //   component: () => import('../views/test.vue')
-  // },
+  {
+    path: '/test',
+    name: '/test',
+    component: () => import('../views/test.vue')
+  },
+  {
+    // 数据可视化展示的不要放layout框架
+    path: '/design/dataScreen/show/:id',
+    name: '/dataScreen',
+    component: () => import('../views/design/dataScreen/show.vue')
+  },
   {
     path: '/layout',
     redirect: '/',
@@ -49,12 +55,13 @@ const router = createRouter({
 router.afterEach((to: any) => {
   // 导航位置处理
   const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([])
   const navList = window.sessionStorage.getItem('formMenuList')
   if (navList) {
     const navListJson = JSON.parse(navList)
     const list: any = []
     getNavName(navListJson, to, list)
-    console.log(list)
+    // console.log(list)
     const spliceList = []
     if (list?.length) {
       for (let i = list.length - 1; i >= 0; i--) {

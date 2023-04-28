@@ -83,7 +83,7 @@
         .then((res) => {
           // console.log(res)
           // console.log(res.data.path)
-          if (res.data.code === 200) {
+          if (res.data.code === 1) {
             resolve(res.data.path) // 上传成功，在成功函数里填入图片路径
             // console.log('[文件上传]', res.data)
           } else {
@@ -133,7 +133,7 @@
       }
       getRequest('upload', params, options)
         .then((res) => {
-          if (res.data.code === 200) {
+          if (res.data.code === 1) {
             callback(res.data.path, attr) // 上传成功，在成功函数里填入图片路径
           } else {
             ElMessage.error(res.data?.message)

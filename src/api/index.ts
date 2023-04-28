@@ -1,7 +1,8 @@
 import request from '../utils/request'
 import form from './form'
 import system from './system'
-const allApi: any = Object.assign(form, system)
+import flow from './flow'
+const allApi: any = Object.assign(form, system, flow)
 export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
   let url = allApi[apiKey] || apiKey
   // 解决动态url 如/api/delete/id(id为动态时)
@@ -44,6 +45,9 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
       url.includes('/single')
     ) {
       url = 'ok'
+    }
+    if (options.method) {
+      delete options.method
     }
     obj = Object.assign(
       {

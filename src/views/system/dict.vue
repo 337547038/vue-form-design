@@ -117,7 +117,7 @@
           },
           name: 'status',
           item: {
-            label: '状态0'
+            label: '状态'
           }
         },
         {

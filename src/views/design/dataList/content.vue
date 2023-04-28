@@ -1,6 +1,6 @@
 <!-- Created by 337547038 -->
 <template>
-  <div>
+  <div v-loading="loading">
     <ak-list
       v-if="state.visible"
       ref="listEl"
@@ -51,6 +51,7 @@
   // id 获取当前设计的列表字段，查询条件等配置
   // form 跳转到新增编辑，列表数据加载
   const listEl = ref()
+  const loading = ref(true)
   const state = reactive({
     searchData: [],
     tableData: [],
@@ -83,6 +84,7 @@
         // 获取列表数据
         nextTick(() => {
           listEl.value.getListData()
+          loading.value = false
         })
         getFormInit()
       }

@@ -451,6 +451,15 @@
                 @click="eventClick('afterSubmit', '表单数据提交成功事件')"
                 >afterSubmit
               </el-button>
+              <el-button
+                @click="
+                  eventClick(
+                    'change',
+                    '表单组件值改变事件。当表单某值改变时，可修改其他组件的值；也可为字符串，如opt=formChange,字符串即为/utils/formChangeValue(name,model,key)中的key值'
+                  )
+                "
+                >表单组件改变事件change
+              </el-button>
             </el-form-item>
           </template>
         </el-form>
@@ -742,7 +751,7 @@
           value: config.span,
           placeholder: '表单区域栅格宽，0为自动宽',
           path: 'config.span',
-          vHide: ['table', 'grid', 'gridChild', 'divider'],
+          vHide: ['gridChild'],
           isNum: true
         },
         /*{
@@ -892,7 +901,9 @@
             'number',
             'cascader',
             'upload',
-            'treeSelect'
+            'treeSelect',
+            'table',
+            'flex'
           ],
           vIf: state.isSearch
         },
@@ -1031,12 +1042,14 @@
           label: 'direction',
           type: 'select',
           dict: { horizontal: 'horizontal', vertical: 'vertical' },
+          placeholder: '分割线方向，默认horizontal',
           value: control.direction,
           path: 'control.direction',
           vShow: ['divider']
         },
         {
           label: 'border-style',
+          placeholder: '分隔符样式，默认solid',
           value: control.borderStyle,
           path: 'control.borderStyle',
           vShow: ['divider']

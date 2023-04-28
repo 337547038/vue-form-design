@@ -36,9 +36,9 @@
 
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
-  import { ref, reactive, nextTick, markRaw } from 'vue'
+  import { ref, reactive, nextTick } from 'vue'
   // import { ElMessage } from 'element-plus'
-  import iconfont from '@/components/iconfont.vue'
+  // import iconfont from '@/components/iconfont.vue'
   const router = useRouter()
   const dialog = reactive({
     visible: false,
@@ -72,13 +72,13 @@
         width: 200,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
-      {
-        prop: 'updateDate',
-        label: '修改时间',
-        width: 200,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
-      },
-      { prop: 'editName', label: '最后修改' },
+      // {
+      //   prop: 'updateDate',
+      //   label: '修改时间',
+      //   width: 200,
+      //   config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+      // },
+      // { prop: 'editName', label: '最后修改' },
       { label: '操作', prop: '__control', width: '110px', fixed: 'right' }
     ],
     controlBtn: [
@@ -257,7 +257,8 @@
           modelValue: ''
         },
         config: {
-          componentName: markRaw(iconfont)
+          // componentName: markRaw(iconfont)
+          componentName: 'DiyIconfont'
         },
         name: 'icon',
         item: {

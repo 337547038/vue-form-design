@@ -51,6 +51,12 @@ router.post('/menu/save', async (req, res) => {
   commSave(req, res, 'menu')
 })
 router.post('/menu/edit', async (req, res) => {
+  if (req.body.label) {
+    delete req.body.label
+  }
+  if (req.body.value) {
+    delete req.body.value
+  }
   commEdit(req, res, 'menu')
 })
 router.post('/menu/delete', async (req, res) => {

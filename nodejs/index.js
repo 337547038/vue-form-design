@@ -56,4 +56,8 @@ app.use('/api/dataSource', source)
 const system = require('./system')
 app.use('/api/system', system)
 
+// 流程
+const flow = require('./flow')
+app.use('/api/flow', flow)
+
 // https://blog.csdn.net/weixin_42934729/article/details/125233590

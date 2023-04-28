@@ -131,9 +131,9 @@
           <flex-box :data="element" v-else />
           <el-button
             style="position: relative; top: -28px; left: 10px"
-            v-if="element.config.add && type === 5"
+            v-if="element.config.addBtnText && type === 5"
             size="small"
-            >{{ element.config.add }}</el-button
+            >{{ element.config.addBtnText }}</el-button
           >
         </template>
         <template v-else-if="element.type === 'button'">
@@ -280,7 +280,6 @@
       'grid',
       'tabs',
       'flex',
-      'divider',
       'div'
     ]
     if (!notNeedItem.includes(obj.type)) {

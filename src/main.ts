@@ -8,6 +8,7 @@ import 'element-plus/dist/index.css'
 import './assets/scss/element-var.scss'
 import '@/assets/scss/index.scss'
 import AKDesign from './views/design/index'
+import ComComponents from '@/components/index'
 // 实例化 Pinia
 const pinia = createPinia()
 const app = createApp(App)
@@ -18,6 +19,7 @@ app
   })
   .use(router)
   .use(AKDesign)
+  .use(ComComponents)
   .mount('#app')
 // 全局注册icon
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'

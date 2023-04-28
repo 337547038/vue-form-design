@@ -123,7 +123,8 @@
         { title: '快速开始', to: '/docs/use-start' },
         { title: '数据源', to: '/docs/use-dataSource' },
         { title: 'ak-form', to: '/docs/use-form' },
-        { title: 'ak-list', to: '/docs/use-list' }
+        { title: 'ak-list', to: '/docs/use-list' },
+        { title: '可视化数据大屏', to: '/docs/use-screen' }
       ]
     }
   ])

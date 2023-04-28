@@ -6,6 +6,83 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "658044",
+      "name": "解锁",
+      "font_class": "lock",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "679775",
+      "name": "锁定",
+      "font_class": "lock-open",
+      "unicode": "e6e6",
+      "unicode_decimal": 59110
+    },
+    {
+      "icon_id": "5388071",
+      "name": "眼睛_隐藏_o",
+      "font_class": "eye-close",
+      "unicode": "ebcd",
+      "unicode_decimal": 60365
+    },
+    {
+      "icon_id": "3294800",
+      "name": "设置边框",
+      "font_class": "border",
+      "unicode": "e673",
+      "unicode_decimal": 58995
+    },
+    {
+      "icon_id": "11179879",
+      "name": "文字边框",
+      "font_class": "text2",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "21529713",
+      "name": "m-滚动文字",
+      "font_class": "stext",
+      "unicode": "e801",
+      "unicode_decimal": 59393
+    },
+    {
+      "icon_id": "33172809",
+      "name": "发起的",
+      "font_class": "apply",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "1206679",
+      "name": "工作台",
+      "font_class": "work",
+      "unicode": "e68c",
+      "unicode_decimal": 59020
+    },
+    {
+      "icon_id": "5388003",
+      "name": "待办任务_o",
+      "font_class": "todo",
+      "unicode": "ebb1",
+      "unicode_decimal": 60337
+    },
+    {
+      "icon_id": "7158013",
+      "name": "我发起的",
+      "font_class": "applyed",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "20438918",
+      "name": "我的已办",
+      "font_class": "done",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
       "icon_id": "1766470",
       "name": "符号-按钮",
       "font_class": "button",
