@@ -185,6 +185,7 @@
       color: #999;
       transform-origin: left top;
       padding-left: 3px;
+      user-select: none;
     }
     &.ruler-v {
       cursor: row-resize;

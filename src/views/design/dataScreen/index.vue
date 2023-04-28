@@ -1,7 +1,17 @@
 <!-- Created by 337547038 -->
 <template>
   <div class="container-screen" v-loading="state.loading">
-    <control-left :style="{ width: state.widthLeft }" />
+    <i
+      class="icon-close close-preview"
+      v-if="state.isEye"
+      @click="state.isEye = false"
+    ></i>
+    <control-left
+      :style="{ width: state.widthLeft }"
+      ref="controlLeftEl"
+      v-model:active="state.active"
+      @update="controlLeftUpdate"
+    />
     <div class="main-box">
       <head-tools @click="headToolsClick" />
       <div class="design-box" ref="designBoxEl">
@@ -19,11 +29,12 @@
           direction="v"
         />
         <div
-          ref="designCanvasEl"
           @mousedown="onmousedown"
           class="design-canvas"
-          @click="canvasClick"
+          :class="{ preview: state.isEye }"
           :style="canvasStyle"
+          @click="canvasClick"
+          @contextmenu="contextmenu"
         >
           <draggable
             itemKey="id"
@@ -37,28 +48,33 @@
             }"
             @add="draggableAdd"
           >
-            <template #item="{ element }">
+            <template #item="{ element, index }">
               <a-screen
                 :data="element"
-                @click.stop="itemClick(element)"
+                @click.stop="itemClick(element, index)"
                 :type="0"
-                :current="getActive"
+                :current="index === state.active"
+                @delClick="delClick(index)"
               />
             </template>
           </draggable>
         </div>
+        <div class="no-date" v-if="!screenData.list.length"
+          >请从左则组件栏拖动组件到设计区域</div
+        >
       </div>
       <div class="design-footer">
         <i class="icon-menu icon" @click="toggle('left')"></i>
+        <div class="offset">{{ state.translateX }},{{ state.translateY }}</div>
         <div class="center">
           <div class="item"
-            ><label class="label">标尺</label
-            ><el-switch size="small" v-model="state.ruler"
-          /></div>
+            ><label class="label">标尺</label>
+            <el-switch size="small" v-model="state.ruler" />
+          </div>
           <div class="item"
-            ><label class="label">参考线</label
-            ><el-switch size="small" v-model="state.showLine"
-          /></div>
+            ><label class="label">参考线</label>
+            <el-switch size="small" v-model="state.showLine" />
+          </div>
           <div class="item slider"
             ><label class="label">缩放比例</label>
             <el-slider
@@ -68,12 +84,13 @@
               size="small"
               :marks="marks"
               v-model="state.scale"
-          /></div>
-          <div class="item"
-            ><el-button type="primary" link @click="defaultScaleClick"
-              >自适应</el-button
-            ></div
-          >
+            />
+          </div>
+          <div class="item">
+            <el-button type="primary" link @click="defaultScaleClick"
+              >自适应
+            </el-button>
+          </div>
         </div>
         <i class="icon-menu icon" @click="toggle()"></i>
       </div>
@@ -82,6 +99,7 @@
       :style="{ width: state.widthRight }"
       v-model:config="screenData.config"
       @open-drawer="openDrawer"
+      @update="setLayerList"
       ref="configEl"
     />
     <ace-drawer
@@ -93,6 +111,7 @@
       @before-close="drawerBeforeClose"
       @confirm="dialogConfirm"
     />
+    <vue-file ref="vueFileEl" />
   </div>
 </template>
 
@@ -104,7 +123,6 @@
   import ARuler from './components/ruler.vue'
   import AScreen from './components/screen.vue'
   import Draggable from 'vuedraggable-es'
-  import md5 from 'md5'
   import AceDrawer from '../components/aceDrawer.vue'
   import {
     json2string,
@@ -117,6 +135,7 @@
   import { ElMessage } from 'element-plus'
   import { getRequest } from '@/api'
   import { useRoute, useRouter } from 'vue-router'
+  import VueFile from '../components/vueFile.vue'
 
   const route = useRoute()
   const router = useRouter()
@@ -132,10 +151,13 @@
     translateX: 0,
     translateY: 0,
     moveFlag: false,
-    loading: false
+    loading: false,
+    isEye: false, // 预览模式
+    active: null // 当前选中的index
   })
-  const current = ref()
   const configEl = ref()
+  const controlLeftEl = ref()
+  const vueFileEl = ref()
   const screenData = ref({
     list: [],
     config: {
@@ -148,30 +170,31 @@
   })
   const canvasStyle = computed(() => {
     const { width, height, background, primary } = screenData.value.config
+    const scale = state.scale / 100
+    // 限制transform范围，不能拖出可视区域
+    const x = state.translateX
+    const y = state.translateY
     return {
       width: width,
       height: height,
       background: background,
-      transform: `scale(${state.scale / 100}) translate(${state.translateX}px,${
-        state.translateY
-      }px)`,
+      transform: `scale(${scale}) translate(${x}px,${y}px)`,
       color: primary
     }
   })
   const canvasClick = () => {
-    current.value = ''
+    state.active = null
     setCurrentConfig({})
   }
-  const itemClick = (obj: any) => {
-    current.value = obj
+  const itemClick = (obj: any, index: number) => {
+    state.active = index
     setCurrentConfig(obj)
   }
-  const getActive = computed(() => {
-    if (current.value && current.value.position) {
-      return md5(JSON.stringify(current.value.position))
-    }
-    return ''
-  })
+  const delClick = (index: number) => {
+    screenData.value.list.splice(index, 1)
+    canvasClick()
+    setLayerList()
+  }
   const marks = ref({
     100: {
       style: {}
@@ -224,14 +247,16 @@
   // 设计区域拖动相关
   const onmousedown = (evt: MouseEvent) => {
     state.moveFlag = true
-    const x = evt.pageX - state.translateX
-    const y = evt.pageY - state.translateY
+    const scale = state.scale / 100
+    //const scale = 1
+    const x = evt.pageX - state.translateX * scale
+    const y = evt.pageY - state.translateY * scale
     document.onmousemove = (evt: MouseEvent) => {
       if (!state.moveFlag) {
         return
       }
-      state.translateX = parseInt(`${evt.pageX - x}`)
-      state.translateY = parseInt(`${evt.pageY - y}`)
+      state.translateX = parseInt(`${(evt.pageX - x) / scale}`)
+      state.translateY = parseInt(`${(evt.pageY - y) / scale}`)
     }
     document.onmouseup = function () {
       state.moveFlag = false
@@ -239,15 +264,8 @@
     }
   }
   // 设计区域自定义右键菜单
-  const designCanvasEl = ref()
-  const setContextmenu = () => {
-    nextTick(() => {
-      designCanvasEl.value.addEventListener('contextmenu', (e: MouseEvent) => {
-        e.preventDefault()
-
-        console.log('00', e)
-      })
-    })
+  const contextmenu = (evt: MouseEvent) => {
+    evt.preventDefault()
   }
   //设计拖动
   const draggableAdd = (evt: any) => {
@@ -262,13 +280,19 @@
     if (!obj.config) {
       obj.config = {}
     }
-    obj.position.left = parseInt(`${pageX - state.offset[0]}`)
-    obj.position.top = parseInt(`${pageY - state.offset[1]}`)
-    current.value = obj
+    obj.position.left = parseInt(
+      `${pageX - state.offset[0] - state.translateX}`
+    )
+    obj.position.top = parseInt(`${pageY - state.offset[1] - state.translateY}`)
+    state.active = newIndex
     setCurrentConfig(obj)
+    setLayerList()
   }
   const setCurrentConfig = (obj: any) => {
     configEl.value.setCurrent(obj)
+  }
+  const setLayerList = () => {
+    controlLeftEl.value.setLayer(screenData.value.list)
   }
   // drawer
   const drawer = reactive({
@@ -300,21 +324,8 @@
             break
           case 'json':
             screenData.value = stringToObj(editVal)
+            setLayerList()
             break
-          // case 'dict':
-          //   state.formDict = string2json(editVal)
-          //   break
-          // case 'beforeRequest':
-          // case 'beforeSubmit':
-          // case 'afterResponse':
-          // case 'afterSubmit':
-          //   if (!state.formData.events) {
-          //     state.formData.events = {}
-          //   }
-          //   state.formData.events[drawer.type] = stringToObj(editVal)
-          //   break
-          // default:
-          //   state.formData = stringToObj(editVal)
         }
       }
       dialogCancel()
@@ -356,9 +367,10 @@
       case 'del':
         screenData.value.list = []
         canvasClick() // 清空右则属性相关
+        setLayerList()
         break
       case 'eye':
-        //　todo
+        state.isEye = true
         break
       case 'json':
         openDrawer({
@@ -368,7 +380,7 @@
         })
         break
       case 'vue':
-        //　todo
+        vueFileEl.value.openScreen(screenData.value)
         break
       case 'save':
         saveData()
@@ -383,9 +395,11 @@
       type: 4 // 1表单 2列表 3流程　4大屏
     }
     let apiKey = 'designSave'
-    if (route.id) {
+    const queryId = route.query.id
+    if (queryId) {
       // 编辑状态 当前记录id
-      Object.assign(params, { id: route.id })
+      Object.assign(params, { id: queryId })
+      delete params.name // 修改不传名称
       apiKey = 'designEdit'
     }
     state.loading = true
@@ -396,7 +410,10 @@
           type: 'success'
         })
         // 根据不同情况跳转到不同地址
-        router.push({ path: '/design/dataScreen/list' })
+        // 修改时不跳转，以免在开发阶段频繁修改跳转
+        if (!queryId) {
+          router.push({ path: '/design/dataScreen/list' })
+        }
         state.loading = false
       })
       .catch((res: any) => {
@@ -406,7 +423,7 @@
     canvasClick() // 清空右则属性相关
   }
   const getInitData = () => {
-    const id = route.id // 当前记录保存的id
+    const id = route.query.id // 当前记录保存的id
     if (!id) {
       return
     }
@@ -417,6 +434,14 @@
         const result = res.data
         screenData.value = stringToObj(result.data)
         state.loading = false
+        setLayerList()
+        if (screenData.value.config.style) {
+          appendOrRemoveStyle(
+            'screenStyle',
+            screenData.value.config.style,
+            true
+          )
+        }
       })
       .catch((res: any) => {
         // console.log(res)
@@ -425,9 +450,28 @@
       })
   }
   // 数据处理相关结束
+  // 设置图层隐藏锁定
+  const controlLeftUpdate = (
+    key: string,
+    index: number,
+    val: number | boolean
+  ) => {
+    //　console.log(key, index, val)
+    switch (key) {
+      case 'display':
+      case 'zIndex':
+        screenData.value.list[index].position[key] = val
+        break
+      case 'lock':
+        screenData.value.list[index].config[key] = val
+        break
+      case 'del':
+        return delClick(index)
+    }
+    setCurrentConfig(screenData.value.list[index]) // 右则属性
+  }
   onMounted(() => {
     getInitScale()
-    setContextmenu()
     getInitData()
   })
 </script>

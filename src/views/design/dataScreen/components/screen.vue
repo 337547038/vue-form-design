@@ -7,13 +7,13 @@
       [data.config?.class]: data.config?.class
     }"
     :style="positionStyle"
-    @mousedown.prevent.stop="stopPropagation"
+    @mousedown="stopPropagation"
   >
     <div
       class="resize-box"
       @mousedown="resizeMousedown"
       v-if="type === 0 && !data.config?.lock"
-      v-show="current === active"
+      v-show="current"
     >
       <span
         v-for="item in 8"
@@ -21,6 +21,7 @@
         :class="`rs${item}`"
         @mousedown.stop="resizeDotMouseDown($event, item)"
       ></span>
+      <i class="icon-del del" @click.stop="delClick"></i>
     </div>
     <div
       v-if="['text', 'border'].includes(data.type)"
@@ -53,7 +54,12 @@
       <span v-if="!config.src">请选择或上传图片</span>
     </div>
     <div v-if="data.type === 'table'" ref="tableEl">
-      <el-table v-bind="config.props" :data="tableData" style="width: 100%">
+      <el-table
+        v-bind="config.props"
+        :data="tableData"
+        style="width: 100%"
+        :height="`${props.data.position.height}`"
+      >
         <el-table-column
           v-bind="col"
           v-for="col in data.columns"
@@ -85,7 +91,6 @@
   import NowTime from './nowTime.vue'
   import MyMarquee from './marquee.vue'
   import EchartsInit from '../../components/echartsInt.vue'
-  import md5 from 'md5'
   import type { ScreenData } from '../types'
   import { getRequest } from '@/api'
   import formatScreen from '@/utils/formatScreen'
@@ -93,7 +98,7 @@
     defineProps<{
       data: ScreenData
       type?: number
-      current?: string // 当前激活的项
+      current?: boolean // 当前激活的项index
     }>(),
     {
       type: 1
@@ -106,26 +111,31 @@
       // }
     }
   )
-  // const emits = defineEmits<{
-  //   (e: 'error', val: any): void
-  //   (e: 'success', res: any): void
-  // }>()
+  const emits = defineEmits<{
+    (e: 'delClick'): void
+  }>()
   const newValue = ref()
-  const active = computed(() => {
-    if (props.data.position) {
-      return md5(JSON.stringify(props.data.position))
-    }
-    return ''
-  })
   const config = computed(() => {
     return props.data.config || {}
   })
+  const transformUnit = (val: any) => {
+    /*try {
+      const isNumber = /^\d+(\.\d+)?$/.test(val.toString())
+      if (isNumber) {
+        return val + 'px'
+      }
+      return val
+    } catch (e) {
+      return val
+    }*/
+    return val + 'px'
+  }
   // 组件自定配置编辑的样式+定位时的宽高
   const getConfigStyle = computed(() => {
-    const { width, height } = props.data.position
+    //const { width, height } = props.data.position
     return Object.assign(
       {},
-      { width: width + 'px', height: height + 'px' },
+      { width: '100%', height: '100%' },
       config.value.style || {}
     )
   })
@@ -141,27 +151,52 @@
     if (!props.data.position) {
       return {}
     }
-    const { left, top, height, width, zIndex, display } = props.data.position
+    const { left, top, height, width, zIndex, display, right, bottom } =
+      props.data.position
     return {
-      left: left + 'px',
-      top: top + 'px',
-      width: width + 'px',
-      height: height + 'px',
+      left: transformUnit(left),
+      right: transformUnit(right),
+      bottom: transformUnit(bottom),
+      top: transformUnit(top),
+      width: transformUnit(width),
+      height: transformUnit(height),
       zIndex: zIndex || 1,
       display: display ? 'none' : ''
     }
   })
   const stopPropagation = (evt: MouseEvent) => {
-    evt.preventDefault()
-    evt.stopPropagation()
+    // 当前图层锁定时允许，要不没办法拖动主设计区域
+    if (!config.value.lock) {
+      evt.preventDefault()
+      evt.stopPropagation()
+    }
   }
   // 缩放
+  // const isNumberOrPx = (val: any) => {
+  //   if (!val) {
+  //     return false
+  //   }
+  //   try {
+  //     const isNumber = /^\d+(\.\d+)?$/.test(val.toString().replace('px', ''))
+  //     console.log(isNumber)
+  //     return isNumber
+  //   } catch (e) {
+  //     console.log('eeee', e)
+  //     return false
+  //   }
+  // }
   const resizeDotMouseDown = (evt: MouseEvent, index: number) => {
     let flag = true
     if (flag) {
       const x = evt.pageX
       const y = evt.pageY
       let { width, height, left, top } = props.data.position
+      // if (!isNumberOrPx(width) || !isNumberOrPx(height)) {
+      //   console.error('暂仅单位为px时才允许拖动缩放')
+      //   return false
+      // }
+      // const width2 = parseInt(`${width}`)
+      // const height2 = parseInt(`${height}`)
       document.onmousemove = (ev: MouseEvent) => {
         const mx = ev.pageX - x // 移动的位置
         const my = ev.pageY - y
@@ -231,8 +266,8 @@
   //　移动
   const resizeMousedown = (evt: MouseEvent) => {
     let moveFlag = true
-    const x = evt.pageX - props.data.position.left
-    const y = evt.pageY - props.data.position.top
+    const x = evt.pageX - parseInt(`${props.data.position.left}`) || 0
+    const y = evt.pageY - parseInt(`${props.data.position.top}`) || 0
     document.onmousemove = (evt: MouseEvent) => {
       if (!moveFlag) {
         return
@@ -331,8 +366,7 @@
         if (afterResponse) {
           if (typeof afterResponse === 'function') {
             newValue.value = afterResponse(result, getDataByType.value)
-          }
-          if (typeof afterResponse === 'string') {
+          } else {
             newValue.value = formatScreen(
               afterResponse,
               result,
@@ -346,6 +380,9 @@
       })
   }
   // 获取动态数据相关结束
+  const delClick = () => {
+    emits('delClick')
+  }
   onMounted(() => {
     getUrlData() // 从接口获取动态数据
   })

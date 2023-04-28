@@ -9,6 +9,8 @@ export interface CSSProperties {
   height: number
   left: number
   top: number
+  bottom?: number
+  right?: number
   zIndex?: number
   display?: string
 }

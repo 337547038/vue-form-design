@@ -11,6 +11,12 @@ const routes = [
     component: () => import('../views/test.vue')
   },
   {
+    // 数据可视化展示的不要放layout框架
+    path: '/design/dataScreen/show/:id',
+    name: '/dataScreen',
+    component: () => import('../views/design/dataScreen/show.vue')
+  },
+  {
     path: '/layout',
     redirect: '/',
     name: 'layout',

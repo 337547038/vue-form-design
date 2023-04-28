@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "658044",
+      "name": "解锁",
+      "font_class": "lock",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "679775",
+      "name": "锁定",
+      "font_class": "lock-open",
+      "unicode": "e6e6",
+      "unicode_decimal": 59110
+    },
+    {
+      "icon_id": "5388071",
+      "name": "眼睛_隐藏_o",
+      "font_class": "eye-close",
+      "unicode": "ebcd",
+      "unicode_decimal": 60365
+    },
+    {
       "icon_id": "3294800",
       "name": "设置边框",
       "font_class": "border",

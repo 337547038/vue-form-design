@@ -52,13 +52,13 @@
           })
         }
         /*if (item.config?.optionsType === 2 && item.config?.optionsFun) {
-          // 单选多选下拉等方法设值
-          // const optionsValue = ref([{label: "选项1", value: '1'}])
-          // provide("getCheckbox", optionsValue)
-          sourceFun += `// todo ${item.item.label}设置选项值\n`
-          sourceFun += `　const ${item.name}Option = ref([{label: "选项1", value: '1'}])\n`
-          sourceFun += `　provide("${item.config.optionsFun}", ${item.name}Option)\n`
-        }*/
+      // 单选多选下拉等方法设值
+      // const optionsValue = ref([{label: "选项1", value: '1'}])
+      // provide("getCheckbox", optionsValue)
+      sourceFun += `// todo ${item.item.label}设置选项值\n`
+      sourceFun += `　const ${item.name}Option = ref([{label: "选项1", value: '1'}])\n`
+      sourceFun += `　provide("${item.config.optionsFun}", ${item.name}Option)\n`
+    }*/
       })
     return {
       rulesMethods: rulesMethods,
@@ -249,6 +249,46 @@
       editor.value = aceEdit(html, 'editJsonCopy', 'html')
     })
   }
+  const openScreen = (obj: any) => {
+    visible.value = true
+    let styleCss = ''
+    const style = obj.config.style
+    if (style) {
+      styleCss = `<style>
+${style}
+<\/style>`
+    }
+    const html = `<template>
+  <div :style="screenStyle" class="design-canvas">
+    <ak-screen
+      v-for="(element, index) in screenData.list"
+      :key="index"
+      :data="element"
+    ></ak-screen>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { ref, computed } from 'vue'
+  const loading = ref(true)
+  const screenData = ref(${objToStringify(obj)})
+  const screenStyle = computed(() => {
+    const { width, height, background, primary } = screenData.value.config
+    return {
+      width: width,
+      height: height,
+      background: background,
+      color: primary,
+      position: 'relative'
+    }
+  })
+<\/script>
+${styleCss}`
+    nextTick(() => {
+      editor.value = aceEdit(html, 'editJsonCopy', 'html')
+    })
+  }
+
   const copyData = (e: any) => {
     nextTick(() => {
       const clipboard: any = new Clipboard(e.target, {
@@ -282,6 +322,7 @@
   }
   defineExpose({
     open,
-    openTable
+    openTable,
+    openScreen
   })
 </script>

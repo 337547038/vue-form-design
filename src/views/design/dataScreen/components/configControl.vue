@@ -1,7 +1,11 @@
 <!-- Created by 337547038 -->
 <template>
-  <div class="main-right">
-    <el-tabs class="tabs" model-value="data" v-if="Object.keys(current).length">
+  <div class="main-right" :class="{ lock: current.config?.lock }">
+    <el-tabs
+      class="tabs"
+      model-value="screen"
+      v-if="Object.keys(current).length"
+    >
       <el-tab-pane label="位置属性" name="screen">
         <el-form size="small">
           <el-form-item
@@ -14,6 +18,7 @@
               v-else-if="item.type === 'switch'"
               :model-value="item.value"
               @change="propertyChange(item, $event)"
+              :class="[item.key]"
             />
             <el-color-picker
               v-else-if="item.type === 'color'"
@@ -50,10 +55,19 @@
               @input="propertyChange(item, $event)"
             />
           </el-form-item>
-          <el-form-item v-if="['image', 'background'].includes(type)">
-            <el-upload>
-              <el-button type="primary">选择图片</el-button>
-            </el-upload>
+          <el-form-item
+            v-if="['image', 'background'].includes(type)"
+            class="upload-image"
+          >
+            <el-input
+              placeholder="请输入图片地址"
+              v-model="current.config.src"
+            />
+            <el-button
+              type="primary"
+              @click="openUpload(type === 'image' ? 'img' : 'bg', 'src')"
+              >选择图片</el-button
+            >
           </el-form-item>
           <el-form-item v-if="['line', 'bar', 'pie', 'echarts'].includes(type)">
             <el-button type="primary" @click="echartsEdit">图表编辑</el-button>
@@ -85,29 +99,35 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="数据" name="data">
-        <el-form size="small">
+        <el-form
+          size="small"
+          v-if="
+            [
+              'line',
+              'bar',
+              'pie',
+              'echarts',
+              'text',
+              'sText',
+              'table'
+            ].includes(type)
+          "
+        >
           <el-form-item label="数据类型">
             <el-radio-group v-model="current.config.optionsType">
               <el-radio :label="0">静态</el-radio>
               <el-radio :label="1">动态</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item v-if="current.config.optionsType === 0">
-            <el-button type="primary" @click="editData">编辑数据</el-button>
-          </el-form-item>
-          <template
+          <el-form-item
             v-if="
-              [
-                'line',
-                'bar',
-                'pie',
-                'echarts',
-                'text',
-                'sText',
-                'table'
-              ].includes(type) && current.config.optionsType === 1
+              current.config.optionsType === 0 &&
+              !['text', 'sText'].includes(type)
             "
           >
+            <el-button type="primary" @click="editData">编辑数据</el-button>
+          </el-form-item>
+          <template v-if="current.config.optionsType === 1">
             <el-form-item>
               <el-input
                 v-model="current.config.requestUrl"
@@ -204,9 +224,9 @@
               v-model="state.bgUpload"
               @change="stateChange"
             />
-            <el-upload :action="uploadUrl" :on-success="uploadSuccess">
-              <el-button type="primary">上传</el-button>
-            </el-upload>
+            <el-button type="primary" @click="openUpload('bg', 'screenBg')"
+              >上传</el-button
+            >
           </el-form-item>
           <el-form-item>
             <el-button @click="editStyle">编辑样式</el-button>
@@ -214,14 +234,15 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
+    <upload-image ref="uploadImageEl" @click="selectImg" />
   </div>
 </template>
 
 <script setup lang="ts">
   import { reactive, ref, computed, watch } from 'vue'
-  import { uploadUrl } from '@/api'
   import type { Config } from '../types'
   import type { OpenDrawer } from '../../types'
+  import UploadImage from './upload.vue'
   //import { stringToObj } from '@/utils/form'
 
   const props = withDefaults(
@@ -233,8 +254,10 @@
   const emits = defineEmits<{
     (e: 'update:config', val: Config): void
     (e: 'openDrawer', val: OpenDrawer): void
+    (e: 'update'): void
   }>()
   const current = ref({})
+  const uploadImageEl = ref()
   const type = computed(() => {
     return current.value.type
   })
@@ -301,10 +324,6 @@
   const configChange = (key: string, val: any) => {
     updateConfig({ [key]: val })
   }
-  //　背景上传
-  const uploadSuccess = (response: any) => {
-    state.bgUpload = response.path
-  }
   // ---------------------大屏配置结束---------------------
   const setCurrent = (obj: any) => {
     current.value = obj
@@ -336,17 +355,32 @@
         {
           type: 'number',
           label: 'left',
-          value: position.left,
+          value: position.left || 0,
+          placeholder: '图层位置',
           key: 'left',
           path: 'position'
         },
         {
           type: 'number',
           label: 'top',
-          value: position.top,
+          value: position.top || 0,
           key: 'top',
           path: 'position'
         },
+        // {
+        //   label: 'right',
+        //   value: position.right,
+        //   placeholder: 'right位置',
+        //   key: 'right',
+        //   path: 'position'
+        // },
+        // {
+        //   label: 'bottom',
+        //   value: position.bottom,
+        //   placeholder: 'bottom位置',
+        //   key: 'bottom',
+        //   path: 'position'
+        // },
         {
           type: 'number',
           label: 'zIndex',
@@ -373,7 +407,6 @@
           path: 'position'
         },
         {
-          type: 'input',
           label: '样式类名',
           placeholder: '方便引用个性化样式',
           value: config.class,
@@ -442,6 +475,14 @@
         },
         {
           type: 'color',
+          label: '背景颜色',
+          value: config.style?.background,
+          key: 'background',
+          path: 'style',
+          vShow: ['border']
+        },
+        {
+          type: 'color',
           label: '字体颜色',
           value: config.style?.color,
           key: 'color',
@@ -461,8 +502,8 @@
             '{y}-{m}-{d}': '{y}-{m}-{d}',
             '{h}:{i}:{s}': '{h}:{i}:{s}',
             '{y}-{m}-{d} {h}:{i}:{s}': '{y}-{m}-{d} {h}:{i}:{s}',
-            '{y}年{m}月{d}日 {h}:{i}:{s} 星期{a}':
-              '{y}年{m}月{d}日 {h}:{i}:{s} 星期{a}'
+            '{y}年{m}月{d}日 {h}:{i}:{s} 星期{w}':
+              '{y}年{m}月{d}日 {h}:{i}:{s} 星期{w}'
           }
         },
         {
@@ -501,6 +542,9 @@
     return []
   })
   const propertyChange = (obj: any, value: any) => {
+    if (obj.type === 'number') {
+      value = parseInt(value)
+    }
     if (obj.path === 'position') {
       current.value.position[obj.key] = value
     } else if (obj.path === 'style') {
@@ -510,10 +554,30 @@
       }
       current.value.config.style[obj.key] = value
     } else {
-      if (obj.type === 'number') {
-        value = parseInt(value)
-      }
       current.value.config[obj.key] = value
+    }
+    if (['zIndex', 'display', 'lock'].includes(obj.key)) {
+      // 这三个更新，需要重设左侧图层
+      emits('update')
+    }
+  }
+  /***
+   * 选择上传图片
+   * @param tabsName 转到对应的选项卡
+   * @param key 关闭弹窗时用于区分事件标识
+   */
+  const openUpload = (tabsName: string, key: string) => {
+    uploadImageEl.value.open(tabsName, key)
+  }
+  const selectImg = (path: string, key: string) => {
+    switch (key) {
+      case 'screenBg':
+        state.bgUpload = path
+        stateChange()
+        break
+      case 'src':
+        current.value.config.src = path
+        break
     }
   }
   // ace编辑器相关
@@ -606,10 +670,10 @@
   const editData = () => {
     if (type.value === 'table') {
       emits('openDrawer', {
-        content: current.value.tableData,
+        content: current.value.option,
         title: '表格列表数据。根据设定的table-column列数据设置对应的数据',
         callback: (res: any) => {
-          current.value.tableData = res
+          current.value.option = res
         }
       })
     } else {

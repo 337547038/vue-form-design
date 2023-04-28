@@ -304,7 +304,7 @@ export default [
     ]
   },
   {
-    title: '扩展字段',
+    title: '扩展组件',
     children: [
       {
         type: 'expand-user',

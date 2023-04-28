@@ -30,18 +30,49 @@
           <draggable
             itemKey="itemKey"
             tag="ul"
-            v-model="layerList"
+            ghost-class="ghost"
+            :list="layerList"
             animation="300"
-            :move="onMove"
-            @sort="sort"
+            v-bind="{
+              group: {
+                pull: false
+              }
+            }"
+            @sort="dragEnd"
           >
             <template #item="{ element }">
-              <li>{{ element.label }}</li>
+              <li
+                :class="{
+                  active: active === element.index,
+                  lock: element.lock,
+                  display: element.display
+                }"
+              >
+                <span @click="showLockClick(element, 'active')"
+                  ><i :class="`icon-${element.icon}`"></i>
+                  {{ element.label }}</span
+                >
+                <i
+                  @click="showLockClick(element, 'display')"
+                  class="icon"
+                  :class="[element.display ? 'icon-eye-close' : 'icon-eye']"
+                ></i>
+                <i
+                  @click="showLockClick(element, 'lock')"
+                  class="icon"
+                  :class="[element.lock ? 'icon-lock' : 'icon-lock-open']"
+                ></i>
+                <el-popconfirm
+                  title="确认删除"
+                  @confirm="showLockClick({ index: element.index }, 'del')"
+                >
+                  <template #reference>
+                    <i class="icon-del"></i>
+                  </template>
+                </el-popconfirm>
+              </li>
             </template>
           </draggable>
-          <!--            <li v-for="item in layerList" :key="item">
-              <i :class="`icon-${item.icon}`"></i>{{ item.label }}
-            </li>-->
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -52,20 +83,41 @@
   import { ref } from 'vue'
   import Draggable from 'vuedraggable-es'
   import { jsonParseStringify } from '@/utils'
-  const layerList = ref([
-    { label: '折线图1', icon: 'line', zIndex: 1 },
-    { label: '折线图2', icon: 'line', zIndex: 2 },
-    { label: '折线图3', icon: 'line', zIndex: 3 },
-    { label: '折线图4', icon: 'line2', zIndex: 4 }
-  ])
+  import type { ScreenData } from '../types'
+
+  withDefaults(
+    defineProps<{
+      active: number | null
+    }>(),
+    {}
+  )
+  const emits = defineEmits<{
+    (e: 'update', key: string, index: number, value: number | boolean): void
+    (e: 'update:active', index: number): void
+  }>()
+  const dict: any = {
+    line: ['折线图', 'line'],
+    bar: ['柱状图', 'bar'],
+    pie: ['饼图', 'pie'],
+    echarts: ['通用图表', ''],
+    table: ['表格', 'table'],
+    text: ['文本', 'text2'],
+    sText: ['滚动文本', 'stext'],
+    image: ['图片', 'image'],
+    background: ['背景', 'image'],
+    border: ['边框', 'border'],
+    clock: ['当前时间', 'time'],
+    component: ['自定义', 'component']
+  }
+  const layerList = ref([])
   const controlList = ref([
     {
       label: '图表',
       children: [
         {
           type: 'line',
-          label: '折线图',
-          icon: 'line',
+          label: dict.line[0],
+          icon: dict.line[1],
           position: {
             width: 400,
             height: 300
@@ -88,8 +140,8 @@
         },
         {
           type: 'bar',
-          label: '柱状图',
-          icon: 'bar',
+          label: dict.bar[0],
+          icon: dict.bar[1],
           position: {
             width: 400,
             height: 300
@@ -112,8 +164,8 @@
         },
         {
           type: 'pie',
-          label: '饼图',
-          icon: 'pie',
+          label: dict.pie[0],
+          icon: dict.pie[1],
           position: {
             width: 300,
             height: 300
@@ -136,8 +188,8 @@
         },
         {
           type: 'echarts',
-          label: '通用图表',
-          icon: '',
+          label: dict.echarts[0],
+          icon: dict.echarts[1],
           position: {
             width: 400,
             height: 300
@@ -151,8 +203,8 @@
       children: [
         {
           type: 'table',
-          label: '表格',
-          icon: 'table',
+          label: dict.table[0],
+          icon: dict.table[1],
           position: {
             width: 500,
             height: 300
@@ -167,8 +219,8 @@
       children: [
         {
           type: 'text',
-          label: '文本',
-          icon: 'text2',
+          label: dict.text[0],
+          icon: dict.text[1],
           position: {
             width: 100,
             height: 30
@@ -179,8 +231,8 @@
         },
         {
           type: 'sText',
-          label: '滚动文本',
-          icon: 'stext',
+          label: dict.sText[0],
+          icon: dict.sText[1],
           position: {
             width: 100,
             height: 30
@@ -191,8 +243,8 @@
         },
         {
           type: 'image',
-          label: '图片',
-          icon: 'image',
+          label: dict.image[0],
+          icon: dict.image[1],
           position: {
             width: 100,
             height: 50
@@ -203,8 +255,8 @@
         },
         {
           type: 'background',
-          label: '背景',
-          icon: 'image',
+          label: dict.background[0],
+          icon: dict.background[1],
           position: {
             width: 100,
             height: 50
@@ -215,8 +267,8 @@
         },
         {
           type: 'border',
-          label: '边框',
-          icon: 'border',
+          label: dict.border[0],
+          icon: dict.border[1],
           position: {
             width: 100,
             height: 100
@@ -234,8 +286,8 @@
       children: [
         {
           type: 'clock',
-          label: '当前时间',
-          icon: 'time',
+          label: dict.clock[0],
+          icon: dict.clock[1],
           position: {
             width: 150,
             height: 30
@@ -248,8 +300,8 @@
       children: [
         {
           type: 'component',
-          label: '自定义',
-          icon: 'component',
+          label: dict.component[0],
+          icon: dict.component[1],
           position: {
             width: 200,
             height: 200
@@ -262,13 +314,59 @@
   const clone = (origin: any) => {
     return jsonParseStringify(origin)
   }
-  const onMove = (e, originalEvent) => {
-    //console.log(e)
-    //console.log(originalEvent)
-    //false表示阻止拖拽
-    return false
+  // 处理层级
+  const dragEnd = (evt: any) => {
+    const newIndex = evt.newIndex // 拖动完成后的位置
+    const len = layerList.value.length
+    console.log('dragEnd', newIndex)
+    //　获取下一层的zIndex
+    let nextZIndex
+    if (newIndex + 1 === len) {
+      // 最后一层了
+      nextZIndex = 0
+    } else {
+      //　将当前拖动的层zIndex设置为下一层的zIndex+1
+      nextZIndex = layerList.value[newIndex + 1].zIndex || 0
+    }
+    layerList.value[newIndex].zIndex = nextZIndex + 1
+    emits('update', 'zIndex', layerList.value[newIndex].index, nextZIndex + 1)
   }
-  const sort = () => {
-    console.log('sort')
+  // 隐藏或锁定
+  const showLockClick = (obj: any, key: string) => {
+    let newVal = false
+    switch (key) {
+      case 'display':
+        newVal = !obj.display
+        obj.display = newVal
+        break
+      case 'lock':
+        newVal = !obj.lock
+        obj.lock = newVal
+        break
+      case 'active': // 点击时选中对应的层
+        emits('update:active', obj.index)
+        break
+    }
+    // 通知外层处理
+    emits('update', key, obj.index, newVal)
   }
+  // 添加或删除图层时
+  const setLayer = (data: ScreenData[]) => {
+    const temp: any = []
+    data.forEach((item: ScreenData, index: number) => {
+      temp.push({
+        label: dict[item.type][0],
+        icon: dict[item.type][1],
+        zIndex: item.position.zIndex || 0,
+        display: item.position.display,
+        lock: item.config.lock,
+        index: index
+      })
+    })
+    //layerList.value = temp
+    layerList.value = temp.sort((a: any, b: any) => {
+      return b.zIndex - a.zIndex
+    })
+  }
+  defineExpose({ setLayer })
 </script>
