@@ -139,8 +139,9 @@
       const left = parseInt(`${evt2.pageX - x}`)
       const top = parseInt(`${evt2.pageY - y}`)
       const newVal = props.direction === 'h' ? left : top
-      if (newVal < 10 && newVal > 1910) {
+      if (newVal < 30) {
         state.line.splice(index, 1)
+        state.moveLine = false
       } else {
         state.line[index] = newVal
       }
