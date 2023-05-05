@@ -1,1 +1,0 @@
-import{_ as e,o,c as t}from"./index.13ff13d8.js";const n={name:"Index",components:{},props:{},data(){return{}},computed:{},mounted(){},methods:{}};function c(r,s,a,p,d,m){return o(),t("div")}const u=e(n,[["render",c]]);export{u as default};
