@@ -16,7 +16,7 @@
         <h3>列表页设计</h3>
         <p>展示管理数据</p>
       </div>
-      <div class="item" @click="$router.push({ path: '/design/echarts' })">
+      <div class="item">
         <img src="../../assets/img/echarts.png" alt="" />
         <h3>数据统计</h3>
         <p>展示数据报表</p>
@@ -26,7 +26,7 @@
         <h3>数据大屏</h3>
         <p>业务数据统计展示</p>
       </div>
-      <div class="item" @click="$router.push({ path: '/design/flow' })">
+      <div class="item">
         <img src="../../assets/img/flow.png" alt="" />
         <h3>流程设计</h3>
         <p>快速信息搜集</p>
