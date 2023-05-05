@@ -1,14 +1,25 @@
-export function debounce(fn: any, delay = 500) {
-  let timer: NodeJS.Timeout
+export function debounce(fn: any, delay = 500, immediate?: boolean) {
+  let timer: any
   return function (...args: any) {
     if (timer) {
       clearTimeout(timer)
     }
-    timer = setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      fn.apply(this, args)
-    }, delay)
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const context = this
+    if (immediate) {
+      const callNow = !timer
+      timer = setTimeout(() => {
+        timer = null
+      }, delay)
+      if (callNow) {
+        fn.apply(context, args)
+      }
+    } else {
+      timer = setTimeout(() => {
+        fn.apply(context, args)
+      }, delay)
+    }
   }
 }
 // 时间格式化
@@ -67,5 +78,20 @@ export const jsonParseStringify = (val: any) => {
     return JSON.parse(JSON.stringify(val))
   } else {
     return val
+  }
+}
+/**
+ * 设置或获取local session storage
+ * @param key
+ * @param data　有值时set，否则get
+ * @param type local/session默认
+ */
+export const getSetStorage = (key: string, data?: string, type = 'session') => {
+  //console.log(key, data)
+  const winType = type === 'session' ? 'sessionStorage' : 'localStorage'
+  if (data) {
+    window[winType].setItem(key, data)
+  } else {
+    return window[winType].getItem(key)
   }
 }

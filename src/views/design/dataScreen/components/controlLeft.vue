@@ -27,52 +27,55 @@
       </el-tab-pane>
       <el-tab-pane label="图层" name="layer">
         <div class="scroll layer-list">
-          <draggable
-            itemKey="itemKey"
-            tag="ul"
-            ghost-class="ghost"
-            :list="layerList"
-            animation="300"
-            v-bind="{
-              group: {
-                pull: false
-              }
-            }"
-            @sort="dragEnd"
-          >
-            <template #item="{ element }">
-              <li
-                :class="{
-                  active: active === element.index,
-                  lock: element.lock,
-                  display: element.display
-                }"
+          <ul>
+            <li
+              v-for="(element, index) in layerList"
+              :key="index"
+              :class="{
+                active: active === element.index,
+                lock: element.lock,
+                display: element.display
+              }"
+            >
+              <span @click="showLockClick(element, 'active')"
+                ><i :class="`icon-${element.icon}`"></i>
+                {{ element.label }}</span
               >
-                <span @click="showLockClick(element, 'active')"
-                  ><i :class="`icon-${element.icon}`"></i>
-                  {{ element.label }}</span
-                >
-                <i
-                  @click="showLockClick(element, 'display')"
-                  class="icon"
-                  :class="[element.display ? 'icon-eye-close' : 'icon-eye']"
-                ></i>
-                <i
-                  @click="showLockClick(element, 'lock')"
-                  class="icon"
-                  :class="[element.lock ? 'icon-lock' : 'icon-lock-open']"
-                ></i>
-                <el-popconfirm
-                  title="确认删除"
-                  @confirm="showLockClick({ index: element.index }, 'del')"
-                >
-                  <template #reference>
-                    <i class="icon-del"></i>
-                  </template>
-                </el-popconfirm>
-              </li>
-            </template>
-          </draggable>
+              <i
+                @click="showLockClick(element, 'display')"
+                class="icon"
+                :class="[element.display ? 'icon-eye-close' : 'icon-eye']"
+              ></i>
+              <i
+                @click="showLockClick(element, 'lock')"
+                class="icon"
+                :class="[element.lock ? 'icon-lock' : 'icon-lock-open']"
+              ></i>
+              <el-popconfirm
+                title="确认删除"
+                @confirm="showLockClick({ index: element.index }, 'del')"
+              >
+                <template #reference>
+                  <i class="icon-del"></i>
+                </template>
+              </el-popconfirm>
+            </li>
+          </ul>
+          <!--          <draggable-->
+          <!--            itemKey="itemKey"-->
+          <!--            tag="ul"-->
+          <!--            ghost-class="ghost"-->
+          <!--            :list="layerList"-->
+          <!--            animation="300"-->
+          <!--            v-bind="{-->
+          <!--              group: {-->
+          <!--                pull: false-->
+          <!--              }-->
+          <!--            }"-->
+          <!--            @sort="dragEnd"-->
+          <!--          >-->
+          <!--            <template #item="{ element }"> </template>-->
+          <!--          </draggable>-->
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -315,22 +318,22 @@
     return jsonParseStringify(origin)
   }
   // 处理层级
-  const dragEnd = (evt: any) => {
-    const newIndex = evt.newIndex // 拖动完成后的位置
-    const len = layerList.value.length
-    console.log('dragEnd', newIndex)
-    //　获取下一层的zIndex
-    let nextZIndex
-    if (newIndex + 1 === len) {
-      // 最后一层了
-      nextZIndex = 0
-    } else {
-      //　将当前拖动的层zIndex设置为下一层的zIndex+1
-      nextZIndex = layerList.value[newIndex + 1].zIndex || 0
-    }
-    layerList.value[newIndex].zIndex = nextZIndex + 1
-    emits('update', 'zIndex', layerList.value[newIndex].index, nextZIndex + 1)
-  }
+  // const dragEnd = (evt: any) => {
+  //   const newIndex = evt.newIndex // 拖动完成后的位置
+  //   const len = layerList.value.length
+  //   console.log('dragEnd', newIndex)
+  //   //　获取下一层的zIndex
+  //   let nextZIndex
+  //   if (newIndex + 1 === len) {
+  //     // 最后一层了
+  //     nextZIndex = 0
+  //   } else {
+  //     //　将当前拖动的层zIndex设置为下一层的zIndex+1
+  //     nextZIndex = layerList.value[newIndex + 1].zIndex || 0
+  //   }
+  //   layerList.value[newIndex].zIndex = nextZIndex + 1
+  //   emits('update', 'zIndex', layerList.value[newIndex].index, nextZIndex + 1)
+  // }
   // 隐藏或锁定
   const showLockClick = (obj: any, key: string) => {
     let newVal = false
@@ -365,7 +368,7 @@
     })
     //layerList.value = temp
     layerList.value = temp.sort((a: any, b: any) => {
-      return b.zIndex - a.zIndex
+      return a.icon.localeCompare(b.icon)
     })
   }
   defineExpose({ setLayer })

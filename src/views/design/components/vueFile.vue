@@ -252,11 +252,24 @@
   const openScreen = (obj: any) => {
     visible.value = true
     let styleCss = ''
+    let globalData = ''
+    let globalImport = ''
     const style = obj.config.style
     if (style) {
       styleCss = `<style>
 ${style}
 <\/style>`
+    }
+    if (obj.config.requestUrl) {
+      // 全局大屏数据
+      globalImport = `import { getGlobalData } from '@/views/design/dataScreen/getData'`
+      globalData = `const globalScreen = ref({})
+  provide('globalScreen', globalScreen)
+  const {requestUrl, afterResponse, beforeRequest, method} = screenData.value.config
+  getGlobalData(requestUrl, afterResponse, beforeRequest, method)
+  .then((res: any) => {
+       globalScreen.value = res
+   })`
     }
     const html = `<template>
   <div :style="screenStyle" class="design-canvas">
@@ -269,7 +282,8 @@ ${style}
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, provide } from 'vue'
+  ${globalImport}
   const loading = ref(true)
   const screenData = ref(${objToStringify(obj)})
   const screenStyle = computed(() => {
@@ -282,6 +296,7 @@ ${style}
       position: 'relative'
     }
   })
+  ${globalData}
 <\/script>
 ${styleCss}`
     nextTick(() => {

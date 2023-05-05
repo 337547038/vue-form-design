@@ -48,6 +48,13 @@
                 :value="key"
               />
             </el-select>
+            <el-input-number
+              v-else-if="item.type === 'number'"
+              controls-position="right"
+              :placeholder="item.placeholder"
+              :model-value="item.value"
+              @input="propertyChange(item, $event)"
+            />
             <el-input
               v-else
               :placeholder="item.placeholder"
@@ -115,16 +122,12 @@
         >
           <el-form-item label="数据类型">
             <el-radio-group v-model="current.config.optionsType">
-              <el-radio :label="0">静态</el-radio>
+              <el-radio :label="0" style="margin-right: 4px">静态</el-radio>
+              <el-radio :label="2" style="margin-right: 4px">全局</el-radio>
               <el-radio :label="1">动态</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item
-            v-if="
-              current.config.optionsType === 0 &&
-              !['text', 'sText'].includes(type)
-            "
-          >
+          <el-form-item v-if="current.config.optionsType !== 1">
             <el-button type="primary" @click="editData">编辑数据</el-button>
           </el-form-item>
           <template v-if="current.config.optionsType === 1">
@@ -140,9 +143,13 @@
                   >
                     <el-option label="get" value="get" />
                     <el-option label="post" value="post" />
+                    <el-option label="ws" value="ws" disabled />
                   </el-select>
                 </template>
               </el-input>
+            </el-form-item>
+            <el-form-item label="刷新时间">
+              <el-input-number v-model="current.config.loopTime" disabled />
             </el-form-item>
             <el-form-item>
               <h3>接口数据处理事件</h3>
@@ -230,6 +237,48 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="editStyle">编辑样式</el-button>
+          </el-form-item>
+          <el-form-item>
+            <h3>全局数据</h3>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+              :model-value="config.requestUrl"
+              placeholder="接口URL或api中的key"
+              @input="configChange('requestUrl', $event)"
+            >
+              <template #prepend>
+                <el-select
+                  :model-value="config.method"
+                  style="width: 60px"
+                  @change="configChange('method', $event)"
+                >
+                  <el-option label="get" value="get" />
+                  <el-option label="post" value="post" />
+                  <el-option label="ws" value="ws" disabled />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="刷新时间">
+            <el-input-number
+              disabled
+              :model-value="config.loopTime"
+              @input="configChange('loopTime', $event)"
+            />
+          </el-form-item>
+          <el-form-item>
+            <h3>接口数据处理事件</h3>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="openEventsDrawer('beforeRequest', 'global')"
+              >beforeRequest</el-button
+            >
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="openEventsDrawer('afterResponse', 'global')"
+              >afterResponse</el-button
+            >
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -337,7 +386,6 @@
           title: '位置信息'
         },
         {
-          type: 'number',
           label: 'width',
           value: position.width,
           placeholder: '请输入宽度',
@@ -345,7 +393,6 @@
           path: 'position'
         },
         {
-          type: 'number',
           label: 'height',
           value: position.height,
           placeholder: '请输入高度',
@@ -355,7 +402,7 @@
         {
           type: 'number',
           label: 'left',
-          value: position.left || 0,
+          value: position.left,
           placeholder: '图层位置',
           key: 'left',
           path: 'position'
@@ -363,24 +410,26 @@
         {
           type: 'number',
           label: 'top',
-          value: position.top || 0,
+          value: position.top,
           key: 'top',
           path: 'position'
         },
-        // {
-        //   label: 'right',
-        //   value: position.right,
-        //   placeholder: 'right位置',
-        //   key: 'right',
-        //   path: 'position'
-        // },
-        // {
-        //   label: 'bottom',
-        //   value: position.bottom,
-        //   placeholder: 'bottom位置',
-        //   key: 'bottom',
-        //   path: 'position'
-        // },
+        {
+          type: 'number',
+          label: 'right',
+          value: position.right,
+          placeholder: '设置后left为auto',
+          key: 'right',
+          path: 'position'
+        },
+        {
+          type: 'number',
+          label: 'bottom',
+          value: position.bottom,
+          placeholder: '设置后top为auto',
+          key: 'bottom',
+          path: 'position'
+        },
         {
           type: 'number',
           label: 'zIndex',
@@ -542,9 +591,9 @@
     return []
   })
   const propertyChange = (obj: any, value: any) => {
-    if (obj.type === 'number') {
-      value = parseInt(value)
-    }
+    // if (obj.type === 'number') {
+    //   value = parseInt(value)
+    // }
     if (obj.path === 'position') {
       current.value.position[obj.key] = value
     } else if (obj.path === 'style') {
@@ -636,8 +685,13 @@
       }
     })
   }
-  const openEventsDrawer = (type: string) => {
-    let content = current.value.events && current.value.events[type]
+  const openEventsDrawer = (type: string, source?: string) => {
+    let content
+    if (source === 'global') {
+      content = props.config && (props.config as any)[type]
+    } else {
+      content = current.value.events && current.value.events[type]
+    }
     if (!content) {
       if (type === 'beforeRequest') {
         content = (data: any) => {
@@ -646,9 +700,16 @@
           return data
         }
       } else {
-        content = (data: any, option: any) => {
-          console.log('afterResponse', data, option)
-          return option
+        if (source === 'global') {
+          content = (res: any) => {
+            console.log('afterResponse', res)
+            return res
+          }
+        } else {
+          content = (data: any, option: any, global: any) => {
+            console.log('afterResponse', data, option, global)
+            return option
+          }
         }
       }
     }
@@ -659,26 +720,63 @@
           ? '这里可处理请求前的参数，返回相应参数给接口'
           : '接口数据处理。也可为字符串，如opt=formatTest',
       callback: (res: any) => {
-        if (!current.value.events) {
-          current.value.events = {}
+        if (source === 'global') {
+          ;(props.config as any)[type] = res
+        } else {
+          if (!current.value.events) {
+            current.value.events = {}
+          }
+          current.value.events[type] = res
         }
-        current.value.events[type] = res
       }
     })
   }
-  // 编辑静态数据
+  // 编辑静态/全局数据
   const editData = () => {
-    if (type.value === 'table') {
-      emits('openDrawer', {
-        content: current.value.option,
-        title: '表格列表数据。根据设定的table-column列数据设置对应的数据',
-        callback: (res: any) => {
-          current.value.option = res
+    let content
+    let title
+    const optionsType = current.value.config.optionsType
+    if (optionsType === 2) {
+      // 全局
+      title = '从大屏配置的全局数据里获取指定数据'
+      content = current.value.events?.getGlobal
+      if (!content) {
+        content = (data: any, global: any) => {
+          console.log('getGlobalData', data, global)
+          return data
         }
-      })
+      }
     } else {
-      echartsEdit()
+      // 静态
+      title = '图表数据，替换相关数据返回即可'
+      if (['text', 'sText'].includes(type.value)) {
+        content = current.value.config?.text
+        title = '编辑文本内容数据'
+      } else {
+        content = current.value.option
+      }
+      if (type.value === 'table') {
+        title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
+      }
     }
+    emits('openDrawer', {
+      content: content,
+      title: title,
+      callback: (res: any) => {
+        if (optionsType === 2) {
+          if (!current.value.events) {
+            current.value.events = {}
+          }
+          current.value.events.getGlobal = res
+        } else {
+          if (['text', 'sText'].includes(type.value)) {
+            current.value.config.text = res
+          } else {
+            current.value.option = res
+          }
+        }
+      }
+    })
   }
   defineExpose({ setCurrent })
 </script>

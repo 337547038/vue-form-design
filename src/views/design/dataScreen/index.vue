@@ -14,16 +14,20 @@
     />
     <div class="main-box">
       <head-tools @click="headToolsClick" />
-      <div class="design-box" ref="designBoxEl">
+      <div class="design-box" ref="designBoxEl" @scroll="designScroll">
         <a-ruler
+          size="1920px"
           :scale="state.scale"
           :offset="state.offset"
+          :scroll="state.scroll"
           :show-ruler="state.ruler"
           :show-line="state.showLine"
         />
         <a-ruler
+          size="1080px"
           :scale="state.scale"
           :offset="state.offset"
+          :scroll="state.scroll"
           :show-ruler="state.ruler"
           :show-line="state.showLine"
           direction="v"
@@ -54,18 +58,17 @@
                 @click.stop="itemClick(element, index)"
                 :type="0"
                 :current="index === state.active"
-                @delClick="delClick(index)"
+                @control-click="controlClick(index, $event)"
               />
             </template>
           </draggable>
         </div>
         <div class="no-date" v-if="!screenData.list.length"
-          >请从左则组件栏拖动组件到设计区域</div
-        >
+          >请从左则组件栏拖动组件到设计区域
+        </div>
       </div>
       <div class="design-footer">
-        <i class="icon-menu icon" @click="toggle('left')"></i>
-        <div class="offset">{{ state.translateX }},{{ state.translateY }}</div>
+        <i class="icon-menu icon" @click="toggle('Left')"></i>
         <div class="center">
           <div class="item"
             ><label class="label">标尺</label>
@@ -80,7 +83,7 @@
             <el-slider
               show-stops
               :max="200"
-              :min="20"
+              :min="state.autoScale - 5"
               size="small"
               :marks="marks"
               v-model="state.scale"
@@ -92,7 +95,7 @@
             </el-button>
           </div>
         </div>
-        <i class="icon-menu icon" @click="toggle()"></i>
+        <i class="icon-menu icon" @click="toggle('Right')"></i>
       </div>
     </div>
     <config-control
@@ -116,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, reactive, onMounted, nextTick } from 'vue'
+  import { ref, computed, reactive, onMounted, nextTick, provide } from 'vue'
   import HeadTools from '../components/headTools.vue'
   import ConfigControl from './components/configControl.vue'
   import ControlLeft from './components/controlLeft.vue'
@@ -136,18 +139,29 @@
   import { getRequest } from '@/api'
   import { useRoute, useRouter } from 'vue-router'
   import VueFile from '../components/vueFile.vue'
+  import { getSetStorage, jsonParseStringify } from '@/utils'
+  import { getInitData, getGlobalData } from './getData'
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([
+    { label: '系统工具' },
+    { label: '可视化大屏设计' }
+  ])
 
   const route = useRoute()
   const router = useRouter()
 
+  const wLeft = getSetStorage('screenToolWidthLeft') || ''
+  const wRight = getSetStorage('screenToolWidthRight') || ''
   const state = reactive({
     showLine: true,
     scale: 100,
     autoScale: 100,
     ruler: true,
-    widthLeft: '',
-    widthRight: '',
+    widthLeft: wLeft === '0' ? '' : wLeft,
+    widthRight: wRight === '0' ? '' : wRight,
     offset: [],
+    scroll: [0, 0], // 滚动条位置
     translateX: 0,
     translateY: 0,
     moveFlag: false,
@@ -168,17 +182,17 @@
       primary: '#409eff'
     }
   })
+  const globalScreen = ref({})
+  provide('globalScreen', globalScreen)
   const canvasStyle = computed(() => {
     const { width, height, background, primary } = screenData.value.config
     const scale = state.scale / 100
     // 限制transform范围，不能拖出可视区域
-    const x = state.translateX
-    const y = state.translateY
     return {
       width: width,
       height: height,
       background: background,
-      transform: `scale(${scale}) translate(${x}px,${y}px)`,
+      transform: `scale(${scale})`,
       color: primary
     }
   })
@@ -190,9 +204,17 @@
     state.active = index
     setCurrentConfig(obj)
   }
-  const delClick = (index: number) => {
-    screenData.value.list.splice(index, 1)
-    canvasClick()
+  const controlClick = (index: number, type: string) => {
+    if (type === 'del') {
+      screenData.value.list.splice(index, 1)
+      canvasClick()
+    } else if (type === 'clone') {
+      const newObj = jsonParseStringify(screenData.value.list[index])
+      screenData.value.list.push(newObj)
+      // 选中复制的，即最后一条记录
+      const cloneIndex = screenData.value.list.length - 1
+      itemClick(newObj, cloneIndex)
+    }
     setLayerList()
   }
   const marks = ref({
@@ -202,25 +224,24 @@
   })
   // 左右两边展开收起
   const toggle = (type?: string) => {
-    if (type === 'left') {
-      state.widthLeft === ''
-        ? (state.widthLeft = '0px')
-        : (state.widthLeft = '')
+    let val
+    if (type === 'Left') {
+      state.widthLeft = state.widthLeft === '' ? '0px' : ''
+      val = state.widthLeft
       // 展开收起有过渡动画时间
       setTimeout(() => {
         getInitScale()
       }, 500)
     } else {
-      state.widthRight === ''
-        ? (state.widthRight = '0px')
-        : (state.widthRight = '')
+      state.widthRight = state.widthRight === '' ? '0px' : ''
+      val = state.widthRight
     }
+    // 这个方法的data为空时是取值，这里要设值
+    getSetStorage('screenToolWidth' + type, val || '0')
   }
   //　初始时设置缩放比例，自适应
   const defaultScaleClick = () => {
     state.scale = state.autoScale
-    state.translateX = 0
-    state.translateY = 0
   }
   const designBoxEl = ref()
   const getInitScale = () => {
@@ -230,7 +251,7 @@
       if (boxWidth && screenWidth) {
         const scale = parseInt(`${(boxWidth / screenWidth) * 100}`)
         state.autoScale = scale
-        // todo state.scale = scale
+        state.scale = scale
       }
       // 获取偏移距离
       const componentRect: DOMRect = designBoxEl.value.getBoundingClientRect()
@@ -247,21 +268,28 @@
   // 设计区域拖动相关
   const onmousedown = (evt: MouseEvent) => {
     state.moveFlag = true
-    const scale = state.scale / 100
-    //const scale = 1
-    const x = evt.pageX - state.translateX * scale
-    const y = evt.pageY - state.translateY * scale
+    const scrollTop = designBoxEl.value.scrollTop
+    const scrollLeft = designBoxEl.value.scrollLeft
+    const x = evt.pageX + scrollLeft
+    const y = evt.pageY + scrollTop
     document.onmousemove = (evt: MouseEvent) => {
       if (!state.moveFlag) {
         return
       }
-      state.translateX = parseInt(`${(evt.pageX - x) / scale}`)
-      state.translateY = parseInt(`${(evt.pageY - y) / scale}`)
+      const xx = x - evt.pageX
+      const yy = y - evt.pageY
+      designBoxEl.value.scrollTo(xx, yy)
     }
     document.onmouseup = function () {
       state.moveFlag = false
       document.onmousemove = null
     }
+  }
+  // 滚动条位置
+  const designScroll = () => {
+    const scrollTop = designBoxEl.value.scrollTop
+    const scrollLeft = designBoxEl.value.scrollLeft
+    state.scroll = [scrollLeft, scrollTop]
   }
   // 设计区域自定义右键菜单
   const contextmenu = (evt: MouseEvent) => {
@@ -280,10 +308,8 @@
     if (!obj.config) {
       obj.config = {}
     }
-    obj.position.left = parseInt(
-      `${pageX - state.offset[0] - state.translateX}`
-    )
-    obj.position.top = parseInt(`${pageY - state.offset[1] - state.translateY}`)
+    obj.position.left = parseInt(`${pageX - state.offset[0] + state.scroll[0]}`)
+    obj.position.top = parseInt(`${pageY - state.offset[1] + state.scroll[1]}`)
     state.active = newIndex
     setCurrentConfig(obj)
     setLayerList()
@@ -422,30 +448,25 @@
       })
     canvasClick() // 清空右则属性相关
   }
-  const getInitData = () => {
-    const id = route.query.id // 当前记录保存的id
-    if (!id) {
-      return
-    }
-    // 获取初始表单数据
+  const getData = () => {
     state.loading = true
-    getRequest('designById', { id: id })
-      .then((res) => {
-        const result = res.data
-        screenData.value = stringToObj(result.data)
+    getInitData(route.query.id)
+      .then((res: any) => {
         state.loading = false
+        screenData.value = res
         setLayerList()
-        if (screenData.value.config.style) {
-          appendOrRemoveStyle(
-            'screenStyle',
-            screenData.value.config.style,
-            true
+        const { requestUrl, afterResponse, beforeRequest, method } =
+          screenData.value.config
+        if (requestUrl) {
+          // 加载处理全局数据
+          getGlobalData(requestUrl, afterResponse, beforeRequest, method).then(
+            (res: any) => {
+              globalScreen.value = res
+            }
           )
         }
       })
-      .catch((res: any) => {
-        // console.log(res)
-        ElMessage.error(res.message || '加载异常')
+      .catch(() => {
         state.loading = false
       })
   }
@@ -466,12 +487,12 @@
         screenData.value.list[index].config[key] = val
         break
       case 'del':
-        return delClick(index)
+        return controlClick(index, 'del')
     }
     setCurrentConfig(screenData.value.list[index]) // 右则属性
   }
   onMounted(() => {
     getInitScale()
-    getInitData()
+    getData()
   })
 </script>

@@ -37,13 +37,14 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, computed, nextTick } from 'vue'
+  import { ref, computed, nextTick, onMounted } from 'vue'
   import { useLayoutStore } from '@/store/layout'
   // import TagViews from './tagViews.vue'
   import Menu from './menu.vue'
   import CommonHeader from './header.vue'
+  import { getSetStorage } from '@/utils'
   const store = useLayoutStore()
-  const isCollapse = ref(false)
+  const isCollapse = ref(getSetStorage('collapseMenu') === 'true')
   const fullScreen = ref(false)
   //const reloadFlag = ref<boolean>(true)
   const navList = ref([])
@@ -57,7 +58,9 @@
   })
   const headClick = (type: string) => {
     if (type === 'collapse') {
-      isCollapse.value = !isCollapse.value
+      const val = !isCollapse.value
+      isCollapse.value = val
+      getSetStorage('collapseMenu', val.toString())
     }
     if (type === 'fullScreen') {
       fullScreen.value = !fullScreen.value
@@ -82,5 +85,8 @@
       return temp
     }
     return []
+  })
+  onMounted(() => {
+    //isCollapse.value = getSetStorage('collapseMenu') === 'true'
   })
 </script>

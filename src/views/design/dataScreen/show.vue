@@ -10,16 +10,15 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, onMounted, computed, provide } from 'vue'
   import { useRoute } from 'vue-router'
-  import { getRequest } from '@/api'
-  const route = useRoute()
   import AScreen from './components/screen.vue'
-  import { stringToObj } from '@/utils/form'
-  import { ElMessage } from 'element-plus'
-  import { appendOrRemoveStyle } from '../utils'
+  import { getInitData, getGlobalData } from './getData'
 
+  const route = useRoute()
   const loading = ref(true)
+  const globalScreen = ref({})
+  provide('globalScreen', globalScreen)
   const screenData = ref({ list: [], config: {} })
   const screenStyle = computed(() => {
     const { width, height, background, primary } = screenData.value.config
@@ -31,30 +30,27 @@
       position: 'relative'
     }
   })
-  const getInitData = () => {
-    const params = {
-      id: route.params.id
-    }
-    getRequest('designById', params)
+  const getData = () => {
+    getInitData(route.params.id)
       .then((res: any) => {
-        const result = res.data
-        screenData.value = stringToObj(result.data)
         loading.value = false
-        if (screenData.value.config.style) {
-          appendOrRemoveStyle(
-            'screenStyle',
-            screenData.value.config.style,
-            true
+        screenData.value = res
+        const { requestUrl, afterResponse, beforeRequest, method } =
+          screenData.value.config
+        if (requestUrl) {
+          // 加载处理全局数据
+          getGlobalData(requestUrl, afterResponse, beforeRequest, method).then(
+            (res: any) => {
+              globalScreen.value = res
+            }
           )
         }
       })
-      .catch((res: any) => {
-        // console.log(res)
-        ElMessage.error(res.message || '加载异常')
+      .catch(() => {
         loading.value = false
       })
   }
   onMounted(() => {
-    getInitData()
+    getData()
   })
 </script>

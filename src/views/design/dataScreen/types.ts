@@ -3,10 +3,15 @@ export interface Config {
   height: string
   background?: string
   primary?: string
+  requestUrl?: string
+  method?: string
+  loopTime?: number
+  beforeRequest?: Function
+  afterResponse?: Function | string
 }
 export interface CSSProperties {
-  width: number
-  height: number
+  width: number | string
+  height: number | string
   left: number
   top: number
   bottom?: number

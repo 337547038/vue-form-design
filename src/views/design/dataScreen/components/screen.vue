@@ -21,7 +21,15 @@
         :class="`rs${item}`"
         @mousedown.stop="resizeDotMouseDown($event, item)"
       ></span>
-      <i class="icon-del del" @click.stop="delClick"></i>
+      <div class="control-btn">
+        <i
+          class="icon-clone"
+          @click.stop="controlClick('clone')"
+          title="复制"
+        ></i>
+        <i class="icon-del" @click.stop="controlClick('del')" title="删除"></i>
+      </div>
+      <div class="position">{{ JSON.stringify(props.data.position) }}</div>
     </div>
     <div
       v-if="['text', 'border'].includes(data.type)"
@@ -87,13 +95,16 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted, nextTick, watch } from 'vue'
+  import { ref, computed, onMounted, nextTick, watch, inject } from 'vue'
   import NowTime from './nowTime.vue'
   import MyMarquee from './marquee.vue'
   import EchartsInit from '../../components/echartsInt.vue'
   import type { ScreenData } from '../types'
   import { getRequest } from '@/api'
   import formatScreen from '@/utils/formatScreen'
+  import { ElMessage } from 'element-plus'
+  import { debounce } from '@/utils'
+
   const props = withDefaults(
     defineProps<{
       data: ScreenData
@@ -112,23 +123,26 @@
     }
   )
   const emits = defineEmits<{
-    (e: 'delClick'): void
+    (e: 'controlClick', type: string): void
   }>()
   const newValue = ref()
   const config = computed(() => {
     return props.data.config || {}
   })
-  const transformUnit = (val: any) => {
-    /*try {
-      const isNumber = /^\d+(\.\d+)?$/.test(val.toString())
-      if (isNumber) {
-        return val + 'px'
-      }
-      return val
+  const isNumber = (val: any) => {
+    try {
+      return /^\d+(\.\d+)?$/.test(val.toString())
     } catch (e) {
+      return false
+    }
+  }
+  // 位置信息
+  const transformUnit = (val: any) => {
+    if (isNumber(val)) {
+      return val + 'px'
+    } else {
       return val
-    }*/
-    return val + 'px'
+    }
   }
   // 组件自定配置编辑的样式+定位时的宽高
   const getConfigStyle = computed(() => {
@@ -153,11 +167,20 @@
     }
     const { left, top, height, width, zIndex, display, right, bottom } =
       props.data.position
+    // 设置了right时left为auto，设置了bottom时top为auto
+    let left2 = transformUnit(left)
+    if (right || right === 0) {
+      left2 = 'auto'
+    }
+    let top2 = transformUnit(top)
+    if (bottom || bottom === 0) {
+      top2 = 'auto'
+    }
     return {
-      left: transformUnit(left),
+      left: left2,
       right: transformUnit(right),
       bottom: transformUnit(bottom),
-      top: transformUnit(top),
+      top: top2,
       width: transformUnit(width),
       height: transformUnit(height),
       zIndex: zIndex || 1,
@@ -171,32 +194,30 @@
       evt.stopPropagation()
     }
   }
-  // 缩放
-  // const isNumberOrPx = (val: any) => {
-  //   if (!val) {
-  //     return false
-  //   }
-  //   try {
-  //     const isNumber = /^\d+(\.\d+)?$/.test(val.toString().replace('px', ''))
-  //     console.log(isNumber)
-  //     return isNumber
-  //   } catch (e) {
-  //     console.log('eeee', e)
-  //     return false
-  //   }
-  // }
+  const isNumberOrPx = (val: any) => {
+    if (isNumber(val)) {
+      return true
+    } else {
+      // 不是数字时，带有px单位时
+      return val.indexOf('px') !== -1
+    }
+  }
   const resizeDotMouseDown = (evt: MouseEvent, index: number) => {
     let flag = true
     if (flag) {
       const x = evt.pageX
       const y = evt.pageY
-      let { width, height, left, top } = props.data.position
-      // if (!isNumberOrPx(width) || !isNumberOrPx(height)) {
-      //   console.error('暂仅单位为px时才允许拖动缩放')
-      //   return false
-      // }
-      // const width2 = parseInt(`${width}`)
-      // const height2 = parseInt(`${height}`)
+      let { width, height, left, top, right, bottom } = props.data.position
+      if (right || right === 0 || bottom || bottom === 0) {
+        moveTips('使用right或bottom定位时不能缩放')
+        return
+      }
+      if (!isNumberOrPx(width) || !isNumberOrPx(height)) {
+        moveTips('暂仅单位为px时才允许拖动缩放')
+        return false
+      }
+      const widthNum = width as number
+      const heightNum = height as number
       document.onmousemove = (ev: MouseEvent) => {
         const mx = ev.pageX - x // 移动的位置
         const my = ev.pageY - y
@@ -207,40 +228,40 @@
         switch (index) {
           case 1:
             // 左上
-            mWidth = width - mx
-            mHeight = height - my
+            mWidth = widthNum - mx
+            mHeight = heightNum - my
             mTop = top + my
             mLeft = left + mx
             break
           case 4:
             // 向左
-            mWidth = width - mx
+            mWidth = widthNum - mx
             mLeft = left + mx
             break
           case 6:
             // 左下
-            mWidth = width - mx
+            mWidth = widthNum - mx
             mLeft = left + mx
-            mHeight = height + my
+            mHeight = heightNum + my
             break
           case 2: // 上中
-            mHeight = height - my
+            mHeight = heightNum - my
             mTop = top + my
             break
           case 7: //　下中
-            mHeight = height + my
+            mHeight = heightNum + my
             break
           case 3: //　右上
-            mWidth = width + mx
-            mHeight = height - my
+            mWidth = widthNum + mx
+            mHeight = heightNum - my
             mTop = top + my
             break
           case 5: //　右中
-            mWidth = width + mx
+            mWidth = widthNum + mx
             break
           case 8: //　右下
-            mWidth = width + mx
-            mHeight = height + my
+            mWidth = widthNum + mx
+            mHeight = heightNum + my
             break
         }
         // 重新设置值
@@ -265,10 +286,16 @@
   }
   //　移动
   const resizeMousedown = (evt: MouseEvent) => {
+    //　设置了right或bottom时不能拖动
+    const { left, top, right, bottom } = props.data.position
     let moveFlag = true
-    const x = evt.pageX - parseInt(`${props.data.position.left}`) || 0
-    const y = evt.pageY - parseInt(`${props.data.position.top}`) || 0
+    const x = evt.pageX - parseInt(`${left}`) || 0
+    const y = evt.pageY - parseInt(`${top}`) || 0
     document.onmousemove = (evt: MouseEvent) => {
+      if (right || right === 0 || bottom || bottom === 0) {
+        moveTips('使用right或bottom定位时不能拖动')
+        return
+      }
       if (!moveFlag) {
         return
       }
@@ -282,6 +309,14 @@
       document.onmousemove = null
     }
   }
+  // 缩放或移动提示
+  const moveTips = debounce(
+    (text: string) => {
+      ElMessage.error(text)
+    },
+    3000,
+    true
+  )
   // 表格相关
   const tableData = computed(() => {
     // 如果开启了轮播时，复制一份数据追加到最后
@@ -302,12 +337,14 @@
       return
     }
     const divData = tableEl.value.querySelector('.el-scrollbar__wrap')
+
     function marquee() {
       divData.scrollTop += 1
       if (divData.clientHeight + divData.scrollTop === divData.scrollHeight) {
         divData.scrollTop = divData.scrollTop - divData.scrollHeight / 2
       }
     }
+
     let clear = setInterval(marquee, config.value.speed || 30)
     tableEl.value.onmouseenter = function () {
       clearInterval(clear)
@@ -342,16 +379,22 @@
     }
     return ''
   })
+  const globalScreen = inject('globalScreen', {})
   const getUrlData = () => {
-    if (
-      !['line', 'bar', 'pie', 'echarts', 'text', 'sText', 'table'].includes(
-        props.data.type
-      )
-    ) {
+    if (['image', 'background', 'border', 'clock'].includes(props.data.type)) {
       return // 不支持动态数据获取的return
     }
     const { optionsType, requestUrl, method = 'post' } = config.value
-    const { beforeRequest = '', afterResponse = '' } = props.data.events || {}
+    const {
+      beforeRequest = '',
+      afterResponse = '',
+      getGlobal
+    } = props.data.events || {}
+    if (optionsType === 2 && typeof getGlobal === 'function') {
+      // 从全局加载的数据中提取
+      newValue.value = getGlobal(getDataByType.value, globalScreen.value || {})
+      return
+    }
     if (optionsType !== 1 || !requestUrl) {
       return
     }
@@ -365,12 +408,17 @@
         newValue.value = result
         if (afterResponse) {
           if (typeof afterResponse === 'function') {
-            newValue.value = afterResponse(result, getDataByType.value)
+            newValue.value = afterResponse(
+              result,
+              getDataByType.value,
+              globalScreen.value || {}
+            )
           } else {
             newValue.value = formatScreen(
               afterResponse,
               result,
-              getDataByType.value
+              getDataByType.value,
+              globalScreen.value || {}
             )
           }
         }
@@ -380,8 +428,8 @@
       })
   }
   // 获取动态数据相关结束
-  const delClick = () => {
-    emits('delClick')
+  const controlClick = (type: string) => {
+    emits('controlClick', type)
   }
   onMounted(() => {
     getUrlData() // 从接口获取动态数据
