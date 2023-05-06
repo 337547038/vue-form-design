@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
   // import {useRoute, useRouter} from 'vue-router'
-  import { ref, nextTick, reactive } from 'vue'
+  import { ref } from 'vue'
   import DrawerCom from './components/drawerCom.vue'
   // const route = useRoute()
   // const router = useRouter()
@@ -48,8 +48,7 @@
           type: 'primary',
           key: 'submit'
         },
-        config: {},
-        name: 'button1682087269238'
+        config: {}
       },
       {
         type: 'button',

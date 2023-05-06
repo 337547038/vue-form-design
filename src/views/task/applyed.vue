@@ -11,10 +11,10 @@
 </template>
 
 <script setup>
-  // import {useRoute, useRouter} from 'vue-router'
-  import { ref, nextTick, reactive } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { ref } from 'vue'
   // const route = useRoute()
-  // const router = useRouter()
+  const router = useRouter()
   const tableListEl = ref()
   const searchData = ref({
     list: [
@@ -80,9 +80,22 @@
       {
         prop: 'status',
         label: '流程状态'
+      },
+      {
+        prop: '__control',
+        label: '操作'
       }
     ],
     operateBtn: [
+      {
+        label: '修改',
+        click: (row) => {
+          router.push({
+            path: '/task/apply/start',
+            query: { flowId: row.flowId, id: row.id }
+          })
+        }
+      },
       {
         label: '撤回'
       }

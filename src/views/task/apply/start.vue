@@ -4,6 +4,7 @@
     <el-tabs>
       <el-tab-pane label="表单信息">
         <ak-form
+          ref="formEl"
           :formData="formData"
           :beforeSubmit="beforeSubmit"
           :afterSubmit="afterSubmit"
@@ -35,15 +36,23 @@
   import { getRequest } from '@/api'
   import { stringToObj } from '@/utils/form'
 
+  import { useLayoutStore } from '@/store/layout'
+  const layoutStore = useLayoutStore()
+  layoutStore.changeBreadcrumb([{ label: '工作台' }, { label: '发起流程' }])
+
   const route = useRoute()
   const router = useRouter()
   const flowEl = ref()
+  const formEl = ref()
   const formData = ref({
     list: [],
     form: {}
   })
   const loading = ref(true)
   const formType = computed(() => {
+    if (route.query.id) {
+      return 2 // 编辑
+    }
     return 1
   })
   const formId = ref()
@@ -54,7 +63,7 @@
     // 获取设计的流程信息
     getRequest('designById', params).then((res: any) => {
       flowEl.value.setValue(stringToObj(res.data.data))
-      // 获取流程表单信息
+      // 获取流程表单结构信息
       formId.value = res.data.source
       getRequest('designById', { id: res.data.source }).then((res: any) => {
         formData.value = stringToObj(res.data.data)
@@ -62,15 +71,28 @@
           loading.value = false
         })
       })
+      // 修改时获取表单初始值
+      const id = route.query.id
+      if (id) {
+        formEl.value.getData({ formId: formId.value, id: id })
+      }
     })
   }
   // 表单提交
   const beforeSubmit = (params: Record<string, any>) => {
     params.formId = formId.value
+    if (route.query.id) {
+      params.id = route.query.id
+    }
     return params
   }
   const afterSubmit = (type: string, res: any) => {
     if (type === 'success') {
+      if (route.query.id) {
+        // 修改时直接跳转即可
+        router.push({ path: '/task/applyed' })
+        return
+      }
       // 这里再插入发起的申请记录，这里和提交表单应为同一接口，先拆分处理了
       const params = {
         userId: 0, // 当前操作人用户id

@@ -170,6 +170,21 @@
         }
       },
       {
+        type: 'select',
+        control: {
+          modelValue: '',
+          placeholder: '请选择表单分类'
+        },
+        config: {
+          optionsType: 2,
+          optionsFun: 'form'
+        },
+        name: 'category',
+        item: {
+          label: '分类'
+        }
+      },
+      {
         type: 'button',
         control: {
           label: '查询',

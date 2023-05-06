@@ -32,6 +32,7 @@
   //import iconfont from '@/components/iconfont.vue'
   import { objToStringify, stringToObj } from '@/utils/form'
   import { useLayoutStore } from '@/store/layout'
+  import { ElMessage } from 'element-plus'
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '流程设计' }])
 
@@ -73,7 +74,7 @@
           optionsType: 1,
           optionsFun: 'designList',
           method: 'post',
-          // debug: true,
+          debug: true,
           label: 'name',
           value: 'id',
           beforeRequest: (data: any) => {
@@ -234,6 +235,19 @@
         // 到所有流程列表
         router.push({ path: '/design/flow/list' })
       }
+    }
+    if (type === 'validate' && tabName.value === 'flow') {
+      // 校验没通过
+      let message
+      try {
+        for (const key in res) {
+          if (!message) {
+            message = res[key][0].message
+            break
+          }
+        }
+        ElMessage.error(message)
+      } catch (e) {}
     }
   }
   const getInitData = () => {

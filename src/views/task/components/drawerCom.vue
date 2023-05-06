@@ -52,29 +52,31 @@
           </div>
           <ak-flow :type="1" ref="flowEl" />
         </el-tab-pane>
-        <el-tab-pane label="流转记录" />
+        <el-tab-pane label="流转记录">
+          <ak-list ref="tableListEl" :tableData="tableData" />
+        </el-tab-pane>
       </el-tabs>
     </div>
   </el-drawer>
 </template>
 
 <script setup lang="ts">
-  import { ref, nextTick, reactive, computed } from 'vue'
+  import { ref, nextTick, reactive } from 'vue'
   import { getRequest } from '@/api'
   import { stringToObj } from '@/utils/form'
 
-  const props = withDefaults(
-    defineProps<{
-      type: 'todo' | 'apply' | 'done'
-    }>(),
-    {}
-  )
+  // const props = withDefaults(
+  //   defineProps<{
+  //     type: 'todo' | 'apply' | 'done'
+  //   }>(),
+  //   {}
+  // )
 
-  const emits = defineEmits<{
-    (e: 'update:modelValue', value: string): void
-  }>()
+  // const emits = defineEmits<{
+  //   (e: 'update:modelValue', value: string): void
+  // }>()
   const state = reactive({
-    visible: true,
+    visible: false,
     formId: '',
     id: '',
     loading: true
@@ -187,6 +189,45 @@
       formOptionsEl.value.setValue({ remark: value === 1 ? '同意' : '不同意' })
     }
   }
+  // 流转记录
+  const tableData = ref({
+    columns: [
+      {
+        label: '节点名称',
+        prop: 'nodeName'
+      },
+      {
+        label: '处理人',
+        prop: 'name'
+      },
+      {
+        label: '任务状态', // 发起/已审批/审批中/已拒绝/已撤回/完成
+        prop: 'status',
+        config: {}
+      },
+      {
+        label: '开始时间',
+        prop: 'startTime',
+        config: {
+          formatter: '{y}-{m}-{d} {h}:{i}:{s}'
+        }
+      },
+      {
+        label: '结束时间',
+        prop: 'endTime',
+        config: {
+          formatter: '{y}-{m}-{d} {h}:{i}:{s}'
+        }
+      },
+      {
+        label: '审批意见',
+        prop: 'remark'
+      }
+    ],
+    config: {
+      columnsSetting: false
+    }
+  })
   defineExpose({ open })
 </script>
 <style lang="scss">

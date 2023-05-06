@@ -404,7 +404,6 @@
         } else if (typeof props.beforeSubmit === 'function') {
           submitParams = props.beforeSubmit(formatParams, route)
         }
-        // console.log('okkk')
         if (submitParams === false) {
           return
         }
@@ -417,6 +416,9 @@
           .catch((res) => {
             afterSubmit('fail', res)
           })
+      } else {
+        // 没通过校验
+        afterSubmit('validate', fields)
       }
     })
   }
@@ -438,7 +440,7 @@
     }
     if (type === 'success') {
       ElMessage.success(res.message || '保存成功！')
-    } else {
+    } else if (type === 'fail') {
       ElMessage.error(res.message || '保存失败！')
     }
   }
