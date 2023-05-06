@@ -23,10 +23,10 @@
   const echartsEl = ref()
   const myChart = ref()
   const intEcharts = debounce(() => {
-    // @ts-ignore
     if (!echartsEl.value) {
       return
     }
+    // @ts-ignore
     myChart.value = echarts.init(echartsEl.value)
     myChart.value.setOption(props.option)
     window.onresize = myChart.value

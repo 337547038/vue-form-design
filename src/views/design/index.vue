@@ -16,7 +16,7 @@
         <h3>列表页设计</h3>
         <p>展示管理数据</p>
       </div>
-      <div class="item">
+      <div class="item" @click="$router.push({ path: '/design/echarts' })">
         <img src="../../assets/img/echarts.png" alt="" />
         <h3>数据统计</h3>
         <p>展示数据报表</p>
