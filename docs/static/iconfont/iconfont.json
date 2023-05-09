@@ -6,18 +6,32 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "13644674",
+      "name": "箭头",
+      "font_class": "mouse",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "18372381",
+      "name": "手，手势",
+      "font_class": "hand",
+      "unicode": "e6cf",
+      "unicode_decimal": 59087
+    },
+    {
+      "icon_id": "7577422",
+      "name": "24gl-unlock4",
+      "font_class": "lock-open",
+      "unicode": "e9d6",
+      "unicode_decimal": 59862
+    },
+    {
       "icon_id": "658044",
       "name": "解锁",
       "font_class": "lock",
       "unicode": "e669",
       "unicode_decimal": 58985
-    },
-    {
-      "icon_id": "679775",
-      "name": "锁定",
-      "font_class": "lock-open",
-      "unicode": "e6e6",
-      "unicode_decimal": 59110
     },
     {
       "icon_id": "5388071",
