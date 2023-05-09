@@ -6,16 +6,17 @@ export const formData = {
     {
       type: 'input',
       control: {
-        modelValue: ''
+        modelValue: '',
       },
       config: {},
       name: 'input1663920706618',
       item: {
-        label: '单行文本'
-      }
-    }
+        label: '单行文本',
+      },
+    },
   ],
   form: {
-    size: 'default'
-  }
+    size: 'default',
+  },
+  config: {},
 }

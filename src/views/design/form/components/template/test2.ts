@@ -126,5 +126,6 @@ export const formData = {
     class: '',
     size: 'default',
     name: 'form1663920704871'
-  }
+  },
+  config: {}
 }
