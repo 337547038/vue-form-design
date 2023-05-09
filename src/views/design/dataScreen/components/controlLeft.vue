@@ -38,7 +38,7 @@
               }"
             >
               <span @click="showLockClick(element, 'active')"
-                ><i :class="`icon-${element.icon}`"></i>
+              ><i :class="`icon-${element.icon}`"></i>
                 {{ element.label }}</span
               >
               <i

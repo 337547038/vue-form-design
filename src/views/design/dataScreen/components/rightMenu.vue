@@ -11,7 +11,7 @@
         v-for="(item, index) in list"
         :key="index"
         @click="menuClick(index)"
-        >{{ item }}</li
+      >{{ item }}</li
       >
     </ul>
   </div>

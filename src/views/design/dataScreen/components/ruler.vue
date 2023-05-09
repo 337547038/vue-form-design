@@ -30,7 +30,7 @@
       :key="item"
       :style="getStyle(item)"
       @mousedown="lineMousedown(index, item, $event)"
-      ><span>{{ getScaleText(item - 20) }}</span></div
+    ><span>{{ getScaleText(item - 20) }}</span></div
     >
   </div>
 </template>

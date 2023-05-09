@@ -3,7 +3,7 @@
   <div class="flow-group" :class="{ 'flow-branch': isBranch }">
     <div class="flow-branch-btn" v-if="isBranch && !type">
       <el-button size="small" type="primary" plain round @click="addBranchClick"
-        >添加条件
+      >添加条件
       </el-button>
     </div>
     <div class="flow-row">
@@ -17,16 +17,16 @@
           <div class="title" :class="`bg-${item.nodeType}`">
             <i :class="getIcon(item)"></i>
             <span
-              >{{ nodeTypeName[item.nodeType]
-              }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span
+            >{{ nodeTypeName[item.nodeType]
+            }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span
             >
             <i
               class="icon-close close"
               @click.stop="delClick(item)"
               v-if="
                 item.nodeType !== 1 &&
-                !type &&
-                !(i === flowBranch.length - 1 && isBranch)
+                  !type &&
+                  !(i === flowBranch.length - 1 && isBranch)
               "
             ></i>
           </div>

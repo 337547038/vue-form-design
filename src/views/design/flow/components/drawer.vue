@@ -17,7 +17,7 @@
                 :value="item"
                 v-for="item in branchLen - 1"
                 :key="item"
-                >{{ item }}</el-option
+              >{{ item }}</el-option
               >
             </el-select>
           </el-form-item>
@@ -38,14 +38,14 @@
                 v-for="(item, key) in userTypeList"
                 :label="key"
                 :key="key"
-                >{{ item }}</el-radio
+              >{{ item }}</el-radio
               >
             </el-radio-group>
           </el-form-item>
           <template v-if="['1', '5'].includes(state.userType)">
             <el-form-item>
               <el-button type="primary" @click="selectClick"
-                >选择/修改{{ userTypeList[state.userType] }}</el-button
+              >选择/修改{{ userTypeList[state.userType] }}</el-button
               >
             </el-form-item>
             <el-form-item>

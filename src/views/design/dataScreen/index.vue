@@ -64,22 +64,22 @@
           </draggable>
         </div>
         <div class="no-date" v-if="!screenData.list.length"
-          >请从左则组件栏拖动组件到设计区域
+        >请从左则组件栏拖动组件到设计区域
         </div>
       </div>
       <div class="design-footer">
         <i class="icon-menu icon" @click="toggle('Left')"></i>
         <div class="center">
           <div class="item"
-            ><label class="label">标尺</label>
+          ><label class="label">标尺</label>
             <el-switch size="small" v-model="state.ruler" />
           </div>
           <div class="item"
-            ><label class="label">参考线</label>
+          ><label class="label">参考线</label>
             <el-switch size="small" v-model="state.showLine" />
           </div>
           <div class="item slider"
-            ><label class="label">缩放比例</label>
+          ><label class="label">缩放比例</label>
             <el-slider
               show-stops
               :max="200"
@@ -91,7 +91,7 @@
           </div>
           <div class="item">
             <el-button type="primary" link @click="defaultScaleClick"
-              >自适应
+            >自适应
             </el-button>
           </div>
         </div>
@@ -200,6 +200,7 @@
     state.active = null
     setCurrentConfig({})
   }
+
   const itemClick = (obj: any, index: number) => {
     state.active = index
     setCurrentConfig(obj)
@@ -228,18 +229,18 @@
     if (type === 'Left') {
       state.widthLeft = state.widthLeft === '' ? '0px' : ''
       val = state.widthLeft
-      // 展开收起有过渡动画时间
-      setTimeout(() => {
-        getInitScale()
-      }, 500)
     } else {
       state.widthRight = state.widthRight === '' ? '0px' : ''
       val = state.widthRight
     }
+    // 展开收起有过渡动画时间
+    setTimeout(() => {
+      getInitScale()
+    }, 500)
     // 这个方法的data为空时是取值，这里要设值
     getSetStorage('screenToolWidth' + type, val || '0')
   }
-  //　初始时设置缩放比例，自适应
+  // 初始时设置缩放比例，自适应
   const defaultScaleClick = () => {
     state.scale = state.autoScale
   }
@@ -418,7 +419,7 @@
     let params: any = {
       data: objToStringify(screenData.value),
       name: '未命名可视化大屏', // 表单名称，用于在显示所有已创建的表单列表里显示
-      type: 4 // 1表单 2列表 3流程　4大屏
+      type: 4 // 1表单,2列表,3流程,4大屏
     }
     let apiKey = 'designSave'
     const queryId = route.query.id
@@ -477,7 +478,6 @@
     index: number,
     val: number | boolean
   ) => {
-    //　console.log(key, index, val)
     switch (key) {
       case 'display':
       case 'zIndex':

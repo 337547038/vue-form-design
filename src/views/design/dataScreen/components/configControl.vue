@@ -73,7 +73,7 @@
             <el-button
               type="primary"
               @click="openUpload(type === 'image' ? 'img' : 'bg', 'src')"
-              >选择图片</el-button
+            >选择图片</el-button
             >
           </el-form-item>
           <el-form-item v-if="['line', 'bar', 'pie', 'echarts'].includes(type)">
@@ -92,15 +92,15 @@
             "
           >
             <el-button type="primary" @click="styleEdit"
-              >编辑更多内联样式</el-button
+            >编辑更多内联样式</el-button
             >
           </el-form-item>
           <el-form-item v-if="['table'].includes(type)">
             <el-button type="primary" @click="tablePropsEdit"
-              >表格属性</el-button
+            >表格属性</el-button
             >
             <el-button type="primary" @click="tableColumnEdit"
-              >Table-column</el-button
+            >Table-column</el-button
             >
           </el-form-item>
         </el-form>
@@ -156,12 +156,12 @@
             </el-form-item>
             <el-form-item>
               <el-button @click="openEventsDrawer('beforeRequest')"
-                >beforeRequest</el-button
+              >beforeRequest</el-button
               >
             </el-form-item>
             <el-form-item>
               <el-button @click="openEventsDrawer('afterResponse')"
-                >afterResponse</el-button
+              >afterResponse</el-button
               >
             </el-form-item>
           </template>
@@ -232,7 +232,7 @@
               @change="stateChange"
             />
             <el-button type="primary" @click="openUpload('bg', 'screenBg')"
-              >上传</el-button
+            >上传</el-button
             >
           </el-form-item>
           <el-form-item>
@@ -272,12 +272,12 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="openEventsDrawer('beforeRequest', 'global')"
-              >beforeRequest</el-button
+            >beforeRequest</el-button
             >
           </el-form-item>
           <el-form-item>
             <el-button @click="openEventsDrawer('afterResponse', 'global')"
-              >afterResponse</el-button
+            >afterResponse</el-button
             >
           </el-form-item>
         </el-form>
@@ -721,7 +721,7 @@
           : '接口数据处理。也可为字符串，如opt=formatTest',
       callback: (res: any) => {
         if (source === 'global') {
-          ;(props.config as any)[type] = res
+          (props.config as any)[type] = res
         } else {
           if (!current.value.events) {
             current.value.events = {}

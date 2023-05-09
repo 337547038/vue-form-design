@@ -15,7 +15,7 @@
             @click="btnClick(item.key)"
             v-for="(item, index) in btnList"
             :key="index"
-            ><i :class="item.icon"></i> {{ item.label }}</el-button
+          ><i :class="item.icon"></i> {{ item.label }}</el-button
           >
         </div>
       </div>

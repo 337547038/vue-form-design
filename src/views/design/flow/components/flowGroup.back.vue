@@ -3,7 +3,7 @@
   <div class="flow-group" :class="{ 'flow-branch': isBranch }">
     <div class="flow-branch-btn" v-if="isBranch">
       <el-button size="small" type="primary" plain round @click="addBranchClick"
-        >添加条件</el-button
+      >添加条件</el-button
       >
     </div>
     <div class="flow-row">
@@ -17,8 +17,8 @@
           <div class="title" :class="`bg-${item.nodeType}`">
             <i :class="getIcon(item)"></i>
             <span
-              >{{ title[item.nodeType]
-              }}<span v-if="item.nodeType === 3">{{ index }}</span></span
+            >{{ title[item.nodeType]
+            }}<span v-if="item.nodeType === 3">{{ index }}</span></span
             >
             <i
               class="icon-close close"
@@ -60,9 +60,9 @@
       }
     }
   )
-  const emits = defineEmits<{
-    (e: 'addNodeClick', nodeType: number, index: number): void
-  }>()
+  // const emits = defineEmits<{
+  //   //(e: 'addNodeClick', nodeType: number, index: number): void
+  // }>()
   const title = {
     1: '发起人',
     2: '审批人',
