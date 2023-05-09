@@ -84,7 +84,7 @@
 
   const store = useDesignFormStore()
   const router = useRouter()
-  const route = useRoute().query || {}
+  const route:any = useRoute().query || {}
   const state = reactive({
     formData: {
       list: [],

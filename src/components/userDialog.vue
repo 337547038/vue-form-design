@@ -29,7 +29,7 @@
             <el-table-column label="操作" width="60px">
               <template #default="{ row }">
                 <el-button circle size="small" @click="tableRowClick(row)"
-                  ><el-icon><ArrowRight /></el-icon
+                ><el-icon><ArrowRight /></el-icon
                 ></el-button>
               </template>
             </el-table-column>
@@ -52,7 +52,7 @@
         <div class="total">
           <div>已选择：{{ checkData.length }}</div>
           <el-button type="danger" @click="delAllClick" size="small"
-            >全部移除</el-button
+          >全部移除</el-button
           >
         </div>
         <el-table :data="checkData">
@@ -62,7 +62,7 @@
           <el-table-column label="操作" width="60px">
             <template #default="{ row }">
               <el-button size="small" type="danger" @click="delRowClick(row)"
-                >移除</el-button
+              >移除</el-button
               >
             </template>
           </el-table-column>

@@ -22,8 +22,8 @@
       <div class="iconfont-input">
         <el-input v-model="value" placeholder="输入或选择iconfont图标" />
         <div @click.stop="" class="color-input" v-if="colorPicker"
-          ><el-color-picker v-model="color" /></div
-      ></div>
+        ><el-color-picker v-model="color" /></div
+        ></div>
     </template>
   </el-popover>
 </template>

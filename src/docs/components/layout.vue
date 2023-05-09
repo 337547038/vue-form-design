@@ -8,7 +8,7 @@
         :style="{ paddingLeft: `${(anchor.indent - 2) * 15}px` }"
         @click="rollTo(anchor)"
         :key="index"
-        >{{ anchor.title }}</a
+      >{{ anchor.title }}</a
       >
     </div>
 
@@ -31,7 +31,7 @@
             :index="ch.to"
             v-for="(ch, i) in item.children"
             :key="i"
-            >{{ ch.title }}</el-menu-item
+          >{{ ch.title }}</el-menu-item
           >
         </el-sub-menu>
         <el-menu-item :index="item.to" v-else>{{ item.title }}</el-menu-item>

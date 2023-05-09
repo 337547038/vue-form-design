@@ -11,7 +11,7 @@
             <el-popover placement="bottom" :width="420" trigger="hover">
               <template #reference>
                 <el-button type="primary" plain size="small"
-                  >添加表格列字段</el-button
+                >添加表格列字段</el-button
                 >
               </template>
               <div class="table-field-list">
@@ -27,7 +27,7 @@
                       v-for="li in item.options"
                       :key="li.prop"
                       @change="fieldSelectClick(li, $event)"
-                  /></div>
+                    /></div>
                 </div>
               </div>
             </el-popover>
@@ -60,9 +60,9 @@
                 class="tip"
                 v-if="
                   state.tableData?.controlBtn?.length === 0 ||
-                  !state.tableData?.controlBtn
+                    !state.tableData?.controlBtn
                 "
-                >操作按钮区域，点击可添加如新增、删除</div
+              >操作按钮区域，点击可添加如新增、删除</div
               >
               <el-button
                 v-for="item in state.tableData?.controlBtn"
@@ -88,7 +88,7 @@
             </div>
           </div>
           <div class="tip" v-if="!state.tableData.columns?.length"
-            >表格列设置区域，可从左上角 添加表格列字段
+          >表格列设置区域，可从左上角 添加表格列字段
             选择已有列或直接从上方工具栏 生成脚本预览 编辑</div
           >
           <el-table
@@ -134,12 +134,12 @@
             <el-tab-pane label="字段属性" name="first">
               <div v-show="Object.keys(state.attrObj).length">
                 <div class="h3"
-                  ><h3>{{ state.attrObj.label }}</h3> 个性化设置</div
+                ><h3>{{ state.attrObj.label }}</h3> 个性化设置</div
                 >
                 <template v-if="state.attrObj.prop === '__control'">
                   <el-form-item>
                     <el-button @click="editOpenDrawer('operateBtn')"
-                      >操作按钮设置</el-button
+                    >操作按钮设置</el-button
                     >
                   </el-form-item>
                 </template>
@@ -194,7 +194,7 @@
                   </el-form-item>
                   <el-form-item>
                     <el-button @click="editAttr"
-                      >编辑{{ state.attrObj.label }}属性
+                    >编辑{{ state.attrObj.label }}属性
                     </el-button>
                   </el-form-item>
                 </template>
@@ -239,21 +239,21 @@
                 class="event-btn"
               >
                 <el-button @click="editOpenDrawer('tree')"
-                  >编辑侧栏树属性
+                >编辑侧栏树属性
                 </el-button>
                 <el-button @click="editOpenDrawer('treeBeforeRequest')"
-                  >beforeRequest
+                >beforeRequest
                 </el-button>
                 <el-button @click="editOpenDrawer('treeAfterResponse')"
-                  >afterResponse
+                >afterResponse
                 </el-button>
               </el-form-item>
               <el-form-item class="event-btn">
                 <el-button @click="editOpenDrawer('tableConfig')"
-                  >编辑表格属性
+                >编辑表格属性
                 </el-button>
                 <el-button @click="editOpenDrawer('dict')"
-                  >设置数据字典
+                >设置数据字典
                   <el-tooltip :content="tooltip.dict" placement="top">
                     <el-icon>
                       <QuestionFilled />
@@ -276,13 +276,13 @@
               </el-form-item>
               <el-form-item class="event-btn">
                 <el-button @click="editOpenDrawer('beforeRequest')"
-                  >beforeRequest
+                >beforeRequest
                 </el-button>
                 <el-button @click="editOpenDrawer('afterResponse')"
-                  >afterResponse
+                >afterResponse
                 </el-button>
                 <el-button @click="editOpenDrawer('beforeDelete')"
-                  >beforeDelete
+                >beforeDelete
                 </el-button>
               </el-form-item>
             </el-tab-pane>

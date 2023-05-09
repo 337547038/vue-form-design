@@ -12,7 +12,7 @@
         v-for="(item, index) in state.list"
         :key="index"
         @click="selectClick(item)"
-        ><img :src="item.imgPath" alt="" />{{ item.title }}</div
+      ><img :src="item.imgPath" alt="" />{{ item.title }}</div
       >
     </div>
   </div>
