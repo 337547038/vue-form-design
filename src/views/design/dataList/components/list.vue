@@ -59,7 +59,7 @@
                   :label="item.prop || item.type"
                   v-for="item in tableData.columns"
                   :key="item.prop || item.type"
-                  >{{ item.label }}</el-checkbox
+                >{{ item.label }}</el-checkbox
                 >
               </el-checkbox-group>
             </template>
@@ -95,14 +95,14 @@
                 <Tooltip :content="item.help" />
               </template>
               <template #default="scope" v-if="$slots[item.prop]">
-                <slot :name="item.prop" :row="scope.row" :$index="scope.$index">
+                <slot :name="item.prop" :row="scope.row" :index="scope.$index">
                 </slot>
               </template>
               <template
                 #default="scope"
                 v-else-if="
                   item.config?.tagList &&
-                  Object.keys(item.config?.tagList).length
+                    Object.keys(item.config?.tagList).length
                 "
               >
                 <el-tag
@@ -138,7 +138,7 @@
                             link
                             type="primary"
                             v-bind="btn"
-                            >{{ btn.label }}</el-button
+                          >{{ btn.label }}</el-button
                           >
                         </template>
                       </el-popconfirm>
@@ -151,7 +151,7 @@
                         type="primary"
                         v-bind="btn"
                         @click="operateBtnClick(btn, scope.row)"
-                        >{{ btn.label }}</el-button
+                      >{{ btn.label }}</el-button
                       >
                     </template>
                   </template>
@@ -170,7 +170,7 @@
                           <el-dropdown-item
                             v-if="getOperateVisible(m, scope.row)"
                             @click="operateBtnClick(m, scope.row)"
-                            >{{ m.label }}</el-dropdown-item
+                          >{{ m.label }}</el-dropdown-item
                           >
                         </template>
                       </el-dropdown-menu>

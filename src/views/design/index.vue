@@ -3,7 +3,7 @@
   <div class="bg-none design-index">
     <h2>开始创建一个页面</h2>
     <el-button type="primary" link @click="$router.push({ path: '/docs' })"
-      >如何使用？</el-button
+    >如何使用？</el-button
     >
     <div class="content">
       <div class="item" @click="$router.push({ path: '/design/form' })">
@@ -45,7 +45,7 @@
           • 丰富的API接口，方便快速的生成表单，验证和获取表单数据<br />
           • 代码简洁、易于二次开发 用于学习研究，欢迎交流，微信：<span
             style="color: red"
-            >337547038</span
+          >337547038</span
           ><br />
           • 如果项目对你有所帮助，请留个赞，以表支持<br />
           • 如果你对该项目感兴趣，欢迎加入项目建设中来<br />
@@ -53,7 +53,7 @@
         </div>
         <div><br /></div>
       </div> </div
-  ></div>
+    ></div>
 </template>
 
 <script setup></script>

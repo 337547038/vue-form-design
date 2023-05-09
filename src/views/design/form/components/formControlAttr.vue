@@ -155,7 +155,7 @@
               </div>
               <el-form-item>
                 <el-button @click="addSelectOption"
-                  >{{ controlData.type === 'cascader' ? '编辑' : '新增' }}
+                >{{ controlData.type === 'cascader' ? '编辑' : '新增' }}
                 </el-button>
               </el-form-item>
             </template>
@@ -203,7 +203,7 @@
                       '请求前处理事件，参数(data,route,form) data请求参数,route页面路由,form表单值'
                     )
                   "
-                  >beforeRequest
+                >beforeRequest
                 </el-button>
                 <el-button
                   @click="
@@ -212,7 +212,7 @@
                       '请求返回结束处理；，也可为字符串，如opt=formatTest'
                     )
                   "
-                  >afterResponse
+                >afterResponse
                 </el-button>
               </el-form-item>
             </template>
@@ -230,20 +230,20 @@
           <template
             v-if="
               !state.isSearch &&
-              showHide([
-                'txt',
-                'title',
-                'table',
-                'grid',
-                'tabs',
-                'card',
-                'switch',
-                'gridChild',
-                'tableColumn',
-                'divider',
-                'div',
-                'button'
-              ])
+                showHide([
+                  'txt',
+                  'title',
+                  'table',
+                  'grid',
+                  'tabs',
+                  'card',
+                  'switch',
+                  'gridChild',
+                  'tableColumn',
+                  'divider',
+                  'div',
+                  'button'
+                ])
             "
           >
             <div class="h3"><h3>校验设置</h3></div>
@@ -285,7 +285,7 @@
               <el-form-item>
                 <el-button @click="addRulesFast">快速添加</el-button>
                 <el-button @click="addRules(state.tooltip.rules)"
-                  >编写校验规则
+                >编写校验规则
                   <el-tooltip
                     :content="state.tooltip.rules"
                     placement="top"
@@ -302,7 +302,7 @@
               <el-checkbox
                 :modelValue="checkboxRequired"
                 @change="requiredChange"
-                >必填
+              >必填
               </el-checkbox>
               <el-input
                 placeholder="自定义必填错误提示"
@@ -317,7 +317,7 @@
             <el-button
               size="small"
               @click="openAttrDialog('', state.tooltip.props)"
-              >编辑属性
+            >编辑属性
               <el-tooltip :content="state.tooltip.props" placement="top">
                 <el-icon>
                   <QuestionFilled />
@@ -364,7 +364,7 @@
           </el-form-item>
           <el-form-item v-if="!state.isSearch">
             <template #label
-              >添加时获取请求
+            >添加时获取请求
               <el-tooltip
                 content="新增表单数据时，从接口获取新增初始数据"
                 placement="top"
@@ -383,7 +383,7 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="editFormStyle(state.tooltip.css)"
-              >编辑表单样式
+            >编辑表单样式
               <el-tooltip :content="state.tooltip.css" placement="top">
                 <el-icon>
                   <QuestionFilled />
@@ -391,7 +391,7 @@
               </el-tooltip>
             </el-button>
             <el-button @click="editFormDict(state.tooltip.dict)"
-              >设置数据字典
+            >设置数据字典
               <el-tooltip :content="state.tooltip.dict" placement="top">
                 <el-icon>
                   <QuestionFilled />
@@ -427,7 +427,7 @@
                     '获取表单初始数据前事件，可修改请求参数'
                   )
                 "
-                >beforeRequest
+              >beforeRequest
               </el-button>
               <el-button
                 @click="
@@ -436,7 +436,7 @@
                     '获取表单初始数据后事件，可对请求返回数据进行处理；也可为字符串，如opt=formatTest'
                   )
                 "
-                >afterResponse
+              >afterResponse
               </el-button>
               <el-button
                 @click="
@@ -445,11 +445,11 @@
                     '表单数据提交前事件，可对提交数据进行处理；也可为字符串，如opt=formatTest'
                   )
                 "
-                >beforeSubmit
+              >beforeSubmit
               </el-button>
               <el-button
                 @click="eventClick('afterSubmit', '表单数据提交成功事件')"
-                >afterSubmit
+              >afterSubmit
               </el-button>
               <el-button
                 @click="
@@ -458,7 +458,7 @@
                     '表单组件值改变事件。当表单某值改变时，可修改其他组件的值；也可为字符串，如opt=formChange,字符串即为/utils/formChangeValue(name,model,key)中的key值'
                   )
                 "
-                >表单组件改变事件change
+              >表单组件改变事件change
               </el-button>
             </el-form-item>
           </template>

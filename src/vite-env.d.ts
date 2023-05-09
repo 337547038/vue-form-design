@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
@@ -18,6 +17,9 @@ declare module 'vue-router'
 declare module 'vue'
 declare module 'clipboard'
 declare module 'vuedraggable-es'
+declare module 'vite-plugin-pages'
+declare module 'vite-plugin-vuedoc'
+declare module 'vite'
 /*
 declare module 'vuex' {
   type StoreStateType = typeof store.state

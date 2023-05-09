@@ -16,12 +16,12 @@
       link
       size="small"
       v-if="data.config?.delBtnText && [1, 2].includes(type)"
-      >{{ data.config.delBtnText }}</el-button
+    >{{ data.config.delBtnText }}</el-button
     >
   </div>
   <el-form-item v-if="data.config?.addBtnText && [1, 2, 5].includes(type)">
     <el-button class="flex-add-btn" size="small" @click="addRow"
-      >{{ data.config.addBtnText }}
+    >{{ data.config.addBtnText }}
     </el-button>
   </el-form-item>
 </template>

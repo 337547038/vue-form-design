@@ -26,7 +26,7 @@
         item
       }}</p>
       <div style="position: absolute" :style="{ left: left + 'px' }"
-        >键盘事件</div
+      >键盘事件</div
       >
     </div>
   </div>

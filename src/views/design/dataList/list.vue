@@ -10,7 +10,7 @@
     >
       <template #sourceName="{ row }">
         <router-link :to="`/design/form?id=${row.source}`"
-          >{{ row.sourceName }}/{{ row.source }}</router-link
+        >{{ row.sourceName }}/{{ row.source }}</router-link
         >
       </template>
     </ak-list>

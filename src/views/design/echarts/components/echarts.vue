@@ -127,6 +127,8 @@
     dataList.value = obj
   }
   // 设备图标数据
-  const setData = (data: any) => {}
+  const setData = (data: any) => {
+    console.log(data)
+  }
   defineExpose({ getData, setDataList, setData })
 </script>

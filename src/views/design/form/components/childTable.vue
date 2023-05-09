@@ -38,7 +38,7 @@
       >
         <template #default="scope">
           <el-button link type="primary" @click="delColumn(scope.$index)"
-            >{{ data.config.delBtnText }}
+          >{{ data.config.delBtnText }}
           </el-button>
         </template>
       </el-table-column>

@@ -106,7 +106,7 @@
         </template>
         <template v-else-if="element.type === 'divider'">
           <el-divider v-bind="element.control"
-            >{{ element.item && element.item.label }}
+          >{{ element.item && element.item.label }}
           </el-divider>
         </template>
         <template v-else-if="element.type === 'div'">
@@ -133,7 +133,7 @@
             style="position: relative; top: -28px; left: 10px"
             v-if="element.config.addBtnText && type === 5"
             size="small"
-            >{{ element.config.addBtnText }}</el-button
+          >{{ element.config.addBtnText }}</el-button
           >
         </template>
         <template v-else-if="element.type === 'button'">
@@ -144,7 +144,7 @@
             <el-button
               v-bind="element.control"
               @click="clickBtn(element.control)"
-              >{{ element.control?.label }}</el-button
+            >{{ element.control?.label }}</el-button
             ></div
           >
         </template>

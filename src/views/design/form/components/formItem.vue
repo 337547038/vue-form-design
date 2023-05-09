@@ -76,7 +76,7 @@
           v-for="(item, index) in options"
           :key="index"
           :label="transformOption(item.value)"
-          >{{ item.label }}
+        >{{ item.label }}
         </el-checkbox>
       </el-checkbox-group>
       <AKSelect
@@ -106,7 +106,7 @@
         :on-remove="uploadRemove"
       >
         <el-button type="primary" v-if="config.btnText"
-          >{{ config.btnText }}
+        >{{ config.btnText }}
         </el-button>
         <i class="icon-plus" v-else></i>
         <template #tip v-if="config.tip">
