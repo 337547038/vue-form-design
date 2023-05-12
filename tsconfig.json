@@ -16,6 +16,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
+    "sourceMap": true,
     "types": [],
     /* Linting */
     "strict": true,
@@ -39,5 +40,10 @@
     {
       "path": "./tsconfig.node.json"
     }
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "docs"
   ]
 }

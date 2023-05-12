@@ -1,26 +1,24 @@
-export function debounce(fn: any, delay = 500, immediate?: boolean) {
-  let timer: any
-  return function (...args: any) {
-    if (timer) {
-      clearTimeout(timer)
+export function debounce<T extends (...args: any[]) => void>(func: T, delay = 500, immediate?: boolean): T {
+  let timerId: any
+
+  return function (this: any, ...args: any[]) {
+    if (timerId) {
+      clearTimeout(timerId)
     }
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const context = this
     if (immediate) {
-      const callNow = !timer
-      timer = setTimeout(() => {
-        timer = null
+      const callNow = !timerId
+      timerId = setTimeout(() => {
+        timerId = null
       }, delay)
       if (callNow) {
-        fn.apply(context, args)
+        func.apply(this, args)
       }
     } else {
-      timer = setTimeout(() => {
-        fn.apply(context, args)
+      timerId = setTimeout(() => {
+        func.apply(this, args)
       }, delay)
     }
-  }
+  } as T
 }
 // 时间格式化
 export const dateFormatting = (time: any, cFormat?: string) => {

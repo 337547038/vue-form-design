@@ -22,12 +22,12 @@ export default defineConfig({
     }),
     vueJsx({}),
     Pages({
-      pagesDir: [
+      dirs: [
         { dir: 'src/views', baseRoute: '' },
         { dir: 'src/docs', baseRoute: '/docs' }
       ],
       extensions: ['md', 'vue'],
-      exclude: ['**/components', '**/views/**/*.md']
+      exclude: ['**/components', '**/design/**/*.md']
     })
   ],
   resolve: {

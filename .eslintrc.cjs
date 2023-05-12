@@ -6,13 +6,13 @@ module.exports = {
     //'vue/setup-compiler-macros': true
   },
   "extends": [
-    //"eslint:recommended",
-    //"plugin:vue/vue3-essential",
+    "plugin:vue/vue3-essential",
     "plugin:vue/vue3-recommended",
     "plugin:@typescript-eslint/recommended",
+    "prettier",
     //'@vue/typescript/recommended',
     //'@vue/prettier',
-    //'@vue/prettier/@typescript-eslint'
+    //"plugin:prettier/recommended"
   ],
   "overrides": [],
   "parser": "vue-eslint-parser",
@@ -22,6 +22,7 @@ module.exports = {
     "parser": "@typescript-eslint/parser"
   },
   "plugins": [
+    "prettier",
     "vue",
     "@typescript-eslint"
   ],
@@ -32,6 +33,9 @@ module.exports = {
     echarts: true
   },
   rules: {
+    "prettier/prettier": ["error",{
+      vueIndentScriptAndStyle:true
+    }],
     "vue/script-setup-uses-vars": "error",
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/explicit-function-return-type": "off",

@@ -28,39 +28,21 @@
       >
         <template v-if="element.type === 'tabs'">
           <div class="form-tabs">
-            <el-tabs
-              v-bind="element.control"
-              :class="[element.config?.className]"
-            >
-              <el-tab-pane
-                v-for="(item, tIndex) in element.columns"
-                :label="item.label"
-                :key="tIndex"
-              >
+            <el-tabs v-bind="element.control" :class="[element.config?.className]">
+              <el-tab-pane v-for="(item, tIndex) in element.columns" :label="item.label" :key="tIndex">
                 <form-group :data="item.list" data-type="not-nested" />
               </el-tab-pane>
             </el-tabs>
           </div>
         </template>
         <template v-else-if="element.type === 'title'">
-          <div
-            class="title"
-            :class="[element.config.className]"
-            v-bind="element.control"
-          >
+          <div class="title" :class="[element.config.className]" v-bind="element.control">
             <span v-html="element.control.modelValue"></span>
-            <Tooltips
-              :content="element.config.help"
-              v-if="element.config.help"
-            />
+            <Tooltips :content="element.config.help" v-if="element.config.help" />
           </div>
         </template>
         <template v-else-if="element.type === 'txt'">
-          <div
-            v-bind="element.control"
-            :class="[element.config.className]"
-            v-html="element.control.modelValue"
-          ></div>
+          <div v-bind="element.control" :class="[element.config.className]" v-html="element.control.modelValue"></div>
         </template>
         <template v-else-if="element.type === 'table'">
           <div class="form-table" v-if="type === 5">
@@ -84,10 +66,7 @@
               <form-group :data="col.list" data-type="not-nested" />
               <div class="drag-control" v-if="type === 5">
                 <div class="item-control">
-                  <i
-                    class="icon-del"
-                    @click.stop="click('delGridChild', i, element.columns)"
-                  ></i>
+                  <i class="icon-del" @click.stop="click('delGridChild', <number>i, element.columns)"></i>
                 </div>
               </div>
             </el-col>
@@ -105,9 +84,7 @@
           </el-collapse>
         </template>
         <template v-else-if="element.type === 'divider'">
-          <el-divider v-bind="element.control"
-          >{{ element.item && element.item.label }}
-          </el-divider>
+          <el-divider v-bind="element.control">{{ element.item && element.item.label }} </el-divider>
         </template>
         <template v-else-if="element.type === 'div'">
           <div
@@ -123,30 +100,21 @@
           </div>
         </template>
         <template v-else-if="element.type === 'flex'">
-          <form-group
-            :data="element.list"
-            data-type="not-nested"
-            v-if="type === 5"
-          />
+          <form-group :data="element.list" data-type="not-nested" v-if="type === 5" />
           <flex-box :data="element" v-else />
           <el-button
             style="position: relative; top: -28px; left: 10px"
             v-if="element.config.addBtnText && type === 5"
             size="small"
-          >{{ element.config.addBtnText }}</el-button
+            >{{ element.config.addBtnText }}</el-button
           >
         </template>
         <template v-else-if="element.type === 'button'">
-          <div
-            :class="[element.config?.className]"
-            :style="{ 'text-align': element.config?.textAlign }"
-          >
-            <el-button
-              v-bind="element.control"
-              @click="clickBtn(element.control)"
-            >{{ element.control?.label }}</el-button
-            ></div
-          >
+          <div :class="[element.config?.className]" :style="{ 'text-align': element.config?.textAlign }">
+            <el-button v-bind="element.control" @click="clickBtn(element.control)">{{
+              element.control?.label
+            }}</el-button>
+          </div>
         </template>
         <template v-else-if="element.type === 'inputSlot' && type !== 5">
           <!--  除设计外其他无需处理-->
@@ -161,12 +129,7 @@
                 v-if="state.gridAdd"
                 title="添加列"
               ></i>
-              <i
-                class="icon-clone"
-                @click.stop="click('clone', index, element)"
-                v-if="state.clone"
-                title="克隆"
-              ></i>
+              <i class="icon-clone" @click.stop="click('clone', index, element)" v-if="state.clone" title="克隆"></i>
               <i class="icon-del" @click.stop="click('del', index)"></i>
             </div>
             <div class="drag-move icon-move"></div>
@@ -203,7 +166,7 @@
   /*  const emits = defineEmits<{
     (e: 'update:data', value: FormList[]): void
   }>()*/
-  const store = useDesignFormStore()
+  const store = useDesignFormStore() as any
   const formProps = inject(constFormProps, {}) as any
 
   const type = computed(() => {
@@ -272,16 +235,7 @@
     delete obj.icon
     let objectItem = {}
     // 不需要添加item的项
-    const notNeedItem = [
-      'txt',
-      'title',
-      'button',
-      'table',
-      'grid',
-      'tabs',
-      'flex',
-      'div'
-    ]
+    const notNeedItem = ['txt', 'title', 'button', 'table', 'grid', 'tabs', 'flex', 'div']
     if (!notNeedItem.includes(obj.type)) {
       objectItem = {
         item: {
@@ -291,16 +245,7 @@
     }
     //　不需要name的组件
     let nameObj = {}
-    const notNeedName = [
-      'txt',
-      'title',
-      'button',
-      'grid',
-      'tabs',
-      'divider',
-      'div',
-      'card'
-    ]
+    const notNeedName = ['txt', 'title', 'button', 'grid', 'tabs', 'divider', 'div', 'card']
     if (!notNeedName.includes(obj.type) && !obj.name) {
       nameObj = {
         name: obj.type + key

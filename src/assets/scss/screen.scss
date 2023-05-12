@@ -30,9 +30,15 @@
     }
   }
   .main-box {flex: 2;border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;height: calc(100vh - 66px);display: flex;flex-direction: column;color: #fff;width: 100%;position: relative;overflow: hidden;
-    .main-tools {margin-right: 0;line-height: 20px}
+    .main-tools {line-height: 20px;
+      .control-tools {flex: 2;color: #999;margin-left: 20px;
+        i {margin-right: 5px;cursor: pointer}
+        .active{color: #409eff}
+      }
+    }
     .design-box {background: rgb(48, 65, 86);flex: 2;padding: 0 0 0 20px;position: relative;overflow: auto;}
-    .design-canvas {height: 100%;position: absolute;cursor: pointer;top:20px;left: 20px;transform-origin: left top;
+    .draw-react{border: 1px solid #409eff;position: absolute;z-index: 999}
+    .design-canvas {height: 100%;position: absolute;cursor: pointer;top: 20px;left: 20px;transform-origin: left top;
       .drag {height: 100%}
       .resize-box {
         position: absolute;left: 0;top: 0;width: 100%;height: 100%;border: 1px dotted #409eff;z-index: 5;
@@ -47,9 +53,10 @@
         .rs7 {left: 50%;bottom: -4px;margin-left: -4px;cursor: s-resize}
         .rs8 {right: -4px;bottom: -4px;cursor: se-resize;}
         &:hover {background: rgba(64, 158, 255, .5);cursor: move}
-        .control-btn{bottom: -25px;right: 5px;position: absolute;cursor: pointer;
-        i{margin-left: 5px}}
-        .position{font-size: 12px;position: absolute;left: 0;top:-20px}
+        .control-btn {bottom: -25px;right: 5px;position: absolute;cursor: pointer;
+          i {margin-left: 5px}
+        }
+        .position {font-size: 12px;position: absolute;left: 0;top: -20px}
       }
       &.preview {position: fixed;left: 0;top: 0;z-index: 50;
         transform: scale(1) translate(0px, 0px) !important;transition: all .3s;
@@ -69,7 +76,7 @@
       //.offset{width: 120px;text-align: center;color: red}
     }
     .el-slider__marks-stop {background: red}
-    .no-date{color: #ccc;position: absolute;left: 50%;top:30%;transform: translateX(-50%);font-size: 20px}
+    .no-date {color: #ccc;position: absolute;left: 50%;top: 30%;transform: translateX(-50%);font-size: 20px}
   }
   .main-right {width: 220px;transition: all .3s;position: relative;
     form {padding: 0 10px}
@@ -82,21 +89,21 @@
       .el-input {flex: 2}
       .el-upload-list {display: none}
     }
-    &.lock{
-      &:after{position: absolute;left: 0;top:0;bottom: 0;right: 0;content: '';background: rgba(255,255,255,.3)}
-      .lock{z-index: 2}
+    &.lock {
+      &:after {position: absolute;left: 0;top: 0;bottom: 0;right: 0;content: '';background: rgba(255, 255, 255, .3)}
+      .lock {z-index: 2}
     }
   }
   .close-preview {position: fixed;right: 10px;top: 10px;z-index: 51;color: #999;cursor: pointer}
-  //.screen-right-menu {position: absolute;z-index: 100;background: #fff;
-  //  li {padding: 5px 15px;cursor: pointer;
-  //    &:hover {background: #409eff;color: #fff}
-  //  }
-  //}
+  .screen-right-menu {position: absolute;z-index: 100;background: #fff;width: 160px;
+    li {padding: 5px 15px;cursor: pointer;
+      &:hover {background: #409eff;color: #fff}
+    }
+  }
 }
 .design-canvas {
   .group {
     position: absolute;
   }
-  .default-img,.default-bg {display: block;width: 100%;height: 100%}
+  .default-img, .default-bg {display: block;width: 100%;height: 100%}
 }
