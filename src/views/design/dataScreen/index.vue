@@ -1,7 +1,11 @@
 <!-- Created by 337547038 -->
 <template>
   <div class="container-screen" v-loading="state.loading">
-    <i class="icon-close close-preview" v-if="state.isEye" @click="state.isEye = false"></i>
+    <i
+      class="icon-close close-preview"
+      v-if="state.isEye"
+      @click="state.isEye = false"
+    ></i>
     <control-left
       :style="{ width: state.widthLeft }"
       ref="controlLeftEl"
@@ -73,11 +77,19 @@
               />
             </template>
           </draggable>
-          <div class="draw-react" :style="state.react">
-            <span v-if="state.activeIndex?.length">选中{{ state.activeIndex.length }}个</span>
+          <div
+            class="draw-react"
+            :style="state.rect"
+            @contextmenu="drawReactContextmenu"
+          >
+            <span v-if="state.activeIndex?.length"
+              >选中{{ state.activeIndex.length }}个</span
+            >
           </div>
         </div>
-        <div class="no-date" v-if="!screenData.list.length">请从左则组件栏拖动组件到设计区域</div>
+        <div class="no-date" v-if="!screenData.list.length">
+          请从左则组件栏拖动组件到设计区域
+        </div>
       </div>
       <div class="design-footer">
         <i class="icon-menu icon" @click="toggle('Left')"></i>
@@ -102,8 +114,12 @@
             />
           </div>
           <div class="item">
-            <el-button type="primary" link @click="defaultScaleClick('auto')">自适应</el-button>
-            <el-button type="primary" link @click="defaultScaleClick('100')">100%</el-button>
+            <el-button type="primary" link @click="defaultScaleClick('auto')"
+              >自适应</el-button
+            >
+            <el-button type="primary" link @click="defaultScaleClick('100')"
+              >100%</el-button
+            >
           </div>
         </div>
         <i class="icon-menu icon" @click="toggle('Right')"></i>
@@ -126,11 +142,20 @@
       @confirm="dialogConfirm"
     />
     <vue-file ref="vueFileEl" />
+    <right-menu ref="rightMenuEl" @click="rightMenuClick" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, reactive, onMounted, nextTick, provide, onUnmounted } from 'vue'
+  import {
+    ref,
+    computed,
+    reactive,
+    onMounted,
+    nextTick,
+    provide,
+    onUnmounted
+  } from 'vue'
   import HeadTools from '../components/headTools.vue'
   import ConfigControl from './components/configControl.vue'
   import ControlLeft from './components/controlLeft.vue'
@@ -138,27 +163,36 @@
   import AScreen from './components/screen.vue'
   import Draggable from 'vuedraggable-es'
   import AceDrawer from '../components/aceDrawer.vue'
-  import { json2string, objToStringify, string2json, stringToObj } from '@/utils/form'
+  import {
+    json2string,
+    objToStringify,
+    string2json,
+    stringToObj
+  } from '@/utils/form'
   import { OpenDrawer } from '../types'
   import { appendOrRemoveStyle } from '../utils'
   import { ElMessage } from 'element-plus'
   import { getRequest } from '@/api'
   import { useRoute, useRouter } from 'vue-router'
   import VueFile from '../components/vueFile.vue'
-  import { getSetStorage, jsonParseStringify } from '@/utils'
+  import { getSetStorage, jsonParseStringify, randomString } from '@/utils'
   import { getInitData, getGlobalData } from './getData'
   import { useLayoutStore } from '@/store/layout'
   import { canControlRect } from './utils.ts'
+  import RightMenu from './components/rightMenu.vue'
 
   const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '可视化大屏设计' }])
+  layoutStore.changeBreadcrumb([
+    { label: '系统工具' },
+    { label: '可视化大屏设计' }
+  ])
 
   const route = useRoute()
   const router = useRouter()
 
   const wLeft = getSetStorage('screenToolWidthLeft') || ''
   const wRight = getSetStorage('screenToolWidthRight') || ''
-  const state = reactive({
+  const state = reactive<any>({
     showLine: true,
     scale: 100,
     autoScale: 100,
@@ -174,7 +208,7 @@
     isEye: false, // 预览模式
     activeIndex: [], // 当前选中的index，默认情况下只有一个，矩形选择时存在多个
     activeTool: 'mouse',
-    react: {
+    rect: {
       left: '0px',
       top: '0px',
       width: '0px',
@@ -185,6 +219,7 @@
   const configEl = ref()
   const controlLeftEl = ref()
   const vueFileEl = ref()
+  const rightMenuEl = ref()
   const screenData = ref({
     list: [],
     config: {
@@ -216,7 +251,7 @@
   }
 
   const itemClick = (obj: any, index: number) => {
-    state.react.display = 'none'
+    state.rect.display = 'none'
     state.activeIndex = [index]
     setCurrentConfig(obj)
   }
@@ -274,14 +309,19 @@
       if (boxWidth && screenWidth) {
         const scale = parseInt(`${(boxWidth / screenWidth) * 100}`)
         state.autoScale = scale
-        state.scale = getSetStorage('screenScale') || scale
+        const storage = getSetStorage('screenScale') as string
+        state.scale = parseInt(storage) || scale
       }
       // 获取偏移距离
       const componentRect: DOMRect = designBoxEl.value.getBoundingClientRect()
       state.offset[1] =
-        componentRect.top + document.documentElement.scrollTop - (document.documentElement.clientTop || 0)
+        componentRect.top +
+        document.documentElement.scrollTop -
+        (document.documentElement.clientTop || 0)
       state.offset[0] =
-        componentRect.left + document.documentElement.scrollLeft - (document.documentElement.clientLeft || 0)
+        componentRect.left +
+        document.documentElement.scrollLeft -
+        (document.documentElement.clientLeft || 0)
     })
   }
   // 设计区域拖动/选中矩形相关
@@ -292,11 +332,13 @@
     const scrollLeft = designBoxEl.value.scrollLeft
     const x = evt.pageX + scrollLeft
     const y = evt.pageY + scrollTop
-    const rx = (evt.pageX - state.offset[0] - 20 + state.scroll[0]) / (state.scale / 100)
-    const ry = (evt.pageY - state.offset[1] - 20 + state.scroll[1]) / (state.scale / 100)
+    const rx =
+      (evt.pageX - state.offset[0] - 20 + state.scroll[0]) / (state.scale / 100)
+    const ry =
+      (evt.pageY - state.offset[1] - 20 + state.scroll[1]) / (state.scale / 100)
     //if (state.activeTool === 'mouse') {
-    //　矩形选择工具，初始点击位置
-    state.react = {
+    // 矩形选择工具，初始点击位置
+    state.rect = {
       left: rx + 'px',
       top: ry + 'px',
       width: '0px',
@@ -309,12 +351,16 @@
         return
       }
       if (state.activeTool === 'mouse') {
-        //　矩形选择工具，选中当前区域所有组件
-        const rxE = (evt.pageX - state.offset[0] - 20 + state.scroll[0]) / (state.scale / 100) // 移动当前实时位置
-        const ryE = (evt.pageY - state.offset[1] - 20 + state.scroll[1]) / (state.scale / 100)
+        // 矩形选择工具，选中当前区域所有组件
+        const rxE =
+          (evt.pageX - state.offset[0] - 20 + state.scroll[0]) /
+          (state.scale / 100) // 移动当前实时位置
+        const ryE =
+          (evt.pageY - state.offset[1] - 20 + state.scroll[1]) /
+          (state.scale / 100)
         const sx = rx > rxE ? rxE : rx // 矩形起始位置，使用两个坐标位置小的作为开始点
         const sy = ry > ryE ? ryE : ry
-        state.react = {
+        state.rect = {
           left: sx + 'px',
           top: sy + 'px',
           width: Math.abs(rx - rxE) + 'px',
@@ -329,12 +375,12 @@
       }
     }
     document.onmouseup = function () {
-      const { width, height } = state.react
+      const { width, height } = state.rect
       if (parseInt(width) > 10 && parseInt(height) > 10) {
         findComponentsInRect()
       } else {
         // 选区太小时
-        state.react.display = 'none'
+        state.rect.display = 'none'
       }
       state.moveFlag = false
       document.onmousemove = null
@@ -345,7 +391,7 @@
    */
   const findComponentsInRect = () => {
     // 因存在宽高为其他单位以及支持right和top定位，计算重叠比较复杂。这里简单化排除那些不符合规则的
-    let autoRect = { left: 0, top: 0, ex: 0, ey: 0 }
+    const autoRect = { left: 0, top: 0, ex: 0, ey: 0 }
     screenData.value.list.forEach((item: any, index: number) => {
       if (canControlRect(item.position) && isRectOverlap(item.position)) {
         if (!state.activeIndex.includes(index)) {
@@ -359,9 +405,9 @@
         autoRect.ey = Math.max(autoRect.ey, parseInt(height) + top)
       }
     })
-    //　如果有选中组件时，根据所选中的组件重新设置选区大小
+    // 如果有选中组件时，根据所选中的组件重新设置选区大小
     if (state.activeIndex.length) {
-      state.react = {
+      state.rect = {
         left: autoRect.left + 'px',
         top: autoRect.top + 'px',
         width: Math.abs(autoRect.ex - autoRect.left) + 'px',
@@ -370,7 +416,7 @@
       }
     } else {
       // 选区中没有组件时，隐藏
-      state.react.display = 'none'
+      state.rect.display = 'none'
     }
     function getMin(num1: number, num2: number) {
       if (num1 === 0) {
@@ -385,10 +431,10 @@
       const rect1Top = rect1.top
       const rect1Right = rect1.left + parseInt(rect1.width)
       const rect1Bottom = rect1.top + parseInt(rect1.height)
-      const rect2Left = parseInt(state.react.left) // 都带有px单位
-      const rect2Top = parseInt(state.react.top)
-      const rect2Right = rect2Left + parseInt(state.react.width)
-      const rect2Bottom = rect2Top + parseInt(state.react.height)
+      const rect2Left = parseInt(state.rect.left) // 都带有px单位
+      const rect2Top = parseInt(state.rect.top)
+      const rect2Right = rect2Left + parseInt(state.rect.width)
+      const rect2Bottom = rect2Top + parseInt(state.rect.height)
 
       // 判断两个矩形是否水平方向和垂直方向都有重叠
       const isOverlapX = rect1Left < rect2Right && rect2Left < rect1Right
@@ -421,7 +467,7 @@
     }
     obj.position.left = parseInt(`${pageX - state.offset[0] + state.scroll[0]}`)
     obj.position.top = parseInt(`${pageY - state.offset[1] + state.scroll[1]}`)
-    state.react.display = 'none' // 防意外，清空下
+    state.rect.display = 'none' // 防意外，清空下
     state.activeIndex = [newIndex]
     setCurrentConfig(obj)
     setLayerList()
@@ -448,7 +494,10 @@
     try {
       if (typeof drawer.callback === 'function') {
         // callback
-        const newObj = drawer.codeType === 'json' ? string2json(editVal) : stringToObj(editVal)
+        const newObj =
+          drawer.codeType === 'json'
+            ? string2json(editVal)
+            : stringToObj(editVal)
         drawer.callback(newObj)
       } else {
         switch (drawer.type) {
@@ -477,7 +526,10 @@
     drawer.title = title ? `提示：${title}` : ''
     drawer.visible = true
     drawer.callback = callback
-    let editData = codeType === 'json' ? json2string(content, true) : objToStringify(content, true)
+    let editData =
+      codeType === 'json'
+        ? json2string(content, true)
+        : objToStringify(content, true)
     switch (type) {
       case 'css':
         editData = screenData.value.config.style || ''
@@ -521,7 +573,7 @@
   }
   // 数据处理相关
   const saveData = () => {
-    let params: any = {
+    const params: any = {
       data: objToStringify(screenData.value),
       name: '未命名可视化大屏', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 4 // 1表单,2列表,3流程,4大屏
@@ -561,12 +613,15 @@
         state.loading = false
         screenData.value = res
         setLayerList()
-        const { requestUrl, afterResponse, beforeRequest, method } = screenData.value.config
+        const { requestUrl, afterResponse, beforeRequest, method } =
+          screenData.value.config
         if (requestUrl) {
           // 加载处理全局数据
-          getGlobalData(requestUrl, afterResponse, beforeRequest, method).then((res: any) => {
-            globalScreen.value = res
-          })
+          getGlobalData(requestUrl, afterResponse, beforeRequest, method).then(
+            (res: any) => {
+              globalScreen.value = res
+            }
+          )
         }
       })
       .catch(() => {
@@ -575,7 +630,11 @@
   }
   // 数据处理相关结束
   // 设置图层隐藏锁定
-  const controlLeftUpdate = (key: string, index: number, val: number | boolean) => {
+  const controlLeftUpdate = (
+    key: string,
+    index: number,
+    val: number | boolean
+  ) => {
     switch (key) {
       case 'display':
       case 'zIndex':
@@ -614,19 +673,78 @@
       }
     }
     // 临时选中的矩形框也允许移动
-    if (state.react.display === 'block') {
+    if (state.rect.display === 'block') {
       if (event.key === 'ArrowRight') {
-        state.react.left = parseInt(state.react.left) + 1 + 'px'
+        state.rect.left = parseInt(state.rect.left) + 1 + 'px'
       } else if (event.key === 'ArrowLeft') {
-        state.react.left = parseInt(state.react.left) - 1 + 'px'
+        state.rect.left = parseInt(state.rect.left) - 1 + 'px'
       } else if (event.key === 'ArrowDown') {
-        state.react.top = parseInt(state.react.top) + 1 + 'px'
+        state.rect.top = parseInt(state.rect.top) + 1 + 'px'
       } else if (event.key === 'ArrowUp') {
-        state.react.top = parseInt(state.react.top) - 1 + 'px'
+        state.rect.top = parseInt(state.rect.top) - 1 + 'px'
       }
     }
     event.preventDefault()
   }
+  // 临时框选矩形右键菜单
+  const drawReactContextmenu = (evt: MouseEvent) => {
+    rightMenuEl.value.open({ x: evt.pageX, y: evt.pageY })
+    evt.preventDefault()
+  }
+  const rightMenuClick = (key: string) => {
+    switch (key) {
+      case 'merge':
+        rightMenuMerge()
+        break
+      case 'split':
+        // 1.先移除组id标志
+        // 2.删除组图层
+        // eslint-disable-next-line no-case-declarations
+        const groupId = screenData.value.list[state.activeIndex[0]].groupId
+        screenData.value.list.forEach((item: any) => {
+          if (item.groupId === groupId) {
+            delete item.groupId
+          }
+        })
+        screenData.value.list.splice(state.activeIndex[0], 1)
+        // 3.清空当前选中
+        state.activeIndex = []
+        break
+      case 'left':
+        break
+      case 'right':
+      case 'top':
+      case 'bottom':
+      case 'horizontally':
+      case 'verticalCenter':
+      case 'copy':
+      case 'del':
+      case 'lock':
+      case 'hide':
+        break
+    }
+  }
+  const rightMenuMerge = () => {
+    // 1.在list里追加一个组的记录
+    // 2.将当前选中的使用groupId标志为一个组
+    const randId = randomString(8)
+    screenData.value.list.push({
+      type: 'group',
+      position: state.rect,
+      config: {},
+      id: randId
+    })
+    screenData.value.list.forEach((item: any, index: number) => {
+      if (state.activeIndex.includes(index)) {
+        item.groupId = randId
+      }
+    })
+    // 3.选中当前整个组，即最后一条记录
+    state.activeIndex = [screenData.value.list.length - 1]
+    // 4.将临时显示的矩形隐藏
+    state.rect.display = 'none'
+  }
+  // 右键菜单相关结束
   onMounted(() => {
     getInitScale()
     getData()
