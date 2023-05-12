@@ -1105,8 +1105,6 @@
         break
     }
     if (obj.path) {
-      console.log(obj, val)
-      console.log('controlData.value', controlData.value)
       const newVal = obj.isNum ? formatNumber(val) : val // 类型为数字时转整数
       obj.path && getPropByPath(controlData.value, obj.path, newVal)
     }
