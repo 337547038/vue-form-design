@@ -1,27 +1,38 @@
 <template>
-  <div
-    class="echarts"
-    :style="{ width: width + 'px', height: height + 'px' }"
-    ref="echartsEl"
-  ></div>
+  <div class="echarts" :style="style" ref="echartsEl"></div>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, nextTick, watch } from 'vue'
+  import { ref, onMounted, nextTick, watch, computed } from 'vue'
   import { debounce } from '@/utils'
   const props = withDefaults(
     defineProps<{
       option: object
-      width: number
-      height: number
+      width: string | number
+      height: string | number
     }>(),
     {
-      width: 600,
-      height: 400
+      width: '600px',
+      height: '400px'
     }
   )
   const echartsEl = ref()
   const myChart = ref()
+  const isNumber = (val: any): boolean => {
+    try {
+      return /^\d+(\.\d+)?$/.test(val.toString())
+    } catch (e) {
+      return false
+    }
+  }
+  const style = computed(() => {
+    const numberWidth = isNumber(props.width)
+    const numberHeight = isNumber(props.height)
+    return {
+      width: numberWidth ? props.width + 'px' : props.width,
+      height: numberHeight ? props.height + 'px' : props.height
+    }
+  })
   const intEcharts = debounce(() => {
     // @ts-ignore
     if (!echartsEl.value) {

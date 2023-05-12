@@ -23,11 +23,7 @@
     <div class="main-body">
       <headTools @click="headToolClick" type="2" />
       <div class="main-form design-form">
-        <echarts
-          :type="1"
-          @control-btn-click="controlBtnClick"
-          ref="echartsEl"
-        />
+        <echarts :type="1" @control-btn-click="controlBtnClick" ref="echartsEl" />
       </div>
     </div>
     <div class="sidebar-tools">
@@ -42,16 +38,10 @@
                 <el-input placeholder="字段标识" v-model="current.name" />
               </el-form-item>
               <el-form-item label="图表宽度">
-                <el-input
-                  placeholder="图表宽度，数字类型"
-                  v-model.number="current.width"
-                />
+                <el-input placeholder="图表宽度，数字类型" v-model.number="current.width" />
               </el-form-item>
               <el-form-item label="图表高度">
-                <el-input
-                  placeholder="图表高度，数字类型"
-                  v-model.number="current.height"
-                />
+                <el-input placeholder="图表高度，数字类型" v-model.number="current.height" />
               </el-form-item>
             </template>
           </el-tab-pane>
@@ -88,7 +78,7 @@
       v-model="state.visible"
       size="60%"
       :direction="state.direction"
-      custom-class="ace-dialog"
+      class="ace-dialog"
       :append-to-body="true"
       :before-close="drawerBeforeClose"
     >
@@ -97,9 +87,7 @@
       </template>
       <div v-if="state.visible" id="editJson"></div>
       <div class="dialog-footer">
-        <el-button type="primary" size="small" @click="dialogConfirm">
-          确定
-        </el-button>
+        <el-button type="primary" size="small" @click="dialogConfirm"> 确定 </el-button>
       </div>
     </el-drawer>
     <VueFile ref="vueFileEl" />
@@ -315,13 +303,13 @@
     if (state.id) {
       state.loading = true
       getRequest('echartsList', { id: state.id })
-        .then((res) => {
+        .then(res => {
           state.loading = false
           const result = res.data
           state.name = result.name
           echartsEl.value.setDataList(result.list)
         })
-        .catch((res) => {
+        .catch(res => {
           ElMessage.error(res.data?.message || '操作异常')
           state.loading = false
         })

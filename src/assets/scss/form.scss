@@ -38,7 +38,7 @@ $mainColor: #66b1ff;
   .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 124px);overflow-y: auto;overflow-x: hidden;position: relative}
 }
 // 中间按钮工具
-.main-tools {line-height: 26px;border-bottom: 2px solid #e4e7ed;text-align: right;margin-right: 10px;padding: 8px 0;
+.main-tools {line-height: 26px;border-bottom: 2px solid #e4e7ed;margin-right: 10px;padding: 8px 0;display: flex;align-items: center;justify-content: flex-end;
   button {color: $mainColor;
     i {padding-right: 5px}
   }

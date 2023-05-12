@@ -1,19 +1,10 @@
 <template>
-  <el-dialog
-    v-model="visible"
-    title="导出vue文件"
-    custom-class="export-dialog"
-    width="80%"
-  >
+  <el-dialog v-model="visible" title="导出vue文件" class="export-dialog" width="80%">
     <div id="editJsonCopy"></div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button size="small" type="primary" @click="copyData">
-          复制数据
-        </el-button>
-        <el-button type="primary" size="small" @click="dialogExport">
-          导出代码
-        </el-button>
+        <el-button size="small" type="primary" @click="copyData"> 复制数据 </el-button>
+        <el-button type="primary" size="small" @click="dialogExport"> 导出代码 </el-button>
       </div>
     </template>
   </el-dialog>
