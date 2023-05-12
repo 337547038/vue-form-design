@@ -1,19 +1,30 @@
 <!-- Created by 337547038 -->
 <template>
   <div class="container-screen" v-loading="state.loading">
-    <i
-      class="icon-close close-preview"
-      v-if="state.isEye"
-      @click="state.isEye = false"
-    ></i>
+    <i class="icon-close close-preview" v-if="state.isEye" @click="state.isEye = false"></i>
     <control-left
       :style="{ width: state.widthLeft }"
       ref="controlLeftEl"
-      v-model:active="state.active"
+      v-model:active="state.activeIndex"
       @update="controlLeftUpdate"
     />
     <div class="main-box">
-      <head-tools @click="headToolsClick" />
+      <head-tools @click="headToolsClick">
+        <div class="control-tools">
+          <i
+            class="icon-mouse"
+            title="矩形选择工具"
+            :class="{ active: state.activeTool === 'mouse' }"
+            @click="state.activeTool = 'mouse'"
+          ></i>
+          <i
+            class="icon-hand"
+            title="手拖动工具"
+            :class="{ active: state.activeTool === 'hand' }"
+            @click="state.activeTool = 'hand'"
+          ></i>
+        </div>
+      </head-tools>
       <div class="design-box" ref="designBoxEl" @scroll="designScroll">
         <a-ruler
           size="1920px"
@@ -33,11 +44,10 @@
           direction="v"
         />
         <div
-          @mousedown="onmousedown"
+          @mousedown.left="onmousedown"
           class="design-canvas"
           :class="{ preview: state.isEye }"
           :style="canvasStyle"
-          @click="canvasClick"
           @contextmenu="contextmenu"
         >
           <draggable
@@ -57,29 +67,31 @@
                 :data="element"
                 @click.stop="itemClick(element, index)"
                 :type="0"
-                :current="index === state.active"
+                :scale="state.scale"
+                :current="state.activeIndex.includes(index)"
                 @control-click="controlClick(index, $event)"
               />
             </template>
           </draggable>
+          <div class="draw-react" :style="state.react">
+            <span v-if="state.activeIndex?.length">选中{{ state.activeIndex.length }}个</span>
+          </div>
         </div>
-        <div class="no-date" v-if="!screenData.list.length"
-        >请从左则组件栏拖动组件到设计区域
-        </div>
+        <div class="no-date" v-if="!screenData.list.length">请从左则组件栏拖动组件到设计区域</div>
       </div>
       <div class="design-footer">
         <i class="icon-menu icon" @click="toggle('Left')"></i>
         <div class="center">
-          <div class="item"
-          ><label class="label">标尺</label>
+          <div class="item">
+            <label class="label">标尺</label>
             <el-switch size="small" v-model="state.ruler" />
           </div>
-          <div class="item"
-          ><label class="label">参考线</label>
+          <div class="item">
+            <label class="label">参考线</label>
             <el-switch size="small" v-model="state.showLine" />
           </div>
-          <div class="item slider"
-          ><label class="label">缩放比例</label>
+          <div class="item slider">
+            <label class="label">缩放比例</label>
             <el-slider
               show-stops
               :max="200"
@@ -90,9 +102,8 @@
             />
           </div>
           <div class="item">
-            <el-button type="primary" link @click="defaultScaleClick"
-            >自适应
-            </el-button>
+            <el-button type="primary" link @click="defaultScaleClick('auto')">自适应</el-button>
+            <el-button type="primary" link @click="defaultScaleClick('100')">100%</el-button>
           </div>
         </div>
         <i class="icon-menu icon" @click="toggle('Right')"></i>
@@ -119,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, reactive, onMounted, nextTick, provide } from 'vue'
+  import { ref, computed, reactive, onMounted, nextTick, provide, onUnmounted } from 'vue'
   import HeadTools from '../components/headTools.vue'
   import ConfigControl from './components/configControl.vue'
   import ControlLeft from './components/controlLeft.vue'
@@ -127,12 +138,7 @@
   import AScreen from './components/screen.vue'
   import Draggable from 'vuedraggable-es'
   import AceDrawer from '../components/aceDrawer.vue'
-  import {
-    json2string,
-    objToStringify,
-    string2json,
-    stringToObj
-  } from '@/utils/form'
+  import { json2string, objToStringify, string2json, stringToObj } from '@/utils/form'
   import { OpenDrawer } from '../types'
   import { appendOrRemoveStyle } from '../utils'
   import { ElMessage } from 'element-plus'
@@ -142,11 +148,10 @@
   import { getSetStorage, jsonParseStringify } from '@/utils'
   import { getInitData, getGlobalData } from './getData'
   import { useLayoutStore } from '@/store/layout'
+  import { canControlRect } from './utils.ts'
+
   const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([
-    { label: '系统工具' },
-    { label: '可视化大屏设计' }
-  ])
+  layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '可视化大屏设计' }])
 
   const route = useRoute()
   const router = useRouter()
@@ -167,7 +172,15 @@
     moveFlag: false,
     loading: false,
     isEye: false, // 预览模式
-    active: null // 当前选中的index
+    activeIndex: [], // 当前选中的index，默认情况下只有一个，矩形选择时存在多个
+    activeTool: 'mouse',
+    react: {
+      left: '0px',
+      top: '0px',
+      width: '0px',
+      height: '0px',
+      display: 'none'
+    }
   })
   const configEl = ref()
   const controlLeftEl = ref()
@@ -193,16 +206,18 @@
       height: height,
       background: background,
       transform: `scale(${scale})`,
-      color: primary
+      color: primary,
+      cursor: state.activeTool === 'mouse' ? 'default' : 'pointer'
     }
   })
   const canvasClick = () => {
-    state.active = null
+    state.activeIndex = []
     setCurrentConfig({})
   }
 
   const itemClick = (obj: any, index: number) => {
-    state.active = index
+    state.react.display = 'none'
+    state.activeIndex = [index]
     setCurrentConfig(obj)
   }
   const controlClick = (index: number, type: string) => {
@@ -241,8 +256,15 @@
     getSetStorage('screenToolWidth' + type, val || '0')
   }
   // 初始时设置缩放比例，自适应
-  const defaultScaleClick = () => {
-    state.scale = state.autoScale
+  const defaultScaleClick = (scale: string) => {
+    // 将滚动条移回0,0位置
+    designBoxEl.value.scrollTo(0, 0)
+    if (scale === 'auto') {
+      state.scale = state.autoScale
+    } else {
+      state.scale = 100
+    }
+    getSetStorage('screenScale', state.scale + '')
   }
   const designBoxEl = ref()
   const getInitScale = () => {
@@ -252,38 +274,126 @@
       if (boxWidth && screenWidth) {
         const scale = parseInt(`${(boxWidth / screenWidth) * 100}`)
         state.autoScale = scale
-        state.scale = scale
+        state.scale = getSetStorage('screenScale') || scale
       }
       // 获取偏移距离
       const componentRect: DOMRect = designBoxEl.value.getBoundingClientRect()
       state.offset[1] =
-        componentRect.top +
-        (window.pageYOffset || document.documentElement.scrollTop) -
-        (document.documentElement.clientTop || 0)
+        componentRect.top + document.documentElement.scrollTop - (document.documentElement.clientTop || 0)
       state.offset[0] =
-        componentRect.left +
-        (window.pageXOffset || document.documentElement.scrollLeft) -
-        (document.documentElement.clientLeft || 0)
+        componentRect.left + document.documentElement.scrollLeft - (document.documentElement.clientLeft || 0)
     })
   }
-  // 设计区域拖动相关
+  // 设计区域拖动/选中矩形相关
   const onmousedown = (evt: MouseEvent) => {
+    canvasClick() // 先清空当前选中的
     state.moveFlag = true
     const scrollTop = designBoxEl.value.scrollTop
     const scrollLeft = designBoxEl.value.scrollLeft
     const x = evt.pageX + scrollLeft
     const y = evt.pageY + scrollTop
+    const rx = (evt.pageX - state.offset[0] - 20 + state.scroll[0]) / (state.scale / 100)
+    const ry = (evt.pageY - state.offset[1] - 20 + state.scroll[1]) / (state.scale / 100)
+    //if (state.activeTool === 'mouse') {
+    //　矩形选择工具，初始点击位置
+    state.react = {
+      left: rx + 'px',
+      top: ry + 'px',
+      width: '0px',
+      height: '0px',
+      display: 'none'
+    }
+    // }
     document.onmousemove = (evt: MouseEvent) => {
       if (!state.moveFlag) {
         return
       }
-      const xx = x - evt.pageX
-      const yy = y - evt.pageY
-      designBoxEl.value.scrollTo(xx, yy)
+      if (state.activeTool === 'mouse') {
+        //　矩形选择工具，选中当前区域所有组件
+        const rxE = (evt.pageX - state.offset[0] - 20 + state.scroll[0]) / (state.scale / 100) // 移动当前实时位置
+        const ryE = (evt.pageY - state.offset[1] - 20 + state.scroll[1]) / (state.scale / 100)
+        const sx = rx > rxE ? rxE : rx // 矩形起始位置，使用两个坐标位置小的作为开始点
+        const sy = ry > ryE ? ryE : ry
+        state.react = {
+          left: sx + 'px',
+          top: sy + 'px',
+          width: Math.abs(rx - rxE) + 'px',
+          height: Math.abs(ry - ryE) + 'px',
+          display: 'block'
+        }
+      } else {
+        const xx = x - evt.pageX
+        const yy = y - evt.pageY
+        // 可拖动状态
+        designBoxEl.value.scrollTo(xx, yy)
+      }
     }
     document.onmouseup = function () {
+      const { width, height } = state.react
+      if (parseInt(width) > 10 && parseInt(height) > 10) {
+        findComponentsInRect()
+      } else {
+        // 选区太小时
+        state.react.display = 'none'
+      }
       state.moveFlag = false
       document.onmousemove = null
+    }
+  }
+  /***
+   * 查找当前矩形中所有组件并选中
+   */
+  const findComponentsInRect = () => {
+    // 因存在宽高为其他单位以及支持right和top定位，计算重叠比较复杂。这里简单化排除那些不符合规则的
+    let autoRect = { left: 0, top: 0, ex: 0, ey: 0 }
+    screenData.value.list.forEach((item: any, index: number) => {
+      if (canControlRect(item.position) && isRectOverlap(item.position)) {
+        if (!state.activeIndex.includes(index)) {
+          // 防意外重复push
+          state.activeIndex.push(index)
+        }
+        const { left, top, width, height } = item.position
+        autoRect.left = getMin(autoRect.left, left)
+        autoRect.top = getMin(autoRect.top, top)
+        autoRect.ex = Math.max(autoRect.ex, parseInt(width) + left) // 结束坐标点
+        autoRect.ey = Math.max(autoRect.ey, parseInt(height) + top)
+      }
+    })
+    //　如果有选中组件时，根据所选中的组件重新设置选区大小
+    if (state.activeIndex.length) {
+      state.react = {
+        left: autoRect.left + 'px',
+        top: autoRect.top + 'px',
+        width: Math.abs(autoRect.ex - autoRect.left) + 'px',
+        height: Math.abs(autoRect.ey - autoRect.top) + 'px',
+        display: 'block'
+      }
+    } else {
+      // 选区中没有组件时，隐藏
+      state.react.display = 'none'
+    }
+    function getMin(num1: number, num2: number) {
+      if (num1 === 0) {
+        return num2
+      } else {
+        return Math.min(num1, num2)
+      }
+    }
+    function isRectOverlap(rect1) {
+      // 计算两个矩形的左上角和右下角坐标
+      const rect1Left = rect1.left
+      const rect1Top = rect1.top
+      const rect1Right = rect1.left + parseInt(rect1.width)
+      const rect1Bottom = rect1.top + parseInt(rect1.height)
+      const rect2Left = parseInt(state.react.left) // 都带有px单位
+      const rect2Top = parseInt(state.react.top)
+      const rect2Right = rect2Left + parseInt(state.react.width)
+      const rect2Bottom = rect2Top + parseInt(state.react.height)
+
+      // 判断两个矩形是否水平方向和垂直方向都有重叠
+      const isOverlapX = rect1Left < rect2Right && rect2Left < rect1Right
+      const isOverlapY = rect1Top < rect2Bottom && rect2Top < rect1Bottom
+      return isOverlapX && isOverlapY
     }
   }
   // 滚动条位置
@@ -311,7 +421,8 @@
     }
     obj.position.left = parseInt(`${pageX - state.offset[0] + state.scroll[0]}`)
     obj.position.top = parseInt(`${pageY - state.offset[1] + state.scroll[1]}`)
-    state.active = newIndex
+    state.react.display = 'none' // 防意外，清空下
+    state.activeIndex = [newIndex]
     setCurrentConfig(obj)
     setLayerList()
   }
@@ -337,10 +448,7 @@
     try {
       if (typeof drawer.callback === 'function') {
         // callback
-        const newObj =
-          drawer.codeType === 'json'
-            ? string2json(editVal)
-            : stringToObj(editVal)
+        const newObj = drawer.codeType === 'json' ? string2json(editVal) : stringToObj(editVal)
         drawer.callback(newObj)
       } else {
         switch (drawer.type) {
@@ -369,10 +477,7 @@
     drawer.title = title ? `提示：${title}` : ''
     drawer.visible = true
     drawer.callback = callback
-    let editData =
-      codeType === 'json'
-        ? json2string(content, true)
-        : objToStringify(content, true)
+    let editData = codeType === 'json' ? json2string(content, true) : objToStringify(content, true)
     switch (type) {
       case 'css':
         editData = screenData.value.config.style || ''
@@ -456,15 +561,12 @@
         state.loading = false
         screenData.value = res
         setLayerList()
-        const { requestUrl, afterResponse, beforeRequest, method } =
-          screenData.value.config
+        const { requestUrl, afterResponse, beforeRequest, method } = screenData.value.config
         if (requestUrl) {
           // 加载处理全局数据
-          getGlobalData(requestUrl, afterResponse, beforeRequest, method).then(
-            (res: any) => {
-              globalScreen.value = res
-            }
-          )
+          getGlobalData(requestUrl, afterResponse, beforeRequest, method).then((res: any) => {
+            globalScreen.value = res
+          })
         }
       })
       .catch(() => {
@@ -473,11 +575,7 @@
   }
   // 数据处理相关结束
   // 设置图层隐藏锁定
-  const controlLeftUpdate = (
-    key: string,
-    index: number,
-    val: number | boolean
-  ) => {
+  const controlLeftUpdate = (key: string, index: number, val: number | boolean) => {
     switch (key) {
       case 'display':
       case 'zIndex':
@@ -491,8 +589,50 @@
     }
     setCurrentConfig(screenData.value.list[index]) // 右则属性
   }
+  // 支持键盘控制调整位置
+  const controlMoveByKeydown = (event: any) => {
+    if (!state.activeIndex?.length) {
+      return
+    }
+    const moveIndex = state.activeIndex
+    for (const key in moveIndex) {
+      const index = moveIndex[key]
+      const objActive = screenData.value.list[index]
+      const canMove = canControlRect(objActive?.position)
+      if (!canMove) {
+        console.log('不能移')
+        break
+      }
+      if (event.key === 'ArrowRight') {
+        objActive.position.left++
+      } else if (event.key === 'ArrowLeft') {
+        objActive.position.left--
+      } else if (event.key === 'ArrowDown') {
+        objActive.position.top++
+      } else if (event.key === 'ArrowUp') {
+        objActive.position.top--
+      }
+    }
+    // 临时选中的矩形框也允许移动
+    if (state.react.display === 'block') {
+      if (event.key === 'ArrowRight') {
+        state.react.left = parseInt(state.react.left) + 1 + 'px'
+      } else if (event.key === 'ArrowLeft') {
+        state.react.left = parseInt(state.react.left) - 1 + 'px'
+      } else if (event.key === 'ArrowDown') {
+        state.react.top = parseInt(state.react.top) + 1 + 'px'
+      } else if (event.key === 'ArrowUp') {
+        state.react.top = parseInt(state.react.top) - 1 + 'px'
+      }
+    }
+    event.preventDefault()
+  }
   onMounted(() => {
     getInitScale()
     getData()
+    document.addEventListener('keydown', controlMoveByKeydown)
+  })
+  onUnmounted(() => {
+    document.removeEventListener('keydown', controlMoveByKeydown)
   })
 </script>

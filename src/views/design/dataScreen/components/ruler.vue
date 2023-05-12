@@ -1,37 +1,24 @@
 <!-- Created by 337547038 -->
 <template>
-  <div
-    class="screen-ruler"
-    :class="`ruler-${direction}`"
-    :style="rulerStyle"
-    v-show="showRuler"
-  >
-    <div
-      class="ruler-box"
-      @mouseenter="mouseenter"
-      @mouseleave="mouseleave"
-      @mousedown="mousedown"
-    >
+  <div class="screen-ruler" :class="`ruler-${direction}`" :style="rulerStyle" v-show="showRuler">
+    <div class="ruler-box" @mouseenter="mouseenter" @mouseleave="mouseleave" @mousedown="mousedown">
       <span v-for="item in rulerLen" :key="item">{{ getScaleText(item) }}</span>
     </div>
   </div>
   <div v-show="showLine">
-    <div
-      class="ruler-line dotted"
-      :style="lineStyle"
-      :class="`line-${direction}`"
-    >
-      <span>{{ getScaleText(state.leftTop - 20) }}</span></div
-    >
+    <div class="ruler-line dotted" :style="lineStyle" :class="`line-${direction}`">
+      <span>{{ getScaleText(state.leftTop - 20) }}</span>
+    </div>
     <div
       class="ruler-line"
       :class="`line-${direction}`"
       v-for="(item, index) in state.line"
       :key="item"
       :style="getStyle(item)"
-      @mousedown="lineMousedown(index, item, $event)"
-    ><span>{{ getScaleText(item - 20) }}</span></div
+      @mousedown="lineMousedown(<number>index, item, $event)"
     >
+      <span>{{ getScaleText(item - 20) }}</span>
+    </div>
   </div>
 </template>
 
@@ -159,8 +146,7 @@
     position: sticky;
     top: 0;
     height: 20px;
-    background: rgb(48, 65, 86) url(../../../../assets/img/ruler.png) repeat-x
-      left top;
+    background: rgb(48, 65, 86) url(../../../../assets/img/ruler.png) repeat-x left top;
     z-index: 11;
     .ruler-box {
       height: 20px;

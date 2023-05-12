@@ -32,14 +32,13 @@
               v-for="(element, index) in layerList"
               :key="index"
               :class="{
-                active: active === element.index,
+                active: active[0] === element.index,
                 lock: element.lock,
                 display: element.display
               }"
             >
               <span @click="showLockClick(element, 'active')"
-              ><i :class="`icon-${element.icon}`"></i>
-                {{ element.label }}</span
+                ><i :class="`icon-${element.icon}`"></i> {{ element.label }}</span
               >
               <i
                 @click="showLockClick(element, 'display')"
@@ -51,10 +50,7 @@
                 class="icon"
                 :class="[element.lock ? 'icon-lock' : 'icon-lock-open']"
               ></i>
-              <el-popconfirm
-                title="确认删除"
-                @confirm="showLockClick({ index: element.index }, 'del')"
-              >
+              <el-popconfirm title="确认删除" @confirm="showLockClick({ index: element.index }, 'del')">
                 <template #reference>
                   <i class="icon-del"></i>
                 </template>
@@ -90,13 +86,13 @@
 
   withDefaults(
     defineProps<{
-      active: number | null
+      active: number[]
     }>(),
     {}
   )
   const emits = defineEmits<{
     (e: 'update', key: string, index: number, value: number | boolean): void
-    (e: 'update:active', index: number): void
+    (e: 'update:active', index: number[]): void
   }>()
   const dict: any = {
     line: ['折线图', 'line'],
@@ -347,7 +343,7 @@
         obj.lock = newVal
         break
       case 'active': // 点击时选中对应的层
-        emits('update:active', obj.index)
+        emits('update:active', [obj.index])
         break
     }
     // 通知外层处理

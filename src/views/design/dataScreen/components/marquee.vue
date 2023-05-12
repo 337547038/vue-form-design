@@ -1,11 +1,6 @@
 <!-- Created by 337547038  -->
 <template>
-  <div
-    ref="container"
-    :class="`marquess-${direction}`"
-    :style="style"
-    class="marquee-container"
-  >
+  <div ref="container" :class="`marquess-${direction}`" :style="style" class="marquee-container">
     <div :style="innerStyle" class="inner-container">
       <div ref="container1" :style="{ display: isLeftOrRight ? 'flex' : '' }">
         <slot></slot>

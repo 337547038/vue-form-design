@@ -8,12 +8,7 @@
       :tableData="tableData"
       :beforeRequest="beforeRequest"
     />
-    <el-dialog
-      v-model="dialog.visible"
-      title="设置"
-      width="480px"
-      destroy-on-close
-    >
+    <el-dialog v-model="dialog.visible" title="设置" width="480px" destroy-on-close>
       <ak-form
         ref="formEl"
         :formData="dialogFormData"

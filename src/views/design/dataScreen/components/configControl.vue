@@ -1,18 +1,10 @@
 <!-- Created by 337547038 -->
 <template>
   <div class="main-right" :class="{ lock: current.config?.lock }">
-    <el-tabs
-      class="tabs"
-      model-value="screen"
-      v-if="Object.keys(current).length"
-    >
+    <el-tabs class="tabs" model-value="screen" v-if="Object.keys(current).length">
       <el-tab-pane label="位置属性" name="screen">
         <el-form size="small">
-          <el-form-item
-            :label="item.label"
-            v-for="(item, index) in positionProperty"
-            :key="index"
-          >
+          <el-form-item :label="item.label" v-for="(item, index) in positionProperty" :key="index">
             <h3 v-if="item.type === 'group'">{{ item.title }}</h3>
             <el-switch
               v-else-if="item.type === 'switch'"
@@ -41,12 +33,7 @@
               @change="propertyChange(item, $event)"
               :model-value="item.value"
             >
-              <el-option
-                v-for="(opt, key) in item.options"
-                :key="opt"
-                :label="opt"
-                :value="key"
-              />
+              <el-option v-for="(opt, key) in item.options" :key="opt" :label="opt" :value="key" />
             </el-select>
             <el-input-number
               v-else-if="item.type === 'number'"
@@ -62,64 +49,24 @@
               @input="propertyChange(item, $event)"
             />
           </el-form-item>
-          <el-form-item
-            v-if="['image', 'background'].includes(type)"
-            class="upload-image"
-          >
-            <el-input
-              placeholder="请输入图片地址"
-              v-model="current.config.src"
-            />
-            <el-button
-              type="primary"
-              @click="openUpload(type === 'image' ? 'img' : 'bg', 'src')"
-            >选择图片</el-button
-            >
+          <el-form-item v-if="['image', 'background'].includes(type)" class="upload-image">
+            <el-input placeholder="请输入图片地址" v-model="current.config.src" />
+            <el-button type="primary" @click="openUpload(type === 'image' ? 'img' : 'bg', 'src')">选择图片</el-button>
           </el-form-item>
           <el-form-item v-if="['line', 'bar', 'pie', 'echarts'].includes(type)">
             <el-button type="primary" @click="echartsEdit">图表编辑</el-button>
           </el-form-item>
-          <el-form-item
-            v-if="
-              [
-                'text',
-                'sText',
-                'image',
-                'background',
-                'border',
-                'clock'
-              ].includes(type)
-            "
-          >
-            <el-button type="primary" @click="styleEdit"
-            >编辑更多内联样式</el-button
-            >
+          <el-form-item v-if="['text', 'sText', 'image', 'background', 'border', 'clock'].includes(type)">
+            <el-button type="primary" @click="styleEdit">编辑更多内联样式</el-button>
           </el-form-item>
           <el-form-item v-if="['table'].includes(type)">
-            <el-button type="primary" @click="tablePropsEdit"
-            >表格属性</el-button
-            >
-            <el-button type="primary" @click="tableColumnEdit"
-            >Table-column</el-button
-            >
+            <el-button type="primary" @click="tablePropsEdit">表格属性</el-button>
+            <el-button type="primary" @click="tableColumnEdit">Table-column</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="数据" name="data">
-        <el-form
-          size="small"
-          v-if="
-            [
-              'line',
-              'bar',
-              'pie',
-              'echarts',
-              'text',
-              'sText',
-              'table'
-            ].includes(type)
-          "
-        >
+        <el-form size="small" v-if="['line', 'bar', 'pie', 'echarts', 'text', 'sText', 'table'].includes(type)">
           <el-form-item label="数据类型">
             <el-radio-group v-model="current.config.optionsType">
               <el-radio :label="0" style="margin-right: 4px">静态</el-radio>
@@ -132,15 +79,9 @@
           </el-form-item>
           <template v-if="current.config.optionsType === 1">
             <el-form-item>
-              <el-input
-                v-model="current.config.requestUrl"
-                placeholder="接口URL或api中的key"
-              >
+              <el-input v-model="current.config.requestUrl" placeholder="接口URL或api中的key">
                 <template #prepend>
-                  <el-select
-                    v-model="current.config.method"
-                    style="width: 60px"
-                  >
+                  <el-select v-model="current.config.method" style="width: 60px">
                     <el-option label="get" value="get" />
                     <el-option label="post" value="post" />
                     <el-option label="ws" value="ws" disabled />
@@ -155,14 +96,10 @@
               <h3>接口数据处理事件</h3>
             </el-form-item>
             <el-form-item>
-              <el-button @click="openEventsDrawer('beforeRequest')"
-              >beforeRequest</el-button
-              >
+              <el-button @click="openEventsDrawer('beforeRequest')">beforeRequest</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button @click="openEventsDrawer('afterResponse')"
-              >afterResponse</el-button
-              >
+              <el-button @click="openEventsDrawer('afterResponse')">afterResponse</el-button>
             </el-form-item>
           </template>
         </el-form>
@@ -172,11 +109,7 @@
       <el-tab-pane label="大屏配置" name="screen">
         <el-form size="small">
           <el-form-item label="大屏宽度">
-            <el-input
-              placeholder="请输入大屏宽度"
-              :model-value="config.width"
-              @input="configChange('width', $event)"
-            />
+            <el-input placeholder="请输入大屏宽度" :model-value="config.width" @input="configChange('width', $event)" />
           </el-form-item>
           <el-form-item label="大屏高度">
             <el-input
@@ -189,11 +122,7 @@
             <el-input placeholder="请输入项目名称" />
           </el-form-item>-->
           <el-form-item class="color-picker" label="主色">
-            <el-color-picker
-              show-alpha
-              @change="configChange('primary', $event)"
-              :model-value="config.primary"
-            />
+            <el-color-picker show-alpha @change="configChange('primary', $event)" :model-value="config.primary" />
           </el-form-item>
           <el-form-item label="背景">
             <el-select v-model="state.bgSelect" @change="stateChange">
@@ -203,37 +132,19 @@
             </el-select>
           </el-form-item>
           <el-form-item v-if="state.bgSelect !== 3" class="color-picker">
-            <el-color-picker
-              show-alpha
-              v-model="state.bgColor"
-              @change="stateChange"
-            />
+            <el-color-picker show-alpha v-model="state.bgColor" @change="stateChange" />
           </el-form-item>
           <template v-if="state.bgSelect === 2">
             <el-form-item class="color-picker">
-              <el-color-picker
-                show-alpha
-                v-model="state.bgLinear"
-                @change="stateChange"
-              />
+              <el-color-picker show-alpha v-model="state.bgLinear" @change="stateChange" />
             </el-form-item>
             <el-form-item label="渐变角度">
-              <el-slider
-                v-model="state.bgAngle"
-                :max="360"
-                @change="stateChange"
-              />
+              <el-slider v-model="state.bgAngle" :max="360" @change="stateChange" />
             </el-form-item>
           </template>
           <el-form-item v-if="state.bgSelect === 3" class="upload-image">
-            <el-input
-              placeholder="请输入图片地址"
-              v-model="state.bgUpload"
-              @change="stateChange"
-            />
-            <el-button type="primary" @click="openUpload('bg', 'screenBg')"
-            >上传</el-button
-            >
+            <el-input placeholder="请输入图片地址" v-model="state.bgUpload" @change="stateChange" />
+            <el-button type="primary" @click="openUpload('bg', 'screenBg')">上传</el-button>
           </el-form-item>
           <el-form-item>
             <el-button @click="editStyle">编辑样式</el-button>
@@ -248,11 +159,7 @@
               @input="configChange('requestUrl', $event)"
             >
               <template #prepend>
-                <el-select
-                  :model-value="config.method"
-                  style="width: 60px"
-                  @change="configChange('method', $event)"
-                >
+                <el-select :model-value="config.method" style="width: 60px" @change="configChange('method', $event)">
                   <el-option label="get" value="get" />
                   <el-option label="post" value="post" />
                   <el-option label="ws" value="ws" disabled />
@@ -261,24 +168,16 @@
             </el-input>
           </el-form-item>
           <el-form-item label="刷新时间">
-            <el-input-number
-              disabled
-              :model-value="config.loopTime"
-              @input="configChange('loopTime', $event)"
-            />
+            <el-input-number disabled :model-value="config.loopTime" @input="configChange('loopTime', $event)" />
           </el-form-item>
           <el-form-item>
             <h3>接口数据处理事件</h3>
           </el-form-item>
           <el-form-item>
-            <el-button @click="openEventsDrawer('beforeRequest', 'global')"
-            >beforeRequest</el-button
-            >
+            <el-button @click="openEventsDrawer('beforeRequest', 'global')">beforeRequest</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button @click="openEventsDrawer('afterResponse', 'global')"
-            >afterResponse</el-button
-            >
+            <el-button @click="openEventsDrawer('afterResponse', 'global')">afterResponse</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -336,9 +235,7 @@
           })
         } else if (bg.indexOf('linear') !== -1) {
           const str = bg.substring(bg.indexOf('(') + 1, bg.lastIndexOf(')'))
-          const split = str.split(
-            /,(?![^(]*\))(?![^"']*["'](?:[^"']*["'][^"']*["'])*[^"']*$)/
-          )
+          const split = str.split(/,(?![^(]*\))(?![^"']*["'](?:[^"']*["'][^"']*["'])*[^"']*$)/)
           Object.assign(state, {
             bgColor: split[1].trim(),
             bgLinear: split[2].trim(),
@@ -379,7 +276,7 @@
   }
   const positionProperty = computed(() => {
     if (Object.keys(current.value).length) {
-      const { config = {}, position, type } = current.value
+      const { config = {}, position, type }: { config: any } = current.value
       return [
         {
           type: 'group',
@@ -551,8 +448,7 @@
             '{y}-{m}-{d}': '{y}-{m}-{d}',
             '{h}:{i}:{s}': '{h}:{i}:{s}',
             '{y}-{m}-{d} {h}:{i}:{s}': '{y}-{m}-{d} {h}:{i}:{s}',
-            '{y}年{m}月{d}日 {h}:{i}:{s} 星期{w}':
-              '{y}年{m}月{d}日 {h}:{i}:{s} 星期{w}'
+            '{y}年{m}月{d}日 {h}:{i}:{s} 星期{w}': '{y}年{m}月{d}日 {h}:{i}:{s} 星期{w}'
           }
         },
         {
@@ -721,7 +617,7 @@
           : '接口数据处理。也可为字符串，如opt=formatTest',
       callback: (res: any) => {
         if (source === 'global') {
-          (props.config as any)[type] = res
+          ;(props.config as any)[type] = res
         } else {
           if (!current.value.events) {
             current.value.events = {}
