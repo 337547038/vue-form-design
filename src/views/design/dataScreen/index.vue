@@ -10,7 +10,7 @@
       :style="{ width: state.widthLeft }"
       ref="controlLeftEl"
       v-model:active="state.activeIndex"
-      @update="controlLeftUpdate"
+      @update="controlEvent"
     />
     <div class="main-box">
       <head-tools @click="headToolsClick">
@@ -73,7 +73,8 @@
                 :type="0"
                 :scale="state.scale"
                 :current="state.activeIndex.includes(index)"
-                @control-click="controlClick(index, $event)"
+                @contextmenu="screenContextmenu"
+                @moveOrResize="moveOrResize"
               />
             </template>
           </draggable>
@@ -115,11 +116,11 @@
           </div>
           <div class="item">
             <el-button type="primary" link @click="defaultScaleClick('auto')"
-              >自适应</el-button
-            >
+              >自适应
+            </el-button>
             <el-button type="primary" link @click="defaultScaleClick('100')"
-              >100%</el-button
-            >
+              >100%
+            </el-button>
           </div>
         </div>
         <i class="icon-menu icon" @click="toggle('Right')"></i>
@@ -180,6 +181,7 @@
   import { useLayoutStore } from '@/store/layout'
   import { canControlRect } from './utils.ts'
   import RightMenu from './components/rightMenu.vue'
+  import { ScreenData } from './types.ts'
 
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([
@@ -254,19 +256,6 @@
     state.rect.display = 'none'
     state.activeIndex = [index]
     setCurrentConfig(obj)
-  }
-  const controlClick = (index: number, type: string) => {
-    if (type === 'del') {
-      screenData.value.list.splice(index, 1)
-      canvasClick()
-    } else if (type === 'clone') {
-      const newObj = jsonParseStringify(screenData.value.list[index])
-      screenData.value.list.push(newObj)
-      // 选中复制的，即最后一条记录
-      const cloneIndex = screenData.value.list.length - 1
-      itemClick(newObj, cloneIndex)
-    }
-    setLayerList()
   }
   const marks = ref({
     100: {
@@ -391,40 +380,36 @@
    */
   const findComponentsInRect = () => {
     // 因存在宽高为其他单位以及支持right和top定位，计算重叠比较复杂。这里简单化排除那些不符合规则的
-    const autoRect = { left: 0, top: 0, ex: 0, ey: 0 }
-    screenData.value.list.forEach((item: any, index: number) => {
-      if (canControlRect(item.position) && isRectOverlap(item.position)) {
+    screenData.value.list.forEach((item: ScreenData, index: number) => {
+      // 已经组合的组件不能再次被选中，锁定隐藏的也不能选中
+      if (
+        canControlRect(item.position) &&
+        isRectOverlap(item.position) &&
+        item.type !== 'group' &&
+        !item.groupId &&
+        !item.config.lock
+      ) {
         if (!state.activeIndex.includes(index)) {
           // 防意外重复push
           state.activeIndex.push(index)
         }
-        const { left, top, width, height } = item.position
-        autoRect.left = getMin(autoRect.left, left)
-        autoRect.top = getMin(autoRect.top, top)
-        autoRect.ex = Math.max(autoRect.ex, parseInt(width) + left) // 结束坐标点
-        autoRect.ey = Math.max(autoRect.ey, parseInt(height) + top)
       }
     })
     // 如果有选中组件时，根据所选中的组件重新设置选区大小
     if (state.activeIndex.length) {
+      const { left, top, width, height } = getRectPosition()
       state.rect = {
-        left: autoRect.left + 'px',
-        top: autoRect.top + 'px',
-        width: Math.abs(autoRect.ex - autoRect.left) + 'px',
-        height: Math.abs(autoRect.ey - autoRect.top) + 'px',
+        left: left + 'px',
+        top: top + 'px',
+        width: width + 'px',
+        height: height + 'px',
         display: 'block'
       }
     } else {
       // 选区中没有组件时，隐藏
       state.rect.display = 'none'
     }
-    function getMin(num1: number, num2: number) {
-      if (num1 === 0) {
-        return num2
-      } else {
-        return Math.min(num1, num2)
-      }
-    }
+
     function isRectOverlap(rect1) {
       // 计算两个矩形的左上角和右下角坐标
       const rect1Left = rect1.left
@@ -440,6 +425,34 @@
       const isOverlapX = rect1Left < rect2Right && rect2Left < rect1Right
       const isOverlapY = rect1Top < rect2Bottom && rect2Top < rect1Bottom
       return isOverlapX && isOverlapY
+    }
+  }
+  // 设置选区及合并组宽高及坐标点
+  const getRectPosition = () => {
+    const autoRect = { left: 0, top: 0, ex: 0, ey: 0 }
+    screenData.value.list.forEach((item: ScreenData, index: number) => {
+      // 已经组合的组件不能再次被选中，锁定隐藏的也不能选中
+      if (state.activeIndex.includes(index)) {
+        const { left, top, width, height } = item.position
+        autoRect.left = getMin(autoRect.left, left)
+        autoRect.top = getMin(autoRect.top, top)
+        autoRect.ex = Math.max(autoRect.ex, parseInt(`${width}`) + left) // 结束坐标点
+        autoRect.ey = Math.max(autoRect.ey, parseInt(`${height}`) + top)
+      }
+    })
+    return {
+      left: autoRect.left,
+      top: autoRect.top,
+      width: Math.abs(autoRect.ex - autoRect.left),
+      height: Math.abs(autoRect.ey - autoRect.top)
+    }
+
+    function getMin(num1: number, num2: number) {
+      if (num1 === 0) {
+        return num2
+      } else {
+        return Math.min(num1, num2)
+      }
     }
   }
   // 滚动条位置
@@ -629,31 +642,80 @@
       })
   }
   // 数据处理相关结束
-  // 设置图层隐藏锁定
-  const controlLeftUpdate = (
-    key: string,
-    index: number,
-    val: number | boolean
-  ) => {
-    switch (key) {
-      case 'display':
-      case 'zIndex':
-        screenData.value.list[index].position[key] = val
-        break
-      case 'lock':
-        screenData.value.list[index].config[key] = val
-        break
-      case 'del':
-        return controlClick(index, 'del')
+  // 组件属性等操作事件处理
+  const controlEvent = (key: string, index: number, val?: boolean) => {
+    // 确保意外，这里清除下
+    state.rect.display = 'none'
+    const isGroupId = screenData.value.list[index].id
+    const list = screenData.value.list
+    if (['display', 'lock'].includes(key)) {
+      if (key === 'display') {
+        list[index].position[key] = val
+      } else {
+        list[index].config[key] = val
+      }
+      if (isGroupId) {
+        // 将组内所有设置
+        list.forEach((item: ScreenData) => {
+          if (item.groupId === isGroupId) {
+            if (key === 'display') {
+              item.position.display = val
+            } else {
+              item.config.lock = val
+            }
+          }
+        })
+      }
+      setCurrentConfig(list[index]) // 右则属性
     }
-    setCurrentConfig(screenData.value.list[index]) // 右则属性
+    if (key === 'del') {
+      screenData.value.list.splice(index, 1)
+      canvasClick()
+      if (isGroupId) {
+        screenData.value.list = list.filter((item: ScreenData) => {
+          return item.groupId !== isGroupId
+        })
+      }
+    }
+    if (key === 'copy') {
+      let randId = ''
+      const newObj = jsonParseStringify(screenData.value.list[index])
+      if (isGroupId) {
+        randId = randomString(8)
+        // 修改下当前组的id
+        newObj.id = randId
+        // 找出组内的所有组件依次追加
+        list.forEach((item: ScreenData) => {
+          if (item.groupId === isGroupId) {
+            const newGroupObj = jsonParseStringify(item)
+            //修改groupId，指向新组
+            newGroupObj.groupId = randId
+            screenData.value.list.push(newGroupObj)
+          }
+        })
+      }
+      screenData.value.list.push(newObj)
+      // 选中复制的，即最后一条记录
+      const cloneIndex = screenData.value.list.length - 1
+      itemClick(newObj, cloneIndex)
+    }
+    setLayerList() // 重置左侧
   }
   // 支持键盘控制调整位置
   const controlMoveByKeydown = (event: any) => {
     if (!state.activeIndex?.length) {
       return
     }
-    const moveIndex = state.activeIndex
+    const moveIndex = jsonParseStringify(state.activeIndex)
+    // 当前移动为合并组时
+    const groupId = screenData.value.list[state.activeIndex[0]].id
+    if (state.activeIndex.length === 1 && groupId) {
+      screenData.value.list.forEach((item: ScreenData, index: number) => {
+        if (item.groupId === groupId) {
+          moveIndex.push(index)
+        }
+      })
+    }
     for (const key in moveIndex) {
       const index = moveIndex[key]
       const objActive = screenData.value.list[index]
@@ -691,7 +753,23 @@
     rightMenuEl.value.open({ x: evt.pageX, y: evt.pageY })
     evt.preventDefault()
   }
-  const rightMenuClick = (key: string) => {
+  // 视图组件右键事件
+  const screenContextmenu = ({
+    x,
+    y,
+    type
+  }: {
+    x: number
+    y: number
+    type: number
+  }) => {
+    rightMenuEl.value.open({ x: x, y: y, type: type })
+  }
+  const rightMenuClick = (key: string, type: number) => {
+    const { list } = screenData.value
+    const { id, position } = list[state.activeIndex[0]] // 当前选中的组id
+    let min
+    let max = 0
     switch (key) {
       case 'merge':
         rightMenuMerge()
@@ -699,28 +777,54 @@
       case 'split':
         // 1.先移除组id标志
         // 2.删除组图层
-        // eslint-disable-next-line no-case-declarations
-        const groupId = screenData.value.list[state.activeIndex[0]].groupId
-        screenData.value.list.forEach((item: any) => {
-          if (item.groupId === groupId) {
+        list.forEach((item: any) => {
+          if (item.groupId === id) {
             delete item.groupId
           }
         })
         screenData.value.list.splice(state.activeIndex[0], 1)
         // 3.清空当前选中
-        state.activeIndex = []
+        canvasClick()
+        setLayerList()
         break
       case 'left':
+        //左对齐。按从选中的左则最小值为基准对齐
+        //type=0临时矩形选中，对当前选中的，1时组内
+        if (type === 0) {
+          min = parseInt(state.rect.left)
+        } else if (type === 1) {
+          min = position.left
+        }
+        screenData.value.list.forEach((item: ScreenData, index: number) => {
+          if (
+            (type === 0 && state.activeIndex.includes(index)) ||
+            (type === 1 && item.groupId === id)
+          ) {
+            item.position.left = min
+            if (item.position.width > max) {
+              max = parseInt(item.position.width as string)
+            }
+          }
+        })
+        // 重设组或临时选区的宽度
+        if (type === 0) {
+          state.rect.width = max + 'px'
+        } else if (type === 1) {
+          screenData.value.list[state.activeIndex[0]].position.width = max
+        }
         break
       case 'right':
       case 'top':
       case 'bottom':
       case 'horizontally':
       case 'verticalCenter':
+        // 这里对齐方式后面根据情况完善
+        break
       case 'copy':
       case 'del':
       case 'lock':
-      case 'hide':
+      case 'display':
+        controlEvent(key, state.activeIndex[0], true)
         break
     }
   }
@@ -730,7 +834,13 @@
     const randId = randomString(8)
     screenData.value.list.push({
       type: 'group',
-      position: state.rect,
+      position: {
+        left: parseInt(state.rect.left),
+        top: parseInt(state.rect.top),
+        width: parseInt(state.rect.width),
+        height: parseInt(state.rect.height),
+        zIndex: 110 // 这个层要确保高于组内的其他图层
+      },
       config: {},
       id: randId
     })
@@ -740,11 +850,14 @@
       }
     })
     // 3.选中当前整个组，即最后一条记录
-    state.activeIndex = [screenData.value.list.length - 1]
-    // 4.将临时显示的矩形隐藏
-    state.rect.display = 'none'
+    const index = screenData.value.list.length - 1
+    itemClick(screenData.value.list[index], index)
+    //4.重置图层
+    setLayerList()
   }
   // 右键菜单相关结束
+  //组件移动缩放事件，用于处理合并组
+  const moveOrResize = () => {}
   onMounted(() => {
     getInitScale()
     getData()

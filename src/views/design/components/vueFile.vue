@@ -1,10 +1,19 @@
 <template>
-  <el-dialog v-model="visible" title="导出vue文件" class="export-dialog" width="80%">
+  <el-dialog
+    v-model="visible"
+    title="导出vue文件"
+    class="export-dialog"
+    width="80%"
+  >
     <div id="editJsonCopy"></div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button size="small" type="primary" @click="copyData"> 复制数据 </el-button>
-        <el-button type="primary" size="small" @click="dialogExport"> 导出代码 </el-button>
+        <el-button size="small" type="primary" @click="copyData">
+          复制数据
+        </el-button>
+        <el-button type="primary" size="small" @click="dialogExport">
+          导出代码
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -22,7 +31,7 @@
   // 根据生成的json提取需要导入的组件，远程方法，检验方法
   const getObjHtml = (obj: any) => {
     let rulesMethods = ''
-    let sourceFun = ''
+    const sourceFun = ''
     obj &&
       obj.list.forEach((item: any) => {
         if (item.customRules?.length) {
@@ -90,7 +99,7 @@
   import { ref, computed, provide } from 'vue'
   const formNameEl = ref()
   const formData = ref(${objToStringify(obj)})
-    // todo 存在编辑时，可根据路由等参数设置当前表单模式　1新增　2编辑
+    // todo 存在编辑时，可根据路由等参数设置当前表单模式 1新增 2编辑
   const formType = computed(() => {
      return 1
   })
@@ -98,7 +107,7 @@
   ${getHtml.sourceFun}
   // 表单提交时参数处理
   const beforeSubmit = (params)=>{
-    //　如编辑时添加参数
+    // 如编辑时添加参数
     //  params.id='xxx'
     return params
   }
@@ -175,6 +184,7 @@
       // 编辑，根据id加载
       if (btn.key === 'edit') {
         nextTick(() => {
+       // eslint-disable-next-line no-irregular-whitespace
        　 // todo 当表单内容字段比较少，所需值从列表数据就可以获取
        　　// formEl.value.setValue(row)
           formEl.value.getData({ id: row.id })
@@ -182,17 +192,17 @@
       }
     }
   }
-  //　提交表单前事件
+  // 提交表单前事件
   const beforeSubmit = (params) => {
     if(dialog.formType===2){ // 编辑模式下添加参数
       params.id = dialog.editId
     }
     return params
   }
-  //　提交表单后事件
+  // 提交表单后事件
   const afterSubmit = (type) => {
     if (type === 'success') {
-      //　添加成功，刷新列表数据
+      // 添加成功，刷新列表数据
       closeResetDialog()
       tableListEl.value.getListData()
     }
@@ -209,7 +219,7 @@
       closeResetDialog()
     }
   }
-  `
+`
     }
     visible.value = true
     const html = `<template>

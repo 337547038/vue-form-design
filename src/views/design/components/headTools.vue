@@ -2,7 +2,13 @@
 <template>
   <div class="main-tools">
     <slot></slot>
-    <el-button link type="primary" @click="btnClick(item.icon)" v-for="item in btnList" :key="item.icon">
+    <el-button
+      link
+      type="primary"
+      @click="btnClick(item.icon)"
+      v-for="item in btnList"
+      :key="item.icon"
+    >
       <i :class="['icon-' + item.icon]"></i>{{ item.label }}
     </el-button>
   </div>

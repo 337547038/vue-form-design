@@ -14,14 +14,15 @@
       </div>
     </div>
     <div v-for="(list, index) in controlList" :key="index">
-      <div class="title"
-      >{{ list.title }}
+      <div class="title">
+        {{ list.title }}
         <div
           class="template"
           v-if="index === 0 && !isSearch"
           @click="useTemplateClick"
-        >使用模板</div
         >
+          使用模板
+        </div>
       </div>
       <draggable
         itemKey="key123"

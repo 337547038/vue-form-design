@@ -15,9 +15,9 @@
       >
         <template #default="scope">
           <span v-if="item.type === 'index'">{{ scope.$index + 1 }}</span>
-          <div v-if="type === 4 || editDisabled">{{
-            getText(scope.row[item.name])
-          }}</div>
+          <div v-if="type === 4 || editDisabled">
+            {{ getText(scope.row[item.name]) }}
+          </div>
           <div v-else>
             <form-item
               v-model="scope.row[item.name]"
@@ -34,18 +34,18 @@
       <el-table-column
         prop="del"
         label="操作"
-        v-if="[1, 2].includes(type) && data.config.delBtnText && !editDisabled"
+        v-if="[1, 2].includes(type as number) && data.config.delBtnText && !editDisabled"
       >
         <template #default="scope">
           <el-button link type="primary" @click="delColumn(scope.$index)"
-          >{{ data.config.delBtnText }}
+            >{{ data.config.delBtnText }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <div
       class="table-btn"
-      v-if="[1, 2].includes(type) && data.config.addBtnText && !editDisabled"
+      v-if="[1, 2].includes(type as number) && data.config.addBtnText && !editDisabled"
     >
       <el-button size="small" @click="addColumn">{{
         data.config.addBtnText

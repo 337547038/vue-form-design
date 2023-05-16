@@ -27,6 +27,7 @@
           span {cursor: not-allowed}
         }
         &.display {opacity: .5}
+        &.isGroup{padding-left: 20px}
       }
     }
   }
@@ -54,9 +55,6 @@
         .rs7 {left: 50%;bottom: -4px;margin-left: -4px;cursor: s-resize}
         .rs8 {right: -4px;bottom: -4px;cursor: se-resize;}
         &:hover {background: rgba(64, 158, 255, .5);cursor: move}
-        .control-btn {bottom: -25px;right: 5px;position: absolute;cursor: pointer;
-          i {margin-left: 5px}
-        }
         .position {font-size: 12px;position: absolute;left: 0;top: -20px}
       }
       &.preview {position: fixed;left: 0;top: 0;z-index: 50;
@@ -99,6 +97,8 @@
   .screen-right-menu {position: absolute;z-index: 100;background: #fff;width: 160px;transform: translateY(-50%);
     li {padding: 5px 15px;cursor: pointer;
       &:hover {background: #409eff;color: #fff}
+      &.display{cursor: not-allowed;opacity: .5;
+      &:hover{background: #fff;color: #333}}
     }
   }
 }

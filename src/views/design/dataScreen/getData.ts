@@ -26,7 +26,12 @@ export const getInitData = (id: string | number) => {
       })
   })
 }
-export const getGlobalData = (requestUrl: string, afterResponse: any, beforeRequest: any, method: string) => {
+export const getGlobalData = (
+  requestUrl: string,
+  afterResponse: any,
+  beforeRequest: any,
+  method: string
+) => {
   return new Promise((resolve, reject) => {
     let params = {}
     if (typeof beforeRequest === 'function') {

@@ -27,6 +27,7 @@ export const canControlRect = (rect: any): boolean => {
     rect.right ||
     rect.right === 0 ||
     !isNumberOrPx(rect.width) ||
-    !isNumberOrPx(rect.height)
+    !isNumberOrPx(rect.height) ||
+    rect.display === 'none'
   )
 }

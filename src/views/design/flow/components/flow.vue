@@ -2,7 +2,12 @@
 <template>
   <div class="flow-container" :class="{ [direction]: true, 'type-show': type }">
     <div class="flow-main">
-      <flow-group v-for="(item, index) in nodeList" :key="index" :data="item" @click-event="clickEvent" />
+      <flow-group
+        v-for="(item, index) in nodeList"
+        :key="index"
+        :data="item"
+        @click-event="clickEvent"
+      />
       <div class="flow-end">结束</div>
     </div>
     <drawer ref="drawerEl" v-if="type === 0" />
@@ -43,7 +48,9 @@
     }
   })
   provide('flowProps', flowProps)
-  const nodeData = ref([{ id: 'start', nodeType: 1, parentId: '', content: '发起人' }])
+  const nodeData = ref([
+    { id: 'start', nodeType: 1, parentId: '', content: '发起人' }
+  ])
   const nodeList = computed(() => {
     return nodeData.value.filter((i: NodeList) => !i.parentId)
   })

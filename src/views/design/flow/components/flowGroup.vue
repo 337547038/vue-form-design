@@ -2,22 +2,35 @@
 <template>
   <div class="flow-group" :class="{ 'flow-branch': isBranch }">
     <div class="flow-branch-btn" v-if="isBranch && !type">
-      <el-button size="small" type="primary" plain round @click="addBranchClick">添加条件 </el-button>
+      <el-button size="small" type="primary" plain round @click="addBranchClick"
+        >添加条件
+      </el-button>
     </div>
     <div class="flow-row">
       <div class="flow-col" v-for="(item, i) in flowBranch" :key="i">
         <span class="mask-left" v-if="i === 0 && isBranch"></span>
-        <span class="mask-right" v-if="i === flowBranch.length - 1 && isBranch"></span>
-        <div class="flow-item" @click="itemClick(item, <number>i, flowBranch.length)">
+        <span
+          class="mask-right"
+          v-if="i === flowBranch.length - 1 && isBranch"
+        ></span>
+        <div
+          class="flow-item"
+          @click="itemClick(item, i as number, flowBranch.length)"
+        >
           <div class="title" :class="`bg-${item.nodeType}`">
             <i :class="getIcon(item)"></i>
             <span
-              >{{ nodeTypeName[item.nodeType] }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span
+              >{{ nodeTypeName[item.nodeType]
+              }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span
             >
             <i
               class="icon-close close"
               @click.stop="delClick(item)"
-              v-if="item.nodeType !== 1 && !type && !(i === flowBranch.length - 1 && isBranch)"
+              v-if="
+                item.nodeType !== 1 &&
+                !type &&
+                !(i === flowBranch.length - 1 && isBranch)
+              "
             ></i>
           </div>
           <div class="text" :title="getContent(item)">
@@ -139,10 +152,14 @@
     emits('clickEvent', data)
   }
   const itemClick = (data: NodeList, index: number, length: number) => {
-    if (data.nodeType === 1 || (data.nodeType === 5 && index === flowBranch.value.length - 1)) {
+    if (
+      data.nodeType === 1 ||
+      (data.nodeType === 5 && index === flowBranch.value.length - 1)
+    ) {
       // 发起人节点和条件最后一个节点不能设置
     } else {
-      flowProps.value.openDrawer && flowProps.value.openDrawer(data, index, length)
+      flowProps.value.openDrawer &&
+        flowProps.value.openDrawer(data, index, length)
     }
   }
   // const drawerConfirm = (obj: any) => {

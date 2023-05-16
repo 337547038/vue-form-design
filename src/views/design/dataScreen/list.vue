@@ -8,7 +8,12 @@
       :tableData="tableData"
       :beforeRequest="beforeRequest"
     />
-    <el-dialog v-model="dialog.visible" title="设置" width="480px" destroy-on-close>
+    <el-dialog
+      v-model="dialog.visible"
+      title="设置"
+      width="480px"
+      destroy-on-close
+    >
       <ak-form
         ref="formEl"
         :formData="dialogFormData"
@@ -190,10 +195,10 @@
         options: [],
         config: {
           optionsType: 1,
-          optionsFun: 'roleList', //　可以为url也可以为api中的key
+          optionsFun: 'roleList', // 可以为url也可以为api中的key
           method: 'post',
-          label: 'name', //　指定name为label的值
-          value: 'id', //　指定id为value的值
+          label: 'name', // 指定name为label的值
+          value: 'id', // 指定id为value的值
           help: '哪些角色可以查看'
         },
         name: 'roleId',

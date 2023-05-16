@@ -13,7 +13,12 @@
         <template v-if="nodeData.nodeType === 5">
           <el-form-item label="优先级">
             <el-select v-model="state.priority">
-              <el-option :value="item" v-for="item in branchLen - 1" :key="item">{{ item }}</el-option>
+              <el-option
+                :value="item"
+                v-for="item in branchLen - 1"
+                :key="item"
+                >{{ item }}</el-option
+              >
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -22,18 +27,26 @@
           </el-form-item>
           <div class="tip">
             可使用运算符+-*/()&lt;&gt;=&&||符号编写条件规则，$代表当前流程表单所有值，如$.name即为流程表单输入字段名称为name的值。<br />
-            如请假流程表单day为请假天数，当条件规则设置为 $.day>2 即表示请假天假大于2天时，该条件成立
+            如请假流程表单day为请假天数，当条件规则设置为 $.day>2
+            即表示请假天假大于2天时，该条件成立
           </div>
         </template>
         <template v-else>
           <el-form-item>
             <el-radio-group v-model="state.userType">
-              <el-radio v-for="(item, key) in userTypeList" :label="key" :key="key">{{ item }}</el-radio>
+              <el-radio
+                v-for="(item, key) in userTypeList"
+                :label="key"
+                :key="key"
+                >{{ item }}</el-radio
+              >
             </el-radio-group>
           </el-form-item>
           <template v-if="['1', '5'].includes(state.userType)">
             <el-form-item>
-              <el-button type="primary" @click="selectClick">选择/修改{{ userTypeList[state.userType] }}</el-button>
+              <el-button type="primary" @click="selectClick"
+                >选择/修改{{ userTypeList[state.userType] }}</el-button
+              >
             </el-form-item>
             <el-form-item>
               <el-tag
@@ -41,7 +54,7 @@
                 v-for="(item, index) in userTagList"
                 :key="item"
                 closable
-                @close="tagClose(<number>index)"
+                @close="tagClose(index as number)"
               >
                 {{ item }}
               </el-tag>

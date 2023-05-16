@@ -32,13 +32,15 @@
               v-for="(element, index) in layerList"
               :key="index"
               :class="{
-                active: active[0] === element.index,
+                active: active.includes(element.index),
                 lock: element.lock,
-                display: element.display
+                display: element.display,
+                isGroup: element.groupId && !element.type
               }"
             >
               <span @click="showLockClick(element, 'active')"
-                ><i :class="`icon-${element.icon}`"></i> {{ element.label }}</span
+                ><i :class="`icon-${element.icon}`"></i>
+                {{ element.label }}</span
               >
               <i
                 @click="showLockClick(element, 'display')"
@@ -50,7 +52,10 @@
                 class="icon"
                 :class="[element.lock ? 'icon-lock' : 'icon-lock-open']"
               ></i>
-              <el-popconfirm title="确认删除" @confirm="showLockClick({ index: element.index }, 'del')">
+              <el-popconfirm
+                title="确认删除"
+                @confirm="showLockClick({ index: element.index }, 'del')"
+              >
                 <template #reference>
                   <i class="icon-del"></i>
                 </template>
@@ -313,23 +318,6 @@
   const clone = (origin: any) => {
     return jsonParseStringify(origin)
   }
-  // 处理层级
-  // const dragEnd = (evt: any) => {
-  //   const newIndex = evt.newIndex // 拖动完成后的位置
-  //   const len = layerList.value.length
-  //   console.log('dragEnd', newIndex)
-  //   //　获取下一层的zIndex
-  //   let nextZIndex
-  //   if (newIndex + 1 === len) {
-  //     // 最后一层了
-  //     nextZIndex = 0
-  //   } else {
-  //     //　将当前拖动的层zIndex设置为下一层的zIndex+1
-  //     nextZIndex = layerList.value[newIndex + 1].zIndex || 0
-  //   }
-  //   layerList.value[newIndex].zIndex = nextZIndex + 1
-  //   emits('update', 'zIndex', layerList.value[newIndex].index, nextZIndex + 1)
-  // }
   // 隐藏或锁定
   const showLockClick = (obj: any, key: string) => {
     let newVal = false
@@ -353,18 +341,43 @@
   const setLayer = (data: ScreenData[]) => {
     const temp: any = []
     data.forEach((item: ScreenData, index: number) => {
-      temp.push({
-        label: dict[item.type][0],
-        icon: dict[item.type][1],
-        zIndex: item.position.zIndex || 0,
-        display: item.position.display,
-        lock: item.config.lock,
-        index: index
-      })
+      if (item.type === 'group') {
+        temp.push({
+          label: '合并组',
+          zIndex: item.position.zIndex || 0,
+          display: item.position.display,
+          lock: item.config.lock,
+          index: index,
+          icon: '',
+          groupId: item.id,
+          type: 'group'
+        })
+      } else {
+        temp.push({
+          label: dict[item.type][0],
+          icon: dict[item.type][1],
+          zIndex: item.position.zIndex || 0,
+          display: item.position.display,
+          lock: item.config.lock,
+          index: index,
+          groupId: item.groupId
+        })
+      }
     })
     //layerList.value = temp
-    layerList.value = temp.sort((a: any, b: any) => {
-      return a.icon.localeCompare(b.icon)
+    // layerList.value = temp.sort((a: any, b: any) => {
+    //   return a.icon.localeCompare(b.icon)
+    // })
+    //先按组排序
+    layerList.value = temp.sort(function (a, b) {
+      if (a.groupId < b.groupId) {
+        return -1
+      } else if (a.groupId > b.groupId) {
+        return 1
+      } else {
+        // 组id相同，
+        return a.icon.localeCompare(b.icon)
+      }
     })
   }
   defineExpose({ setLayer })

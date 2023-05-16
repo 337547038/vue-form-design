@@ -9,20 +9,26 @@
     :style="positionStyle"
     @mousedown="stopPropagation"
   >
-    <div class="resize-box" @mousedown="resizeMousedown" v-if="type === 0 && !data.config?.lock" v-show="current">
+    <div
+      class="resize-box"
+      @mousedown.left="resizeMousedown"
+      v-if="type === 0 && !data.config?.lock"
+      v-show="current"
+      @contextmenu="contextmenu"
+    >
       <span
         v-for="item in 8"
         :key="item"
         :class="`rs${item}`"
         @mousedown.stop="resizeDotMouseDown($event, item)"
       ></span>
-      <div class="control-btn">
-        <i class="icon-clone" @click.stop="controlClick('clone')" title="复制"></i>
-        <i class="icon-del" @click.stop="controlClick('del')" title="删除"></i>
-      </div>
       <div class="position">{{ JSON.stringify(props.data.position) }}</div>
     </div>
-    <div v-if="['text', 'border'].includes(data.type)" :style="getConfigStyle" v-html="newValue || config.text"></div>
+    <div
+      v-if="['text', 'border'].includes(data.type)"
+      :style="getConfigStyle"
+      v-html="newValue || config.text"
+    ></div>
     <div v-if="data.type === 'sText'" :style="getConfigStyle">
       <my-marquee
         :width="`${data.position.width}px`"
@@ -41,16 +47,37 @@
       :style="getConfigStyle"
       alt="请选择或上传图片"
     />
-    <div class="default-bg" v-if="data.type === 'background'" :style="getBackground">
+    <div
+      class="default-bg"
+      v-if="data.type === 'background'"
+      :style="getBackground"
+    >
       <span v-if="!config.src">请选择或上传图片</span>
     </div>
     <div v-if="data.type === 'table'" ref="tableEl">
-      <el-table v-bind="config.props" :data="tableData" style="width: 100%" :height="`${props.data.position.height}`">
-        <el-table-column v-bind="col" v-for="col in data.columns" :key="col.prop" />
+      <el-table
+        v-bind="config.props"
+        :data="tableData"
+        style="width: 100%"
+        :height="`${props.data.position.height}`"
+      >
+        <el-table-column
+          v-bind="col"
+          v-for="col in data.columns"
+          :key="col.prop"
+        />
       </el-table>
     </div>
-    <now-time :style="getConfigStyle" v-if="data.type === 'clock'" :config="config" />
-    <component v-if="['component'].includes(data.type)" :is="config.component" v-bind="config" />
+    <now-time
+      :style="getConfigStyle"
+      v-if="data.type === 'clock'"
+      :config="config"
+    />
+    <component
+      v-if="['component'].includes(data.type)"
+      :is="config.component"
+      v-bind="config"
+    />
     <echarts-init
       :option="newValue || data.option"
       :height="data.position.height"
@@ -61,7 +88,15 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted, nextTick, watch, inject, reactive } from 'vue'
+  import {
+    ref,
+    computed,
+    onMounted,
+    nextTick,
+    watch,
+    inject,
+    reactive
+  } from 'vue'
   import NowTime from './nowTime.vue'
   import MyMarquee from './marquee.vue'
   import EchartsInit from '../../components/echartsInt.vue'
@@ -92,6 +127,11 @@
   )
   const emits = defineEmits<{
     (e: 'controlClick', type: string): void
+    (e: 'moveOrResize'): void
+    (
+      e: 'contextmenu',
+      { x, y, type }: { x: number; y: number; type: number }
+    ): void
   }>()
   const state = reactive({
     left: '',
@@ -121,7 +161,11 @@
   // 组件自定配置编辑的样式+定位时的宽高
   const getConfigStyle = computed(() => {
     //const { width, height } = props.data.position
-    return Object.assign({}, { width: '100%', height: '100%' }, config.value.style || {})
+    return Object.assign(
+      {},
+      { width: '100%', height: '100%' },
+      config.value.style || {}
+    )
   })
   const getBackground = computed(() => {
     let src = {}
@@ -135,7 +179,8 @@
     if (!props.data.position) {
       return {}
     }
-    const { left, top, height, width, zIndex, display, right, bottom } = props.data.position
+    const { left, top, height, width, zIndex, display, right, bottom } =
+      props.data.position
     // 设置了right时left为auto，设置了bottom时top为auto
     let left2 = state.left || transformUnit(left)
     if (right || right === 0) {
@@ -168,13 +213,13 @@
     if (flag) {
       const x = evt.pageX
       const y = evt.pageY
-      let { width, height, left, top } = props.data.position
+      const { width, height, left, top } = props.data.position
       if (!canControlRect(props.data.position)) {
         moveTips('使用非px单位宽高和right或bottom定位时不能拖动缩放')
         return
       }
-      const widthNum = parseInt(width)
-      const heightNum = parseInt(height)
+      const widthNum = parseInt(`${width}`)
+      const heightNum = parseInt(`${height}`)
       document.onmousemove = (ev: MouseEvent) => {
         const mx = ev.pageX - x // 移动的位置
         const my = ev.pageY - y
@@ -205,18 +250,18 @@
             mHeight = heightNum - my
             mTop = top + my
             break
-          case 7: //　下中
+          case 7: // 下中
             mHeight = heightNum + my
             break
-          case 3: //　右上
+          case 3: // 右上
             mWidth = widthNum + mx
             mHeight = heightNum - my
             mTop = top + my
             break
-          case 5: //　右中
+          case 5: // 右中
             mWidth = widthNum + mx
             break
-          case 8: //　右下
+          case 8: // 右下
             mWidth = widthNum + mx
             mHeight = heightNum + my
             break
@@ -241,15 +286,15 @@
     }
     evt.stopPropagation()
   }
-  //　移动
+  // 移动
   const resizeMousedown = (evt: MouseEvent) => {
-    //　设置了right或bottom时不能拖动
+    // 设置了right或bottom时不能拖动
     const { left, top } = props.data.position
     let moveFlag = true
     const startX = evt.pageX
     const startY = evt.pageY
-    let mx
-    let my
+    let mx = left
+    let my = top
     document.onmousemove = (evt: MouseEvent) => {
       if (!canControlRect(props.data.position)) {
         moveTips('使用right或bottom定位时不能拖动')
@@ -259,19 +304,20 @@
         return
       }
       const scale = props.scale / 100
-      mx = (evt.pageX - startX) / scale + parseInt(left) || 0
-      my = (evt.pageY - startY) / scale + parseInt(top) || 0
+      mx = (evt.pageX - startX) / scale + parseInt(`${left}`) || 0
+      my = (evt.pageY - startY) / scale + parseInt(`${top}`) || 0
       state.left = mx + 'px'
       state.top = my + 'px'
     }
     document.onmouseup = function () {
       Object.assign(props.data.position, {
-        left: parseInt(mx),
-        top: parseInt(my)
+        left: parseInt(`${mx}`),
+        top: parseInt(`${my}`)
       })
       state.left = ''
       state.top = ''
       moveFlag = false
+
       document.onmousemove = null
     }
   }
@@ -295,7 +341,11 @@
   // 设置表格滚动
   const tableEl = ref()
   const setTableCarousel = () => {
-    if (!config.value.carousel || !tableEl.value || props.data.type !== 'table') {
+    if (
+      !config.value.carousel ||
+      !tableEl.value ||
+      props.data.type !== 'table'
+    ) {
       return
     }
     const divData = tableEl.value.querySelector('.el-scrollbar__wrap')
@@ -347,7 +397,11 @@
       return // 不支持动态数据获取的return
     }
     const { optionsType, requestUrl, method = 'post' } = config.value
-    const { beforeRequest = '', afterResponse = '', getGlobal } = props.data.events || {}
+    const {
+      beforeRequest = '',
+      afterResponse = '',
+      getGlobal
+    } = props.data.events || {}
     if (optionsType === 2 && typeof getGlobal === 'function') {
       // 从全局加载的数据中提取
       newValue.value = getGlobal(getDataByType.value, globalScreen.value || {})
@@ -366,9 +420,18 @@
         newValue.value = result
         if (afterResponse) {
           if (typeof afterResponse === 'function') {
-            newValue.value = afterResponse(result, getDataByType.value, globalScreen.value || {})
+            newValue.value = afterResponse(
+              result,
+              getDataByType.value,
+              globalScreen.value || {}
+            )
           } else {
-            newValue.value = formatScreen(afterResponse, result, getDataByType.value, globalScreen.value || {})
+            newValue.value = formatScreen(
+              afterResponse,
+              result,
+              getDataByType.value,
+              globalScreen.value || {}
+            )
           }
         }
       })
@@ -377,8 +440,11 @@
       })
   }
   // 获取动态数据相关结束
-  const controlClick = (type: string) => {
-    emits('controlClick', type)
+  // 鼠标右键事件
+  const contextmenu = (evt: MouseEvent) => {
+    const type = props.data.type === 'group' ? 1 : 2
+    emits('contextmenu', { x: evt.pageX, y: evt.pageY, type: type })
+    evt.preventDefault()
   }
   onMounted(() => {
     getUrlData() // 从接口获取动态数据

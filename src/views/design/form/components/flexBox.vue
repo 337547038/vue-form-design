@@ -11,17 +11,19 @@
     </div>
     <el-button
       class="flex-delete-btn"
-      @click="deleteRow(index)"
+      @click="deleteRow(index as number)"
       type="primary"
       link
       size="small"
-      v-if="data.config?.delBtnText && [1, 2].includes(type)"
-    >{{ data.config.delBtnText }}</el-button
+      v-if="data.config?.delBtnText && [1, 2].includes(type as number)"
+      >{{ data.config.delBtnText }}</el-button
     >
   </div>
-  <el-form-item v-if="data.config?.addBtnText && [1, 2, 5].includes(type)">
+  <el-form-item
+    v-if="data.config?.addBtnText && [1, 2, 5].includes(type as number)"
+  >
     <el-button class="flex-add-btn" size="small" @click="addRow"
-    >{{ data.config.addBtnText }}
+      >{{ data.config.addBtnText }}
     </el-button>
   </el-form-item>
 </template>
@@ -49,7 +51,7 @@
     return formProps.value.type
   })
   const getRow = () => {
-    let temp: any = {}
+    const temp: any = {}
     props.data.list.forEach((item: any) => {
       temp[item.name] = item.control.modelValue
     })

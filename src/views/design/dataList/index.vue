@@ -11,7 +11,7 @@
             <el-popover placement="bottom" :width="420" trigger="hover">
               <template #reference>
                 <el-button type="primary" plain size="small"
-                >添加表格列字段</el-button
+                  >添加表格列字段</el-button
                 >
               </template>
               <div class="table-field-list">
@@ -27,7 +27,8 @@
                       v-for="li in item.options"
                       :key="li.prop"
                       @change="fieldSelectClick(li, $event)"
-                    /></div>
+                    />
+                  </div>
                 </div>
               </div>
             </el-popover>
@@ -60,10 +61,11 @@
                 class="tip"
                 v-if="
                   state.tableData?.controlBtn?.length === 0 ||
-                    !state.tableData?.controlBtn
+                  !state.tableData?.controlBtn
                 "
-              >操作按钮区域，点击可添加如新增、删除</div
               >
+                操作按钮区域，点击可添加如新增、删除
+              </div>
               <el-button
                 v-for="item in state.tableData?.controlBtn"
                 v-bind="item"
@@ -87,10 +89,10 @@
               />
             </div>
           </div>
-          <div class="tip" v-if="!state.tableData.columns?.length"
-          >表格列设置区域，可从左上角 添加表格列字段
-            选择已有列或直接从上方工具栏 生成脚本预览 编辑</div
-          >
+          <div class="tip" v-if="!state.tableData.columns?.length">
+            表格列设置区域，可从左上角 添加表格列字段
+            选择已有列或直接从上方工具栏 生成脚本预览 编辑
+          </div>
           <el-table
             :data="[{}]"
             v-bind="state.tableData.tableProps || {}"
@@ -133,13 +135,14 @@
           <el-tabs v-model="state.tabsName">
             <el-tab-pane label="字段属性" name="first">
               <div v-show="Object.keys(state.attrObj).length">
-                <div class="h3"
-                ><h3>{{ state.attrObj.label }}</h3> 个性化设置</div
-                >
+                <div class="h3">
+                  <h3>{{ state.attrObj.label }}</h3>
+                  个性化设置
+                </div>
                 <template v-if="state.attrObj.prop === '__control'">
                   <el-form-item>
                     <el-button @click="editOpenDrawer('operateBtn')"
-                    >操作按钮设置</el-button
+                      >操作按钮设置</el-button
                     >
                   </el-form-item>
                 </template>
@@ -187,14 +190,17 @@
                         </el-select>
                       </template>
                     </el-input>
-                    <i class="icon-del" @click="delTagOption(index)"></i>
+                    <i
+                      class="icon-del"
+                      @click="delTagOption(index as number)"
+                    ></i>
                   </el-form-item>
                   <el-form-item>
                     <el-button @click="tagAdd">新增Tag标签显示</el-button>
                   </el-form-item>
                   <el-form-item>
                     <el-button @click="editAttr"
-                    >编辑{{ state.attrObj.label }}属性
+                      >编辑{{ state.attrObj.label }}属性
                     </el-button>
                   </el-form-item>
                 </template>
@@ -203,7 +209,7 @@
             <el-tab-pane label="数据列表配置" name="second">
               <el-form-item
                 v-for="(item, index) in tableListAttr.filter(
-                  (item) => !item.hide
+                  item => !item.hide
                 )"
                 :label="item.label"
                 :key="index"
@@ -239,21 +245,21 @@
                 class="event-btn"
               >
                 <el-button @click="editOpenDrawer('tree')"
-                >编辑侧栏树属性
+                  >编辑侧栏树属性
                 </el-button>
                 <el-button @click="editOpenDrawer('treeBeforeRequest')"
-                >beforeRequest
+                  >beforeRequest
                 </el-button>
                 <el-button @click="editOpenDrawer('treeAfterResponse')"
-                >afterResponse
+                  >afterResponse
                 </el-button>
               </el-form-item>
               <el-form-item class="event-btn">
                 <el-button @click="editOpenDrawer('tableConfig')"
-                >编辑表格属性
+                  >编辑表格属性
                 </el-button>
                 <el-button @click="editOpenDrawer('dict')"
-                >设置数据字典
+                  >设置数据字典
                   <el-tooltip :content="tooltip.dict" placement="top">
                     <el-icon>
                       <QuestionFilled />
@@ -276,13 +282,13 @@
               </el-form-item>
               <el-form-item class="event-btn">
                 <el-button @click="editOpenDrawer('beforeRequest')"
-                >beforeRequest
+                  >beforeRequest
                 </el-button>
                 <el-button @click="editOpenDrawer('afterResponse')"
-                >afterResponse
+                  >afterResponse
                 </el-button>
                 <el-button @click="editOpenDrawer('beforeDelete')"
-                >beforeDelete
+                  >beforeDelete
                 </el-button>
               </el-form-item>
             </el-tab-pane>
@@ -641,10 +647,12 @@
       case 'beforeRequest':
       case 'afterResponse':
       case 'beforeDelete':
+        // eslint-disable-next-line no-case-declarations
         const newData = state.tableData.events || {}
         dialogOpen(newData[type], { type: type, title: tooltip[type] })
         break
       case 'tree':
+        // eslint-disable-next-line no-case-declarations
         let tree = state.tableData.treeData || {}
         if (Object.keys(tree).length === 1) {
           tree = {
@@ -661,6 +669,7 @@
         })
         break
       case 'treeBeforeRequest':
+        // eslint-disable-next-line no-case-declarations
         const treeData = state.tableData.treeData?.beforeRequest
         dialogOpen(treeData, {
           type: type,
@@ -668,6 +677,7 @@
         })
         break
       case 'treeAfterResponse':
+        // eslint-disable-next-line no-case-declarations
         const treeData2 = state.tableData.treeData?.afterResponse
         dialogOpen(treeData2, {
           type: type,
@@ -676,6 +686,7 @@
         })
         break
       case 'operateBtn':
+        // eslint-disable-next-line no-case-declarations
         const btnObj = [
           {
             label: '编辑',
@@ -693,6 +704,7 @@
         })
         break
       case 'controlBtn':
+        // eslint-disable-next-line no-case-declarations
         const btnObj2 = [
           {
             label: '新增',
@@ -842,14 +854,14 @@
       },
       type: 1 // 只获取表单的
     }
-    getRequest('designList', params).then((res) => {
+    getRequest('designList', params).then(res => {
       console.log('获取列表数据源', res)
       state.formList = res.data.list
     })
   }
   // 根据所选择的表单获取当前设计的所有字段
   const getFormField = (id: number) => {
-    getRequest('designById', { id: id }).then((res) => {
+    getRequest('designById', { id: id }).then(res => {
       console.log('获取当前数据下所有字段')
       const content = stringToObj(res.data.data)
       console.log('content', content)
@@ -924,7 +936,7 @@
   }
   // 修改时获取初始数据
   const getInitData = (id: number) => {
-    getRequest('designById', { id: id }).then((res) => {
+    getRequest('designById', { id: id }).then(res => {
       const result = res.data
       state.tableData = stringToObj(result.listData) // 列表数据
       state.searchData = stringToObj(result.data) // 搜索表单数据

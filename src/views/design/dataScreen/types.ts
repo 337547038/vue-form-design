@@ -17,7 +17,7 @@ export interface CSSProperties {
   bottom?: number
   right?: number
   zIndex?: number
-  display?: string
+  display?: boolean
 }
 export interface ScreenData {
   type: string
@@ -26,4 +26,6 @@ export interface ScreenData {
   option?: any
   config?: any
   events?: any
+  groupId?: string
+  id?: string
 }

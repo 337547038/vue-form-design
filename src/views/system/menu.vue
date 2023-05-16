@@ -315,7 +315,7 @@
     config: {}
   })
   const beforeSubmit = (params: any) => {
-    //　如编辑时添加参数
+    // 如编辑时添加参数
     if (dialog.formType === 2) {
       params.id = dialog.editId
     }

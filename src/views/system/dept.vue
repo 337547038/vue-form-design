@@ -139,7 +139,7 @@
           dialog.title = '编辑部门'
           dialog.formType = 2
           dialog.editId = row.id
-          //　这里有个问题parentId默认treeSelect显示有异常
+          // 这里有个问题parentId默认treeSelect显示有异常
           if (row.parentId === 0) {
             row.parentId = ''
           }
@@ -249,7 +249,7 @@
     config: {}
   })
   const beforeSubmit = (params: any) => {
-    //　如编辑时添加参数
+    // 如编辑时添加参数
     if (dialog.formType === 2) {
       params.id = dialog.editId
     }
@@ -272,7 +272,7 @@
   // 处理表格数据，转换为可折叠表格
   const afterResponse = (result: any) => {
     const list = result.list
-    let temp: any = []
+    const temp: any = []
     transformDataList(list, 0, temp)
     departmentTree.value = temp
     return temp

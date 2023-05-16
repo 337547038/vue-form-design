@@ -8,7 +8,9 @@
       :tableData="tableData"
       :beforeRequest="beforeRequest"
       ><template #sourceName="{ row }">
-        <router-link :to="`/design/form?id=${row.source}`">{{ row.sourceName }}/{{ row.source }}</router-link>
+        <router-link :to="`/design/form?id=${row.source}`"
+          >{{ row.sourceName }}/{{ row.source }}</router-link
+        >
       </template></ak-list
     >
   </div>

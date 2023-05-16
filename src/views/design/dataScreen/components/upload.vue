@@ -23,7 +23,7 @@
           <img :src="path + item" alt="" />
         </li>
       </ul>
-      <p v-if="!imgList?.length"> 暂无相关素材资源 </p>
+      <p v-if="!imgList?.length">暂无相关素材资源</p>
     </div>
   </el-dialog>
 </template>
@@ -50,7 +50,7 @@
     return temp
   })
   const imgList = computed(() => {
-    //　上传选择卡的应为接口返回才行
+    // 上传选择卡的应为接口返回才行
     if (tabsName.value.name === 'upload') {
       return []
     } else {

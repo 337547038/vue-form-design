@@ -9,19 +9,5 @@ module.exports = {
   jsxBracketSameLine: false, //jsx 中的 > 是否与前面的内容在同一行，建议分行（即设置为 false）；
   arrowParens: 'avoid', //箭头函数的参数是否使用括号，建议不使用括号（即设置为 "avoid"）
   vueIndentScriptAndStyle: true,
-  endOfLine: 'auto',
-  scss: {
-    brace_style: '1tbs'
-  },
-  overrides: [
-    {
-      files: '*.scss',
-      options: {
-        singleQuote: false,
-        tabWidth: 2,
-        proseWrap: 'never',
-        htmlWhitespaceSensitivity: 'ignore'
-      }
-    }
-  ]
+  endOfLine: 'auto'
 }

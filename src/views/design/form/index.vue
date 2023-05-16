@@ -84,7 +84,7 @@
 
   const store = useDesignFormStore()
   const router = useRouter()
-  const route:any = useRoute().query || {}
+  const route: any = useRoute().query || {}
   const state = reactive({
     formData: {
       list: [],
@@ -122,7 +122,7 @@
       // 获取初始表单数据
       state.loading = true
       getRequest('designById', { id: id })
-        .then((res) => {
+        .then(res => {
           const result = res.data
           // 初始设计搜索时res.data=''
           if (result.data) {
@@ -157,8 +157,11 @@
         store.setActiveKey('')
         store.setControlAttr({})
         state.previewVisible = true
+        // eslint-disable-next-line no-case-declarations
         let stringPreview = objToStringify(state.formData) // 防止预览窗口数据修改影响
+        // eslint-disable-next-line no-case-declarations
         const formName = state.formData.form.name
+        // eslint-disable-next-line no-case-declarations
         const reg = new RegExp(`get${formName}ControlByName`, 'g')
         stringPreview = stringPreview.replace(
           reg,
@@ -228,7 +231,7 @@
   }
   // 将数据保存在服务端
   const saveData = () => {
-    //　添加校验，没有选择数据源时则必须要配置接口url
+    // 添加校验，没有选择数据源时则必须要配置接口url
     const { addUrl, editUrl, requestUrl } = state.formData.config
     if (
       !state.formOtherData.source &&
@@ -268,7 +271,7 @@
         })
         // 根据不同情况跳转到不同地址
         const path = route.redirect || '/design/form/list'
-        let query: any = {}
+        const query: any = {}
         if (route.redirect && route.redirect.indexOf('?') !== -1) {
           // 带有问号参数时，放在path传是有问题的，将id=1转为{id:1}
           const p = route.redirect.split('?')[1]
@@ -319,6 +322,7 @@
       case 'afterResponse':
       case 'afterSubmit':
       case 'change':
+        // eslint-disable-next-line no-case-declarations
         const beforeData = state.formData.events || {}
         if (beforeData[type]) {
           editData = objToStringify(beforeData[type], true)
