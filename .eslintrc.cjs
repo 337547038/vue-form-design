@@ -1,20 +1,17 @@
 module.exports = {
+  root: true,
   "env": {
     "browser": true,
     "es2021": true,
-    "node": true,
-    //'vue/setup-compiler-macros': true
+    "node": true
   },
-  "extends": [
-    "plugin:vue/vue3-essential",
-    "plugin:vue/vue3-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-    //'@vue/typescript/recommended',
-    //'@vue/prettier',
-    //"plugin:prettier/recommended"
+  extends: [
+    'plugin:vue/vue3-essential',
+    'eslint:recommended',
+    '@vue/typescript/recommended',
+    'prettier',
+    'plugin:prettier/recommended'
   ],
-  "overrides": [],
   "parser": "vue-eslint-parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -26,6 +23,14 @@ module.exports = {
     "vue",
     "@typescript-eslint"
   ],
+  overrides: [
+    {
+      files: ['*.vue'],
+      rules: {
+        indent: 'off',
+      },
+    },
+  ],
   globals: {
     ace: true,
     tinymce: true,
@@ -33,8 +38,8 @@ module.exports = {
     echarts: true
   },
   rules: {
-    "prettier/prettier": ["error",{
-      vueIndentScriptAndStyle:true
+    "prettier/prettier": ["error", {
+      vueIndentScriptAndStyle: true
     }],
     "vue/script-setup-uses-vars": "error",
     "@typescript-eslint/ban-ts-ignore": "off",
@@ -87,6 +92,6 @@ module.exports = {
       },
     ],
     "vue/multi-word-component-names": "off",
-    "vue/no-v-html":"off"
+    "vue/no-v-html": "off"
   }
 }

@@ -164,7 +164,7 @@
   }
   const afterSubmit = (type: string) => {
     if (type === 'success') {
-      //　添加成功，刷新列表数据
+      // 添加成功，刷新列表数据
       closeResetDialog()
       listEl.value.getListData()
     }

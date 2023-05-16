@@ -170,6 +170,21 @@
         }
       },
       {
+        type: 'select',
+        control: {
+          modelValue: '',
+          placeholder: '请选择表单分类'
+        },
+        config: {
+          optionsType: 2,
+          optionsFun: 'form'
+        },
+        name: 'category',
+        item: {
+          label: '分类'
+        }
+      },
+      {
         type: 'button',
         control: {
           label: '查询',
@@ -237,10 +252,10 @@
         options: [],
         config: {
           optionsType: 1,
-          optionsFun: 'roleList', //　可以为url也可以为api中的key
+          optionsFun: 'roleList', // 可以为url也可以为api中的key
           method: 'post',
-          label: 'name', //　指定name为label的值
-          value: 'id', //　指定id为value的值
+          label: 'name', // 指定name为label的值
+          value: 'id', // 指定id为value的值
           help: '哪些角色可以查看'
         },
         name: 'roleId',

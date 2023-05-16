@@ -59,7 +59,7 @@
                   :label="item.prop || item.type"
                   v-for="item in tableData.columns"
                   :key="item.prop || item.type"
-                >{{ item.label }}</el-checkbox
+                  >{{ item.label }}</el-checkbox
                 >
               </el-checkbox-group>
             </template>
@@ -102,7 +102,7 @@
                 #default="scope"
                 v-else-if="
                   item.config?.tagList &&
-                    Object.keys(item.config?.tagList).length
+                  Object.keys(item.config?.tagList).length
                 "
               >
                 <el-tag
@@ -138,7 +138,7 @@
                             link
                             type="primary"
                             v-bind="btn"
-                          >{{ btn.label }}</el-button
+                            >{{ btn.label }}</el-button
                           >
                         </template>
                       </el-popconfirm>
@@ -151,7 +151,7 @@
                         type="primary"
                         v-bind="btn"
                         @click="operateBtnClick(btn, scope.row)"
-                      >{{ btn.label }}</el-button
+                        >{{ btn.label }}</el-button
                       >
                     </template>
                   </template>
@@ -170,7 +170,7 @@
                           <el-dropdown-item
                             v-if="getOperateVisible(m, scope.row)"
                             @click="operateBtnClick(m, scope.row)"
-                          >{{ m.label }}</el-dropdown-item
+                            >{{ m.label }}</el-dropdown-item
                           >
                         </template>
                       </el-dropdown-menu>
@@ -356,7 +356,7 @@
       ...newData
     }
     getRequest(getUrl, params)
-      .then((res) => {
+      .then(res => {
         state.loading = false
         let formatRes: any = res.data
         const afterResponse = props.tableData.events?.afterResponse
@@ -402,7 +402,7 @@
     getListData(page)
   }
   const addOrEdit = (btn: any, row?: any) => {
-    //　数据添加编辑打开方式为弹窗时，这里不处理
+    // 数据添加编辑打开方式为弹窗时，这里不处理
     if (props.tableData.config?.openType === 'dialog') {
       return false
     }
@@ -443,7 +443,7 @@
         ElMessage.success(res.message || '删除成功')
         getListData() // 请求列表数据
       })
-      .catch((res) => {
+      .catch(res => {
         state.loading = false
         ElMessage.error(res.message || '删除失败')
       })
@@ -497,7 +497,7 @@
     } else if (row.key === 'del') {
       // 批量删除
       if (state.selectionChecked.length) {
-        let idList: any = []
+        const idList: any = []
         state.selectionChecked.forEach((item: any) => {
           idList.push(item.id)
         })
@@ -572,7 +572,7 @@
           tableBodyWrapDom.style.overflowY = ''
         } else {
           // 窗口高度 - 列表距顶部值 且 不超过自身实际值
-          let wrapHeight = Math.min(
+          const wrapHeight = Math.min(
             windowHeight - tableBodyDomTop - 10,
             tableHeight
           )

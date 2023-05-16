@@ -13,21 +13,21 @@
 
 ### Props
 
-| 参数            | 类型                             | 说明                                                                |
-|---------------|--------------------------------|-------------------------------------------------------------------|
-| formData      | object                         | 设计的生成表单数据                                                         |
-| type          | number/1                       | 表单展示模式，1新增；2修改；3查看（表单模式） ；4查看； 5设计                                |
-| disabled      | boolean/false                  | 表单禁用模式，类似于表单模式查看                                                  |
-| requestUrl    | string/boolean                 | 表单编辑初始数据加载。适用于导出vue文件                                             |
-| beforeRequest | function (params,route)        | 请求编辑数据前参数处理方法，可对请求参数处理。适用于导出vue文件，`return false`时不请求              |
-| afterResponse | function/string                | 请求编辑数据完成后数据处理方法。适用于导出vue文件，`return false`阻止事件运行                   |
-| addUrl        | string                         | 表单数据新增提交保存url                                                     |
-| editUrl       | string                         | 表单数据修改保存提交url                                                     |
-| beforeSubmit  | function (params,route)/string | 表单提交前数据处理。适用于导出vue文件，`return false`时不发送请求                         |
-| afterSubmit   | function(type,res)             | 表单提交后，默认提示提交结果，可return false阻止提示。res接口返回参数,type提交结果类型success/fail |
-| value         | object                         | 表单初始值，同setValue                                                   |
-| options       | object                         | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                            |
-| dict          | object                         | 用于匹配的字典数据，一般不设置，从接口获取                                             |
+| 参数            | 类型                             | 说明                                                                                          |
+|---------------|--------------------------------|---------------------------------------------------------------------------------------------|
+| formData      | object                         | 设计的生成表单数据                                                                                   |
+| type          | number/1                       | 表单展示模式，1新增；2修改；3查看（表单模式） ；4查看； 5设计                                                          |
+| disabled      | boolean/false                  | 表单禁用模式，类似于表单模式查看                                                                            |
+| requestUrl    | string/boolean                 | 表单编辑初始数据加载。适用于导出vue文件                                                                       |
+| beforeRequest | function (params,route)        | 请求编辑数据前参数处理方法，可对请求参数处理。适用于导出vue文件，`return false`时不请求                                        |
+| afterResponse | function/string                | 请求编辑数据完成后数据处理方法。适用于导出vue文件，`return false`阻止事件运行                                             |
+| addUrl        | string                         | 表单数据新增提交保存url                                                                               |
+| editUrl       | string                         | 表单数据修改保存提交url                                                                               |
+| beforeSubmit  | function (params,route)/string | 表单提交前数据处理。适用于导出vue文件，`return false`时不发送请求                                                   |
+| afterSubmit   | function(type,res)             | 表单提交后，默认提示提交结果，可return false阻止提示。res接口返回参数,type提交结果类型success/fail/validate。validate表单没通过校验时 |
+| value         | object                         | 表单初始值，同setValue                                                                             |
+| options       | object                         | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                                                      |
+| dict          | object                         | 用于匹配的字典数据，一般不设置，从接口获取                                                                       |
 ### Events
 | 事件名      | 说明                                                                                                               |
 |----------|------------------------------------------------------------------------------------------------------------------|

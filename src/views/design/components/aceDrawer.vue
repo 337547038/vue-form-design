@@ -14,7 +14,9 @@
     </template>
     <div v-if="visible" :id="id"></div>
     <div class="dialog-footer">
-      <el-button type="primary" size="small" @click="dialogConfirm"> 确定 </el-button>
+      <el-button type="primary" size="small" @click="dialogConfirm">
+        确定
+      </el-button>
     </div>
   </el-drawer>
 </template>

@@ -19,7 +19,15 @@
 </template>
 <script lang="ts" setup>
   import FormGroup from './formGroup.vue'
-  import { computed, ref, watch, onUnmounted, onMounted, nextTick, provide } from 'vue'
+  import {
+    computed,
+    ref,
+    watch,
+    onUnmounted,
+    onMounted,
+    nextTick,
+    provide
+  } from 'vue'
   import type { FormData, FormList } from '../../types'
   import { getRequest } from '@/api'
   import { useRoute, useRouter } from 'vue-router'
@@ -121,7 +129,7 @@
   const model = ref<any>({})
   // 获取表单初始model值
   const getInitModel = () => {
-    let obj = {}
+    const obj = {}
     forEachGetFormModel(props.formData.list, obj)
     model.value = obj
   }
@@ -375,14 +383,16 @@
     const apiUrl = props.type === 1 ? addUrl : editUrl
     if (props.isSearch || !apiUrl || loading.value) {
       if (!props.isSearch && !apiUrl) {
-        console.error(new Error('请在表单设计处配置接口事件url或选择数据源或设置props'))
+        console.error(
+          new Error('请在表单设计处配置接口事件url或选择数据源或设置props')
+        )
       }
       // 列表里作为筛选时，不提交表单
       return
     }
     validate((valid: boolean, fields: any) => {
       if (valid) {
-        let formatParams = Object.assign({}, fields, params)
+        const formatParams = Object.assign({}, fields, params)
         let submitParams
         const beforeSubmit = props.formData.events?.beforeSubmit
         if (beforeSubmit) {

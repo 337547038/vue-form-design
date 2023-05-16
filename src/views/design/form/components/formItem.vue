@@ -5,7 +5,7 @@
     :prop="tProp || data.name"
     :class="config.className"
     :rules="itemRules"
-    :label="getLabel(<FormItem>data.item)"
+    :label="getLabel(data.item)"
   >
     <template #label v-if="config.help">
       {{ getLabel(data.item) }}
@@ -52,18 +52,37 @@
         type="textarea"
         v-if="data.type === 'textarea'"
       />
-      <el-radio-group v-bind="control" :disabled="editDisabled" v-model="value" v-if="data.type === 'radio'">
-        <el-radio :key="index" :label="transformOption(item.value)" v-for="(item, index) in options">
+      <el-radio-group
+        v-bind="control"
+        :disabled="editDisabled"
+        v-model="value"
+        v-if="data.type === 'radio'"
+      >
+        <el-radio
+          :key="index"
+          :label="transformOption(item.value)"
+          v-for="(item, index) in options"
+        >
           {{ item.label }}
         </el-radio>
       </el-radio-group>
-      <el-checkbox-group v-bind="control" :disabled="editDisabled" v-model="value" v-if="data.type === 'checkbox'">
-        <el-checkbox v-for="(item, index) in options" :key="index" :label="transformOption(item.value)"
+      <el-checkbox-group
+        v-bind="control"
+        :disabled="editDisabled"
+        v-model="value"
+        v-if="data.type === 'checkbox'"
+      >
+        <el-checkbox
+          v-for="(item, index) in options"
+          :key="index"
+          :label="transformOption(item.value)"
           >{{ item.label }}
         </el-checkbox>
       </el-checkbox-group>
       <AKSelect
-        v-if="data.type === 'select' || (type === 5 && data.type === 'inputSlot')"
+        v-if="
+          data.type === 'select' || (type === 5 && data.type === 'inputSlot')
+        "
         :data="data"
         :disabled="editDisabled"
         v-model="value"
@@ -86,7 +105,9 @@
         :on-success="uploadSuccess"
         :on-remove="uploadRemove"
       >
-        <el-button type="primary" v-if="config.btnText">{{ config.btnText }} </el-button>
+        <el-button type="primary" v-if="config.btnText"
+          >{{ config.btnText }}
+        </el-button>
         <i class="icon-plus" v-else></i>
         <template #tip v-if="config.tip">
           <div class="el-upload__tip">
@@ -128,16 +149,29 @@
           :config="config"
           :disabled="editDisabled"
           v-model="value"
-          v-if="[1, 2, 3].includes(<number>type)"
+          v-if="[1, 2, 3].includes(type as number)"
         />
-        <img alt="" src="./tinymce.png" v-if="type === 5" style="max-width: 100%" />
+        <img
+          alt=""
+          src="./tinymce.png"
+          v-if="type === 5"
+          style="max-width: 100%"
+        />
       </template>
     </template>
   </el-form-item>
 </template>
 
 <script lang="ts" setup>
-  import { inject, onMounted, computed, watch, ref, onUnmounted, markRaw } from 'vue'
+  import {
+    inject,
+    onMounted,
+    computed,
+    watch,
+    ref,
+    onUnmounted,
+    markRaw
+  } from 'vue'
   import md5 from 'md5'
   import { ElMessage } from 'element-plus'
   import Tooltip from '../../components/tooltip.vue'
@@ -146,14 +180,18 @@
   import { formatNumber, objectToArray } from '../../utils'
   import validate from './validate'
   import ExpandUser from './expand/user.vue'
-  import { constControlChange, constSetFormOptions, constFormProps, constGetControlByName } from '../../utils'
+  import {
+    constControlChange,
+    constSetFormOptions,
+    constFormProps,
+    constGetControlByName
+  } from '../../utils'
   import AKSelect from './select.vue'
   import { uploadUrl } from '@/api'
   import { useRoute } from 'vue-router'
   import formatResult from '@/utils/formatResult'
   import { getRequest } from '@/api'
   import { debounce } from '@/utils'
-  import type { FormRules } from 'element-plus'
 
   const props = withDefaults(
     defineProps<{
@@ -261,7 +299,7 @@
     return control.value.disabled
   })
   // 返回当前item项的校验规则
-  const itemRules = computed<FormRules>(() => {
+  const itemRules = computed(() => {
     let temp
     const itemR: any = props.data.item?.rules || []
     const customR = formatCustomRules()
@@ -269,7 +307,7 @@
     if (itemR?.length || customR?.length) {
       temp = [...customR, ...itemR]
     }
-    return temp || {}
+    return temp
   })
   // data 根据条件搜索，select远程搜索里data有值
   const getAxiosOptions = debounce((data?: any) => {
@@ -308,7 +346,8 @@
           //let newData = Object.assign({}, data || {}, queryParams)
           let newData = data || {}
           if (typeof beforeRequest === 'function') {
-            newData = beforeRequest(newData, route, formProps.value.model) ?? data
+            newData =
+              beforeRequest(newData, route, formProps.value.model) ?? data
           }
           if (newData === false) {
             return
@@ -474,9 +513,10 @@
     })
     oldList.push(response.path)
     updateModel(oldList.join(','))
-    control.value.onSuccess && control.value.onSuccess(response, uploadFile, uploadFiles)
+    control.value.onSuccess &&
+      control.value.onSuccess(response, uploadFile, uploadFiles)
   }
-  //　从列表移除
+  // 从列表移除
   const uploadRemove = (uploadFile: any, uploadFiles: any) => {
     const oldList: any = []
     fileList.value.forEach((item: any) => {

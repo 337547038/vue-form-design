@@ -14,7 +14,8 @@
         default-expand-all
         :highlight-current="true"
         @node-click="nodeClick"
-      /></div>
+      />
+    </div>
   </div>
 </template>
 

@@ -4,9 +4,15 @@
  @params key 当前指定的事件字符串标识
  @params result api接口返回结果
  @params options 静态或图片options数据，需按此格式返回
+ @params global 全局的数据
  */
-const formatScreen = (key: string, result: any, options: any) => {
-  console.log(key, result, options)
+const formatScreen = (
+  key: string,
+  result: any,
+  options?: any,
+  global?: any
+) => {
+  console.log(key, result, options, global)
   return options
 }
 export default formatScreen

@@ -20,7 +20,9 @@
                   v-for="(opt, key) in item.dict"
                   :key="key"
                   :value="item.path === 'name' ? opt.name : key"
-                  :label="item.path === 'name' ? `${opt.label}(${opt.name})` : opt"
+                  :label="
+                    item.path === 'name' ? `${opt.label}(${opt.name})` : opt
+                  "
                 />
               </el-select>
               <el-switch
@@ -75,7 +77,10 @@
                   )
                 "
               >
-                <el-radio-group class="option-radio" v-model="controlData.config.linkResult">
+                <el-radio-group
+                  class="option-radio"
+                  v-model="controlData.config.linkResult"
+                >
                   <el-radio label="hidden">隐藏(默认)</el-radio>
                   <el-radio label="disabled">禁用</el-radio>
                 </el-radio-group>
@@ -84,25 +89,51 @@
           </template>
           <template v-if="showHide(['tabs'], true)">
             <div class="h3"><h3>标签配置项</h3></div>
-            <el-form-item v-for="(item, index) in controlData.columns" :key="index">
+            <el-form-item
+              v-for="(item, index) in controlData.columns"
+              :key="index"
+            >
               <el-col :span="12">
                 <el-input placeholder="标签配置项" v-model="item.label" />
               </el-col>
               <el-col :span="2" :offset="1">
-                <i class="icon-del" @click="delSelectOption(<number>index, 'tabs')"></i>
+                <i
+                  class="icon-del"
+                  @click="delSelectOption(index as number, 'tabs')"
+                ></i>
               </el-col>
             </el-form-item>
             <el-form-item>
               <el-button @click="addSelectOption('tabs')">增加标签</el-button>
             </el-form-item>
           </template>
-          <div v-if="showHide(['radio', 'select', 'checkbox', 'cascader', 'inputSlot', 'treeSelect'], true)">
+          <div
+            v-if="
+              showHide(
+                [
+                  'radio',
+                  'select',
+                  'checkbox',
+                  'cascader',
+                  'inputSlot',
+                  'treeSelect'
+                ],
+                true
+              )
+            "
+          >
             <div class="h3"><h3>选项配置</h3></div>
             <el-form-item label="添加全部项" v-if="showHide(['select'], true)">
-              <el-input placeholder="请输入全部项文案" v-model="controlData.config.addAll" />
+              <el-input
+                placeholder="请输入全部项文案"
+                v-model="controlData.config.addAll"
+              />
             </el-form-item>
             <el-form-item label="选项数据源">
-              <el-select v-model="controlData.config.optionsType" @change="controlData.config.optionsFun = ''">
+              <el-select
+                v-model="controlData.config.optionsType"
+                @change="controlData.config.optionsFun = ''"
+              >
                 <el-option :value="0" label="固定选项" />
                 <el-option :value="1" label="数据源" />
                 <el-option :value="2" label="接口字典" />
@@ -110,7 +141,10 @@
             </el-form-item>
             <template v-if="controlData.config.optionsType === 0">
               <div v-if="controlData.type !== 'cascader'">
-                <el-form-item v-for="(item, index) in controlData.options" :key="index">
+                <el-form-item
+                  v-for="(item, index) in controlData.options"
+                  :key="index"
+                >
                   <el-col :span="10">
                     <el-input placeholder="选项标签" v-model="item.label" />
                   </el-col>
@@ -118,22 +152,35 @@
                     <el-input placeholder="选项值" v-model="item.value" />
                   </el-col>
                   <el-col :span="2" :offset="1">
-                    <i class="icon-del" @click="delSelectOption(<number>index)"></i>
+                    <i
+                      class="icon-del"
+                      @click="delSelectOption(index as number)"
+                    ></i>
                   </el-col>
                 </el-form-item>
               </div>
               <el-form-item>
-                <el-button @click="addSelectOption">{{ controlData.type === 'cascader' ? '编辑' : '新增' }} </el-button>
+                <el-button @click="addSelectOption"
+                  >{{ controlData.type === 'cascader' ? '编辑' : '新增' }}
+                </el-button>
               </el-form-item>
             </template>
             <template v-else>
               <el-form-item>
                 <el-input
                   v-model="controlData.config.optionsFun"
-                  :placeholder="getOptionPlaceholder(controlData.config.optionsType)"
+                  :placeholder="
+                    getOptionPlaceholder(controlData.config.optionsType)
+                  "
                 >
-                  <template #prepend v-if="controlData.config.optionsType === 1">
-                    <el-select v-model="controlData.config.method" style="width: 80px">
+                  <template
+                    #prepend
+                    v-if="controlData.config.optionsType === 1"
+                  >
+                    <el-select
+                      v-model="controlData.config.method"
+                      style="width: 80px"
+                    >
                       <el-option label="get" value="get" />
                       <el-option label="post" value="post" />
                     </el-select>
@@ -142,10 +189,16 @@
               </el-form-item>
               <template v-if="controlData.config.optionsType === 1">
                 <el-form-item label="指定label属性值">
-                  <el-input v-model="controlData.config.label" placeholder="返回数据中没有label时可设置" />
+                  <el-input
+                    v-model="controlData.config.label"
+                    placeholder="返回数据中没有label时可设置"
+                  />
                 </el-form-item>
                 <el-form-item label="指定value属性值">
-                  <el-input v-model="controlData.config.value" placeholder="返回数据中没有value时可设置" />
+                  <el-input
+                    v-model="controlData.config.value"
+                    placeholder="返回数据中没有value时可设置"
+                  />
                 </el-form-item>
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
@@ -158,13 +211,22 @@
                   "
                   >beforeRequest
                 </el-button>
-                <el-button @click="optionsEvent('optionsResult', '请求返回结束处理；，也可为字符串，如opt=formatTest')"
+                <el-button
+                  @click="
+                    optionsEvent(
+                      'optionsResult',
+                      '请求返回结束处理；，也可为字符串，如opt=formatTest'
+                    )
+                  "
                   >afterResponse
                 </el-button>
               </el-form-item>
             </template>
             <el-form-item label="尝试转换value值为">
-              <el-select v-model="controlData.config.transformData" placeholder="默认为number">
+              <el-select
+                v-model="controlData.config.transformData"
+                placeholder="默认为number"
+              >
                 <el-option value="none">不转换</el-option>
                 <el-option value="number">number</el-option>
                 <el-option value="string">string</el-option>
@@ -192,10 +254,17 @@
           >
             <div class="h3"><h3>校验设置</h3></div>
             <div v-if="showHide(['input', 'password', 'component'], true)">
-              <el-form-item v-for="(item, index) in controlData.customRules" :key="item.type">
+              <el-form-item
+                v-for="(item, index) in controlData.customRules"
+                :key="item.type"
+              >
                 <el-input v-model="item.message" placeholder="校验提示信息">
                   <template #prepend>
-                    <el-select v-model="item.type" style="width: 80px" @change="rulesSelectChange(item, $event)">
+                    <el-select
+                      v-model="item.type"
+                      style="width: 80px"
+                      @change="rulesSelectChange(item, $event)"
+                    >
                       <el-option
                         v-for="list in state.customRulesList"
                         :key="list.type"
@@ -205,10 +274,17 @@
                     </el-select>
                   </template>
                   <template #append>
-                    <i class="icon-del" @click="delAddRules(<number>index)"></i>
+                    <i
+                      class="icon-del"
+                      @click="delAddRules(index as number)"
+                    ></i>
                   </template>
                 </el-input>
-                <el-input placeholder="正则表达式" v-model="item.rules" v-if="item.type === 'rules'" />
+                <el-input
+                  placeholder="正则表达式"
+                  v-model="item.rules"
+                  v-if="item.type === 'rules'"
+                />
                 <el-input
                   placeholder="方法名称，此方法仅适用于导出vue文件"
                   v-model="item.methods"
@@ -219,7 +295,11 @@
                 <el-button @click="addRulesFast">快速添加</el-button>
                 <el-button @click="addRules(state.tooltip.rules)"
                   >编写校验规则
-                  <el-tooltip :content="state.tooltip.rules" placement="top" raw-content>
+                  <el-tooltip
+                    :content="state.tooltip.rules"
+                    placement="top"
+                    raw-content
+                  >
                     <el-icon>
                       <QuestionFilled />
                     </el-icon>
@@ -228,7 +308,11 @@
               </el-form-item>
             </div>
             <el-form-item v-else>
-              <el-checkbox :modelValue="checkboxRequired" @change="requiredChange">必填 </el-checkbox>
+              <el-checkbox
+                :modelValue="checkboxRequired"
+                @change="requiredChange"
+                >必填
+              </el-checkbox>
               <el-input
                 placeholder="自定义必填错误提示"
                 v-model="controlData.item.rules[0].message"
@@ -239,7 +323,9 @@
           <div v-if="showHide(['grid', 'card', 'gridChild', 'divider', 'div'])">
             <div class="h3"><h3>其他属性</h3></div>
 
-            <el-button size="small" @click="openAttrDialog('', state.tooltip.props)"
+            <el-button
+              size="small"
+              @click="openAttrDialog('', state.tooltip.props)"
               >编辑属性
               <el-tooltip :content="state.tooltip.props" placement="top">
                 <el-icon>
@@ -252,7 +338,11 @@
       </el-tab-pane>
       <el-tab-pane label="表单配置" name="second">
         <el-form size="small" class="form">
-          <el-form-item v-for="(item, index) in formAttr.filter(item => !item.hide)" :label="item.label" :key="index">
+          <el-form-item
+            v-for="(item, index) in formAttr.filter(item => !item.hide)"
+            :label="item.label"
+            :key="index"
+          >
             <el-select
               v-if="item.type === 'select'"
               v-model="item.value"
@@ -269,13 +359,25 @@
                 :value="formatNumber(opt.value ?? opt.id)"
               />
             </el-select>
-            <el-switch v-else-if="item.type === 'switch'" v-model="item.value" @input="formAttrChange(item)" />
-            <el-input v-else v-model="item.value" :placeholder="item.placeholder" @input="formAttrChange(item)" />
+            <el-switch
+              v-else-if="item.type === 'switch'"
+              v-model="item.value"
+              @input="formAttrChange(item)"
+            />
+            <el-input
+              v-else
+              v-model="item.value"
+              :placeholder="item.placeholder"
+              @input="formAttrChange(item)"
+            />
           </el-form-item>
           <el-form-item v-if="!state.isSearch">
             <template #label
               >添加时获取请求
-              <el-tooltip content="新增表单数据时，从接口获取新增初始数据" placement="top">
+              <el-tooltip
+                content="新增表单数据时，从接口获取新增初始数据"
+                placement="top"
+              >
                 <el-icon>
                   <QuestionFilled />
                 </el-icon>
@@ -283,7 +385,9 @@
             </template>
             <el-switch
               v-model="formConfig.addLoad"
-              @change="formAttrChange({ key: 'addLoad', path: 'config' }, $event)"
+              @change="
+                formAttrChange({ key: 'addLoad', path: 'config' }, $event)
+              "
             />
           </el-form-item>
           <el-form-item>
@@ -307,16 +411,31 @@
           <template v-if="!state.isSearch">
             <div class="h3"><h3>接口数据事件</h3></div>
             <el-form-item label="新增数据保存url">
-              <el-input placeholder="表单提交的url，非特殊不需要设置" v-model="formConfig.addUrl" />
+              <el-input
+                placeholder="表单提交的url，非特殊不需要设置"
+                v-model="formConfig.addUrl"
+              />
             </el-form-item>
             <el-form-item label="修改数据保存url">
-              <el-input placeholder="修改提交的url，非特殊不需要设置" v-model="formConfig.editUrl" />
+              <el-input
+                placeholder="修改提交的url，非特殊不需要设置"
+                v-model="formConfig.editUrl"
+              />
             </el-form-item>
             <el-form-item label="获取表单数据url">
-              <el-input placeholder="获取表单数据url，非特殊不需要设置" v-model="formConfig.requestUrl" />
+              <el-input
+                placeholder="获取表单数据url，非特殊不需要设置"
+                v-model="formConfig.requestUrl"
+              />
             </el-form-item>
             <el-form-item class="event-btn">
-              <el-button @click="eventClick('beforeRequest', '获取表单初始数据前事件，可修改请求参数')"
+              <el-button
+                @click="
+                  eventClick(
+                    'beforeRequest',
+                    '获取表单初始数据前事件，可修改请求参数'
+                  )
+                "
                 >beforeRequest
               </el-button>
               <el-button
@@ -330,11 +449,17 @@
               </el-button>
               <el-button
                 @click="
-                  eventClick('beforeSubmit', '表单数据提交前事件，可对提交数据进行处理；也可为字符串，如opt=formatTest')
+                  eventClick(
+                    'beforeSubmit',
+                    '表单数据提交前事件，可对提交数据进行处理；也可为字符串，如opt=formatTest'
+                  )
                 "
                 >beforeSubmit
               </el-button>
-              <el-button @click="eventClick('afterSubmit', '表单数据提交成功事件')">afterSubmit </el-button>
+              <el-button
+                @click="eventClick('afterSubmit', '表单数据提交成功事件')"
+                >afterSubmit
+              </el-button>
               <el-button
                 @click="
                   eventClick(
@@ -493,11 +618,23 @@
         {
           label: '字段标识',
           value: name,
-          type: Object.keys(state.dataSourceList).length > 0 ? 'select' : 'text',
+          type:
+            Object.keys(state.dataSourceList).length > 0 ? 'select' : 'text',
           placeholder: '字段唯一标识，对应数据库',
           dict: state.dataSourceList,
           path: 'name',
-          vHide: ['grid', 'tabs', 'card', 'title', 'gridChild', 'tableColumn', 'divider', 'txt', 'div', 'button'],
+          vHide: [
+            'grid',
+            'tabs',
+            'card',
+            'title',
+            'gridChild',
+            'tableColumn',
+            'divider',
+            'txt',
+            'div',
+            'button'
+          ],
           eventName: 'filedNameKey'
         },
         {
@@ -568,7 +705,18 @@
           label: 'label值',
           value: item.label,
           path: 'item.label',
-          vHide: ['table', 'grid', 'tabs', 'title', 'gridChild', 'div', 'inputSlot', 'flex', 'button', 'txt']
+          vHide: [
+            'table',
+            'grid',
+            'tabs',
+            'title',
+            'gridChild',
+            'div',
+            'inputSlot',
+            'flex',
+            'button',
+            'txt'
+          ]
         },
         {
           label: '隐藏label',
@@ -594,7 +742,18 @@
           label: '帮助信息',
           value: config.help,
           path: 'config.help',
-          vHide: ['table', 'grid', 'tabs', 'gridChild', 'divider', 'div', 'inputSlot', 'flex', 'button', 'txt']
+          vHide: [
+            'table',
+            'grid',
+            'tabs',
+            'gridChild',
+            'divider',
+            'div',
+            'inputSlot',
+            'flex',
+            'button',
+            'txt'
+          ]
         },
         {
           label: '表单栅格',
@@ -1096,7 +1255,9 @@
         if (val) {
           // 将类型改为inputSlot
           controlData.value.type = 'inputSlot'
-          ElMessage.success(`请在对应的Input输入框属性前后缀设置key:${controlData.value.name}`)
+          ElMessage.success(
+            `请在对应的Input输入框属性前后缀设置key:${controlData.value.name}`
+          )
         } else {
           controlData.value.type = 'select'
         }
@@ -1105,8 +1266,6 @@
         break
     }
     if (obj.path) {
-      console.log(obj, val)
-      console.log('controlData.value', controlData.value)
       const newVal = obj.isNum ? formatNumber(val) : val // 类型为数字时转整数
       obj.path && getPropByPath(controlData.value, obj.path, newVal)
     }
@@ -1256,7 +1415,10 @@
   // 根据不同类型判断是否显示当前属性
   const showHide = (type: string[], show?: boolean) => {
     // show=true 条件成立显示，false符合条件隐藏
-    if ((type && type.length === 0) || Object.keys(controlData.value).length === 0) {
+    if (
+      (type && type.length === 0) ||
+      Object.keys(controlData.value).length === 0
+    ) {
       return false
     }
     const index = type.indexOf(controlData.value.type)
@@ -1297,7 +1459,8 @@
   }
   // 删除一条校验规则
   const delAddRules = (index: number) => {
-    controlData.value.customRules && controlData.value.customRules.splice(index, 1)
+    controlData.value.customRules &&
+      controlData.value.customRules.splice(index, 1)
   }
   // 编辑表单样式
   const editFormStyle = (tooltip: string) => {
@@ -1329,7 +1492,9 @@
           // console.log(res)
           const tableData = res.data.result?.tableData
           if (tableData && tableData.length) {
-            state.dataSourceList = tableData.filter((item: any) => item.enterable)
+            state.dataSourceList = tableData.filter(
+              (item: any) => item.enterable
+            )
           }
         })
         .catch(res => {
@@ -1355,7 +1520,10 @@
       store.setControlAttr({})
     }
     if (['formName', 'source'].includes(obj.key)) {
-      emits('update:formOtherData', Object.assign(props.formOtherData, { [obj.key]: obj.value }))
+      emits(
+        'update:formOtherData',
+        Object.assign(props.formOtherData, { [obj.key]: obj.value })
+      )
       return
     }
     if (obj.path === 'config') {

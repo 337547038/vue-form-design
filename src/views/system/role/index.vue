@@ -266,7 +266,7 @@
       }
     }
   }
-  //　提交表单前事件
+  // 提交表单前事件
   const beforeSubmit = (params: any) => {
     if (dialog.formType === 2) {
       // 编辑模式下添加参数
@@ -274,10 +274,10 @@
     }
     return params
   }
-  //　提交表单后事件
+  // 提交表单后事件
   const afterSubmit = (type: string) => {
     if (type === 'success') {
-      //　添加成功，刷新列表数据
+      // 添加成功，刷新列表数据
       closeResetDialog()
       tableListEl.value.getListData()
     }
@@ -288,7 +288,7 @@
     dialog.editId = ''
     //formEl.value.resetFields() // 重置表单
   }
-  //　点击弹窗取消按钮时
+  // 点击弹窗取消按钮时
   const dialogBtnClick = (type: string) => {
     if (type === 'none') {
       closeResetDialog()

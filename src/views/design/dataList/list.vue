@@ -10,7 +10,7 @@
     >
       <template #sourceName="{ row }">
         <router-link :to="`/design/form?id=${row.source}`"
-        >{{ row.sourceName }}/{{ row.source }}</router-link
+          >{{ row.sourceName }}/{{ row.source }}</router-link
         >
       </template>
     </ak-list>
@@ -240,10 +240,10 @@
         options: [],
         config: {
           optionsType: 1,
-          optionsFun: 'roleList', //　可以为url也可以为api中的key
+          optionsFun: 'roleList', // 可以为url也可以为api中的key
           method: 'post',
-          label: 'name', //　指定name为label的值
-          value: 'id', //　指定id为value的值
+          label: 'name', // 指定name为label的值
+          value: 'id', // 指定id为value的值
           help: '哪些角色可以查看'
         },
         name: 'roleId',

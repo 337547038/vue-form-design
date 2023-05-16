@@ -50,7 +50,7 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue'
   import Draggable from 'vuedraggable-es'
-  import EchartsInt from './echartsInt.vue'
+  import EchartsInt from '../../components/echartsInt.vue'
 
   const props = withDefaults(
     defineProps<{

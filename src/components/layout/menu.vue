@@ -39,7 +39,7 @@
       navList.value = JSON.parse(sessionList)
       return
     }
-    getRequest('menuList', {}).then((res: any) => {
+    getRequest('menuList', { status: 1 }).then((res: any) => {
       navList.value = formatResult(res.data, 'transformDataToChild')
       window.sessionStorage.setItem(
         'formMenuList',

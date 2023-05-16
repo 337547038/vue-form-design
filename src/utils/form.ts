@@ -10,6 +10,10 @@ export function evil(fn: any) {
 
 export function obj2string(o: any) {
   let r: any = []
+  if (o === null) {
+    // 这里有个问题 因typeOf null=object,下面判断会报错
+    return null
+  }
   if (typeof o === 'string') {
     return (
       '"' +

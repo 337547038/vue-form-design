@@ -100,10 +100,10 @@
         options: [],
         config: {
           optionsType: 1,
-          optionsFun: 'roleList', //　可以为url也可以为api中的key
+          optionsFun: 'roleList', // 可以为url也可以为api中的key
           method: 'post',
-          label: 'name', //　指定name为label的值
-          value: 'id' //　指定id为value的值
+          label: 'name', // 指定name为label的值
+          value: 'id' // 指定id为value的值
         },
         name: 'role',
         item: {
@@ -352,10 +352,10 @@
         options: [],
         config: {
           optionsType: 1,
-          optionsFun: 'roleList', //　可以为url也可以为api中的key
+          optionsFun: 'roleList', // 可以为url也可以为api中的key
           method: 'post',
-          label: 'name', //　指定name为label的值
-          value: 'id', //　指定id为value的值
+          label: 'name', // 指定name为label的值
+          value: 'id', // 指定id为value的值
           transformData: 'string'
         },
         name: 'role',
@@ -456,8 +456,8 @@
       }
     }
   }
-  //　提交表单前事件
-  const beforeSubmit = (params) => {
+  // 提交表单前事件
+  const beforeSubmit = params => {
     // 将角色转字符串传
     if (params.role) {
       params.role = params.role.join(',')
@@ -469,10 +469,10 @@
     delete params.password2 // 确认密码无需提交
     return params
   }
-  //　提交表单后事件
-  const afterSubmit = (type) => {
+  // 提交表单后事件
+  const afterSubmit = type => {
     if (type === 'success') {
-      //　添加成功，刷新列表数据
+      // 添加成功，刷新列表数据
       closeResetDialog()
       tableListEl.value.getListData()
     }
@@ -483,8 +483,8 @@
     dialog.editId = ''
     // formEl.value.resetFields() // 重置表单
   }
-  //　点击弹窗取消按钮时
-  const dialogBtnClick = (type) => {
+  // 点击弹窗取消按钮时
+  const dialogBtnClick = type => {
     if (type === 'reset') {
       closeResetDialog()
     }
