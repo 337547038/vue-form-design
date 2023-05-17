@@ -11,7 +11,7 @@
   >
     <div
       class="resize-box"
-      @mousedown.left="resizeMousedown"
+      @mousedown.left="moveMousedown"
       v-if="type === 0 && !data.config?.lock"
       v-show="current"
       @contextmenu="contextmenu"
@@ -116,18 +116,10 @@
     }>(),
     {
       type: 1
-      // data: () => {
-      //   return {
-      //     type: '',
-      //     position: {},
-      //     config: {}
-      //   }
-      // }
     }
   )
   const emits = defineEmits<{
     (e: 'controlClick', type: string): void
-    (e: 'moveOrResize'): void
     (
       e: 'contextmenu',
       { x, y, type }: { x: number; y: number; type: number }
@@ -209,6 +201,12 @@
     }
   }
   const resizeDotMouseDown = (evt: MouseEvent, index: number) => {
+    // 组缩放目前布局不易实现，如往右边拉宽20px，并不是组内的所有标签都往右拉宽20px，而是需按比例拉宽
+    // 可行方案：合并组后使用嵌套方式将组内标签放在一个div里，并转换为百分比单位基于组元素定位，在缩放时无需处理组内标签
+    // 目前不支持组缩放
+    if (props.data.type === 'group') {
+      return
+    }
     let flag = true
     if (flag) {
       const x = evt.pageX
@@ -287,14 +285,21 @@
     evt.stopPropagation()
   }
   // 移动
-  const resizeMousedown = (evt: MouseEvent) => {
+  const moveMousedown = (evt: MouseEvent) => {
+    // 暂不处理组标签移动
+    if (props.data.type === 'group') {
+      return
+    }
     // 设置了right或bottom时不能拖动
     const { left, top } = props.data.position
     let moveFlag = true
     const startX = evt.pageX
     const startY = evt.pageY
-    let mx = left
+    let mx = left // 移动后的位置
     let my = top
+    let mxd = 0 // 移动的距离
+    let myd = 0
+
     document.onmousemove = (evt: MouseEvent) => {
       if (!canControlRect(props.data.position)) {
         moveTips('使用right或bottom定位时不能拖动')
@@ -304,8 +309,10 @@
         return
       }
       const scale = props.scale / 100
-      mx = (evt.pageX - startX) / scale + parseInt(`${left}`) || 0
-      my = (evt.pageY - startY) / scale + parseInt(`${top}`) || 0
+      mxd = (evt.pageX - startX) / scale
+      myd = (evt.pageY - startY) / scale
+      mx = mxd + parseInt(`${left}`) || 0
+      my = myd + parseInt(`${top}`) || 0
       state.left = mx + 'px'
       state.top = my + 'px'
     }
@@ -317,7 +324,6 @@
       state.left = ''
       state.top = ''
       moveFlag = false
-
       document.onmousemove = null
     }
   }
