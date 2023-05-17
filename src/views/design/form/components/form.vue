@@ -4,7 +4,7 @@
     <el-form
       v-bind="formData.form"
       ref="ruleForm"
-      :model="model"
+      :model="model as any"
       :disabled="disabled || type === 3"
       class="add-form"
       :class="{
@@ -244,6 +244,7 @@
     if (filter) {
       const obj: any = {}
       for (const key in model.value) {
+        // eslint-disable-next-line no-prototype-builtins
         if (model.value.hasOwnProperty(key)) {
           const val = (model.value as any)[key]
           if (!/^\s*$/.test(val)) {
@@ -278,26 +279,28 @@
   }
   // 追加移除style样式
   const appendRemoveStyle = (type?: boolean) => {
-    const { config = {} } = props.formData
-    appendOrRemoveStyle('formStyle', config.style || '', type)
+    const {
+      config: { style }
+    } = props.formData
+    appendOrRemoveStyle('formStyle', style || '', type)
     /*const { config = {} } = props.formData
-    const styleId: any = document.getElementById('formStyle')
-    if (styleId && type) {
-      // 存在时直接修改，不用多次插入
-      styleId.innerText = config.style
-      return
-    }
-    if (config.style && type) {
-      const styleEl = document.createElement('style')
-      styleEl.id = 'formStyle'
-      styleEl.type = 'text/css'
-      styleEl.appendChild(document.createTextNode(config.style))
-      document.head.appendChild(styleEl)
-    }
-    if (!type) {
-      // 移除
-      styleId && styleId.parentNode.removeChild(styleId)
-    }*/
+  const styleId: any = document.getElementById('formStyle')
+  if (styleId && type) {
+    // 存在时直接修改，不用多次插入
+    styleId.innerText = config.style
+    return
+  }
+  if (config.style && type) {
+    const styleEl = document.createElement('style')
+    styleEl.id = 'formStyle'
+    styleEl.type = 'text/css'
+    styleEl.appendChild(document.createTextNode(config.style))
+    document.head.appendChild(styleEl)
+  }
+  if (!type) {
+    // 移除
+    styleId && styleId.parentNode.removeChild(styleId)
+  }*/
   }
 
   // 按钮组件事件

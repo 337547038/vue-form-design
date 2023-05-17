@@ -16,10 +16,10 @@
     <div><br /></div>
     <div>
       <el-button type="success" @click="$router.push({ path: '/docs' })"
-      >使用文档</el-button
+        >使用文档</el-button
       >
       <el-button type="primary" @click="$router.push({ path: '/designform' })"
-      >快速开始</el-button
+        >快速开始</el-button
       >
     </div>
     <div>
@@ -28,7 +28,7 @@
       <el-button
         type="primary"
         @click="$router.push({ path: '/echarts/design' })"
-      >快速开始</el-button
+        >快速开始</el-button
       >
     </div>
   </div>
@@ -41,14 +41,14 @@
   const initDict = () => {
     getRequest('dictList', { status: 1 }).then((res: any) => {
       const result = res.data.list
-      let temp: any = {}
+      const temp: any = {}
       if (result) {
         // console.log(result)
         result.forEach((item: any) => {
           const children = item.children
           if (children) {
             const childJson = JSON.parse(children)
-            let list: any = {}
+            const list: any = {}
             childJson.forEach((ch: any) => {
               list[ch.value] = ch.label
             })

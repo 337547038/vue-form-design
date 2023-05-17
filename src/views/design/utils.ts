@@ -52,7 +52,7 @@ export const objectToArray = (obj: any) => {
 /****
  * 动态插入移除css
  * @param id 标签id
- * @param cssContent　要插入的css内容
+ * @param cssContent 要插入的css内容
  * @param append true插入false移除
  */
 export const appendOrRemoveStyle = (
