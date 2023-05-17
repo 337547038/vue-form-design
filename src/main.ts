@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
+// @ts-ignore
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import './assets/scss/element-var.scss'
@@ -22,6 +23,7 @@ app
   .use(ComComponents)
   .mount('#app')
 // 全局注册icon
+// @ts-ignore
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

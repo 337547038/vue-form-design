@@ -1,5 +1,11 @@
 // 快速添加 内置校验规则
-const validateConfig = [
+interface ValidateTypes {
+  type: string
+  label: string
+  regExp: RegExp
+  message: string
+}
+const validateConfig: ValidateTypes[] = [
   {
     type: 'required',
     label: '必填',
@@ -76,13 +82,13 @@ const validateConfig = [
   {
     type: 'longitude',
     label: '经度',
-    regExp: /^[\-+]?(0?\d{1,2}\.\d{1,10}|1[0-7]?\d\.\d{1,10}|180\.0{1,10})$/,
+    regExp: /^[-+]?(0?\d{1,2}\.\d{1,10}|1[0-7]?\d\.\d{1,10}|180\.0{1,10})$/,
     message: '请输入正确的经度'
   },
   {
     type: 'latitude',
     label: '纬度',
-    regExp: /^[\-+]?([0-8]?\d{1}\.\d{1,10}|90\.0{1,10})$/,
+    regExp: /^[-+]?([0-8]?\d{1}\.\d{1,10}|90\.0{1,10})$/,
     message: '请输入正确的纬度'
   }
 ]

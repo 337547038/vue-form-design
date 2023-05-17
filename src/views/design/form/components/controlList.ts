@@ -12,7 +12,7 @@ const selectOption: any = [
     value: 'value3'
   }*/
 ]
-const config = {
+const config: { optionsType: number } = {
   optionsType: 0 // 0固定 1数据源 2 接口字典
 }
 export default [

@@ -4,8 +4,8 @@
     v-bind="data.item"
     :prop="tProp || data.name"
     :class="config.className"
-    :rules="itemRules"
-    :label="getLabel(data.item)"
+    :rules="itemRules as any"
+    :label="getLabel(data.item as FormItem)"
   >
     <template #label v-if="config.help">
       {{ getLabel(data.item) }}
@@ -97,7 +97,7 @@
         v-bind="control"
         :name="control.file || 'file'"
         :disabled="editDisabled"
-        :file-list="fileList"
+        :file-list="fileList as any"
         :class="{
           limit: control.limit <= fileList.length
         }"
@@ -105,13 +105,13 @@
         :on-success="uploadSuccess"
         :on-remove="uploadRemove"
       >
-        <el-button type="primary" v-if="config.btnText"
-          >{{ config.btnText }}
+        <el-button type="primary" v-if="config?.btnText"
+          >{{ config?.btnText }}
         </el-button>
         <i class="icon-plus" v-else></i>
-        <template #tip v-if="config.tip">
+        <template #tip v-if="config?.tip">
           <div class="el-upload__tip">
-            {{ config.tip }}
+            {{ config?.tip }}
           </div>
         </template>
       </el-upload>
@@ -209,7 +209,7 @@
   const type = computed(() => {
     return formProps.value.type
   })
-  const config = computed<any>(() => {
+  const config = computed(() => {
     return props.data.config || {}
   })
   // const control = ref(props.data.control)

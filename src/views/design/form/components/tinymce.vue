@@ -159,6 +159,7 @@
     // 粘贴图片 自动处理 base64
     urlconverter_callback: (url: string, node: string) => {
       if (node === 'img' && url.startsWith('blob:')) {
+        // @ts-ignore
         tinymce.activeEditor && tinymce.activeEditor.uploadImages()
       }
       return url
@@ -181,9 +182,11 @@
     return Object.assign(commInit, styleType)
   })
   onMounted(() => {
+    // @ts-ignore
     tinymce.init(myInit.value)
   })
   onUnmounted(() => {
+    // @ts-ignore
     tinymce.remove()
   })
   // 侦听默认值 外界第一次传进来一个 v-model 就赋值给 contentValue
