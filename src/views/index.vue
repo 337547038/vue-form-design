@@ -16,10 +16,10 @@
     <div><br /></div>
     <div>
       <el-button type="success" @click="$router.push({ path: '/docs' })"
-        >使用文档</el-button
+      >使用文档</el-button
       >
       <el-button type="primary" @click="$router.push({ path: '/designform' })"
-        >快速开始</el-button
+      >快速开始</el-button
       >
     </div>
     <div>
@@ -28,15 +28,41 @@
       <el-button
         type="primary"
         @click="$router.push({ path: '/echarts/design' })"
-        >快速开始</el-button
+      >快速开始</el-button
       >
     </div>
   </div>
 </template>
-<script setup>
-  import { useLayoutStore } from '@/store/layout'
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([])
+<script setup lang="ts">
+  import { onMounted } from 'vue'
+  import { getRequest } from '@/api'
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
+  const initDict = () => {
+    getRequest('dictList', { status: 1 }).then((res: any) => {
+      const result = res.data.list
+      let temp: any = {}
+      if (result) {
+        // console.log(result)
+        result.forEach((item: any) => {
+          const children = item.children
+          if (children) {
+            const childJson = JSON.parse(children)
+            let list: any = {}
+            childJson.forEach((ch: any) => {
+              list[ch.value] = ch.label
+            })
+            temp[item.type] = list
+          }
+        })
+      }
+      window.localStorage.setItem('akFormDict', JSON.stringify(temp))
+    })
+  }
+  onMounted(() => {
+    initDict() // todo 这个应该是每次登录进来就加载一次
+    router.push({ path: '/design' })
+  })
 </script>
 <style scoped lang="scss">
   .info {

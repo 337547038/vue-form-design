@@ -1,0 +1,89 @@
+{
+  "code": 1,
+  "data": {
+    "dict": {
+      "status": {
+        "0": "停用",
+        "1": "正常"
+      }
+    },
+    "list": [
+      {
+        "id": 10,
+        "parentId": 7,
+        "name": "客服2部",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      },
+      {
+        "id": 9,
+        "parentId": 7,
+        "name": "客服1部",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      },
+      {
+        "id": 7,
+        "parentId": 3,
+        "name": "客服部",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      },
+      {
+        "id": 6,
+        "parentId": 1,
+        "name": "设计部",
+        "sort": 0,
+        "status": 1,
+        "remark": "设计部"
+      },
+      {
+        "id": 5,
+        "parentId": 1,
+        "name": "技术开发部",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      },
+      {
+        "id": 4,
+        "parentId": 1,
+        "name": "业务部",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      },
+      {
+        "id": 3,
+        "parentId": 0,
+        "name": "上海分公司",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      },
+      {
+        "id": 2,
+        "parentId": 0,
+        "name": "北京分公司",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      },
+      {
+        "id": 1,
+        "parentId": 0,
+        "name": "广州分公司",
+        "sort": 0,
+        "status": 1,
+        "remark": ""
+      }
+    ],
+    "pageInfo": {
+      "total": 9
+    }
+  },
+  "message": "成功"
+}

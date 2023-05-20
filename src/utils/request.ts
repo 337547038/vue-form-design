@@ -6,7 +6,7 @@ axios.defaults.headers.common['Authorization'] = getToken() */
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_URL, // api的base_url
   //baseURL: 'http://localhost:3001/api', // api的base_url
-  timeout: 6000, // request timeout
+  timeout: 3000, // request timeout
   headers: {}
 })
 
@@ -21,10 +21,11 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response) => {
-    if (response.data.code === 0) {
-      return Promise.reject(response)
+    if (response.data.code === 1) {
+      return response.data
     } else {
-      return response
+      // 这里面需增加统一拦截
+      return Promise.reject(response.data)
     }
   },
   (error) => {

@@ -2,12 +2,12 @@
 // 左侧栏
 $mainColor: #66b1ff;
 .design-container {padding: 0 !important;display: flex;}
-.components-list {width: 250px;padding: 8px 0;overflow-y: auto;height: calc(100vh - 80px);position: relative;overflow-x: hidden;
+.components-list {width: 250px;padding: 8px 0;overflow-y: auto;height: calc(100vh - 60px);position: relative;overflow-x: hidden;
   .title {padding: 8px 12px;position: relative;
     .template {position: absolute;right: 12px;top: 0;padding: 8px;cursor: pointer}
   }
   ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
-    li {font-size: 14px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
+    li {font-size: 13px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
       i {margin-right: 5px}
       &:hover {
         color: $mainColor;border: 1px dashed $mainColor;cursor: move;
@@ -35,10 +35,10 @@ $mainColor: #66b1ff;
 .main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0;overflow: hidden;
   .empty-tips {text-align: center;width: 100%;font-size: 20px;color: #ccc;position: absolute;left: 0;top: 100px;
   }
-  .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 140px);overflow-y: auto;overflow-x: hidden;position: relative}
+  .main-form { background: #fff;border: 1px dashed #999;margin: 10px;height: calc(100vh - 124px);overflow-y: auto;overflow-x: hidden;position: relative}
 }
 // 中间按钮工具
-.main-tools {line-height: 38px;border-bottom: 2px solid #e4e7ed;text-align: right;margin-right: 10px;
+.main-tools {line-height: 26px;border-bottom: 2px solid #e4e7ed;margin-right: 10px;padding: 8px 0;display: flex;align-items: center;justify-content: flex-end;
   button {color: $mainColor;
     i {padding-right: 5px}
   }
@@ -86,12 +86,46 @@ $mainColor: #66b1ff;
     }
     .flex-item {flex: 2;}
   }
+  .group-txt {margin-bottom: 18px}
+  .div-layout {
+    /*&.inline {
+      .drag {display: inline-flex}
+      .group {width: auto;margin-right: 10px}
+    }*/
+    &.right {
+      .drag {text-align: right;justify-content: flex-end}
+    }
+    &.center {
+      .drag {text-align: center;justify-content: center}
+    }
+    &.left {
+
+    }
+  }
+  // 设置默认下input和select一样宽
+  .el-select {width: 100%;}
+  .el-select {
+    .el-input__wrapper .el-input__suffix {position: absolute;right: 10px}
+  }
+  .group {width: 100%}
+  .drag {display: flex;flex-wrap: wrap}
+  &.form-row-2 {
+    .group {width: 50%}
+  }
+  &.form-row-3 {
+    .group {width: 33%}
+  }
+  &.form-row-4 {
+    .group {width: 25%}
+  }
 }
-.sidebar-tools {width: 300px;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;bottom: 0; height: calc(100vh - 80px);
+.sidebar-tools {width: 300px;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;bottom: 0; height: calc(100vh - 60px);
   .form {
     .el-form-item {margin-bottom: 10px;}
   }
-  h3 {font-size: 14px;font-weight: 700;margin-bottom: 10px}
+  .h3 {font-size: 14px;margin-bottom: 10px;display: flex;align-items: center;
+    h3 {font-size: 14px}
+  }
   .el-tabs__nav-wrap {padding: 0 10px}
   .el-tabs__content {padding: 0 10px}
   .icon-del {cursor: pointer}
@@ -112,9 +146,9 @@ $mainColor: #66b1ff;
 .export-dialog {
   .el-dialog__body {padding: 0 20px}
 }
-.design-form {min-height: calc(100vh - 167px);
+.design-form {min-height: calc(100vh - 146px);
   > div {height: 100%}
-  > .drag {min-height: calc(100vh - 167px) !important;}
+  > .drag {min-height: calc(100vh - 146px) !important;}
   .ghost {
     background: #F56C6C;
     border: 2px solid #F56C6C;
@@ -127,13 +161,17 @@ $mainColor: #66b1ff;
     padding: 0;
     width: 100%;
   }
-  .group {border: 1px dashed #ddd;margin: 2px;padding: 5px;position: relative;width: 100%;min-height: 50px;
+  .group {border: 1px dashed #ddd;margin: 2px 2px 10px 2px;padding: 5px;position: relative;min-height: 50px;
     &.active {border: 3px solid $mainColor;position: relative;
       > .drag-control {display: block}
       > .tooltip {display: block;}
     }
     &:hover {border-color: $mainColor;background: #ecf5ff}
     > div {margin-bottom: 0}
+    &:after{content: '';position: absolute;left: 0;top:0;right: 0;bottom: 0;opacity: 0;z-index: 1;display: block;}
+    &.group-grid,&.group-tabs,&.group-card,&.group-flex,&.group-div,&.group-table{
+      &:after{display: none}
+    }
   }
   .group-inputSlot {border-color: #eebe77;display: inline-block;
     &:hover, &.active {border-color: #eebe77 !important;}
@@ -145,10 +183,24 @@ $mainColor: #66b1ff;
     }
     .drag-move {position: absolute;left: 0;top: 0;z-index: 2;width: 24px;height: 24px;background: $mainColor;color: #fff;text-align: center;line-height: 24px;cursor: move}
   }
-  .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;display: flex;flex-wrap: wrap;align-content: flex-start;}
+  .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;align-content: flex-start;}
+  &.form-row-2 {
+    .group {width: 48%}
+  }
+  &.form-row-3 {
+    .group {width: 32%}
+  }
+  &.form-row-4 {
+    .group {width: 23%}
+  }
 }
 /*表格设计*/
 .design-table {
+  .main-body {border-left: 0}
+  .header {position: relative;
+    .field {position: absolute;left: 10px;top: 7px;display: flex;
+    }
+  }
   .components-list {
     .content {padding: 0 12px;
       > div {display: flex;flex-wrap: wrap;justify-content: flex-start;
@@ -156,9 +208,28 @@ $mainColor: #66b1ff;
       }
     }
   }
-  .main-table {padding: 0 20px;
+  .main-table {padding: 10px 20px;
     .add-form {min-height: auto;display: flex;
       > .drag {height: auto;min-height: auto !important;}
+    }
+    .el-divider {margin: 8px 0 0}
+    .table-tip {color: #999;padding: 30px 0;line-height: 22px}
+    .search-box {position: relative;
+      &:after {content: '';width: 100%;height: 100%;position: absolute;left: 0;right: 0;bottom: 0;top: 0;z-index: 2;cursor: pointer;}
+      .group {width: auto;margin-right: 10px}
+    }
+    .control-btn {padding: 10px 0;
+      margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center
+    }
+    .tip {border: 1px dotted #ddd;padding: 3px 5px;border-radius: 5px;color: #999;text-align: center;cursor: pointer}
+    .el-table__header {
+      th {
+        .cell {position: relative;}
+        .icon-close {display: none;font-size: 12px;margin-left: 12px;cursor: pointer;position: absolute;}
+        &:hover {
+          .icon-close {display: inline-block}
+        }
+      }
     }
   }
   .table-tag {
@@ -167,19 +238,44 @@ $mainColor: #66b1ff;
     }
   }
 }
+.table-field-list {
+  h3 {font-size: 14px}
+  .item {margin-bottom: 20px}
+  .list {display: flex;justify-content: flex-start;flex-wrap: wrap;
+    label {width: 25%;margin: 0}
+  }
+}
 .table-list-comm {display: flex;justify-content: space-between;
-  .tree-sidebar {width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px}
-  .table-list {flex: 2}
-  .table-main {margin-bottom: 20px}
+  .tree-sidebar {width: 180px;border-right: 1px solid #ddd;padding-right: 10px;margin-right: 10px;flex-shrink: 0;
+    .el-input {margin-bottom: 10px}
+  }
+  .table-list {display: block;width: 100%}
+  .table-main {margin-bottom: 20px;
+    &.hide-vertical-scroll { // 固定了横向滚动条时，禁用表格固定头部的滚动
+      .el-scrollbar__wrap {overflow: hidden;}
+      .is-vertical {display: none !important;}
+    }
+    .table-operate-btn {display: flex;align-items: center}
+  }
   .table-search {position: relative;
-    .search-form {}
-    form {display: flex;flex-wrap: wrap}
+    form {display: flex;flex-wrap: wrap;padding-bottom: 0;border-bottom: 1px solid #dcdfe6;margin-bottom: 10px;}
     .drag {display: flex;flex-wrap: wrap;
       > div {margin-right: 10px}
     }
+    .group {width: auto}
     .search-icon {margin-left: 10px;height: 30px;cursor: pointer;position: absolute;right: 0;top: 0}
+    .autoHeight-enter-active,
+    .autoHeight-leave-active {
+      max-height: 200px;
+      transition: all .6s;
+      overflow: hidden;
+    }
+    .autoHeight-enter-from,
+    .autoHeight-leave-to {
+      max-height: 0;
+    }
   }
-  .control-btn {margin-bottom: 10px}
+  .control-btn {margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center}
 }
 /*图片文件上传*/
 .upload-style {
@@ -195,3 +291,6 @@ $mainColor: #66b1ff;
 }
 /*分页*/
 .table-page {padding-top: 10px;display: flex;justify-content: flex-end}
+//.el-scrollbar__wrap{overflow: hidden!important;}
+//.el-scrollbar__bar.is-vertical{display: none}
+

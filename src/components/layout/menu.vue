@@ -14,11 +14,12 @@
 <script setup lang="ts">
   import MenuItem from './menuItem.vue'
   import { ref, onMounted } from 'vue'
-  // import { useRoute } from 'vue-router'
+  // import { useRouter } from 'vue-router'
   // import { useLayoutStore } from '@/store/layout'
   import { getRequest } from '@/api'
+  import formatResult from '@/utils/formatResult'
 
-  // const router = useRouter()
+  //const router = useRouter()
   // const route = useRoute()
   // const layoutStore = useLayoutStore()
 
@@ -31,101 +32,128 @@
   const emits = defineEmits<{
     (e: 'getMenuList', val: any): void
   }>()
-  const navList = ref([
-    {
-      title: '首页',
-      path: '/',
-      icon: 'HomeFilled'
-    },
-    {
-      title: '内容管理',
-      icon: 'Document',
-      children: []
-    },
-
-    {
-      title: '导出vue测试',
-      icon: 'FolderOpened',
-      children: [
-        {
-          title: '表单测试',
-          icon: 'Document',
-          path: '/export/form'
-        },
-        {
-          title: '列表测试',
-          icon: 'Tickets',
-          path: '/export/list'
-        }
-      ]
-    },
-    {
-      title: '系统工具',
-      icon: 'platform',
-      children: [
-        {
-          title: '表单管理',
-          icon: 'list',
-          path: '/designform/formlist'
-        },
-        {
-          title: '帮助文档',
-          icon: 'InfoFilled',
-          path: '/docs'
-        }
-      ]
-    }
-  ])
-  const select = () => {
-    //router.push({ path: index })
-    // 位置导航处理，如若异常可在当前页面中修改changeBreadcrumb
-    /*console.log(index)
-    const temp = []
-    if (indexItem && indexItem.length) {
-      temp.push({ label: indexItem[0] })
-      if (indexItem.length === 2) {
-        navList.value.forEach((item: any) => {
-          item.children &&
-            item.children.forEach((ch: any) => {
-              if (index === ch.path) {
-                temp.push({ label: ch.label })
-              }
-            })
-        })
-      }
-      store.changeBreadcrumb(temp)
-    }*/
-  }
-  // 获取创建的表单导航，存下storage不用每次刷新请求
-  const initForm = () => {
+  const navList = ref([])
+  const getNavList = () => {
     const sessionList = window.sessionStorage.getItem('formMenuList')
     if (sessionList) {
-      navList.value[1].children = JSON.parse(sessionList)
-    } else {
-      getRequest('getFormList', { status: 1 }).then((res) => {
-        //contentForm.value = res.data.data?.list || []
-        const result = res.data.data?.list
-        let temp: any = []
-        if (result) {
-          result.forEach((item: any) => {
-            if (item.formId && item.status?.toString() === '1') {
-              // 有数据源创建的才能添加
-              temp.push({
-                title: item.name,
-                icon: 'List',
-                path: '/designform/list?tid=' + item.id
-              })
-            }
-          })
-          navList.value[1].children = temp
-          window.sessionStorage.setItem('formMenuList', JSON.stringify(temp))
-        }
-      })
+      navList.value = JSON.parse(sessionList)
+      return
     }
+    getRequest('menuList', { status: 1 }).then((res: any) => {
+      navList.value = formatResult(res.data, 'transformDataToChild')
+      window.sessionStorage.setItem(
+        'formMenuList',
+        JSON.stringify(navList.value)
+      )
+    })
+  }
+  /*
+  const navList = computed(() => {
+    return [
+      {
+        title: '内容管理',
+        icon: 'doc',
+        children: contentList.value
+      },
+      {
+        title: '设计管理',
+        icon: 'design',
+        children: [
+          { title: '表单设计管理', icon: 'form', path: '/design/form/list' },
+          {
+            title: '列表页设计管理',
+            icon: 'list',
+            path: '/design/dataList/list'
+          },
+          {
+            title: '数据统计图管理',
+            icon: 'line'
+          },
+          {
+            title: '数据大屏管理',
+            icon: 'data'
+          },
+          {
+            title: '流程配置管理',
+            icon: 'tree'
+          }
+        ]
+      },
+      {
+        title: '系统管理',
+        icon: 'sys',
+        children: [
+          {
+            title: '用户管理',
+            icon: 'user',
+            path: '/system/user'
+          },
+          {
+            title: '角色管理',
+            icon: 'role',
+            path: '/system/role'
+          },
+          {
+            title: '菜单管理',
+            icon: 'menu',
+            path: '/system/menu'
+          },
+          {
+            title: '部门管理',
+            icon: 'tree',
+            path: '/system/dept'
+          },
+          {
+            title: '岗位管理',
+            icon: 'post',
+            path: '/system/post'
+          },
+          {
+            title: '字典管理',
+            icon: 'dict',
+            path: '/system/dict'
+          },
+          {
+            title: '登录日志',
+            icon: 'log2',
+            path: '/system/log'
+          },
+          {
+            title: '操作日志',
+            icon: 'log',
+            path: '/system/log'
+          }
+        ]
+      },
+      {
+        title: '系统工具',
+        icon: 'tool',
+        children: [
+          {
+            title: '新建设计',
+            icon: 'creat',
+            path: '/design'
+          },
+          {
+            title: '表单数据源',
+            icon: 'data-source',
+            path: '/design/dataSource'
+          },
+          {
+            title: '帮助文档',
+            icon: 'doc',
+            path: '/docs'
+          }
+        ]
+      }
+    ]
+  })*/
+  const select = () => {
+    // console.log('select')
   }
   onMounted(() => {
     // 将导航信息传给tagViews，根据path匹配出显示的title
     emits('getMenuList', navList.value)
-    initForm()
+    getNavList()
   })
 </script>

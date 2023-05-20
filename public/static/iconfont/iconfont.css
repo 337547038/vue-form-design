@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2578019 */
-  src: url('iconfont.woff2?t=1677028041611') format('woff2'),
-       url('iconfont.woff?t=1677028041611') format('woff'),
-       url('iconfont.ttf?t=1677028041611') format('truetype');
+  src: url('iconfont.woff2?t=1683511822799') format('woff2'),
+       url('iconfont.woff?t=1683511822799') format('woff'),
+       url('iconfont.ttf?t=1683511822799') format('truetype');
 }
 
 .iconfont,[class*="icon-"] {
@@ -11,6 +11,138 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-mouse:before {
+  content: "\e60b";
+}
+
+.icon-hand:before {
+  content: "\e6cf";
+}
+
+.icon-lock-open:before {
+  content: "\e9d6";
+}
+
+.icon-lock:before {
+  content: "\e669";
+}
+
+.icon-eye-close:before {
+  content: "\ebcd";
+}
+
+.icon-border:before {
+  content: "\e673";
+}
+
+.icon-text2:before {
+  content: "\e607";
+}
+
+.icon-stext:before {
+  content: "\e801";
+}
+
+.icon-apply:before {
+  content: "\e606";
+}
+
+.icon-work:before {
+  content: "\e68c";
+}
+
+.icon-todo:before {
+  content: "\ebb1";
+}
+
+.icon-applyed:before {
+  content: "\e633";
+}
+
+.icon-done:before {
+  content: "\e60d";
+}
+
+.icon-button:before {
+  content: "\e690";
+}
+
+.icon-design:before {
+  content: "\e62c";
+}
+
+.icon-data-source:before {
+  content: "\e617";
+}
+
+.icon-sp:before {
+  content: "\e626";
+}
+
+.icon-cs:before {
+  content: "\e605";
+}
+
+.icon-branch:before {
+  content: "\e993";
+}
+
+.icon-doc:before {
+  content: "\e7d0";
+}
+
+.icon-sys:before {
+  content: "\e634";
+}
+
+.icon-creat:before {
+  content: "\e661";
+}
+
+.icon-data:before {
+  content: "\e602";
+}
+
+.icon-menu:before {
+  content: "\e62f";
+}
+
+.icon-user:before {
+  content: "\e66b";
+}
+
+.icon-form:before {
+  content: "\e625";
+}
+
+.icon-list:before {
+  content: "\ec6b";
+}
+
+.icon-log:before {
+  content: "\e604";
+}
+
+.icon-dict:before {
+  content: "\e668";
+}
+
+.icon-post:before {
+  content: "\e658";
+}
+
+.icon-role:before {
+  content: "\e618";
+}
+
+.icon-log2:before {
+  content: "\ea45";
+}
+
+.icon-tool:before {
+  content: "\e628";
 }
 
 .icon-bar:before {

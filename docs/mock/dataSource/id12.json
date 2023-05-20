@@ -1,0 +1,261 @@
+{
+  "code": 1,
+  "data": {
+    "result": {
+      "id": 12,
+      "name": "组件字段示例",
+      "tableName": "ak-test",
+      "category": 0,
+      "status": 1,
+      "creatDate": null,
+      "updateDate": null,
+      "creatName": "admin",
+      "updateName": "",
+      "remark": "组件字段示例",
+      "tableData": [
+        {
+          "label": "单行文本",
+          "name": "text",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "多行文本",
+          "name": "textarea",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "单选组",
+          "name": "radio",
+          "type": "INT",
+          "length": "1",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "多选组",
+          "name": "checkbox",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "下拉选择",
+          "name": "select1",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "时间",
+          "name": "creatTime",
+          "type": "DATETIME",
+          "length": "",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "取色器",
+          "name": "color",
+          "type": "VARCHAR",
+          "length": "10",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "状态开关",
+          "name": "status",
+          "type": "INT",
+          "length": "1",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "计时器",
+          "name": "number",
+          "type": "INT",
+          "length": "1",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "级联",
+          "name": "cascader",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "评分",
+          "name": "rate",
+          "type": "INT",
+          "length": "2",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "滑块",
+          "name": "slider",
+          "type": "VARCHAR",
+          "length": "10",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "树形控件",
+          "name": "tree",
+          "type": "VARCHAR",
+          "length": "10",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "表格",
+          "name": "table",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "自定义组件",
+          "name": "components",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "上传图片",
+          "name": "upload",
+          "type": "VARCHAR",
+          "length": "100",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "富文本",
+          "name": "tinymce",
+          "type": "TEXT",
+          "length": "",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "弹性布局",
+          "name": "flex",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "选择用户",
+          "name": "userName",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "前缀",
+          "name": "prepend",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "后缀",
+          "name": "append",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "密码框",
+          "name": "password",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "文本框2",
+          "name": "input1",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        },
+        {
+          "label": "文本框1",
+          "name": "input1",
+          "type": "VARCHAR",
+          "length": "50",
+          "default": "",
+          "empty": false,
+          "remark": "",
+          "enterable": true
+        }
+      ]
+    },
+    "dict": {}
+  },
+  "message": "成功"
+}

@@ -13,7 +13,7 @@
           <span class="tabs-label">
             <span>{{ item.title }}</span>
             <el-icon @click="handleTabsRemove(item, index, $event)"
-              ><Close
+            ><Close
             /></el-icon>
           </span>
         </template>
@@ -24,7 +24,7 @@
       class="clear-tag"
       title="清空全部"
       v-if="tabsViews?.length > 0"
-      ><Close
+    ><Close
     /></el-icon>
   </div>
 </template>

@@ -1,15 +1,24 @@
-export function debounce(fn: any, delay = 500) {
-  let timer: NodeJS.Timeout
-  return function (...args: any) {
-    if (timer) {
-      clearTimeout(timer)
+export function debounce<T extends (...args: any[]) => void>(func: T, delay = 500, immediate?: boolean): T {
+  let timerId: any
+
+  return function (this: any, ...args: any[]) {
+    if (timerId) {
+      clearTimeout(timerId)
     }
-    timer = setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      fn.apply(this, args)
-    }, delay)
-  }
+    if (immediate) {
+      const callNow = !timerId
+      timerId = setTimeout(() => {
+        timerId = null
+      }, delay)
+      if (callNow) {
+        func.apply(this, args)
+      }
+    } else {
+      timerId = setTimeout(() => {
+        func.apply(this, args)
+      }, delay)
+    }
+  } as T
 }
 // 时间格式化
 export const dateFormatting = (time: any, cFormat?: string) => {
@@ -27,18 +36,18 @@ export const dateFormatting = (time: any, cFormat?: string) => {
     h: date.getHours(),
     i: date.getMinutes(),
     s: date.getSeconds(),
-    a: date.getDay()
+    w: date.getDay()
   }
-  const timeStr = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+  return format.replace(/{(y|m|d|h|i|s|w)+}/g, (result, key) => {
     let value = formatObj[key]
-    if (key === 'a')
-      return ['一', '二', '三', '四', '五', '六', '日'][value - 1]
+    if (key === 'w') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     if (result.length > 0 && value < 10) {
       value = '0' + value
     }
     return value || 0
   })
-  return timeStr
 }
 // 动态远程加载script脚本
 export function loadScript(src: string) {
@@ -50,4 +59,37 @@ export function loadScript(src: string) {
     script.src = src
     document.head.appendChild(script)
   })
+}
+// 随机数字符串
+export const randomString = (len: number) => {
+  len = len || 32
+  const str = 'ABCDEFGHIJKMNOPQSTWXYZabcdefghijklmnopqrstwxyz1234567890'
+  let n = ''
+  for (let i = 0; i < len; i++) {
+    n += str.charAt(Math.floor(Math.random() * str.length))
+  }
+  return n
+}
+
+export const jsonParseStringify = (val: any) => {
+  if (typeof val === 'object') {
+    return JSON.parse(JSON.stringify(val))
+  } else {
+    return val
+  }
+}
+/**
+ * 设置或获取local session storage
+ * @param key
+ * @param data　有值时set，否则get
+ * @param type local/session默认
+ */
+export const getSetStorage = (key: string, data?: string, type = 'session') => {
+  //console.log(key, data)
+  const winType = type === 'session' ? 'sessionStorage' : 'localStorage'
+  if (data) {
+    window[winType].setItem(key, data)
+  } else {
+    return window[winType].getItem(key)
+  }
 }

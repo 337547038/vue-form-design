@@ -2,6 +2,7 @@ html, body, div, span, ul, li, i, h3, p {margin: 0;padding: 0;}
 ul, li {list-style: none}
 body {font-size: 14px; font-family: "Microsoft YaHei UI"}
 * {box-sizing: border-box}
+a{color: #409eff;text-decoration: none}
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -37,18 +38,21 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
     .logo {
       display: flex;
       align-items: center;
-      font-size: 18px;
-      font-weight: 700;
-      height: 60px;
+      font-size: 14px;
+      height: 40px;
       justify-content: center;
+      cursor: pointer;
+      font-weight: 700;
       img {
-        width: 30px;
-        height: 30px;
+        width: 14px;
+        height: 14px;
       }
     }
     .el-menu {
       border-right: 0;
+      .icon{margin-right: 5px;font-size: 15px;opacity: .8}
     }
+    .el-sub-menu .el-menu-item{min-width: 180px}
   }
   .common-header {
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
@@ -71,7 +75,9 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
     background: #f0f2f5;
     padding: 10px;
     overflow: hidden;
-    > div {background: #fff;border-radius: 5px;padding: 10px 15px}
+    > div:first-child {border-radius: 5px;padding: 10px 15px;background: #fff;overflow-x: auto; // 横向滚动条放在这里
+    &.bg-none{background: none;}
+    }
   }
   .tag-tabs {display: flex;justify-content: space-between;align-items: center;
     padding: 0 20px;
@@ -93,9 +99,22 @@ body {font-size: 14px; font-family: "Microsoft YaHei UI"}
     }
     .clear-tag {cursor: pointer}
   }
-  .quit-full {position: fixed;right: 10px;top: 10px;cursor: pointer}
+  .quit-full {position: fixed;right: 10px;top: 10px;cursor: pointer;z-index: 101}
 }
 // 设置el-tooltip最大宽度
 .el-popper {
   max-width: 400px;
+}
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .3s;
+}
+.fade-transform-enter-from{opacity: .3;transform: translateX(-30px)}
+.fade-transform-enter-active {
+}
+.fade-transform-enter-to{transform: translateX(0);opacity: 1}
+
+.fade-transform-leave-active {
+  opacity: 0;
+  transform: translateX(30px);
 }

@@ -3,27 +3,31 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import Pages from 'vite-plugin-pages'
 import vitePluginVuedoc, { vueDocFiles } from 'vite-plugin-vuedoc'
+import creatFileJson from './vite-plugin-creatFileJson'
 import * as path from 'path'
-// const fs = require('fs')
+const fs = require('fs')
+
+// 将public下的iconfont.css复制到。直接从public目录导入会报错Assets in public cannot be imported from JavaScript
+fs.createReadStream('./public/static/iconfont/iconfont.json').pipe(
+  fs.createWriteStream('./src/components/iconfont.json')
+)
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    creatFileJson({}),
     vitePluginVuedoc({}),
     vue({
       include: [...vueDocFiles] // 2. Must include .md | .vd files
     }),
     vueJsx({}),
     Pages({
-      pagesDir: [
+      dirs: [
         { dir: 'src/views', baseRoute: '' },
         { dir: 'src/docs', baseRoute: '/docs' }
       ],
       extensions: ['md', 'vue'],
-      exclude: [
-        'components/*.vue',
-        '**/components/*.vue',
-        '**/components/*/*.vue'
-      ]
+      exclude: ['**/components', '**/design/**/*.md']
     })
   ],
   resolve: {
@@ -43,8 +47,7 @@ export default defineConfig({
     }
   },
   server: {
-    // 是否开启 https
-    //https: true,
+    //https: true, // 是否开启 https
     port: 3000,
     host: '0.0.0.0',
     open: false,

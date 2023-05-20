@@ -1,0 +1,41 @@
+{
+  "code": 1,
+  "data": {
+    "dict": {
+      "status": {
+        "0": "停用",
+        "1": "正常"
+      }
+    },
+    "list": [
+      {
+        "id": 2,
+        "userName": "user",
+        "nickName": "会员",
+        "phone": "",
+        "status": 1,
+        "role": "",
+        "password": "123456",
+        "department": 0,
+        "post": 0,
+        "remark": ""
+      },
+      {
+        "id": 1,
+        "userName": "admin",
+        "nickName": "管理员",
+        "phone": "1380013800",
+        "status": 1,
+        "role": "1",
+        "password": "123456",
+        "department": 2,
+        "post": 0,
+        "remark": ""
+      }
+    ],
+    "pageInfo": {
+      "total": 2
+    }
+  },
+  "message": "成功"
+}
