@@ -4,7 +4,7 @@
     v-model="visible"
     size="60%"
     :title="title"
-    :direction="direction || 'ltr'"
+    :direction="direction as any"
     class="ace-dialog"
     :append-to-body="true"
     :before-close="drawerBeforeClose"
@@ -28,14 +28,15 @@
     defineProps<{
       modelValue: boolean
       title?: string
-      direction?: string
+      direction?: 'rtl' | 'ltr'
       content: string
       id?: string
       codeType?: string
     }>(),
     {
       id: 'editJson',
-      content: ''
+      content: '',
+      direction: 'ltr'
     }
   )
   const emits = defineEmits<{
