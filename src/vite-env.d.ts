@@ -18,7 +18,7 @@ declare module 'vue'
 declare module 'clipboard'
 declare module 'vuedraggable-es'
 declare module 'vite-plugin-pages'
-declare module 'vite-plugin-vuedoc'
+declare module 'vite-plugin-md'
 declare module 'vite'
 /*
 declare module 'vuex' {

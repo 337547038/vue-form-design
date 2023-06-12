@@ -109,20 +109,20 @@ src
 ```Bash
 
 # 安装依赖
-yarn install
+pnpm install
 
 # 运行项目
-yarn dev
+pnpm dev
 
 # 打包项目
-yarn build
+pnpm build
 ```
 
 ### 开发环境
 | 名称           | 版本      |
 |--------------|---------|
 | node         | 16.15.x |
-| yarn         | 1.22.19 |
+| pnpm         | 8.6.0   |
 | vite         | 4.3.x   |
 | vue          | 3.2.x   |
 | element-plus | 2.3.x   |
