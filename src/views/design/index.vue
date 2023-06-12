@@ -34,7 +34,7 @@
     </div>
     <div class="info-box">
       <div class="info">
-        <h3>ak-form基于 Vue3 的可视化低代码快速开发平台</h3>
+        <h3>ak-design基于 Vue3 的可视化低代码快速开发平台</h3>
         <br />
         <div>
           • 使用基于 Vue 3.0 的桌面端组件库 Elemnet-Plus ，使用广泛，扩展方便
