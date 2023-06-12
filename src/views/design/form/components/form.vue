@@ -279,28 +279,14 @@
   }
   // 追加移除style样式
   const appendRemoveStyle = (type?: boolean) => {
-    const {
-      config: { style }
-    } = props.formData
-    appendOrRemoveStyle('formStyle', style || '', type)
-    /*const { config = {} } = props.formData
-  const styleId: any = document.getElementById('formStyle')
-  if (styleId && type) {
-    // 存在时直接修改，不用多次插入
-    styleId.innerText = config.style
-    return
-  }
-  if (config.style && type) {
-    const styleEl = document.createElement('style')
-    styleEl.id = 'formStyle'
-    styleEl.type = 'text/css'
-    styleEl.appendChild(document.createTextNode(config.style))
-    document.head.appendChild(styleEl)
-  }
-  if (!type) {
-    // 移除
-    styleId && styleId.parentNode.removeChild(styleId)
-  }*/
+    try {
+      const {
+        config: { style }
+      } = props.formData
+      appendOrRemoveStyle('formStyle', style || '', type)
+    } catch (e) {
+      /* empty */
+    }
   }
 
   // 按钮组件事件
