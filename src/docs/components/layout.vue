@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
   import '../scss/style.scss'
+  import 'vite-plugin-doc-preview/style/style.css'
   import { ref, nextTick, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   const router = useRouter()

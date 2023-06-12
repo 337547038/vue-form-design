@@ -33,8 +33,8 @@ src
 
 ```text
 git clone https://github.com/337547038/vue-form-design.git
-yarn install
-yarn run dev
+pnpm install
+pnpm run dev
 ```
 
 ## nodejs模拟接口
@@ -46,8 +46,8 @@ yarn run dev
 进入nodejs目录安装依赖
 
 ```text
-yarn install
-yarn dev
+pnpm install
+pnpm dev
 ```
 
 浏览器进入 http://localhost:3000 开始体验
