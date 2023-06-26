@@ -108,21 +108,53 @@ src
 
 ```Bash
 
+# 克隆项目
+git clone https://github.com/337547038/vue-form-design.git
+
 # 安装依赖
 pnpm install
 
 # 运行项目
 pnpm dev
 
+# 使用json模拟数据（建议使用node模拟接口，方法见启动node模拟接口）
+
+ 将/src/api/index.ts约25行 
+ if (window.location.host.indexOf('github') !== -1)中的github
+ 修改为你本地运行的地址如 localost或192.128.xx
+ 
 # 打包项目
 pnpm build
+
+```
+
+### 启动node模拟接口
+
+```Bash
+
+1.将/src/nodejs/akform.sql导入mysql中
+
+2./src/nodejs/db.js修改连接数据库用户密码相关信息
+
+# 进入nodejs目录
+
+cd nodejs
+
+# 安装依赖
+
+pnpm install
+
+#运行项目
+
+pnpm dev
+
 ```
 
 ### 开发环境
 | 名称           | 版本      |
 |--------------|---------|
 | node         | 16.15.x |
-| pnpm         | 8.6.0   |
+| pnpm         | 8.6.x   |
 | vite         | 4.3.x   |
 | vue          | 3.2.x   |
 | element-plus | 2.3.x   |
