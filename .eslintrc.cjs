@@ -35,7 +35,11 @@ module.exports = {
     ace: true,
     tinymce: true,
     AMap: true,
-    echarts: true
+    echarts: true/*,
+    defineProps: "readonly",
+    defineEmits: "readonly",
+    defineExpose: "readonly",
+    withDefaults: "readonly"*/
   },
   rules: {
     "prettier/prettier": ["error", {
