@@ -21,8 +21,10 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
     },
     options
   )
-  // github演示时使用下面地址
-  if (window.location.host.indexOf('github') !== -1) {
+  // localhost和github演示时使用下面地址
+  // 使用node接口时可使用本地ip地址访问或注释下面代码
+  const host = window.location.host
+  if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
     let id = ''
     if (url.indexOf('/id') !== -1 && data.id) {
       id = data.id + ''

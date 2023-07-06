@@ -119,9 +119,8 @@ pnpm dev
 
 # 使用json模拟数据（建议使用node模拟接口，方法见启动node模拟接口）
 
- 将/src/api/index.ts约25行 
- if (window.location.host.indexOf('github') !== -1)中的github
- 修改为你本地运行的地址如 localost或192.128.xx
+默认下github示例和localhost访问时使用json模拟数据，使用node接口时可使用http://192.168.xx.xx形式访问
+ 或注释将/src/api/index.ts约27行代码注释即可
  
 # 打包项目
 pnpm build
