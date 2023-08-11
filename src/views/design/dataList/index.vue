@@ -474,6 +474,13 @@
         path: 'config'
       },
       {
+        label: '查询跳转页面',
+        value: state.tableData.config?.searchJump,
+        key: 'searchJump',
+        type: 'switch',
+        path: 'config'
+      },
+      {
         label: '操作列按钮下拉',
         value: state.tableData.config?.operateDropdown,
         key: 'operateDropdown',

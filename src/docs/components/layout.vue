@@ -74,7 +74,7 @@
           }
           titleList.value = titles.map((el: any) => ({
             title: el.id, // 标题内容
-            lineIndex: el.getAttribute('data-source-line'), // 标签line id
+            //lineIndex: el.getAttribute('data-source-line'), // 标签line id
             indent: parseInt(el.tagName.replace(/h/gi, '')) // 标签层级
             //height: el.offsetTop // 标签距离顶部距离
           }))
@@ -83,9 +83,10 @@
     })
   }
   const rollTo = (item: any) => {
-    const heading = document.querySelector(
+    /*const heading = document.querySelector(
       `[data-source-line="${item.lineIndex}"]`
-    )
+    )*/
+    const heading = document.getElementById(item.title)
     // 页面跳转
     if (heading) {
       heading.scrollIntoView({ behavior: 'smooth', block: 'start' })

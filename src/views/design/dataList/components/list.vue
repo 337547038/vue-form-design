@@ -1,22 +1,23 @@
 <!-- Created by 337547038 on 通用数据表格页. -->
 <template>
-  <div class="table-list-comm" v-loading="state.loading" ref="container">
+  <div ref="container" v-loading="state.loading" class="table-list-comm">
     <list-tree-side
-      :data="treeData"
-      @node-click="treeNodeClick"
       v-if="treeData.show"
+      :data="treeData"
+      :currentNodeKey="state.currentNodeKey"
+      @node-click="treeNodeClick"
     />
     <div class="table-list">
-      <div class="table-search" v-if="searchData?.list?.length">
+      <div v-if="searchData?.list?.length" class="table-search">
         <Transition name="autoHeight">
           <design-form
             v-show="!state.searchFormDown"
-            is-search
+            ref="searchFormEl"
+            :dict="listDict"
             :disabled="state.loading"
             :form-data="searchData"
-            :dict="listDict"
+            is-search
             requestUrl=""
-            ref="searchFormEl"
             @btn-click="formBtnClick"
           >
             <slot name="searchForm"></slot>
@@ -27,9 +28,9 @@
       <div class="control-btn">
         <div class="btn-group">
           <el-button
+            v-bind="item"
             v-for="item in tableData.controlBtn"
             :key="item.key"
-            v-bind="item"
             @click="controlBtnClick(item)"
           >
             {{ item.label }}
@@ -39,35 +40,35 @@
         <div class="control-other">
           <el-button
             v-if="searchFormExpand"
-            title="展开/收起筛选"
-            size="small"
             circle
             icon="Search"
+            size="small"
+            title="展开/收起筛选"
             @click="state.searchFormDown = !state.searchFormDown"
           />
           <el-popover
             v-if="columnsSetting"
-            placement="bottom-end"
             :width="80"
+            placement="bottom-end"
             trigger="click"
-            @show="popoverShowClick"
             @hide="popoverHideClick"
+            @show="popoverShowClick"
           >
             <template #default>
               <el-checkbox-group v-model="state.columnsCheck">
                 <el-checkbox
-                  :label="item.prop || item.type"
                   v-for="item in tableData.columns"
                   :key="item.prop || item.type"
-                  >{{ item.label }}</el-checkbox
-                >
+                  :label="item.prop || item.type"
+                  >{{ item.label }}
+                </el-checkbox>
               </el-checkbox-group>
             </template>
             <template #reference>
               <el-button
-                size="small"
                 circle
                 icon="SetUp"
+                size="small"
                 title="设置列显示隐藏"
               />
             </template>
@@ -76,34 +77,34 @@
       </div>
       <div
         v-if="columnsFilter?.length"
-        class="table-main"
         :class="{ 'hide-vertical-scroll': isFixedBottomScroll }"
+        class="table-main"
       >
         <el-table
-          :data="state.tableDataList"
           v-bind="tableData.tableProps"
-          @selection-change="selectionChange"
           ref="table"
+          :data="state.tableDataList"
+          @selection-change="selectionChange"
         >
           <template
             v-for="item in columnsFilter"
             :key="item.prop || item.label"
           >
             <el-table-column v-bind="item" config="">
-              <template #header="scope" v-if="item.help">
+              <template v-if="item.help" #header="scope">
                 {{ scope.column.label }}
                 <Tooltip :content="item.help" />
               </template>
-              <template #default="scope" v-if="$slots[item.prop]">
-                <slot :name="item.prop" :row="scope.row" :index="scope.$index">
+              <template v-if="$slots[item.prop]" #default="scope">
+                <slot :index="scope.$index" :name="item.prop" :row="scope.row">
                 </slot>
               </template>
               <template
-                #default="scope"
                 v-else-if="
                   item.config?.tagList &&
                   Object.keys(item.config?.tagList).length
                 "
+                #default="scope"
               >
                 <el-tag
                   :type="item.config?.tagList[scope.row[item.prop]]"
@@ -112,13 +113,13 @@
                   {{ getDictLabel(scope, item) }}
                 </el-tag>
               </template>
-              <template #default="scope" v-else-if="item.config?.dictKey">
+              <template v-else-if="item.config?.dictKey" #default="scope">
                 {{ getDictLabel(scope, item) }}
               </template>
-              <template #default="scope" v-else-if="item.config?.formatter">
+              <template v-else-if="item.config?.formatter" #default="scope">
                 {{ getDictLabel(scope, item, 'formatter') }}
               </template>
-              <template #default="scope" v-else-if="item.prop === '__control'">
+              <template v-else-if="item.prop === '__control'" #default="scope">
                 <div class="table-operate-btn">
                   <template
                     v-for="(btn, index) in operateBtnList"
@@ -128,36 +129,37 @@
                       <el-popconfirm
                         v-if="getOperateVisible(btn, scope.row)"
                         :title="btn.tip || '确定删除该记录?'"
-                        confirm-button-text="确认"
                         cancel-button-text="取消"
+                        confirm-button-text="确认"
                         @confirm="operateBtnClick(btn, scope.row)"
                       >
                         <template #reference>
                           <el-button
-                            size="small"
-                            link
-                            type="primary"
                             v-bind="btn"
-                            >{{ btn.label }}</el-button
-                          >
+                            link
+                            size="small"
+                            type="primary"
+                            >{{ btn.label }}
+                          </el-button>
                         </template>
                       </el-popconfirm>
                     </template>
                     <template v-else>
                       <el-button
+                        v-bind="btn"
                         v-if="getOperateVisible(btn, scope.row)"
                         link
                         size="small"
                         type="primary"
-                        v-bind="btn"
                         @click="operateBtnClick(btn, scope.row)"
-                        >{{ btn.label }}</el-button
-                      >
+                        >{{ btn.label }}
+                      </el-button>
                     </template>
                   </template>
                   <el-dropdown v-if="tableData.config?.operateDropdown">
-                    <el-button size="small" type="primary" link>
-                      更多<el-icon class="el-icon--right">
+                    <el-button link size="small" type="primary">
+                      更多
+                      <el-icon class="el-icon--right">
                         <arrow-down />
                       </el-icon>
                     </el-button>
@@ -170,8 +172,8 @@
                           <el-dropdown-item
                             v-if="getOperateVisible(m, scope.row)"
                             @click="operateBtnClick(m, scope.row)"
-                            >{{ m.label }}</el-dropdown-item
-                          >
+                            >{{ m.label }}
+                          </el-dropdown-item>
                         </template>
                       </el-dropdown-menu>
                     </template>
@@ -182,34 +184,35 @@
           </template>
         </el-table>
       </div>
-      <div class="table-page" v-if="showPage && state.total > state.pageSize">
+      <div v-if="showPage && state.total > state.pageSize" class="table-page">
         <el-pagination
           v-model:currentPage="state.currentPage"
-          :page-sizes="[20, 30, 40, 50]"
           v-model:page-size="state.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          :page-sizes="[20, 30, 40, 50] as any"
           :total="state.total"
+          layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
       </div>
       <div
-        :style="{ height: state.tableScrollMargin }"
         v-if="state.tableScrollMargin"
+        :style="{ height: state.tableScrollMargin }"
       ></div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
   import DesignForm from '../../form/components/form.vue'
   import {
-    reactive,
-    ref,
-    onMounted,
     computed,
     nextTick,
-    onBeforeUnmount
+    onBeforeUnmount,
+    onMounted,
+    reactive,
+    ref,
+    watch
   } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import Tooltip from '../../components/tooltip.vue'
@@ -270,7 +273,8 @@
     searchFormDown: false,
     treeValue: {}, // 侧栏树选中的值
     tableScrollMargin: 0,
-    columnsCheck: []
+    columnsCheck: [],
+    currentNodeKey: ''
   })
   const treeData = computed(() => {
     return props.tableData.treeData || {}
@@ -278,6 +282,10 @@
   // 可折叠查询表单
   const searchFormExpand = computed(() => {
     return props.searchData?.list?.length && props.tableData.config?.expand
+  })
+  // 查询点击跳转
+  const searchJump = computed(() => {
+    return props.tableData.config?.searchJump
   })
   const columnsFilter = computed(() => {
     if (!state.columnsCheck.length) {
@@ -375,7 +383,7 @@
         }
         state.tableDataList = formatRes?.list || formatRes // 兼容下可以不返回list
         setTimeout(() => {
-          fixedBottomScroll()
+          setFixedBottomScroll()
         }, 200) // 加个延时主要是等待列表渲染完，即列表查询区域等，计算才准确。
         state.dict = formatRes.dict || {}
         state.total = formatRes.pageInfo?.total || 0
@@ -529,11 +537,26 @@
       }
     }
   }
+
+  const getParamsJump = () => {
+    const formValue = Object.assign(
+      {},
+      searchFormEl.value?.getValue(true),
+      state.treeValue
+    )
+    const params = Object.assign({}, route.query, formValue || {})
+    router.push({ path: route.path, query: params })
+  }
   const formBtnClick = (type: string) => {
-    if (type === 'submit') {
-      getListData(1)
-    } else if (type === 'reset') {
-      searchClear()
+    if (searchJump.value) {
+      // 带参数跳转
+      getParamsJump()
+    } else {
+      if (type === 'submit') {
+        getListData(1)
+      } else if (type === 'reset') {
+        searchClear()
+      }
     }
   }
   // 侧栏树点击事件
@@ -542,11 +565,17 @@
       console.error(new Error('请设置侧栏树name值'))
       return
     }
+    state.currentNodeKey = val
     state.treeValue = { [treeData.value.name]: val }
-    getListData(1)
+    if (searchJump.value) {
+      // 带参数跳转
+      getParamsJump()
+    } else {
+      getListData(1)
+    }
   }
   // 固定横向滚动条在浏览器底部
-  const fixedBottomScroll = () => {
+  const setFixedBottomScroll = () => {
     if (isFixedBottomScroll.value) {
       nextTick(() => {
         const tableEl = container.value
@@ -606,19 +635,46 @@
   }
   // 列显示隐藏设置收起时，这里可将设置保存于服务端或本地
   const popoverHideClick = () => {}
+  // 监听url参数变化重新请求数据
+  const setSearchValueFormQuery = () => {
+    const routeQuery = route.query
+    if (Object.keys(routeQuery).length) {
+      searchFormEl.value.setValue(routeQuery, true)
+      const { show, name } = treeData.value
+      const val = routeQuery[name]
+      if (show && val) {
+        // 开启树时
+        setTimeout(() => {
+          state.currentNodeKey = isNaN(val) ? val : parseInt(val)
+          state.treeValue = { [treeData.value.name]: val }
+        }, 500)
+      }
+    }
+  }
+  watch(
+    () => route.query,
+    () => {
+      state.currentPage = 1
+      setSearchValueFormQuery()
+      getListData(1)
+    },
+    { deep: true }
+  )
   onMounted(() => {
+    setSearchValueFormQuery() // url带有参数时，先对搜索表单设置
     if (props.autoLoad) {
-      getListData() // 这里不能自动加载数据，需要依赖于tableData各种判断，会出现先于tableData加载完成
+      getListData(1)
+      // 这里不能自动加载数据，需要依赖于tableData各种判断，会出现先于tableData加载完成
     }
     if (isFixedBottomScroll.value) {
-      scrollBox.value.addEventListener('scroll', fixedBottomScroll)
-      window.addEventListener('resize', fixedBottomScroll)
+      scrollBox.value.addEventListener('scroll', setFixedBottomScroll)
+      window.addEventListener('resize', setFixedBottomScroll)
     }
   })
   onBeforeUnmount(() => {
     if (isFixedBottomScroll.value) {
-      scrollBox.value.removeEventListener('scroll', fixedBottomScroll)
-      window.removeEventListener('resize', fixedBottomScroll)
+      scrollBox.value.removeEventListener('scroll', setFixedBottomScroll)
+      window.removeEventListener('resize', setFixedBottomScroll)
     }
   })
   defineExpose({

@@ -263,7 +263,7 @@
     // true则过滤没用的值，即存在当前表单的才合并
     if (filter) {
       for (const key in obj) {
-        if (model.value[key] !== undefined) {
+        if (Object.prototype.hasOwnProperty.call(model.value, key)) {
           model.value[key] = obj[key]
         }
       }
