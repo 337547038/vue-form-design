@@ -338,7 +338,8 @@
       }
     ],
     config: {
-      expand: true
+      expand: true,
+      searchJump: true
     }
   })
   const searchData = ref({

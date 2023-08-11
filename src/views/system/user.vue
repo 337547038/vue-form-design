@@ -84,7 +84,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'status'
+          optionsFun: 'status',
+          transformData: 'string'
         },
         name: 'status',
         item: {
@@ -155,7 +156,7 @@
       },
       { label: '操作', prop: '__control' }
     ],
-    config: { openType: 'dialog' },
+    config: { openType: 'dialog', searchJump: true },
     operateBtn: [
       { label: '编辑', key: 'edit' },
       { label: '删除', key: 'del' }
@@ -179,6 +180,7 @@
     treeData: {
       show: true,
       treeProps: {
+        nodeKey: 'id',
         props: {
           label: 'name'
         }

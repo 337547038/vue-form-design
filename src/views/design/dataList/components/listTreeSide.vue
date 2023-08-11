@@ -13,6 +13,7 @@
         :data="state.treeData"
         default-expand-all
         :highlight-current="true"
+        :current-node-key="currentNodeKey"
         @node-click="nodeClick"
       />
     </div>
@@ -34,6 +35,7 @@
   const props = withDefaults(
     defineProps<{
       data: any
+      currentNodeKey: string | number
     }>(),
     {
       data: () => {

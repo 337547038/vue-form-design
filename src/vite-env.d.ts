@@ -18,8 +18,9 @@ declare module 'vue'
 declare module 'clipboard'
 declare module 'vuedraggable-es'
 declare module 'vite-plugin-pages'
-declare module 'vite-plugin-md'
 declare module 'vite'
+declare module 'pinia'
+declare module 'vite-plugin-doc-preview'
 /*
 declare module 'vuex' {
   type StoreStateType = typeof store.state
