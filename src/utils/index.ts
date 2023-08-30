@@ -1,4 +1,8 @@
-export function debounce<T extends (...args: any[]) => void>(func: T, delay = 500, immediate?: boolean): T {
+export function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  delay = 500,
+  immediate?: boolean
+): T {
   let timerId: any
 
   return function (this: any, ...args: any[]) {
@@ -22,7 +26,7 @@ export function debounce<T extends (...args: any[]) => void>(func: T, delay = 50
 }
 // 时间格式化
 export const dateFormatting = (time: any, cFormat?: string) => {
-  const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+  const format: string = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   // 字符串数字形式的时间戳要转换下
   let newTime = time
   if (/^\d+?$/.test(time)) {
@@ -63,9 +67,9 @@ export function loadScript(src: string) {
 // 随机数字符串
 export const randomString = (len: number) => {
   len = len || 32
-  const str = 'ABCDEFGHIJKMNOPQSTWXYZabcdefghijklmnopqrstwxyz1234567890'
-  let n = ''
-  for (let i = 0; i < len; i++) {
+  const str: string = 'ABCDEFGHIJKMNOPQSTWXYZabcdefghijklmnopqrstwxyz1234567890'
+  let n: string = ''
+  for (let i: number = 0; i < len; i++) {
     n += str.charAt(Math.floor(Math.random() * str.length))
   }
   return n
@@ -81,12 +85,15 @@ export const jsonParseStringify = (val: any) => {
 /**
  * 设置或获取local session storage
  * @param key
- * @param data　有值时set，否则get
+ * @param data 有值时set，否则get
  * @param type local/session默认
  */
-export const getSetStorage = (key: string, data?: string, type = 'session') => {
-  //console.log(key, data)
-  const winType = type === 'session' ? 'sessionStorage' : 'localStorage'
+export const getSetStorage = (
+  key: string,
+  data?: string,
+  type: string = 'session'
+) => {
+  const winType: string = type === 'session' ? 'sessionStorage' : 'localStorage'
   if (data) {
     window[winType].setItem(key, data)
   } else {

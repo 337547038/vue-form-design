@@ -1,10 +1,10 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 // @ts-ignore
 import routesPage from '~pages'
 import { useLayoutStore } from '@/store/layout'
 
 console.log(routesPage)
-const routes = [
+const routes: RouteRecordRaw = [
   {
     path: '/test',
     name: '/test',
