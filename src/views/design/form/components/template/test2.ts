@@ -1,6 +1,6 @@
 import logo from './test2.png'
 export const imgPath = logo
-export const title = '演示test2'
+export const title: string = '演示test2'
 export const formData = {
   list: [
     {
@@ -10,7 +10,7 @@ export const formData = {
       },
       config: {},
       name: 'input',
-      item: {
+      formItem: {
         label: '单行文本'
       }
     },
@@ -37,7 +37,7 @@ export const formData = {
         optionsType: 0
       },
       name: 'radio1667180102980',
-      item: {
+      formItem: {
         label: '单选框组'
       }
     },
@@ -64,7 +64,7 @@ export const formData = {
         optionsType: 0
       },
       name: 'checkbox1667180107698',
-      item: {
+      formItem: {
         label: '多选框组',
         showLabel: false
       }
@@ -93,7 +93,7 @@ export const formData = {
         optionsType: 0
       },
       name: 'select1667180110029',
-      item: {
+      formItem: {
         label: '下拉选择框'
       }
     },
@@ -105,7 +105,7 @@ export const formData = {
       },
       config: {},
       name: 'datePicker1667180115571',
-      item: {
+      formItem: {
         label: '日期选择器'
       }
     },
@@ -116,7 +116,7 @@ export const formData = {
       },
       config: {},
       name: 'switch1667180126483',
-      item: {
+      formItem: {
         label: '开关'
       }
     }

@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7336951",
+      "name": "刷新",
+      "font_class": "refresh",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "1433820",
+      "name": "play",
+      "font_class": "play",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "21151020",
+      "name": "暂停",
+      "font_class": "pause",
+      "unicode": "e65a",
+      "unicode_decimal": 58970
+    },
+    {
+      "icon_id": "2423300",
+      "name": "无数据",
+      "font_class": "empty",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "25964407",
+      "name": "编辑",
+      "font_class": "edit",
+      "unicode": "e65d",
+      "unicode_decimal": 58973
+    },
+    {
+      "icon_id": "34092245",
+      "name": "文件夹",
+      "font_class": "folder",
+      "unicode": "100ff",
+      "unicode_decimal": 65791
+    },
+    {
+      "icon_id": "28550192",
+      "name": "上传",
+      "font_class": "upload",
+      "unicode": "e682",
+      "unicode_decimal": 59010
+    },
+    {
       "icon_id": "13644674",
       "name": "箭头",
       "font_class": "mouse",

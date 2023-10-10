@@ -1,4 +1,4 @@
-<!-- Created by 337547038 -->
+<!-- Created by weiXin:337547038 -->
 <template>
   <el-drawer
     v-model="visible"
@@ -14,16 +14,15 @@
     </template>
     <div v-if="visible" :id="id"></div>
     <div class="dialog-footer">
-      <el-button type="primary" size="small" @click="dialogConfirm">
-        确定
-      </el-button>
+      <el-button type="primary" @click="dialogConfirm"> 确定 </el-button>
     </div>
   </el-drawer>
 </template>
 
 <script setup lang="ts">
   import { ref, nextTick, watch, onMounted, onUnmounted } from 'vue'
-  import { aceEdit } from '../utils'
+  import { onBeforeRouteLeave } from 'vue-router'
+  import { aceEdit } from '@/utils/design'
   const props = withDefaults(
     defineProps<{
       modelValue: boolean
@@ -46,7 +45,7 @@
   }>()
   const editor = ref({})
   const visible = ref(false)
-  watch(
+  const unWatch = watch(
     () => props.modelValue,
     (val: boolean) => {
       visible.value = val
@@ -68,6 +67,9 @@
     emits('update:modelValue', false)
     emits('beforeClose')
   }
+  onBeforeRouteLeave(() => {
+    unWatch() //销毁监听器
+  })
   onMounted(() => {})
   onUnmounted(() => {
     if (Object.keys(editor.value).length !== 0) {

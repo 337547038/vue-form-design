@@ -2,16 +2,15 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl=""
-      deleteUrl=""
-      :searchData="searchData"
-      :tableData="tableData"
+      request-url=""
+      delete-url=""
+      :search-data="searchData"
+      :data="tableData"
     />
   </div>
 </template>
 
 <script setup>
-  // import {useRoute, useRouter} from 'vue-router'
   import { ref } from 'vue'
   const tableListEl = ref()
   const searchData = ref({
@@ -24,7 +23,7 @@
         },
         config: {},
         name: 'userName',
-        item: {
+        formItem: {
           label: '用户名'
         }
       },
@@ -36,7 +35,7 @@
         },
         config: {},
         name: 'ip',
-        item: {
+        formItem: {
           label: '登录IP'
         }
       },
@@ -49,26 +48,9 @@
         },
         config: {},
         name: 'dateTime',
-        item: {
+        formItem: {
           label: '登录时间'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          key: 'submit',
-          type: 'primary'
-        },
-        config: {}
-      },
-      {
-        type: 'button',
-        control: {
-          label: '清空',
-          key: 'reset'
-        },
-        config: {}
       }
     ],
     form: {
@@ -76,7 +58,7 @@
       class: '',
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const tableData = ref({
     columns: [
@@ -87,7 +69,10 @@
       {
         label: '登录状态',
         prop: 'status',
-        config: { dictKey: 'status', tagList: { 1: 'success', 2: 'warning' } }
+        config: {
+          dictKey: 'sys-status',
+          tagList: { 1: 'success', 2: 'warning' }
+        }
       },
       { label: '操作信息', prop: 'remark' },
       {
@@ -97,7 +82,7 @@
       }
     ],
     config: {
-      columnsSetting: false
+      // columnsSetting: false
     }
   })
 </script>

@@ -1,27 +1,29 @@
 # AKList 内容列表
 
 ```html
-<ak-list :tableData="tableData"></ak-list>
+<ak-list :data="tableData"></ak-list>
 ```
 
 ## API
 
 ### Props
 
-| 参数                | 类型                     | 说明                         |
-|-------------------|------------------------|----------------------------|
-| tableData         | object                 | 设计表格配置数据                   |
-| searchData        | object                 | 列表页条件筛选表单数据，同表单的`formData` |
-| beforeRequest     | function(params,route) | 请求列表前参数处理方法，可对请求参数处理       |
-| afterResponse     | function/string        | 请求完成后列表数据处理方法              |
-| beforeDelete      | function(params,route) | 删除请求前事件                    |
-| showPage          | boolean/true           | 是否显示分页信息                   |
-| requestUrl        | string                 | 请求的api接口方法                 |
-| deleteUrl         | string                 | 删除的api接口方法                 |
-| dict              | object                 | 用于匹配的字典数据，一般不设置，从接口获取      |
-| fixedBottomScroll | boolean/true           | 横向滚动条固定在浏览器底部              |
-| autoLoad          | boolean/true           | 初始时是否自动请求加载数据              |
-| treeData          | object                 | 列表左侧栏树数据                   |
+| 参数                | 类型                     | 说明                              |
+|-------------------|------------------------|---------------------------------|
+| data              | object                 | 设计表格配置数据                        |
+| searchData        | object                 | 列表页条件筛选表单数据，同表单的`formData`      |
+| beforeRequest     | function(params,route) | 请求列表前参数处理方法，可对请求参数处理            |
+| afterResponse     | function/string        | 请求完成后列表数据处理方法                   |
+| beforeDelete      | function(params,route) | 删除请求前事件                         |
+| showPage          | boolean/true           | 是否显示分页信息                        |
+| requestUrl        | string                 | 请求的api接口方法                      |
+| deleteUrl         | string                 | 删除的api接口方法                      |
+| dict              | object                 | 用于匹配的字典数据，一般不设置，从接口获取           |
+| fixedBottomScroll | boolean/true           | 横向滚动条固定在浏览器底部                   |
+| autoLoad          | boolean/true           | 初始时是否自动请求加载数据                   |
+| treeData          | object                 | 列表左侧栏树数据                        |
+| delKey            | string                 | 删除标识,默认id                       |
+| query             | object                 | 一些附加的请求参数。也可在`beforeRequest`处添加 |
 
 ### Methods
 
@@ -31,6 +33,7 @@
 | delClick           | 数据删除                                    |
 | table              | 表格方法                                    |
 | setSearchFormValue | 设置查询条件表单初始值。可根据url参数先设置查询表单初始值再加载列表请求方法 |
+| getSearchFormValue | 获取查询条件表单的值                              |
 
 ### Slot
 
@@ -41,14 +44,14 @@
 | searchForm | 位于条件筛选表单内部                       |
 | -          | columns对应的props                  |
 
-### tableData
+### data
 
 | 参数                   | 类型              | 说明                           |
 |----------------------|-----------------|------------------------------|
 | tableProps           | Object          | 表格配置                         |
 | columns              | Array           | 表格列配置                        |
 | controlBtn           | Array           | 列表上方按钮，如新增/删除                |
-| operateBtn           | Array           | 操作拦按钮设置，仅对props='__control'列 |
+| operateBtn           | Array           | 操作栏按钮设置，仅对props='__control'列 |
 | events.beforeRequest | Function        | 同`props.beforeRequest`       |
 | events.afterResponse | Function/string | 同`props.afterResponse`       |
 | events.beforeDelete  | Function 　      | 同`props.beforeDelete`        |

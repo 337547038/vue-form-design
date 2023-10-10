@@ -21,9 +21,13 @@
       </draggable>
     </div>
     <div class="main-body">
-      <headTools @click="headToolClick" type="2" />
+      <head-tools @click="headToolClick" type="2" />
       <div class="main-form design-form">
-        <echarts :type="1" @control-btn-click="controlBtnClick" ref="echartsEl" />
+        <echarts
+          :type="1"
+          @control-btn-click="controlBtnClick"
+          ref="echartsEl"
+        />
       </div>
     </div>
     <div class="sidebar-tools">
@@ -38,10 +42,16 @@
                 <el-input placeholder="字段标识" v-model="current.name" />
               </el-form-item>
               <el-form-item label="图表宽度">
-                <el-input placeholder="图表宽度，数字类型" v-model.number="current.width" />
+                <el-input
+                  placeholder="图表宽度，数字类型"
+                  v-model.number="current.width"
+                />
               </el-form-item>
               <el-form-item label="图表高度">
-                <el-input placeholder="图表高度，数字类型" v-model.number="current.height" />
+                <el-input
+                  placeholder="图表高度，数字类型"
+                  v-model.number="current.height"
+                />
               </el-form-item>
             </template>
           </el-tab-pane>
@@ -87,13 +97,17 @@
       </template>
       <div v-if="state.visible" id="editJson"></div>
       <div class="dialog-footer">
-        <el-button type="primary" size="small" @click="dialogConfirm"> 确定 </el-button>
+        <el-button type="primary" size="small" @click="dialogConfirm">
+          确定
+        </el-button>
       </div>
     </el-drawer>
     <VueFile ref="vueFileEl" />
   </div>
 </template>
-
+<route>
+{meta:{permissions:'none'}}
+</route>
 <script setup lang="ts">
   import echarts from './components/echarts.vue'
   import HeadTools from '../components/headTools.vue'
@@ -101,11 +115,15 @@
   import { reactive, ref, nextTick, onUnmounted, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import VueFile from '../components/vueFile.vue'
-  import { aceEdit, afterResponse, beforeRequest } from '../utils'
+  import {
+    aceEdit,
+    afterResponse,
+    beforeRequest,
+    objToStringify,
+    stringToObj
+  } from '@/utils/design'
   import { ElMessage } from 'element-plus'
   import Draggable from 'vuedraggable-es'
-
-  import { objToStringify, stringToObj } from '@/utils/form'
 
   const router = useRouter()
   const route = useRoute()

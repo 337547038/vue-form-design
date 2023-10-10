@@ -1,43 +1,56 @@
+//Created by 337547038 weixin:337547038
 import request from '../utils/request'
 import form from './form'
 import system from './system'
 import flow from './flow'
+
 const allApi: any = Object.assign(form, system, flow)
-export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
+
+/**
+ * 统一数据请求方法
+ * @param apiKey // 定义的api key或是api请求接口url，也可在url前面带请求的方式
+ * 1.定义好的key，如 'getLogin' => const allApi={getLogin:'/user/login'}
+ * 2.不定义直接为接口url，如 '/user/login'
+ * 3.url前带有请求的method类型，如 'get|/user/login'
+ * @param data // 请求的参数，get时会在request.ts中将参数以params形式提交，即追加到url后面
+ * @param options // 其他参数
+ * 1.改变默认method => {method:'get'}，也可在url前添加，使用｜分隔
+ * 2.改变或添加头部信息 => {headers: { 'Content-Type': 'application/x-www-form-urlencoded' }}
+ * 3.文档数据流时添加信息 => {responseType: 'blob'}
+ * 4.解决apiKey带动态参数时，可添加$标识符 /api/delete/$id => {apiKey:{$id:xx}}
+ */
+export const getRequest = (
+  apiKey: string,
+  data: { [key: string]: any } = {},
+  options: { [key: string]: any } = {}
+) => {
   let url = allApi[apiKey] || apiKey
-  // 解决动态url 如/api/delete/id(id为动态时)
-  // url设置为：/api/delete/$id
-  // options参数设置：options:{apikey:$id:xx}
   if (Object.keys(options.apiKey || {}).length) {
     for (const key in options.apiKey) {
       url = url.replace(key, options.apiKey[key])
     }
   }
+  let method: string = 'POST' // 默认请求方式
+  // 如果url带有｜分隔符，提取｜前面的作为请求method并过滤掉｜前面的
+  if (url.indexOf('|') !== -1) {
+    method = url.split('|')[0]
+    url = url.replace(/.*\|/, '')
+  }
   let obj: any = Object.assign(
     {
       url: '/api/' + url, // 添加个前缀
-      method: 'POST',
+      //url: url, // 添加个前缀
+      method: method,
       data
     },
     options
   )
   // localhost和github演示时使用下面地址
   // 使用node接口时可使用本地ip地址访问或注释下面代码
-  const host = window.location.host
+  const host: string = window.location.host
   if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
-    let id = ''
-    if (url.indexOf('/id') !== -1 && data.id) {
-      id = data.id + ''
-    }
-    if (url.indexOf('/id') !== -1 && data.formId) {
-      id += data.formId
-    }
-    if (url.indexOf('design/list') !== -1 && data.type) {
-      id = data.type
-    }
-    if (url.indexOf('content/list') !== -1 && data.formId) {
-      id = data.formId
-    }
+    const { type = '', id = '', formId = '' } = data
+    let params: string = type + id + formId
     if (
       url.includes('/save') ||
       url.includes('/edit') ||
@@ -47,29 +60,20 @@ export const getRequest = (apiKey: string, data?: any, options: any = {}) => {
       url.includes('/single')
     ) {
       url = 'ok'
+      params = ''
     }
     if (options.method) {
       delete options.method
     }
     obj = Object.assign(
       {
-        url: `./mock/${url}${id}.json`,
-        method: 'GET',
-        params: data
+        url: `./mock/${url}${params}.json`,
+        method: 'GET'
+        //params: data
       },
       options
     )
   }
   return request(obj)
 }
-export const uploadUrl = '/api/' + allApi.upload
-/*export function uploadFiledTinymce(data, url) {
-  return request({
-    url: url || '/upload/single',
-    method: 'post',
-    data,
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-}*/
+export const uploadUrl: string = '/api/' + allApi.upload // el-upload上传地址

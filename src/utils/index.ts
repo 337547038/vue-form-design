@@ -1,3 +1,9 @@
+/**
+ * 防抖
+ * @param func
+ * @param delay
+ * @param immediate
+ */
 export function debounce<T extends (...args: any[]) => void>(
   func: T,
   delay = 500,
@@ -24,7 +30,23 @@ export function debounce<T extends (...args: any[]) => void>(
     }
   } as T
 }
-// 时间格式化
+
+export const throttle = (func: Function, delay: number) => {
+  let timeoutId: ReturnType<typeof setTimeout> | null
+  return function (...args: any[]) {
+    if (!timeoutId) {
+      timeoutId = setTimeout(() => {
+        func.apply(this, args)
+        timeoutId = null
+      }, delay)
+    }
+  }
+}
+/**
+ * 时间格式化
+ * @param time
+ * @param cFormat
+ */
 export const dateFormatting = (time: any, cFormat?: string) => {
   const format: string = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   // 字符串数字形式的时间戳要转换下
@@ -53,7 +75,11 @@ export const dateFormatting = (time: any, cFormat?: string) => {
     return value || 0
   })
 }
-// 动态远程加载script脚本
+
+/**
+ * 动态远程加载script脚本
+ * @param src
+ */
 export function loadScript(src: string) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script')
@@ -64,7 +90,11 @@ export function loadScript(src: string) {
     document.head.appendChild(script)
   })
 }
-// 随机数字符串
+
+/**
+ * 随机数字符串
+ * @param len
+ */
 export const randomString = (len: number) => {
   len = len || 32
   const str: string = 'ABCDEFGHIJKMNOPQSTWXYZabcdefghijklmnopqrstwxyz1234567890'
@@ -75,28 +105,84 @@ export const randomString = (len: number) => {
   return n
 }
 
-export const jsonParseStringify = (val: any) => {
-  if (typeof val === 'object') {
-    return JSON.parse(JSON.stringify(val))
+/**
+ * 获取指定数值区间的随机数
+ * @param min
+ * @param max
+ */
+export function getRandom(min, max) {
+  // +1包括最大值
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+/** 设置 localStorage 添加对时间的控制，hour单位为小时
+ * hour空时使用原始sessionStorage(key,value)，即关闭浏览器过期
+ * hour=0时，使用localStorage，即永不过期
+ * hour>0时localStorage添加时间控制
+ * */
+
+export function setStorage(key: string, data: any, hour?: number | null): void {
+  let newData = data
+  if (typeof data === 'object') {
+    newData = JSON.stringify(data)
+  }
+  if (hour === 0) {
+    window.localStorage.setItem(key, newData)
+  } else if (hour > 0) {
+    const now = new Date()
+    const valueDate: string = JSON.stringify({
+      __value: data,
+      __time: now.setSeconds(now.getSeconds() + hour * 3600)
+    })
+    window.localStorage.setItem(key, valueDate)
   } else {
-    return val
+    window.sessionStorage.setItem(key, newData)
+  }
+}
+
+/**
+ * 获取storage
+ * @param key 保存时的key
+ * @param hour 如果保存时使用了时间，则需要传true
+ * @param expired 指定已过期时返回的值，过期默认返回undefined
+ */
+export const getStorage = (key: string, hour?: boolean, expired?: string) => {
+  let data
+  if (hour) {
+    data = window.localStorage.getItem(key)
+    try {
+      data = JSON.parse(data)
+      if (typeof data === 'object' && data.__value && data.__time) {
+        // 使用了时间的
+        // 在当前时间后，表示没过期
+        if (new Date().getTime() < data.__time) {
+          data = data.__value
+        } else {
+          // 过期了
+          data = expired || undefined
+        }
+      }
+    } catch (e) {
+      /* empty */
+    }
+  } else {
+    //保存时没传时间的，存在session里
+    data = window.sessionStorage.getItem(key)
+  }
+  try {
+    return JSON.parse(data)
+  } catch (e) {
+    return data
   }
 }
 /**
- * 设置或获取local session storage
- * @param key
- * @param data 有值时set，否则get
- * @param type local/session默认
+ * 移除storage
+ * @param key 要移除的key
+ * @param hour set时使用了hour，移除时则传true
  */
-export const getSetStorage = (
-  key: string,
-  data?: string,
-  type: string = 'session'
-) => {
-  const winType: string = type === 'session' ? 'sessionStorage' : 'localStorage'
-  if (data) {
-    window[winType].setItem(key, data)
+export const removeStorage = (key: string, hour?: boolean): void => {
+  if (hour) {
+    window.localStorage.removeItem(key)
   } else {
-    return window[winType].getItem(key)
+    window.sessionStorage.removeItem(key)
   }
 }

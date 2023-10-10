@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
   import { reactive } from 'vue'
-  import { FormData } from '../../types'
+  import type { FormData } from '@/types/form'
   const emits = defineEmits<{
     (e: 'click', value: FormData): void
   }>()
@@ -35,7 +35,7 @@
   }
   const init = () => {
     const template = import.meta.globEager('./template/*.ts')
-    console.log(template)
+    // console.log(template)
     state.list = []
     Object.keys(template).forEach((key: string) => {
       const file: any = template[key]

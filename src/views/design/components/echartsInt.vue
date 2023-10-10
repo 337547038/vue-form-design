@@ -5,6 +5,7 @@
 <script setup lang="ts">
   import { ref, onMounted, nextTick, watch, computed } from 'vue'
   import { debounce } from '@/utils'
+  import { onBeforeRouteLeave } from 'vue-router'
   const props = withDefaults(
     defineProps<{
       option: object
@@ -42,7 +43,7 @@
     myChart.value.setOption(props.option)
     window.onresize = myChart.value
   }, 100)
-  watch(
+  const unWatch = watch(
     () => props,
     () => {
       if (myChart.value) {
@@ -55,6 +56,9 @@
       deep: true
     }
   )
+  onBeforeRouteLeave(() => {
+    unWatch()
+  })
   onMounted(() => {
     nextTick(() => {
       intEcharts()

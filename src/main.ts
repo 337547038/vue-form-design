@@ -8,8 +8,8 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import './assets/scss/element-var.scss'
 import '@/assets/scss/index.scss'
-import AKDesign from './views/design/index'
 import ComComponents from '@/components/index'
+import Directive from '@/directive'
 // 实例化 Pinia
 const pinia = createPinia()
 const app = createApp(App)
@@ -19,8 +19,8 @@ app
     locale: zhCn
   })
   .use(router)
-  .use(AKDesign)
   .use(ComComponents)
+  .use(Directive)
   .mount('#app')
 // 全局注册icon
 // @ts-ignore
