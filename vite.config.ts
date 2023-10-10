@@ -44,6 +44,9 @@ export default defineConfig({
       // 确保外部化处理那些你不想打包进库的依赖2.05/3.02
       // external: ['vue', 'axios', 'vueRouter']
       // external: ['tinymce/tinymce']
+      output: {
+        chunkFileNames: 'js-[name]-[hash].js' // 以_开头放github获取不到，这里统一添加js-
+      }
     }
   },
   server: {
