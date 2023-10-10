@@ -2,7 +2,7 @@
 <template>
   <div class="select-upload">
     <el-input
-      v-if="config.showType === 'input'"
+      v-if="configShowType === 'input'"
       :value="modelValue"
       readonly
       :clearable="true"
@@ -15,7 +15,7 @@
         <el-button @click="open" :disabled="disabled">{{ btnText }} </el-button>
       </template>
     </el-input>
-    <div v-if="config.showType === 'img'" class="select-upload-img">
+    <div v-if="configShowType === 'img'" class="select-upload-img">
       <div class="select-upload-list">
         <div
           class="upload-item"
@@ -32,7 +32,7 @@
       </div>
       <i class="icon-plus" @click="open" :class="{ disabled: disabled }"></i>
     </div>
-    <div class="select-upload-btn" v-else-if="config.showType === 'btn'">
+    <div class="select-upload-btn" v-else-if="configShowType === 'btn'">
       <el-button
         :disabled="disabled"
         v-bind="control"
@@ -87,6 +87,9 @@
 
   const btnText = computed(() => {
     return props.config?.btnText || '选择文件'
+  })
+  const configShowType = computed(() => {
+    return props.config?.showType || 'input'
   })
   const modelValueList = computed(() => {
     if (props.modelValue) {
