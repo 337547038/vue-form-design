@@ -13,7 +13,7 @@
           <span class="tabs-label">
             <span>{{ item.title }}</span>
             <el-icon @click="handleTabsRemove(item, index, $event)"
-            ><Close
+              ><Close
             /></el-icon>
           </span>
         </template>
@@ -24,12 +24,14 @@
       class="clear-tag"
       title="清空全部"
       v-if="tabsViews?.length > 0"
-    ><Close
+      ><Close
     /></el-icon>
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { getStorage } from '@/utils'
+
   interface TabsViews {
     title: string
     path: string
@@ -41,23 +43,13 @@
   import { useRoute, useRouter } from 'vue-router'
 
   const store = useLayoutStore()
-  const props = withDefaults(
-    defineProps<{
-      navList: string[]
-    }>(),
-    {
-      navList: () => {
-        return []
-      }
-    }
-  )
-  /*  const emits = defineEmits<{
-    (e: 'update:modelValue', value: string[]): void
-  }>()*/
 
   const route = useRoute()
   const router = useRouter()
   const activeName = ref()
+  const navList = computed(() => {
+    return getStorage('formMenuList', true)
+  })
   const tabsViews = computed(() => {
     return store?.tabs || []
   })
@@ -96,7 +88,7 @@
     if (!has && route.path !== '/') {
       let title = ''
       // 从菜单导航中提取当前路径对应的标题名称
-      props.navList.forEach((item: any) => {
+      navList.value.forEach((item: any) => {
         if (item.path === route.path) {
           title = item.title
         }

@@ -1,4 +1,4 @@
-<!-- Created by 337547038 -->
+<!-- Created by weiXin:337547038 -->
 <template>
   <el-drawer
     v-model="state.visible"
@@ -24,16 +24,16 @@
           <div class="form-info" v-loading="state.loading">
             <ak-form
               ref="formEl"
-              :formData="formData"
-              :beforeSubmit="beforeSubmit"
-              :afterSubmit="afterSubmit"
+              :data="formData"
+              :before-submit="beforeSubmit"
+              :after-submit="afterSubmit"
               :type="2"
-              requestUrl="getFormContent"
-              editUrl="editFormContent"
+              request-url="getFormContent"
+              edit-url="editFormContent"
             />
             <ak-form
               ref="formOptionsEl"
-              :formData="flowOptionsForm"
+              :data="flowOptionsForm"
               :type="1"
               @change="formChange"
             />
@@ -53,7 +53,7 @@
           <ak-flow :type="1" ref="flowEl" />
         </el-tab-pane>
         <el-tab-pane label="流转记录">
-          <ak-list ref="tableListEl" :tableData="tableData" />
+          <ak-list ref="tableListEl" :data="tableData" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -63,18 +63,8 @@
 <script setup lang="ts">
   import { ref, nextTick, reactive } from 'vue'
   import { getRequest } from '@/api'
-  import { stringToObj } from '@/utils/form'
+  import { stringToObj } from '@/utils/design'
 
-  // const props = withDefaults(
-  //   defineProps<{
-  //     type: 'todo' | 'apply' | 'done'
-  //   }>(),
-  //   {}
-  // )
-
-  // const emits = defineEmits<{
-  //   (e: 'update:modelValue', value: string): void
-  // }>()
   const state = reactive({
     visible: false,
     formId: '',
@@ -107,18 +97,14 @@
       id: obj.flowId
     }
     // 获取设计的流程信息
-    getRequest('designById', params).then((res: any) => {
-      flowEl.value.setValue(stringToObj(res.data.data))
-      // 获取流程表单信息，修改表单需要使用的id
-      state.formId = res.data.source
-      getRequest('designById', { id: res.data.source }).then((res: any) => {
-        formData.value = stringToObj(res.data.data)
-        nextTick(() => {
-          state.loading = false
-        })
-      })
+    getRequest('flowById', params).then((res: any) => {
+      const { flow, form } = res.data
+      flowEl.value.setValue(stringToObj(flow.data))
+      formData.value = stringToObj(form.data)
+      state.loading = false
       // 获取表单填写的内容
-      formEl.value.getData({ formId: state.formId, id: state.id })
+      state.formId = form.id
+      formEl.value.getData({ formId: form.id, id: state.id })
     })
   }
   // 表单相关结束
@@ -130,7 +116,7 @@
         type: 'divider',
         control: {},
         config: {},
-        item: {
+        formItem: {
           label: '审批意见'
         }
       },
@@ -156,7 +142,7 @@
           span: 8
         },
         name: 'type',
-        item: {
+        formItem: {
           label: '快选审批意见'
         }
       },
@@ -167,7 +153,7 @@
         },
         config: {},
         name: 'remark',
-        item: {
+        formItem: {
           label: '审批意见',
           rules: [
             {

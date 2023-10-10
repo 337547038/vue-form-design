@@ -1,8 +1,8 @@
 const express = require('express')
 const sqlQuery = require('./db')
 const router = express.Router()
-
-const getTableNameByFormId = async (formId) => {
+const creatJsonMock = require('./creatJsonMock')
+const getTableNameByFormId = async formId => {
   try {
     const sql = `SELECT tableName FROM \`datasource\` WHERE id = (SELECT source FROM \`design\` WHERE id=${formId})`
     const datasource = await sqlQuery(sql, [])
@@ -29,11 +29,11 @@ router.post('/save', async (req, res) => {
       message: '当前列表未配置有表单数据源，请配置数据源或配置接口url地址'
     })
   }
-  let sql = 'insert into `' + tableName + '` set ?'
+  const sql = 'insert into `' + tableName + '` set ?'
   //const param = Object.assign(query, {})
   // 对应的表没有formId这样插入会报错，这里删除
   delete query.formId
-  sqlQuery(sql, query, res, (result) => {
+  sqlQuery(sql, query, res, result => {
     res.json({
       code: 1,
       data: result,
@@ -79,8 +79,8 @@ router.post('/list', async (req, res) => {
   const sql = `SELECT * FROM \`${tableName}\` ${where} Limit ${start},${pageSize}`
   const countSql = 'select count(id) as num from `' + tableName + '`' + where
   const count = await sqlQuery(countSql)
-  sqlQuery(sql, [], res, (result) => {
-    return res.json({
+  sqlQuery(sql, [], res, result => {
+    const resJson = {
       code: 1,
       data: {
         // dict: dict,
@@ -90,7 +90,9 @@ router.post('/list', async (req, res) => {
         }
       },
       message: '成功'
-    })
+    }
+    res.json(resJson)
+    creatJsonMock(req.originalUrl, resJson, req.body)
   })
 })
 router.post('/delete', async (req, res) => {
@@ -139,15 +141,18 @@ router.post('/id', async (req, res) => {
     })
   }
   const sql = `SELECT * FROM \`${tableName}\` WHERE id=${id}`
-  sqlQuery(sql, [], res, (result) => {
-    return res.json({
+  sqlQuery(sql, [], res, result => {
+    //return res.json()
+    const resJson = {
       code: 1,
       data: {
         result: result[0],
         dict: {}
       },
       message: '成功'
-    })
+    }
+    res.json(resJson)
+    creatJsonMock(req.originalUrl, resJson, req.body)
   })
 })
 
@@ -160,12 +165,12 @@ router.post('/edit', async (req, res) => {
     })
   }
   const tableName = await getTableNameByFormId(query.formId)
-  let sql = 'update `' + tableName + '` set ? where id=?'
+  const sql = 'update `' + tableName + '` set ? where id=?'
   // 这种通用的，没有updateDate字段时会报错
   // Object.assign(query, { updateDate: new Date() })
   delete query.formId
   const param = [query, query.id]
-  sqlQuery(sql, param, res, (result) => {
+  sqlQuery(sql, param, res, result => {
     res.json({
       code: 1,
       data: result,

@@ -1,29 +1,25 @@
 <!-- Created by 337547038 表单设计. -->
 <template>
   <div class="design-container">
-    <form-control
-      :formId="state.formOtherData.source"
+    <drag-control
+      :form-id="state.formOtherData.source"
       @click-check="searchCheckField"
       @click="selectTemplate"
     />
     <div class="main-body">
-      <headTools @click="headToolClick" />
+      <head-tools @click="headToolClick" />
       <div class="main-form" v-loading="state.loading">
-        <div class="empty-tips" v-if="state.formData.list.length === 0">
+        <div class="empty-tips" v-if="state.formData.list?.length === 0">
           从左侧拖拽来添加字段
         </div>
-        <form-design
-          :type="5"
-          :formData="state.formData"
-          :dict="state.formDict"
-        />
+        <ak-form :type="5" :data="state.formData" :dict="state.formDict" />
       </div>
     </div>
     <form-control-attr
       ref="formControlAttrEl"
-      :formData="state.formData.form"
-      :formConfig="state.formData.config"
-      v-model:formOtherData="state.formOtherData"
+      :form-data="state.formData.form"
+      :form-config="state.formData.config"
+      v-model:form-other-data="state.formOtherData"
       @open-dialog="openAceEditDrawer"
     />
     <ace-drawer
@@ -37,10 +33,9 @@
     />
     <vue-file ref="vueFileEl" v-if="!['search'].includes(state.designType)" />
     <el-dialog v-model="state.previewVisible" title="预览" :fullscreen="true">
-      <form-design
-        :form-data="state.formDataPreview"
+      <ak-form
+        :data="state.formDataPreview"
         :dict="state.formDict"
-        :type="1"
         ref="previewForm"
         v-if="state.previewVisible"
       />
@@ -57,32 +52,36 @@
     </el-dialog>
   </div>
 </template>
+<route>
+{meta:{permissions:'none'}}
+</route>
 <script setup lang="ts">
+  import { ref, reactive, provide, onMounted } from 'vue'
   import HeadTools from '../components/headTools.vue'
-  import FormControl from './components/dragControl.vue'
-  import FormDesign from './components/form.vue'
+  import DragControl from './components/dragControl.vue'
   import FormControlAttr from './components/formControlAttr.vue'
   import VueFile from '../components/vueFile.vue'
   import AceDrawer from '../components/aceDrawer.vue'
-  import { ref, reactive, provide, onMounted } from 'vue'
-  import { useDesignFormStore } from '@/store/designForm'
+  import { useDesignStore } from '@/store/design'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { useRoute, useRouter } from 'vue-router'
-  import { afterResponse, beforeRequest, onChange } from '../utils'
   import {
+    afterResponse,
+    beforeRequest,
+    onChange,
     json2string,
     objToStringify,
     string2json,
     stringToObj
-  } from '@/utils/form'
+  } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
-  import { FormData } from '../types'
+  import type { FormData } from '@/types/form'
 
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
-  const store = useDesignFormStore()
+  const store = useDesignStore()
   const router = useRouter()
   const route: any = useRoute().query || {}
   const state = reactive({
@@ -148,7 +147,13 @@
   const headToolClick = (type: string) => {
     switch (type) {
       case 'del':
-        state.formData.list = []
+        state.formData = {
+          list: [],
+          form: {
+            size: 'default'
+          },
+          config: {}
+        }
         store.setActiveKey('')
         store.setControlAttr({})
         break
@@ -232,10 +237,10 @@
   // 将数据保存在服务端
   const saveData = () => {
     // 添加校验，没有选择数据源时则必须要配置接口url
-    const { addUrl, editUrl, requestUrl } = state.formData.config
+    const { submitUrl, editUrl, requestUrl } = state.formData.config
     if (
       !state.formOtherData.source &&
-      (!addUrl || !editUrl || !requestUrl) &&
+      (!submitUrl || !editUrl || !requestUrl) &&
       state.designType !== 'search'
     ) {
       ElMessage.error('请选择数据源或配置接口url地址，否则表单无法提交保存')
@@ -288,11 +293,6 @@
         ElMessage.error(res.message || '保存异常')
         state.loading = false
       })
-    // 清空右侧内容管理菜单存在session的内容，刷新时可重新加载新菜单
-    if (!route.id) {
-      // 新增时
-      window.sessionStorage.removeItem('formMenuList')
-    }
     // 清空右侧栏信息
     store.setActiveKey('')
     store.setControlAttr({})
@@ -396,9 +396,29 @@
   }
   getInitData()
   // 从数据源点创建表单过来时，带有参数source
+  const oneFormCreation = (list: any) => {
+    const temp: any = []
+    list.forEach(item => {
+      temp.push({
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        name: `${item.name}`,
+        formItem: {
+          label: `${item.label}`
+        }
+      })
+    })
+    state.formData.list = temp
+  }
   onMounted(() => {
     if (route.source) {
-      formControlAttrEl.value.getFormFieldBySource(route.source)
+      formControlAttrEl.value.getFormFieldBySource(
+        route.source,
+        oneFormCreation
+      )
     }
   })
 </script>

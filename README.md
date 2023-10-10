@@ -18,6 +18,8 @@ AK-Design 是一个纯前端的`拖拽式`、`可视化`、`低代码`数据可�
 
 如果你有任何建议，请联系我或在评论区留言
 
+**如果你是后端同学，有兴趣和服务器资源，可提供接口服务**
+
 ### 接受需求功能定制(微信:337547038)
 
 ### 演示地址
@@ -89,19 +91,20 @@ https://337547038.github.io/vue-form-design/
 
 ```text
 public
- ├─mock // 模拟数据
+ ├─mock 模拟数据
 src
- ├─api // 数据请求接口
- ├─docs // 使用说明文档
- └─views // 页面
-   ├─design // 表单设计主程序组件
-     ├─components // 公共组件
-     ├─dataList // 列表页设计
-     ├─dataScreen // 数据大屏设计
-     ├─dataSource // 数据源设计
-     ├─flow // 流程设计
-     └─form // 表单设计
-   └─system // 系统框架基本页面，导出vue文件示例
+ ├─api 数据请求接口
+ ├─docs 使用说明文档
+ └─views 页面
+   ├─design 表单设计主程序组件
+     ├─components 公共组件
+     ├─list 列表页设计
+     ├─screen 数据大屏设计
+     ├─datasource 数据源设计
+     ├─flow 流程设计
+     └─form 表单设计
+   ├─system 系统框架基本页面，导出vue文件示例
+   └─task 流程任务
 ```
 
 ### 启动项目
@@ -154,8 +157,8 @@ pnpm dev
 |--------------|---------|
 | node         | 16.15.x |
 | pnpm         | 8.6.x   |
-| vite         | 4.3.x   |
-| vue          | 3.2.x   |
+| vite         | 4.4.x   |
+| vue          | 3.3.x   |
 | element-plus | 2.3.x   |
 
 ### 贡献者

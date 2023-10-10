@@ -2,10 +2,10 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl="roleList"
-      deleteUrl="roleDelete"
-      :searchData="searchData"
-      :tableData="tableData"
+      request-url="roleList"
+      delete-url="roleDelete"
+      :search-data="searchData"
+      :data="tableData"
       @btn-click="listBtnClick"
     />
     <el-dialog
@@ -16,13 +16,13 @@
     >
       <ak-form
         ref="formEl"
-        :formData="formData"
+        :data="formData"
         :dict="dialog.dict"
         :type="dialog.formType"
-        addUrl="roleSave"
-        editUrl="roleEdit"
-        :beforeSubmit="beforeSubmit"
-        :afterSubmit="afterSubmit"
+        submit-url="roleSave"
+        edit-url="roleEdit"
+        :before-submit="beforeSubmit"
+        :after-submit="afterSubmit"
         @btn-click="dialogBtnClick"
       />
     </el-dialog>
@@ -33,7 +33,6 @@
   import { useRouter } from 'vue-router'
   import { ref, nextTick, reactive, markRaw } from 'vue'
   import ContentTree from './components/content.vue'
-  // const route = useRoute()
   const router = useRouter()
   const formEl = ref()
   const tableListEl = ref()
@@ -47,7 +46,7 @@
         },
         config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '角色名称'
         }
       },
@@ -61,35 +60,18 @@
         config: {
           optionsType: 2,
           addAll: '全部',
-          optionsFun: 'status'
+          optionsFun: 'sys-status'
         },
         name: 'status',
-        item: {
+        formItem: {
           label: '状态'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          type: 'primary',
-          key: 'submit'
-        },
-        config: {}
-      },
-      {
-        type: 'button',
-        control: {
-          label: '重置',
-          key: 'reset'
-        },
-        config: {}
       }
     ],
     form: {
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const tableData = ref({
     columns: [
@@ -99,7 +81,7 @@
       {
         label: '状态',
         prop: 'status',
-        config: { dictKey: 'status', tagList: { 1: 'success', 0: 'info' } }
+        config: { dictKey: 'sys-status', tagList: { 1: 'success', 0: 'info' } }
       },
       { label: '操作', prop: '__control' }
     ],
@@ -149,7 +131,7 @@
         },
         config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '角色名称'
         },
         customRules: [
@@ -168,10 +150,10 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'status'
+          optionsFun: 'sys-status'
         },
         name: 'status',
-        item: {
+        formItem: {
           label: '状态'
         }
       },
@@ -184,7 +166,7 @@
           componentName: markRaw(ContentTree)
         },
         name: 'menuId',
-        item: {
+        formItem: {
           label: '菜单权限'
         }
       },
@@ -195,46 +177,16 @@
         },
         config: {},
         name: 'remark',
-        item: {
+        formItem: {
           label: '备注'
         }
-      },
-      {
-        type: 'div',
-        control: {},
-        config: {
-          textAlign: 'center'
-        },
-        list: [
-          {
-            type: 'button',
-            control: {
-              label: '确定',
-              type: 'primary',
-              key: 'submit'
-            },
-            config: {
-              span: 0
-            }
-          },
-          {
-            type: 'button',
-            control: {
-              label: '取消',
-              key: 'none'
-            },
-            config: {
-              span: 0
-            }
-          }
-        ]
       }
     ],
     form: {
       labelWidth: 80,
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const dialog = reactive({
     visible: false,
@@ -290,7 +242,7 @@
   }
   // 点击弹窗取消按钮时
   const dialogBtnClick = (type: string) => {
-    if (type === 'none') {
+    if (type === 'reset') {
       closeResetDialog()
     }
   }

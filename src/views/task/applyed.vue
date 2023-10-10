@@ -3,9 +3,9 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl="flowList"
-      :searchData="searchData"
-      :tableData="tableData"
+      request-url="flowList"
+      :search-data="searchData"
+      :data="tableData"
     />
   </div>
 </template>
@@ -13,7 +13,6 @@
 <script setup>
   import { useRouter } from 'vue-router'
   import { ref } from 'vue'
-  // const route = useRoute()
   const router = useRouter()
   const tableListEl = ref()
   const searchData = ref({
@@ -26,32 +25,15 @@
         },
         config: {},
         name: 'title',
-        item: {
+        formItem: {
           label: '审批标题'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          type: 'primary',
-          key: 'submit'
-        },
-        config: {},
-        name: 'button1682087269238'
-      },
-      {
-        type: 'button',
-        control: {
-          label: '重置'
-        },
-        config: {}
       }
     ],
     form: {
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const tableData = ref({
     columns: [
@@ -88,11 +70,11 @@
     ],
     operateBtn: [
       {
-        label: '修改',
-        click: (row) => {
+        label: '查看',
+        click: row => {
           router.push({
             path: '/task/apply/start',
-            query: { flowId: row.flowId, id: row.id }
+            query: { flowId: row.flowId, id: row.formId }
           })
         }
       },
@@ -100,6 +82,6 @@
         label: '撤回'
       }
     ],
-    config: { requestUrl: 'flowList', expand: true }
+    config: { expand: true }
   })
 </script>

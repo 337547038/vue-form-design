@@ -1,4 +1,4 @@
-<!-- Created by 337547038 -->
+<!-- Created by weiXin:337547038 -->
 <template>
   <el-tree
     ref="treeRef"
@@ -13,6 +13,10 @@
 
 <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue'
+  import { onBeforeRouteLeave } from 'vue-router'
+  import { getRequest } from '@/api'
+  import { flatToTree } from '@/utils/flatTree'
+
   const props = withDefaults(
     defineProps<{
       modelValue?: string
@@ -33,12 +37,11 @@
     emits('update:modelValue', val.join(','))
   }
   const init = () => {
-    const sessionList = window.sessionStorage.getItem('formMenuList')
-    if (sessionList) {
-      treeData.value = JSON.parse(sessionList)
-    }
+    getRequest('menuList', { status: 1 }).then(res => {
+      treeData.value = flatToTree(res.data.list)
+    })
   }
-  watch(
+  const unWatch = watch(
     () => props.modelValue,
     () => {
       if (props.modelValue) {
@@ -46,6 +49,9 @@
       }
     }
   )
+  onBeforeRouteLeave(() => {
+    unWatch() //销毁监听器
+  })
   onMounted(() => {
     init()
   })

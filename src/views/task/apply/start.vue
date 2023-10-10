@@ -5,13 +5,14 @@
       <el-tab-pane label="表单信息">
         <ak-form
           ref="formEl"
-          :formData="formData"
-          :beforeSubmit="beforeSubmit"
-          :afterSubmit="afterSubmit"
+          :data="formData"
+          :after-submit="afterSubmit"
           :type="formType"
-          requestUrl="getFormContent"
-          addUrl="saveFormContent"
-          editUrl="editFormContent"
+          :disabled="!!route.query.id"
+          :params="submitParams"
+          request-url="getFormContent"
+          submit-url="flowSave"
+          edit-url="editFormContent"
         />
       </el-tab-pane>
       <el-tab-pane label="流程图" name="flow" class="flow-box">
@@ -29,12 +30,14 @@
     </el-tabs>
   </div>
 </template>
-
+<route>
+{meta:{permissions:'none'}}
+</route>
 <script setup lang="ts">
-  import { ref, onMounted, nextTick, computed } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getRequest } from '@/api'
-  import { stringToObj } from '@/utils/form'
+  import { stringToObj } from '@/utils/design'
 
   import { useLayoutStore } from '@/store/layout'
   const layoutStore = useLayoutStore()
@@ -49,65 +52,53 @@
     form: {}
   })
   const loading = ref(true)
+  const sourceId = ref()
+  const flowName = ref()
+  const submitParams = computed(() => {
+    return {
+      flow: {
+        flowId: route.query.flowId,
+        sourceId: sourceId.value,
+        id: route.query.id,
+        userId: '', // 当前登录用户id
+        title: `user提交的${flowName.value}审批`,
+        creatTime: new Date()
+      }
+    }
+  })
   const formType = computed(() => {
     if (route.query.id) {
       return 2 // 编辑
     }
     return 1
   })
-  const formId = ref()
   const getInitData = () => {
     const params = {
       id: route.query.flowId
     }
     // 获取设计的流程信息
-    getRequest('designById', params).then((res: any) => {
-      flowEl.value.setValue(stringToObj(res.data.data))
-      // 获取流程表单结构信息
-      formId.value = res.data.source
-      getRequest('designById', { id: res.data.source }).then((res: any) => {
-        formData.value = stringToObj(res.data.data)
-        nextTick(() => {
-          loading.value = false
-        })
-      })
+    getRequest('flowById', params).then((res: any) => {
+      const { flow, form } = res.data
+      flowEl.value.setValue(stringToObj(flow.data))
+      formData.value = stringToObj(form.data)
+      sourceId.value = form.source
+      flowName.value = flow.name
+      loading.value = false
       // 修改时获取表单初始值
       const id = route.query.id
       if (id) {
-        formEl.value.getData({ formId: formId.value, id: id })
+        formEl.value.getData({ formId: form.id, id: id })
       }
     })
   }
   // 表单提交
-  const beforeSubmit = (params: Record<string, any>) => {
-    params.formId = formId.value
-    if (route.query.id) {
-      params.id = route.query.id
-    }
+  /*const beforeSubmit = (params: Record<string, any>) => {
+    // return Object.assign({}, params, submitParams.value)
     return params
-  }
-  const afterSubmit = (type: string, res: any) => {
+  }*/
+  const afterSubmit = (type: string) => {
     if (type === 'success') {
-      if (route.query.id) {
-        // 修改时直接跳转即可
-        router.push({ path: '/task/applyed' })
-        return
-      }
-      // 这里再插入发起的申请记录，这里和提交表单应为同一接口，先拆分处理了
-      const params = {
-        userId: 0, // 当前操作人用户id
-        flowId: route.query.flowId,
-        formId: res.data.insertId, // 保存表单信息的id
-        title: 'user的请假审批',
-        creatTime: new Date()
-      }
-      getRequest('flowSave', params)
-        .then(() => {
-          router.push({ path: '/task/applyed' })
-        })
-        .catch((res: any) => {
-          console.log(res)
-        })
+      router.push({ path: '/task/applyed' })
     } else {
       console.log('提交失败')
     }

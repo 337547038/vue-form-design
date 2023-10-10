@@ -2,20 +2,16 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl=""
-      deleteUrl=""
-      :searchData="searchData"
-      :tableData="tableData"
+      request-url=""
+      delete-url=""
+      :search-data="searchData"
+      :data="tableData"
     />
   </div>
 </template>
 
 <script setup>
-  // import {useRoute, useRouter} from 'vue-router'
   import { ref } from 'vue'
-  // const route = useRoute()
-  // const router = useRouter()
-  // const tableListEl = ref()
   const searchData = ref({})
   const tableData = ref({
     columns: [

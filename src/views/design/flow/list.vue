@@ -2,13 +2,14 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl="designList"
-      deleteUrl="designDelete"
-      :searchData="searchData"
-      :tableData="tableData"
-      :beforeRequest="beforeRequest"
+      request-url="designList"
+      delete-url="designDelete"
+      :search-data="searchData"
+      :data="tableData"
+      :before-request="beforeRequest"
       ><template #sourceName="{ row }">
-        <router-link :to="`/design/form?id=${row.source}`"
+        <router-link
+          :to="`/design/form?id=${row.source}&redirect=/design/flow/list`"
           >{{ row.sourceName }}/{{ row.source }}</router-link
         >
       </template></ak-list
@@ -19,7 +20,6 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { ref } from 'vue'
-  // const route = useRoute()
   const router = useRouter()
   const tableListEl = ref()
   const searchData = ref({
@@ -32,7 +32,7 @@
         },
         config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '流程名称'
         }
       },
@@ -45,35 +45,18 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: ''
+          optionsFun: 'sys-flow'
         },
         name: 'flow',
-        item: {
+        formItem: {
           label: '流程分类'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          type: 'primary',
-          key: 'submit'
-        },
-        config: {}
-      },
-      {
-        type: 'button',
-        control: {
-          label: '重置',
-          key: 'reset'
-        },
-        config: {}
       }
     ],
     form: {
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const tableData = ref({
     columns: [
@@ -84,14 +67,14 @@
         label: '分类',
         prop: 'category',
         config: {
-          dictKey: 'flow'
+          dictKey: 'sys-flow'
         }
       },
       {
         label: '状态',
         prop: 'status',
         config: {
-          dictKey: 'status',
+          dictKey: 'sys-status',
           tagList: {
             0: 'info',
             1: 'success'

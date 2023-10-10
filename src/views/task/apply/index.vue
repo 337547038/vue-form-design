@@ -22,6 +22,7 @@
   import { ref, onMounted, computed } from 'vue'
   import { getRequest } from '@/api'
   import { useRouter } from 'vue-router'
+  import { getStorage } from '@/utils'
 
   const router = useRouter()
 
@@ -35,12 +36,8 @@
     return ''
   }
   const category = computed(() => {
-    const storage = window.localStorage.getItem('akFormDict')
-    let storageDict: { [key: string]: any } = {}
-    if (storage) {
-      storageDict = JSON.parse(storage)
-    }
-    return storageDict.flow || {}
+    const storage = getStorage('akAllDict')
+    return storage['sys-flow'] || {}
   })
   const getListData = () => {
     const params = {

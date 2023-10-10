@@ -63,7 +63,7 @@
     nextTick(() => {
       setTimeout(() => {
         if (articleEl.value) {
-          const anchors = articleEl.value.querySelectorAll('h2,h3')
+          const anchors = articleEl.value.querySelectorAll('h2,h3,h4')
           // 删除标题头尾的空格
           const titles = Array.from(anchors).filter(
             (title: any) => !!title.innerText.trim()
@@ -122,9 +122,9 @@
       to: '/docs/use',
       children: [
         { title: '快速开始', to: '/docs/use-start' },
-        { title: '数据源', to: '/docs/use-dataSource' },
-        { title: 'ak-form', to: '/docs/use-form' },
-        { title: 'ak-list', to: '/docs/use-list' },
+        { title: '数据源', to: '/docs/use-datasource' },
+        { title: 'ak-form配置项手册', to: '/docs/form-option' },
+        { title: 'ak-list配置项手册', to: '/docs/list-option' },
         { title: '可视化数据大屏', to: '/docs/use-screen' }
       ]
     }

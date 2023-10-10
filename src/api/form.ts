@@ -15,5 +15,12 @@ export default {
   getContentList: 'content/list', // 获取表单内容列表
   delFormContent: 'content/delete', // 删除表单内容
   getFormContent: 'content/id', // 获取表单内容
-  upload: 'upload/single' // 默认el-upload上传url，也可单独在设计时填写上传地址
+  upload: 'upload/single', // 默认el-upload上传url，也可单独在设计时填写上传地址
+  importExcel: '', // 导出excel
+  selectUploadAddGroup: 'upload/group/add', // 选择上传文件添加分组
+  selectUploadEditGroup: 'upload/group/edit',
+  selectUploadDelGroup: 'upload/group/del',
+  selectUploadGroupList: 'upload/group/list',
+  selectUploadFileList: 'upload/files/list', //上传文件列表
+  selectUpload: 'upload/batchSplit' //批量分片上传
 }

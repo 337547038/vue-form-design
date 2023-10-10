@@ -63,7 +63,7 @@
       }
     }
     .design-footer {background: rgb(48, 65, 86);display: flex;justify-content: space-between;padding: 0 5px;align-items: center;
-      .center {flex: 2;display: flex;justify-content: center}
+      .center {display: flex;justify-content: center;margin: 0 50px}
       .item {display: flex;align-items: center;margin: 0 10px;
         .label {margin-right: 5px;display: block;white-space: nowrap}
       }
@@ -73,6 +73,7 @@
       }
       .icon {cursor: pointer}
       //.offset{width: 120px;text-align: center;color: red}
+      .control-tip{flex: 2;color: #999;margin: 0 20px;white-space: nowrap;text-overflow: ellipsis;overflow: hidden}
     }
     .el-slider__marks-stop {background: red}
     .no-date {color: #ccc;position: absolute;left: 50%;top: 30%;transform: translateX(-50%);font-size: 20px}
@@ -97,8 +98,6 @@
   .screen-right-menu {position: absolute;z-index: 100;background: #fff;width: 160px;transform: translateY(-50%);
     li {padding: 5px 15px;cursor: pointer;
       &:hover {background: #409eff;color: #fff}
-      &.display{cursor: not-allowed;opacity: .5;
-      &:hover{background: #fff;color: #333}}
     }
   }
 }

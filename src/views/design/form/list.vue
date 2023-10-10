@@ -2,14 +2,18 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl="designList"
-      deleteUrl="designDelete"
-      :searchData="searchData"
-      :tableData="tableData"
-      :beforeRequest="beforeRequest"
+      request-url="designList"
+      delete-url="designDelete"
+      :search-data="searchData"
+      :data="tableData"
+      :before-request="beforeRequest"
     >
       <template #sourceName="{ row }">
-        <div>{{ row.sourceName }}/{{ row.source }}</div>
+        <router-link
+          :to="`/design/datasource?source=${row.source}`"
+          v-if="row.source"
+          >{{ row.sourceName }}</router-link
+        >
       </template>
     </ak-list>
     <el-dialog
@@ -20,12 +24,11 @@
     >
       <ak-form
         ref="formEl"
-        :formData="dialogFormData"
+        :data="dialogFormData"
         :type="2"
-        editUrl="designChange"
-        :afterSubmit="afterSubmit"
-        :beforeSubmit="beforeSubmit"
-        @btn-click="cancelClick"
+        edit-url="designChange"
+        :after-submit="afterSubmit"
+        :btn-click="btnClick"
       />
     </el-dialog>
   </div>
@@ -36,8 +39,7 @@
   import { nextTick, reactive, ref } from 'vue'
   const router = useRouter()
   const dialog = reactive({
-    visible: false,
-    row: {}
+    visible: false
   })
   const formEl = ref()
   const tableListEl = ref()
@@ -47,13 +49,13 @@
       { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '表单名称', width: '150px' },
       /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
-      { prop: 'sourceName', label: '数据源名称/ID', width: '150px' },
-      { prop: 'category', label: '分类', config: { dictKey: 'form' } },
+      { prop: 'sourceName', label: '数据源名称', width: '150px' },
+      { prop: 'category', label: '分类', config: { dictKey: 'sys-form' } },
       {
         prop: 'status',
         label: '状态',
         config: {
-          dictKey: 'status',
+          dictKey: 'sys-status',
           tagList: {
             0: 'info',
             1: 'success'
@@ -74,7 +76,7 @@
       //   config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       // },
       // { prop: 'editName', label: '最后修改' },
-      { label: '操作', prop: '__control', width: '220px', fixed: 'right' }
+      { label: '操作', prop: '__control', width: '250px', fixed: 'right' }
     ],
     controlBtn: [
       {
@@ -88,37 +90,25 @@
       { label: '删除', key: 'del', size: 'small' }
     ],
     operateBtn: [
-      // {
-      //   label: '启用',
-      //   key: 'status',
-      //   visible: '$.status===0',
-      //   click: (row: any) => {
-      //     changeStatus(row, 1)
-      //   }
-      // },
-      // {
-      //   label: '禁用',
-      //   key: 'status',
-      //   visible: '$.status===1',
-      //   click: (row: any) => {
-      //     changeStatus(row, 0)
-      //   }
-      // },
       {
         label: '设置',
         key: 'set',
         click: (row: any) => {
           dialog.visible = true
           nextTick(() => {
-            dialog.row = row
-            formEl.value.setValue(row)
+            formEl.value.setValue({
+              name: row.name,
+              id: row.id,
+              category: row.category,
+              status: row.status
+            })
           })
         }
       },
       {
-        label: '创建列表',
+        label: '一键创建列表',
         click: (row: any) => {
-          router.push({ path: '/design/dataList', query: { form: row.id } })
+          router.push({ path: '/design/list', query: { form: row.id } })
         }
       },
       {
@@ -153,7 +143,7 @@
         },
         config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '表单名称'
         }
       },
@@ -165,7 +155,7 @@
         },
         config: {},
         name: 'sourceName',
-        item: {
+        formItem: {
           label: '数据源名称'
         }
       },
@@ -177,26 +167,11 @@
         },
         config: {
           optionsType: 2,
-          optionsFun: 'form'
+          optionsFun: 'sys-form'
         },
         name: 'category',
-        item: {
+        formItem: {
           label: '分类'
-        }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          key: 'submit',
-          type: 'primary'
-        }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '重置',
-          key: 'reset'
         }
       }
     ],
@@ -205,7 +180,7 @@
       class: '',
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const dialogFormData = ref({
     list: [
@@ -216,7 +191,7 @@
         },
         config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '表单名称'
         },
         customRules: [
@@ -236,10 +211,10 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'form'
+          optionsFun: 'sys-form'
         },
         name: 'category',
-        item: {
+        formItem: {
           label: '分类'
         }
       },
@@ -251,63 +226,13 @@
         },
         options: [],
         config: {
-          optionsType: 1,
-          optionsFun: 'roleList', // 可以为url也可以为api中的key
-          method: 'post',
-          label: 'name', // 指定name为label的值
-          value: 'id', // 指定id为value的值
-          help: '哪些角色可以查看'
-        },
-        name: 'roleId',
-        item: {
-          label: '权限角色'
-        }
-      },
-      {
-        type: 'select',
-        control: {
-          modelValue: '',
-          appendToBody: true
-        },
-        options: [],
-        config: {
           optionsType: 2,
-          optionsFun: 'status'
+          optionsFun: 'sys-status'
         },
         name: 'status',
-        item: {
+        formItem: {
           label: '启用状态'
         }
-      },
-      {
-        type: 'div',
-        control: {},
-        config: {
-          textAlign: 'center'
-        },
-        list: [
-          {
-            type: 'button',
-            control: {
-              label: '修改',
-              type: 'primary',
-              key: 'submit'
-            },
-            config: {
-              span: 0
-            }
-          },
-          {
-            type: 'button',
-            control: {
-              label: '取消',
-              key: 'reset'
-            },
-            config: {
-              span: 0
-            }
-          }
-        ]
       }
     ],
     form: {
@@ -315,20 +240,20 @@
       class: '',
       size: 'default',
       name: 'formDialog'
-    }
+    },
+    config: { submitCancel: true }
   })
   const afterSubmit = (type: string) => {
     if (type === 'success') {
       dialog.visible = false
-      dialog.row = {}
       tableListEl.value.getListData() // 重新拉数据
     }
   }
-  const beforeSubmit = (params: any) => {
+  /*const beforeSubmit = (params: any) => {
     params.id = dialog.row.id
     return params
-  }
-  const cancelClick = (type: string) => {
+  }*/
+  const btnClick = (type: string) => {
     if (type === 'reset') {
       dialog.visible = false
     }

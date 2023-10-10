@@ -8,31 +8,32 @@
       <el-tab-pane label="基础信息" name="info" class="tabs-info">
         <ak-form
           ref="formEl"
-          :formData="formData"
+          :data="formData"
           :type="formType"
-          addUrl="designSave"
-          editUrl="designEdit"
-          requestUrl="designById"
-          :beforeSubmit="beforeSubmit"
-          :afterSubmit="afterSubmit"
-          :afterResponse="afterResponse"
+          submit-url="designSave"
+          edit-url="designEdit"
+          request-url="designById"
+          :before-submit="beforeSubmit"
+          :after-submit="afterSubmit"
+          :after-response="afterResponse"
         />
       </el-tab-pane>
       <el-tab-pane label="审批流程" name="flow">
-        <flow ref="flowEl" />
+        <ak-flow ref="flowEl" />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
-
+<route>
+{meta:{permissions:'none'}}
+</route>
 <script setup lang="ts">
   import { ref, computed, onMounted, nextTick } from 'vue'
-  import Flow from './components/flow.vue'
   import { useRoute, useRouter } from 'vue-router'
-  //import iconfont from '@/components/iconfont.vue'
-  import { objToStringify, stringToObj } from '@/utils/form'
+  import { objToStringify, stringToObj } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
   import { ElMessage } from 'element-plus'
+
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '流程设计' }])
 
@@ -40,7 +41,6 @@
   const flowEl = ref()
   const routeQuery = useRoute()
   const router = useRouter()
-  //const flowData = ref()
   const tabName = ref(routeQuery.query.tabs || 'info')
   const formData = ref({
     list: [
@@ -52,7 +52,7 @@
         },
         config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '流程名称'
         },
         customRules: [
@@ -85,7 +85,7 @@
           }
         },
         name: 'source',
-        item: {
+        formItem: {
           label: '流程表单',
           rules: [
             {
@@ -108,7 +108,7 @@
           optionsType: 2
         },
         name: 'status',
-        item: {
+        formItem: {
           label: '状态'
         }
       },
@@ -123,7 +123,7 @@
           componentName: 'DiyIconfont'
         },
         name: 'icon',
-        item: {
+        formItem: {
           label: '流程图标'
         }
       },
@@ -136,10 +136,10 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'flow'
+          optionsFun: 'sys-flow'
         },
         name: 'category',
-        item: {
+        formItem: {
           label: '所在分组'
         }
       },
@@ -158,7 +158,7 @@
           value: 'id'
         },
         name: 'roleId',
-        item: {
+        formItem: {
           label: '角色权限',
           showLabel: false
         }
@@ -172,7 +172,7 @@
           span: 24
         },
         name: 'remark',
-        item: {
+        formItem: {
           label: '备注说明',
           showLabel: false
         }
@@ -247,7 +247,9 @@
           }
         }
         ElMessage.error(message)
-      } catch (e) {}
+      } catch (e) {
+        /* empty */
+      }
     }
   }
   const getInitData = () => {

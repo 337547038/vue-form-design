@@ -9,7 +9,7 @@ import fs from 'fs'
 
 // 将public下的iconfont.css复制到。直接从public目录导入会报错Assets in public cannot be imported from JavaScript
 fs.createReadStream('./public/static/iconfont/iconfont.json').pipe(
-  fs.createWriteStream('./src/components/iconfont.json')
+  fs.createWriteStream('./src/components/diyIconfont/iconfont.json')
 )
 
 // https://vitejs.dev/config/

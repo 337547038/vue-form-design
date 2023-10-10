@@ -69,6 +69,7 @@ module.exports = {
       },
     ],
     "space-before-function-paren": "off",
+    "no-case-declarations":"off",
 
     "vue/attributes-order": "off",
     "vue/one-component-per-file": "off",

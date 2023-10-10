@@ -1,20 +1,26 @@
 const express = require('express')
 const router = express.Router()
 const sqlQuery = require('./db')
+const creatJsonMock = require('./creatJsonMock')
 router.post('/creat', async (req, res) => {
   const query = req.body
   // 将tableData转换为sql语句创建数据表
   const tableData = query.tableData
   if (tableData.length) {
-    let temp = ['`id` INT(10) NOT NULL AUTO_INCREMENT']
-    tableData.forEach((item) => {
-      let row = [`\`${item.name}\``]
+    const temp = ['`id` INT(10) NOT NULL AUTO_INCREMENT']
+    tableData.forEach(item => {
+      const row = [`\`${item.name}\``]
       if (['INT', 'VARCHAR'].includes(item.type)) {
         row.push(`${item.type}(${item.length})`)
       } else {
         row.push(`${item.type}`)
       }
       item.empty ? row.push('NULL') : row.push('NOT NULL')
+      if (item.default) {
+        item.type === 'DATETIME'
+          ? row.push('DEFAULT current_timestamp()')
+          : row.push(`DEFAULT '${item.default}'`)
+      }
       item.remark ? row.push(`COMMENT '${item.remark}'`) : ''
       temp.push(row.join(' '))
     })
@@ -31,7 +37,7 @@ router.post('/creat', async (req, res) => {
         creatDate: new Date(),
         tableData: JSON.stringify(tableData)
       })
-      sqlQuery(sql, param, res, (result) => {
+      sqlQuery(sql, param, res, result => {
         res.json({
           code: 1,
           data: result,
@@ -56,20 +62,22 @@ router.post('/id', async (req, res) => {
     })
   }
   const sql = `SELECT * FROM \`datasource\` WHERE id=${id}`
-  sqlQuery(sql, [], res, (result) => {
-    let data = result && result[0]
+  sqlQuery(sql, [], res, result => {
+    const data = result && result[0]
     if (data && data.tableData) {
       // 恢复
       data.tableData = JSON.parse(data.tableData)
     }
-    res.json({
+    const resJson = {
       code: 1,
       data: {
         result: data,
         dict: {}
       },
       message: '成功'
-    })
+    }
+    res.json(resJson)
+    creatJsonMock(req.originalUrl, resJson, req.body)
   })
 })
 router.post('/delete', (req, res) => {
@@ -110,8 +118,8 @@ router.post('/list', async (req, res) => {
   const sql = `SELECT category,status,creatDate,creatName,id,name,remark,tableName,updateDate FROM \`datasource\` as d ${where} order by id desc Limit ${start},${pageSize}`
   const countSql = 'select count(id) as num from `datasource`' + where
   const count = await sqlQuery(countSql)
-  sqlQuery(sql, [], res, (result) => {
-    res.json({
+  sqlQuery(sql, [], res, result => {
+    const resJson = {
       code: 1,
       data: {
         list: result,
@@ -120,7 +128,9 @@ router.post('/list', async (req, res) => {
         }
       },
       message: '成功'
-    })
+    }
+    res.json(resJson)
+    creatJsonMock(req.originalUrl, resJson, req.body)
   })
 })
 router.post('/edit', (req, res) => {
@@ -139,7 +149,7 @@ router.post('/edit', (req, res) => {
     { updateDate: new Date() }
   )
   const param = [newQuery, query.id]
-  sqlQuery(sql, param, res, (result) => {
+  sqlQuery(sql, param, res, result => {
     res.json({
       code: 1,
       data: result,

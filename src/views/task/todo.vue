@@ -3,9 +3,9 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl="flowList"
-      :searchData="searchData"
-      :tableData="tableData"
+      request-url="flowList"
+      :search-data="searchData"
+      :data="tableData"
     >
       <template #status="{ row }">
         <el-tag v-if="row.status">{{ row.status }}</el-tag>
@@ -21,11 +21,9 @@
 </template>
 
 <script setup lang="ts">
-  // import {useRoute, useRouter} from 'vue-router'
   import { ref } from 'vue'
   import DrawerCom from './components/drawerCom.vue'
-  // const route = useRoute()
-  // const router = useRouter()
+
   const tableListEl = ref()
   const searchData = ref({
     list: [
@@ -37,31 +35,15 @@
         },
         config: {},
         name: 'title',
-        item: {
+        formItem: {
           label: '审批标题'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          type: 'primary',
-          key: 'submit'
-        },
-        config: {}
-      },
-      {
-        type: 'button',
-        control: {
-          label: '重置'
-        },
-        config: {}
       }
     ],
     form: {
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const tableData = ref({
     columns: [
