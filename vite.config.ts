@@ -45,7 +45,14 @@ export default defineConfig({
       // external: ['vue', 'axios', 'vueRouter']
       // external: ['tinymce/tinymce']
       output: {
-        chunkFileNames: 'js-[name]-[hash].js' // 以_开头放github获取不到，这里统一添加js-
+        chunkFileNames: info => {
+          //[id].vue这种格式会被编译成_id开头的js，在github里获取不到，这里统一添加js
+          if (info.name.indexOf('_') === 0) {
+            return 'assets/js[name]-[hash].js'
+          } else {
+            return 'assets/[name]-[hash].js'
+          }
+        }
       }
     }
   },
