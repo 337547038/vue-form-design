@@ -78,7 +78,7 @@
     if (!groupName.value) {
       ElMessage({ type: 'error', message: '请输入分组名称' })
     } else {
-      getRequest('selectUploadAddGroup', { name: groupName.value })
+      getRequest('chunkUploadAddGroup', { name: groupName.value })
         .then(() => {
           ElMessage({ type: 'success', message: '添加成功' })
           isAddGroup.value = false
@@ -90,7 +90,7 @@
     }
   }
   const groupSave = (obj: { [key: string]: any }) => {
-    getRequest('selectUploadEditGroup', { id: obj.id, name: obj.__newName })
+    getRequest('chunkUploadEditGroup', { id: obj.id, name: obj.__newName })
       .then(() => {
         ElMessage({ type: 'success', message: '修改成功' })
         getList()
@@ -100,7 +100,7 @@
       })
   }
   const groupDel = (id: string | number, index: number) => {
-    getRequest('selectUploadDelGroup', { id: id })
+    getRequest('chunkUploadDelGroup', { id: id })
       .then(() => {
         ElMessage({ type: 'success', message: '删除成功' })
         groupList.value.splice(index, 1) //直接在数据中删除，暂不从接口刷新数据
@@ -121,7 +121,7 @@
   }
   const getList = () => {
     // 每次打开弹窗都会请求，可根据实际情况做缓存
-    getRequest('selectUploadGroupList', {}).then(res => {
+    getRequest('chunkUploadGroupList', {}).then(res => {
       groupList.value = res.data
     })
   }

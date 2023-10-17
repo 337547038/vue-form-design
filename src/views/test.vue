@@ -32,7 +32,7 @@ layout:'hidden'}}
         }
       },
       {
-        type: 'selectUpload',
+        type: 'chunkUpload',
         control: { modelValue: '', disabled: false },
         config: {
           showType: 'input',

@@ -97,8 +97,8 @@
         :disabled="disabledEdit"
         :config="config"
       />
-      <select-upload
-        v-if="data.type === 'selectUpload'"
+      <chunk-upload
+        v-if="data.type === 'chunkUpload'"
         v-model="value"
         :control="control"
         :disabled="disabledEdit"
@@ -183,7 +183,7 @@
   import { debounce } from '@/utils'
   import { useDesignStore } from '@/store/design'
   import UploadFile from './upload.vue'
-  import SelectUpload from './selectUpload/index.vue'
+  import ChunkUpload from './chunkUpload/index.vue'
 
   const props = withDefaults(
     defineProps<{

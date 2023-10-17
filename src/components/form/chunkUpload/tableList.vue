@@ -133,7 +133,7 @@
     return ['jpg', 'gif', 'png', 'jpeg', 'webp'].includes(extension)
   }
   const getList = () => {
-    getRequest('selectUploadFileList', { groupId: props.groupId }).then(res => {
+    getRequest('chunkUploadFileList', { groupId: props.groupId }).then(res => {
       tableData.value = res.data
     })
   }

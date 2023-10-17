@@ -209,7 +209,7 @@ export default [
         config: {}
       },
       {
-        type: 'selectUpload',
+        type: 'chunkUpload',
         label: '选择上传',
         icon: 'upload',
         control: {

@@ -204,7 +204,7 @@
         cancelToken
       }
       currentFile.status = 1 // 正在上传
-      getRequest('selectUpload', formData, config)
+      getRequest('chunkUpload', formData, config)
         .then(() => {
           resolve()
         })
