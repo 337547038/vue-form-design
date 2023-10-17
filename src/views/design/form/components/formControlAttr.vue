@@ -685,14 +685,14 @@
             img: '图片',
             btn: '上传按钮'
           },
-          vShow: ['selectUpload']
+          vShow: ['chunkUpload']
         },
         {
           label: '按钮文本',
           value: config.btnText,
           placeholder: '按钮文本，默认为选择文件',
           path: 'config.btnText',
-          vShow: ['selectUpload'],
+          vShow: ['chunkUpload'],
           vIf: config.showType === 'img'
         },
         {
@@ -700,21 +700,21 @@
           value: config.limit,
           placeholder: '可选择的个数，默认1个',
           path: 'config.limit',
-          vShow: ['selectUpload']
+          vShow: ['chunkUpload']
         },
         {
           label: '接受的文件类型',
           value: config.accept,
           placeholder: '接受的文件类型，input原生属性',
           path: 'config.accept',
-          vShow: ['selectUpload']
+          vShow: ['chunkUpload']
         },
         {
           label: '是否自动上传',
           value: config.auto,
           path: 'config.auto',
           type: 'switch',
-          vShow: ['selectUpload']
+          vShow: ['chunkUpload']
         },
         {
           label: '帮助信息',
