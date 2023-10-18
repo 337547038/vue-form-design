@@ -182,6 +182,7 @@
        // eslint-disable-next-line no-irregular-whitespace
        　 // todo 当表单内容字段比较少，所需值从列表数据就可以获取
        // eslint-disable-next-line no-irregular-whitespace
+       // eslint-disable-next-line no-irregular-whitespace
        　　// formEl.value.setValue(row)
           formEl.value.getData({ id: row.id })
         })

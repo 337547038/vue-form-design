@@ -40,6 +40,7 @@ export interface FormData {
     editUrl?: string // 编辑保存
     addLoad?: boolean
     expand?: boolean // 用于设置筛选条件默认展开/收起状态
+    submitCancel?: boolean | string[]
   }
   events?: {
     beforeRequest?: Function

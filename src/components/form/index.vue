@@ -220,7 +220,7 @@
   // 设置全局事件结束
   const resultDict = ref({})
   // 处理表单值开始
-  const model = ref<any>({})
+  const model = ref({})
   // 获取表单初始model值
   const getInitModel = () => {
     const obj = {}
@@ -424,7 +424,7 @@
       return
     }
     getRequest(requestUrl, newParams2 ?? newParams)
-      .then(res => {
+      .then((res: { data: any }) => {
         // console.log(res)
         loading.value = false
         const result = res.data
@@ -502,7 +502,7 @@
           .then((res: any) => {
             afterSubmit('success', res)
           })
-          .catch(res => {
+          .catch((res: any) => {
             afterSubmit('fail', res)
           })
       } else {

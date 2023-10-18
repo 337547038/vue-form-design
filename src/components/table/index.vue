@@ -351,7 +351,7 @@
       return btn // 不是数字时，0长度
     }
     // 过滤掉没有权限的
-    const filterBtn = btn.filter(item => {
+    const filterBtn = btn.filter((item: { permission: string }) => {
       if (item.permission) {
         return permission(item.permission)
       } else {
@@ -424,7 +424,7 @@
       ...newData
     }
     getRequest(getUrl, params)
-      .then(res => {
+      .then((res: { data: any }) => {
         let formatRes: any = res.data
         const afterResponse = props.data.events?.afterResponse
         if (typeof afterResponse === 'string' && afterResponse) {
@@ -498,7 +498,7 @@
         ElMessage.success(res.message || '删除成功')
         getListData() // 请求列表数据
       })
-      .catch(res => {
+      .catch((res: { message: any }) => {
         state.loading = false
         ElMessage.error(res.message || '删除失败')
       })

@@ -36,6 +36,7 @@ export const throttle = (func: Function, delay: number) => {
   return function (...args: any[]) {
     if (!timeoutId) {
       timeoutId = setTimeout(() => {
+        // @ts-ignore
         func.apply(this, args)
         timeoutId = null
       }, delay)
@@ -110,7 +111,7 @@ export const randomString = (len: number) => {
  * @param min
  * @param max
  */
-export function getRandom(min, max) {
+export function getRandom(min: number, max: number) {
   // +1包括最大值
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
@@ -127,7 +128,7 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
   }
   if (hour === 0) {
     window.localStorage.setItem(key, newData)
-  } else if (hour > 0) {
+  } else if (hour && hour > 0) {
     const now = new Date()
     const valueDate: string = JSON.stringify({
       __value: data,
@@ -146,7 +147,7 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
  * @param expired 指定已过期时返回的值，过期默认返回undefined
  */
 export const getStorage = (key: string, hour?: boolean, expired?: string) => {
-  let data
+  let data: any
   if (hour) {
     data = window.localStorage.getItem(key)
     try {

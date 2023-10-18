@@ -321,7 +321,17 @@
     return result
   }
 
-  const formValueChange = ({ key, label, model, value }) => {
+  const formValueChange = ({
+    key,
+    label,
+    model,
+    value
+  }: {
+    key: string
+    label: string
+    model: any
+    value: string
+  }) => {
     if (key === 'contentList') {
       model.path = '/design/list/content/' + value
       model.name = label

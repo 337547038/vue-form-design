@@ -17,9 +17,9 @@
   import { ref, markRaw, nextTick } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import CodeCom from './components/code.vue'
-  import { ElMessage } from 'element-plus'
+  //import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
-  import { getStorage, setStorage } from '@/utils'
+  import { setStorage } from '@/utils'
   import { getRequest } from '@/api'
   import { flatToTree } from '@/utils/flatTree.ts'
 
@@ -92,8 +92,8 @@
     return new Promise(resolve => {
       getRequest('userMenuList', { status: 1 }).then((res: any) => {
         const list = res.data.list || []
-        const resources = [] // 提取所有path作为权限判断依据
-        const menuList = [] // 过滤掉btn类型的菜单
+        const resources: any[] = [] // 提取所有path作为权限判断依据
+        const menuList: any[] = [] // 过滤掉btn类型的菜单
         list.forEach((item: { [key: string]: any }) => {
           if (item.path) {
             resources.push(item.path)
@@ -106,7 +106,7 @@
         const navList = flatToTree(menuList)
         setStorage('formMenuList', navList, 0) // 用于提取完整的面包导航和供左侧栏使用
         setStorage('resources', resources, 0) // 用于权限判断
-        resolve()
+        resolve({})
       })
     })
   }
