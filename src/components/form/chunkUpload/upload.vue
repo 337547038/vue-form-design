@@ -25,7 +25,7 @@
       <span class="progress">{{ getStatusProgress(item) }}</span>
       <span
         class="speed-time"
-        v-if="(item.status === 1) & item.speed && item.remainingTime"
+        v-if="(item.status === 1) & !!item.speed && !!item.remainingTime"
         >{{ item.speed }}/s {{ item.remainingTime }}</span
       >
       <i
@@ -233,11 +233,13 @@
       const remainingTime = (totalSize - hasProgress) / speed
       const minutes = Math.floor(remainingTime / 60)
       const seconds = Math.floor(remainingTime - minutes * 60)
-      currentFile.remainingTime = minutes
-        ? minutes + '分'
-        : '' + seconds
-        ? seconds + '秒'
-        : ''
+      let time = ''
+      if (minutes) {
+        time = `${minutes}分${seconds}秒`
+      } else {
+        time = `${seconds}秒`
+      }
+      currentFile.remainingTime = time
     },
     1000
   )
