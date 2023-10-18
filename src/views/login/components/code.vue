@@ -2,7 +2,7 @@
 <template>
   <div>
     <el-input :placeholder="placeholder" v-model="value" />
-    <img src="../../../assets/img/createCode.gif" class="img" />
+    <img src="../../../assets/img/createCode.gif" class="img" alt="" />
   </div>
 </template>
 

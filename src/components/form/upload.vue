@@ -31,7 +31,7 @@
   import { ElMessage } from 'element-plus'
   const props = withDefaults(
     defineProps<{
-      control: object
+      control: any
       disabled: boolean
       config: any
       modelValue: any
@@ -42,7 +42,7 @@
     (e: 'update:modelValue', val: any): void
   }>()
 
-  const fileList = computed<any>(() => {
+  const fileList = computed(() => {
     //const imgVal = formProps.value.model[props.data.name]
     const imgVal = props.modelValue
     if (imgVal && typeof imgVal === 'string') {

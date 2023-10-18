@@ -76,13 +76,13 @@
     (e: 'update:modelValue', val: any): void
   }>()*/
 
-  const tempFileList = ref<TempFileList[]>([])
+  const tempFileList = ref([])
   const startTime = ref()
   const chunkSize = 20 * 1024 * 1024 // 每片大小
   const maxParallelUploads = 3 //同时上传并发数
 
   const getStatusProgress = (obj: TempFileList) => {
-    const statusDict = {
+    const statusDict: any = {
       0: '等待上传',
       1: '正在上传',
       2: '上传失败',
@@ -100,12 +100,6 @@
    * 手动点击确认上传
    */
   const confirmUpload = async () => {
-    /*for (let i = 0; i < tempFileList.value.length; i++) {
-      const obj = tempFileList.value[i]
-      if (obj.status === 0) {
-        await axiosUpload(obj)
-      }
-    }*/
     const queue = tempFileList.value.filter(
       (item: TempFileList) => item.status === 0
     ) // 创建一个文件队列
@@ -135,7 +129,7 @@
       const data = file[i]
       let src = ''
       if (/image\/\w+/.test(data.type)) {
-        src = getObjectURL(data)
+        src = getObjectURL(data) || ''
       }
       tempFileList.value.push({
         size: unitFormat(data.size), // 大小
@@ -154,7 +148,7 @@
       await confirmUpload()
     }
   }
-  let cancelToken
+  let cancelToken: any
   const axiosUpload = async (currentFile: TempFileList) => {
     const file: File = currentFile.file
     const chunkCount = Math.ceil(file.size / chunkSize) // 总片数
@@ -206,14 +200,14 @@
       currentFile.status = 1 // 正在上传
       getRequest('chunkUpload', formData, config)
         .then(() => {
-          resolve()
+          resolve({})
         })
-        .catch(res => {
+        .catch((res: any) => {
           switch (res.code) {
             case 2:
               //拦截处设置了只有code=1才正常
               currentFile.status = 4 // 上传成功
-              resolve()
+              resolve(res)
               break
             case 'ERR_CANCELED':
               // 手动取消上传
@@ -312,7 +306,7 @@
       //fileReader.readAsBinaryString(file)
       loadNextChunk()
       fileReader.onload = function (e) {
-        spark.append(e.target.result)
+        spark.append(e.target?.result)
         if (currentChunk < chunkCount) {
           currentChunk++
           loadNextChunk()

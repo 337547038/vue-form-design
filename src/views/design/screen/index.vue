@@ -72,7 +72,7 @@
   } from './types'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
-  import { getGlobalData, getInitData } from './getData'
+  import { getInitData } from './getData'
   import { removeUnit } from './utils'
   import RightMenu from './components/rightMenu.vue'
   import { randomString } from '@/utils'

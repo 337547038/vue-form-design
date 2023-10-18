@@ -113,7 +113,7 @@
   const props = withDefaults(
     defineProps<{
       preview: boolean
-      data: object
+      data: any
       updatePosition: (
         index: number,
         data: UpdatePosition,
@@ -205,7 +205,7 @@
    * 根据条件添加临时选区
    * @param position
    */
-  const tempRectAdd = position => {
+  const tempRectAdd = (position: any) => {
     const dataList = props.data.list
     let hasIndex = -1
     dataList.forEach((item: ScreenData, index: number) => {
@@ -290,7 +290,7 @@
       return false
     }
 
-    function isRectOverlap(rect1) {
+    function isRectOverlap(rect1: any) {
       // 计算两个矩形的左上角和右下角坐标
       const rect1Left = removeUnit(rect1.left)
       const rect1Top = removeUnit(rect1.top)

@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
   import { computed, inject } from 'vue'
-  import type { NodeList, EmitsEvent } from '../types'
+  import type { NodeList, EmitsEvent } from './types'
   import Popover from './popover.vue'
   import { nodeTypeName, userTypeList } from './dict'
 

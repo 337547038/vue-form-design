@@ -85,7 +85,7 @@
 
 <script lang="ts" setup>
   import { ref, reactive, computed } from 'vue'
-  import type { NodeList } from '../types'
+  import type { NodeList } from './types'
   import { userTypeList } from './dict'
   // const emits = defineEmits<{
   //   (e: 'confirm', val: any): void

@@ -77,7 +77,7 @@
   )
   const emits = defineEmits<{
     (e: 'checkedChange', val: any): void
-    (e: 'update:modelValue', val: FileList): void
+    (e: 'update:modelValue', val: any): void
   }>()
 
   const tableData = ref([])
@@ -95,7 +95,7 @@
   )
 
   const checkedListCheckbox = computed(() => {
-    return checkedList.value.map(item => item.fileUrl)
+    return checkedList.value.map((item: { fileUrl: any }) => item.fileUrl)
   })
   // 表格勾选
   const radioChange = (row: any) => {
@@ -130,12 +130,14 @@
   }
   const fileIsImg = (url: string) => {
     const extension = url.split('.')?.pop()?.toLowerCase()
-    return ['jpg', 'gif', 'png', 'jpeg', 'webp'].includes(extension)
+    return ['jpg', 'gif', 'png', 'jpeg', 'webp'].includes(extension as string)
   }
   const getList = () => {
-    getRequest('chunkUploadFileList', { groupId: props.groupId }).then(res => {
-      tableData.value = res.data
-    })
+    getRequest('chunkUploadFileList', { groupId: props.groupId }).then(
+      (res: { data: any }) => {
+        tableData.value = res.data
+      }
+    )
   }
   getList()
   onBeforeUnmount(() => {

@@ -354,7 +354,10 @@
       }
     })
     //先按组排序
-    layerList.value = temp.sort(function (a, b) {
+    layerList.value = temp.sort(function (
+      a: { groupId: number; icon: string },
+      b: { groupId: number; icon: any }
+    ) {
       if (a.groupId < b.groupId) {
         return -1
       } else if (a.groupId > b.groupId) {

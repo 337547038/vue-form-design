@@ -37,7 +37,7 @@
     emits('update:modelValue', val.join(','))
   }
   const init = () => {
-    getRequest('menuList', { status: 1 }).then(res => {
+    getRequest('menuList', { status: 1 }).then((res: any) => {
       treeData.value = flatToTree(res.data.list)
     })
   }

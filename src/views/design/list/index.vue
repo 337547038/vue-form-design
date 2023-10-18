@@ -883,7 +883,7 @@
       },
       type: 1 // 只获取表单的
     }
-    getRequest('designList', params).then(res => {
+    getRequest('designList', params).then((res: { data: { list: any } }) => {
       //console.log('获取列表数据源', res)
       state.formList = res.data.list
     })
@@ -891,13 +891,15 @@
   // 根据所选择的表单获取当前设计的所有字段
   const getFormField = (id: number, callback?: (list: any) => void) => {
     state.formFieldList = []
-    getRequest('designById', { id: id }).then(res => {
-      //console.log('获取当前数据下所有字段')
-      const content = stringToObj(res.data.data)
-      //console.log('content', content)
-      filterFiled(content)
-      callback && callback(content.list)
-    })
+    getRequest('designById', { id: id }).then(
+      (res: { data: { data: string } }) => {
+        //console.log('获取当前数据下所有字段')
+        const content = stringToObj(res.data.data)
+        //console.log('content', content)
+        filterFiled(content)
+        callback && callback(content.list)
+      }
+    )
   }
   const excludeType = [
     'txt',
@@ -963,7 +965,7 @@
   }
   // 修改时获取初始数据
   const getInitData = (id: number) => {
-    getRequest('designById', { id: id }).then(res => {
+    getRequest('designById', { id: id }).then((res: { data: any }) => {
       const result = res.data
       state.tableData = stringToObj(result.listData) // 列表数据
       state.searchData = stringToObj(result.data) // 搜索表单数据
@@ -988,7 +990,7 @@
         width: '70px'
       }
     ]
-    list.forEach(item => {
+    list.forEach((item: { name: any; formItem: { label: any } }) => {
       temp.push({
         prop: item.name,
         label: item.formItem?.label

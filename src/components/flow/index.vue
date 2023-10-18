@@ -17,7 +17,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, provide } from 'vue'
   import { randomString } from '@/utils'
-  import type { NodeList, EmitsEvent } from '../types'
+  import type { NodeList, EmitsEvent } from './types'
   import FlowGroup from './flowGroup.vue'
   import Drawer from './drawer.vue'
   // import { useRoute } from 'vue-router'

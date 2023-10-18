@@ -36,7 +36,7 @@
     check.splice(index, 1)
     clearClick(check)
   }
-  const clearClick = (list?: FileList) => {
+  const clearClick = (list?: any) => {
     emits('update:modelValue', list || [])
   }
 </script>

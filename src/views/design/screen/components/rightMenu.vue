@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, reactive, ref } from 'vue'
+  import { computed, ref } from 'vue'
   import type { Contextmenu2 } from '../types'
 
   const emits = defineEmits<{
@@ -30,7 +30,7 @@
     if (!['tempRect', 'group'].includes(type)) {
       type = 'single'
     }
-    const include = {
+    const include: any = {
       tempRect: [
         'merge',
         'left',

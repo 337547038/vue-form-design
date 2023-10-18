@@ -10,7 +10,7 @@ export const getInitData = (id: string | number) => {
     }
     // 获取初始表单数据
     getRequest('designById', { id: id })
-      .then(res => {
+      .then((res: { data: any }) => {
         const result = res.data
         const resultData = stringToObj(result.data)
         if (resultData.config?.style) {
@@ -30,11 +30,17 @@ export const getInitData = (id: string | number) => {
       })
   })
 }
+// @ts-ignore
 export const getGlobalData = ({
   requestUrl,
   afterResponse,
   beforeRequest,
   method
+}: {
+  requestUrl: string
+  afterResponse: any
+  beforeRequest: any
+  method: string
 }) => {
   return new Promise((resolve, reject) => {
     if (!requestUrl) {

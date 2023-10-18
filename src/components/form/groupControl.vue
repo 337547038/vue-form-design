@@ -144,19 +144,19 @@
   const formProps = inject(constFormProps, {}) as any
   //按钮点击事件
   const injectBtnEvent = inject(constFormBtnEvent)
-  const props = withDefaults(
+  withDefaults(
     defineProps<{
       element: FormList
       active?: string // 设计时是当前选中的name
     }>(),
     {
-      data: () => {
+      /*data: () => {
         return []
-      }
+      }*/
     }
   )
   const emits = defineEmits<{
-    (e: 'groupClick', obj: FormList, type: string): void
+    (e: 'groupClick', obj: FormList, type?: string): void
     (e: 'changeStatus', status: boolean): void
   }>()
   /**

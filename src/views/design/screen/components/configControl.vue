@@ -377,7 +377,11 @@
   // ---------------------大屏配置结束---------------------
   const positionProperty = computed(() => {
     if (Object.keys(current.value).length) {
-      const { config = {}, position, type }: { config: any } = current.value
+      const {
+        config = {},
+        position,
+        type
+      }: { config: any; position: any; type: any } = current.value
       return [
         {
           type: 'group',

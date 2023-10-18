@@ -80,7 +80,7 @@
         }
       }
       getRequest('upload', params, options)
-        .then(res => {
+        .then((res: { data: { code: number; path: unknown } }) => {
           // console.log(res)
           // console.log(res.data.path)
           if (res.data.code === 1) {
@@ -132,14 +132,14 @@
         }
       }
       getRequest('upload', params, options)
-        .then(res => {
+        .then((res: { data: { code: number; path: any; message: any } }) => {
           if (res.data.code === 1) {
             callback(res.data.path, attr) // 上传成功，在成功函数里填入图片路径
           } else {
             ElMessage.error(res.data?.message)
           }
         })
-        .catch(res => {
+        .catch((res: { data: { message: any } }) => {
           ElMessage.error(res.data?.message)
         })
     }

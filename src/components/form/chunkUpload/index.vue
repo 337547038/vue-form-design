@@ -93,7 +93,7 @@
   })
   const modelValueList = computed(() => {
     if (props.modelValue) {
-      const temp = []
+      const temp: { fileUrl: string }[] = []
       const valueList = props.modelValue.split(',')
       valueList.forEach((item: string) => {
         temp.push({
@@ -119,7 +119,7 @@
     selectDialogEl.value.open()
   }
   const confirmClick = (val: FileList) => {
-    const string = val.map(item => item.fileUrl)
+    const string = val.map((item: { fileUrl: any }) => item.fileUrl)
     console.log('confirmClick', string)
     emits('update:modelValue', string.join(','))
   }

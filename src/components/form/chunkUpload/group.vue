@@ -84,7 +84,7 @@
           isAddGroup.value = false
           getList()
         })
-        .catch(res => {
+        .catch((res: { message: any }) => {
           ElMessage({ type: 'error', message: res.message })
         })
     }
@@ -95,7 +95,7 @@
         ElMessage({ type: 'success', message: '修改成功' })
         getList()
       })
-      .catch(res => {
+      .catch((res: { message: any }) => {
         ElMessage({ type: 'error', message: res.message })
       })
   }
@@ -105,7 +105,7 @@
         ElMessage({ type: 'success', message: '删除成功' })
         groupList.value.splice(index, 1) //直接在数据中删除，暂不从接口刷新数据
       })
-      .catch(res => {
+      .catch((res: { message: string }) => {
         ElMessage({ type: 'error', message: res.message })
       })
   }
@@ -121,7 +121,7 @@
   }
   const getList = () => {
     // 每次打开弹窗都会请求，可根据实际情况做缓存
-    getRequest('chunkUploadGroupList', {}).then(res => {
+    getRequest('chunkUploadGroupList', {}).then((res: { data: any }) => {
       groupList.value = res.data
     })
   }
