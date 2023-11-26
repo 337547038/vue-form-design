@@ -5,7 +5,8 @@
       <ak-form
         :after-submit="afterSubmit"
         :data="formData"
-        submit-url="system/user/login"
+        submit-url="loginSubmit"
+        :beforeSubmit="beforeSubmit"
       />
     </div>
   </div>
@@ -26,6 +27,7 @@
   const useStore = useLayoutStore()
   const router = useRouter()
   const route = useRoute()
+  const codeId = ref()
   const formData = ref({
     list: [
       {
@@ -36,7 +38,7 @@
           placeholder: '请输入登录账号'
         },
         config: {},
-        name: 'userName',
+        name: 'username',
         formItem: { label: '用户名', showLabel: true },
         customRules: [
           { type: 'required', message: '请输入登录账号', trigger: 'blur' }
@@ -58,7 +60,13 @@
       },
       {
         type: 'component',
-        control: { modelValue: '1463', placeholder: '请输入验证码' },
+        control: {
+          modelValue: '1463',
+          placeholder: '请输入验证码',
+          onFocus: (val: string) => {
+            codeId.value = val
+          }
+        },
         config: { componentName: markRaw(CodeCom) },
         name: 'code',
         formItem: { label: '验证码', showLabel: true },
@@ -68,12 +76,17 @@
       },
       {
         type: 'button',
-        control: { label: '保存', type: 'primary', key: 'submit' }
+        control: { label: '登录', type: 'primary', key: 'submit' }
       }
     ],
     form: { size: 'default' },
     config: {}
   })
+  const beforeSubmit = (params: any) => {
+    params.codeId = codeId.value //添加验证码加密id
+    console.log('beforeSubmit', params)
+    return params
+  }
   const afterSubmit = (type: string, res: any) => {
     if (type === 'success') {
       // 统一方法保存token

@@ -271,6 +271,25 @@
         formItem: { label: '状态' }
       },
       {
+        type: 'radio',
+        control: { modelValue: 1 },
+        options: [
+          {
+            label: "显示",
+            value: "1"
+          },
+          {
+            label: "隐藏",
+            value: "0"
+          }
+        ],
+        config: {
+          optionsType: 0
+        },
+        name: 'navShow',
+        formItem: { label: '导航显示' }
+      },
+      {
         type: 'textarea',
         control: {
           modelValue: ''
