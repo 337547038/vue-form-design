@@ -19,5 +19,7 @@ export default {
   userEdit: 'system/user/edit',
   userList: 'system/user/list',
   userDelete: 'system/user/delete',
-  userMenuList: 'system/menu/list' // 当前登陆用户的菜单权限列表
+  userMenuList: 'system/menu/list', // 当前登陆用户的菜单权限列表
+  getCaptcha: 'captcha/get', //获取图片验证码
+  loginSubmit: 'system/user/login' //登录
 }
