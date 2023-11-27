@@ -14,7 +14,7 @@
     <div class="main-box">
       <head-tools @click="headToolsClick" />
       <screen-design
-        :preview="preview"
+        :preview="preview as boolean"
         :data="screenData"
         :update-position="updatePosition"
         :screenContextmenu="screenContextmenu"
@@ -327,7 +327,7 @@
   const screenContextmenu = (data: Contextmenu2) => {
     rightMenuEl.value.open(data)
   }
-  const rightMenuClick = (key: string, data: Contextmenu2) => {
+  const rightMenuClick = (key: string, data: any) => {
     console.log(key, data)
     const list = screenData.value.list
     const currentData = list[data.activeIndex]

@@ -114,7 +114,7 @@
 
 <style lang="scss" scoped>
   .login {
-    background-color: #72767b;
+    background: url(../../assets/img/login-bg.png) no-repeat center center;
     width: 100vw;
     height: 100vh;
     display: flex;

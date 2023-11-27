@@ -63,7 +63,8 @@ export default defineConfig({
     open: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:8089',
+        //target: 'http://localhost:3001',
         changeOrigin: true
       }
     }

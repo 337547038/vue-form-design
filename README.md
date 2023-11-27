@@ -156,9 +156,9 @@ pnpm dev
 | 名称           | 版本      |
 |--------------|---------|
 | node         | 16.15.x |
-| pnpm         | 8.6.x   |
-| vite         | 4.4.x   |
+| pnpm         | 8.11.x  |
+| vite         | 5.0.x   |
 | vue          | 3.3.x   |
-| element-plus | 2.3.x   |
+| element-plus | 2.4.x   |
 
 ### 贡献者
