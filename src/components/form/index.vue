@@ -351,10 +351,8 @@
    */
   const appendRemoveStyle = (type?: boolean) => {
     try {
-      const {
-        config: { style }
-      } = props.data
-      appendOrRemoveStyle('formStyle', style || '', type)
+      const style = props.data.config?.style || ''
+      appendOrRemoveStyle('formStyle', style, type)
     } catch (e) {
       /* empty */
     }
@@ -438,7 +436,7 @@
             formatRes = afterResponse(result) ?? result
           }
           // 比较适用于导出vue文件
-          if (typeof props.afterResponse === 'string' && props.afterResponse) {
+          if (props.afterResponse && typeof props.afterResponse === 'string') {
             formatRes = formatResult(result, props.afterResponse, route)
           } else if (typeof props.afterResponse === 'function') {
             formatRes = props.afterResponse(result) ?? result
@@ -532,7 +530,8 @@
     if (type === 'success') {
       ElMessage.success(res.message || '保存成功！')
     } else if (type === 'fail') {
-      ElMessage.error(res.message || '保存失败！')
+      //由框架全局拦截code不等于1的，统一提示
+      //ElMessage.error(res.message || '保存失败！')
     }
   }
   // ------------------------数据处理结束------------------------

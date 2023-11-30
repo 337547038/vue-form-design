@@ -102,7 +102,7 @@
   )
 
   const emits = defineEmits<{
-    (e: 'confirm', val: string): void
+    (e: 'confirm', val: FileList): void
   }>()
 
   const tableListEl = ref()

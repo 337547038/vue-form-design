@@ -104,6 +104,7 @@
                 <img
                   :width="item.config.imgWidth"
                   :src="scope.row[item.prop]"
+                  alt=""
                 />
               </template>
               <template
@@ -286,7 +287,7 @@
   const state = reactive({
     loading: false,
     currentPage: 1,
-    pageSize: props.data.config?.pageSize || 20,
+    pageSize: parseInt(props.data.config?.pageSize) || 20,
     total: 0,
     selectionChecked: [],
     dict: {}, // 接口返回的
@@ -399,31 +400,27 @@
     }
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
-    const formValue = searchFormValue.value
-    let newData: any = formValue
+    const formValue = searchFormValue.value || {}
+    const params = {
+      pageInfo: {
+        sort: props.data.config?.sort,
+        pageSize: state.pageSize,
+        pageIndex: state.currentPage
+      },
+      query: Object.assign({}, formValue, props.query)
+    }
+    let newData: any = params
     const beforeRequest = props.data.events?.beforeRequest
     if (typeof beforeRequest === 'function') {
-      newData = beforeRequest(formValue || {}, route)
+      newData = beforeRequest(params, route)
     }
     if (typeof props.beforeRequest === 'function') {
-      newData = props.beforeRequest(formValue || {}, route)
+      newData = props.beforeRequest(params, route)
     }
     if (newData === false) {
       return
     }
-    if (!newData) {
-      // beforeRequest没有return时
-      newData = formValue
-    }
-    const params = {
-      pageInfo: {
-        pageSize: state.pageSize,
-        pageIndex: state.currentPage
-      },
-      ...props.query,
-      ...newData
-    }
-    getRequest(getUrl, params)
+    getRequest(getUrl, newData || params)
       .then((res: { data: any }) => {
         let formatRes: any = res.data
         const afterResponse = props.data.events?.afterResponse
@@ -432,10 +429,10 @@
         } else if (typeof afterResponse === 'function') {
           formatRes = afterResponse(formatRes) ?? formatRes
         }
-        if (props.afterResponse && typeof props.afterResponse === 'string') {
-          formatRes = formatResult(formatRes, props.afterResponse, route)
-        } else if (typeof props.afterResponse === 'function') {
+        if (typeof props.afterResponse === 'function') {
           formatRes = props.afterResponse(formatRes) ?? formatRes
+        } else if (props.afterResponse) {
+          formatRes = formatResult(formatRes, props.afterResponse, route)
         }
         if (formatRes === false) {
           return
@@ -470,17 +467,13 @@
     getListData(page)
   }
   // 删除 idList支持多个 ,params为附近参数
-  const delClick = (idList: string | number | string[], params?: any) => {
+  const delClick = (idList: string | number | string[]) => {
     state.loading = true
     const delUrl = props.data.config?.deleteUrl || props.deleteUrl
-    const delParams = Object.assign(
-      {},
-      {
-        id: idList.toString() // 多个时转字符串
-      },
-      params || {},
-      props.query
-    )
+    const delParams = {
+      id: idList.toString() // 多个时转字符串
+    }
+
     let delParamsAll
     const beforeDelete = props.data.events?.beforeDelete
     if (typeof beforeDelete === 'function') {
@@ -534,6 +527,7 @@
    * 表格每行的操作按钮点击事件
    * @param btn
    * @param row
+   * @param type
    */
   const operateBtnClick = (btn: any, row: any, type?: string) => {
     emits('btnClick', btn, row)

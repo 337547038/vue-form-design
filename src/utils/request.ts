@@ -3,11 +3,12 @@ import { getStorage } from '@/utils'
 import SparkMD5 from 'spark-md5'
 import { ElMessage } from 'element-plus'
 import { useLayoutStore } from '@/store/layout'
+import router from '@/router'
 
 //5. 通过运行的命令获取各不同环境的请求api等，无需在根目录添加如.env.development等文件
 const mode = import.meta.env.MODE
 const baseUrl: any = {
-  development: '', // 默认命令dev
+  development: '/api/', // 默认命令dev
   production: '', // build
   preRelease: '' // 自定义其他环境如 "build:pre": "vite build --mode preRelease"
 }
@@ -21,35 +22,41 @@ const service = axios.create({
 })
 
 //3.防重复提交拦截
-const axiosList = {}
+const axiosList: any = {}
 
 /***************************4.无感刷新换token相关****************/
 let refreshTokenAjax: boolean = false
 // 存储请求的数组
-const subscribesArr = []
+const subscribesArr: ((newToken: any) => void)[] = []
 
 // 请求push到数组中
-function subscribesArrRefresh(cb) {
+function subscribesArrRefresh(cb: (newToken: any) => void) {
   subscribesArr.push(cb)
 }
 
 // 用新token发起请求
-function reloadSubscribesArr(newToken) {
+function reloadSubscribesArr(newToken: any) {
   subscribesArr.map(cb => cb(newToken))
 }
 
 // 使用refreshToken请求获取新的token
-function getNewToken(refreshToken) {
+function getNewToken(refreshToken: any) {
   const layoutStore = useLayoutStore()
   const params: any = { refreshToken: refreshToken }
   axios
-    .post('/mock/system/user/token.json', params)
+    .post(baseUrl[mode] + '/system/user/refreshToken', params)
     .then((result: any) => {
-      const data = result.data.data
-      // 统一方法保存保存token，和登录时一致
-      layoutStore.setLoginInfo(data)
-      reloadSubscribesArr(data.token)
-      refreshTokenAjax = false
+      console.log(result)
+      if (result.data.code === 1) {
+        const data = result.data.data
+        // 统一方法保存保存token，和登录时一致
+        layoutStore.setLoginInfo(data)
+        reloadSubscribesArr(data.token)
+        refreshTokenAjax = false
+      } else {
+        layoutStore.logout()
+        refreshTokenAjax = false
+      }
     })
     .catch(() => {
       //console.log('换取token失败,直接退出')
@@ -60,9 +67,7 @@ function getNewToken(refreshToken) {
 
 /***************************4.无感刷新换token相关结束****************/
 service.interceptors.request.use(
-  config => {
-    //6.请求时可添加cancelSource回调source.cancel()取消请求
-    config.cancelSource && config.cancelSource(source)
+  (config: any) => {
     //1. get请求时，将参数放到url后面
     if (
       config.method.toUpperCase() === 'GET' &&
@@ -125,15 +130,15 @@ service.interceptors.request.use(
     // 无感刷新token结束
     return config
   },
-  error => {
+  (error: any) => {
     Promise.reject(error)
   }
 )
 
 service.interceptors.response.use(
-  res => {
+  (res: any) => {
     const code: number = res.data.code
-    const msg: string = res.data.msg
+    const msg: string = res.data.message
     // 二进制数据则直接返回，返回时保存的文件名可从res.headers['content-disposition']获取
     if (['blob', 'arraybuffer'].includes(res.request.responseType)) {
       return res
@@ -143,16 +148,18 @@ service.interceptors.response.use(
         return res.data
       case 401:
         // 这里可以直接跳到登录页
-        return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
-      case 500:
+        //return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         ElMessage({ message: msg, type: 'error' })
-        return Promise.reject(new Error(msg))
+        alert(0) //todo
+        router.push({ path: '/login' })
+        break
       default:
         // 这里可统一处理其他异常拦截，或提示
+        ElMessage({ message: msg, type: 'error' })
         return Promise.reject(res.data)
     }
   },
-  error => {
+  (error: any) => {
     return Promise.reject(error)
   }
 )

@@ -448,18 +448,6 @@
         value: state.name,
         key: 'name'
       },
-      // {
-      //   label: '类别',
-      //   placeholder: '保存的类别，方便管理',
-      //   value: state.category,
-      //   type: 'select',
-      //   key: 'category',
-      //   options: [
-      //     { label: 'large', value: '1' },
-      //     { label: 'default', value: '2' },
-      //     { label: 'small', value: '3' }
-      //   ]
-      // },
       {
         label: '数据添加编辑打开方式',
         placeholder: '默认新页面打开',
@@ -536,6 +524,22 @@
         type: 'input',
         path: 'config',
         placeholder: '大于设定个数的以下拉形式显示'
+      },
+      {
+        label: '分页设置',
+        value: state.tableData.config?.pageSize,
+        key: 'pageSize',
+        type: 'input',
+        path: 'config',
+        placeholder: '每页分多少条'
+      },
+      {
+        label: '查询排序',
+        value: state.tableData.config?.sort,
+        key: 'sort',
+        type: 'input',
+        path: 'config',
+        placeholder: '查询排序，id desc'
       },
       {
         label: '开启侧栏树',

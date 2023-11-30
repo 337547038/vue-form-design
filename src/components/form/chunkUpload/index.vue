@@ -26,7 +26,7 @@
           <i
             v-show="!disabled"
             class="icon-close"
-            @click.stop="clearClick(index)"
+            @click.stop="clearClick(index as number)"
           ></i>
         </div>
       </div>
@@ -48,7 +48,7 @@
             <i
               v-show="!disabled"
               class="icon-close"
-              @click.stop="clearClick(index)"
+              @click.stop="clearClick(index as number)"
             ></i>
           </li>
         </ul>
@@ -105,7 +105,7 @@
       return []
     }
   })
-  const clearClick = (index?: number) => {
+  const clearClick = (index: number) => {
     if (index === -1) {
       emits('update:modelValue', '')
     } else {

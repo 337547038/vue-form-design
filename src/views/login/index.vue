@@ -38,7 +38,7 @@
           placeholder: '请输入登录账号'
         },
         config: {},
-        name: 'username',
+        name: 'userName',
         formItem: { label: '用户名', showLabel: true },
         customRules: [
           { type: 'required', message: '请输入登录账号', trigger: 'blur' }
@@ -61,7 +61,7 @@
       {
         type: 'component',
         control: {
-          modelValue: '1463',
+          modelValue: '',
           placeholder: '请输入验证码',
           onFocus: (val: string) => {
             codeId.value = val
@@ -84,13 +84,12 @@
   })
   const beforeSubmit = (params: any) => {
     params.codeId = codeId.value //添加验证码加密id
-    console.log('beforeSubmit', params)
     return params
   }
   const afterSubmit = (type: string, res: any) => {
     if (type === 'success') {
       // 统一方法保存token
-      useStore.setLoginInfo(res.data)
+      useStore.setLoginInfo(res.data, true)
       // 获取权限菜单信息
       getNavList().then(() => {
         // 登录成功跳转
@@ -103,7 +102,10 @@
   }
   const getNavList = () => {
     return new Promise(resolve => {
-      getRequest('userMenuList', { status: 1 }).then((res: any) => {
+      getRequest('userMenuList', {
+        query: { status: 1, navShow: 1 },
+        pageInfo: { sort: 'sort asc' }
+      }).then((res: any) => {
         const list = res.data.list || []
         const resources: any[] = [] // 提取所有path作为权限判断依据
         const menuList: any[] = [] // 过滤掉btn类型的菜单

@@ -30,7 +30,7 @@
 | 方法                 | 说明                                      |
 |--------------------|-----------------------------------------|
 | getListData        | 列表请求方法，可手动调用                            |
-| delClick           | 数据删除                                    |
+| delClick           | 数据删除，delClick(id)                       |
 | table              | 表格方法                                    |
 | setSearchFormValue | 设置查询条件表单初始值。可根据url参数先设置查询表单初始值再加载列表请求方法 |
 | getSearchFormValue | 获取查询条件表单的值                              |

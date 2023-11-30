@@ -5,7 +5,6 @@
       ref="tableListEl"
       request-url="menuList"
       delete-url="menuDelete"
-      :search-data="searchData"
       :data="tableData"
       :after-response="afterResponse"
       :dict="dict"
@@ -45,7 +44,7 @@
     menuType: { 1: '菜单', 2: '按钮', 3: '设计内容' }
   }
   const refreshTable = ref(true)
-  const searchData = ref({
+  /*const searchData = ref({
     list: [
       {
         type: 'input',
@@ -80,7 +79,7 @@
     form: {
       size: 'default'
     }
-  })
+  })*/
   const tableData = ref({
     tableProps: {
       rowKey: 'id',
@@ -169,7 +168,8 @@
       }
     ],
     config: {
-      pageSize: 100,
+      pageSize: '100',
+      sort: 'sort asc',
       fixedBottomScroll: false
     }
   })
@@ -275,12 +275,12 @@
         control: { modelValue: 1 },
         options: [
           {
-            label: "显示",
-            value: "1"
+            label: '显示',
+            value: '1'
           },
           {
-            label: "隐藏",
-            value: "0"
+            label: '隐藏',
+            value: '0'
           }
         ],
         config: {

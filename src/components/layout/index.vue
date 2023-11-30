@@ -47,7 +47,7 @@
 
   const store = useLayoutStore()
   //const isCollapse = ref(getStorage('collapseMenu') === 'true')
-  const isCollapse = computed(() => {
+  const isCollapse: Boolean = computed(() => {
     return store.collapseMenu
   })
   const fullScreen = ref(false)
@@ -89,7 +89,7 @@
   const dictList = () => {
     const storageDict = getStorage('akAllDict')
     if (!storageDict) {
-      getRequest('dictList', { status: 1 }).then((res: any) => {
+      getRequest('dictList', { query: { status: 1 } }).then((res: any) => {
         const result = res.data?.list
         const temp: any = {}
         if (result?.length) {

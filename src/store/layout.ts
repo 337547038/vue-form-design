@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import { removeStorage, getStorage, setStorage } from '@/utils'
+
 /*interface Breadcrumb {
   label: string
   to?: string
@@ -10,6 +11,7 @@ interface TabsViews {
   path: string
   name: string // 路由名称name
 }
+
 const tabs = getStorage('tagViews')
 export const useLayoutStore = defineStore('layout', {
   state: () => {
@@ -51,9 +53,15 @@ export const useLayoutStore = defineStore('layout', {
       }
     },
     // 保存登录的信息
-    setLoginInfo(data: { [key: string]: string }) {
-      setStorage('token', data.token, 24)
-      setStorage('refreshToken', data.refreshToken, 48)
+    setLoginInfo(data: { [key: string]: string }, saveUserInfo: boolean) {
+      const expireTime = data.expire_time //有效时间
+      let time = 24
+      if (expireTime) {
+        time = parseInt(expireTime) / 1000 / 3600 // 将ms转为h
+      }
+      setStorage('token', data.token, time)
+      setStorage('refreshToken', data.refreshToken, time * 2)
+      saveUserInfo && setStorage('userInfo', data)
     }
   }
 })
