@@ -334,11 +334,7 @@
 
   // 搜索表单的值
   const searchFormValue = computed(() => {
-    return Object.assign(
-      {},
-      searchFormEl.value?.getValue(true),
-      state.treeValue
-    )
+    return Object.assign({}, searchFormEl.value?.getValue(), state.treeValue)
   })
 
   /**
@@ -445,12 +441,13 @@
         state.dict = formatRes.dict || {}
         state.total = formatRes.pageInfo?.total || 0
       })
-      .catch((res: any) => {
+      .catch(() => {
         tableDataList.value = []
         state.total = 0
         state.dict = {}
         state.loading = false
-        ElMessage.error(res.message || '数据加载异常')
+        //异常时由框架统一拦截，这里无需多次提示
+        //ElMessage.error(res.message || '数据加载异常')
       })
   }
   // 仅清空筛选输入
@@ -575,14 +572,20 @@
     }
   }
 
-  const getParamsJump = () => {
-    const params = Object.assign({}, route.query, searchFormValue.value)
+  const getParamsJump = (type: string) => {
+    const searchFormVal = searchFormValue.value
+    if (type === 'reset') {
+      for (const key in searchFormVal) {
+        searchFormVal[key] = undefined
+      }
+    }
+    const params = Object.assign({}, route.query, searchFormVal)
     router.push({ path: route.path, query: params })
   }
   const formBtnClick = (type: string) => {
     if (searchJump.value) {
       // 带参数跳转
-      getParamsJump()
+      getParamsJump(type)
     } else {
       if (type === 'submit') {
         getListData(1)

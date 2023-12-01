@@ -115,11 +115,15 @@ export function getRandom(min: number, max: number) {
   // +1包括最大值
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
-/** 设置 localStorage 添加对时间的控制，hour单位为小时
- * hour空时使用原始sessionStorage(key,value)，即关闭浏览器过期
+
+/**
+ * 设置 localStorage 添加对时间的控制，hour单位为小时
+ * @param key 保存在storage的key
+ * @param data 需存储的数据
+ * @param hour null时存sessionStorage(key,value)，即关闭浏览器过期
  * hour=0时，使用localStorage，即永不过期
  * hour>0时localStorage添加时间控制
- * */
+ */
 
 export function setStorage(key: string, data: any, hour?: number | null): void {
   let newData = data

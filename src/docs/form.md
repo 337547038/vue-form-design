@@ -18,7 +18,7 @@
 | data          | object                         | 设计的生成表单数据                                                                                   |
 | type          | number/1                       | 表单展示模式，1新增；2修改；3查看（表单模式） ；4查看； 5设计                                                          |
 | disabled      | boolean/false                  | 表单禁用模式，类似于表单模式查看                                                                            |
-| requestUrl    | string/boolean                 | 表单编辑初始数据加载。适用于导出vue文件                                                                       |
+| requestUrl    | string                         | 表单编辑初始数据加载。适用于导出vue文件                                                                       |
 | beforeRequest | function (params,route)        | 请求编辑数据前参数处理方法，可对请求参数处理。适用于导出vue文件，`return false`时不请求                                        |
 | afterResponse | function/string                | 请求编辑数据完成后数据处理方法。适用于导出vue文件，`return false`阻止事件运行                                             |
 | submitUrl     | string                         | 表单数据新增提交保存url                                                                               |

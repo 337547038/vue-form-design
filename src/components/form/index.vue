@@ -453,9 +453,10 @@
           })
         }
       })
-      .catch((res: any) => {
+      .catch(() => {
         loading.value = false
-        return ElMessage.error(res.message)
+        //框架统一提示，这里不重复
+        //return ElMessage.error(res.message)
       })
   }
   /**

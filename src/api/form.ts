@@ -5,11 +5,11 @@ export default {
   designChange: 'design/change', // 改变设计表单部分设置内容
   designDelete: 'design/delete', // 根据id删除已设计
   designById: 'design/id', // 根据id获取已设计的表单
-  sourceList: 'dataSource/list', // 获取数据源列表
-  sourceDelete: 'dataSource/delete',
-  sourceCreat: 'dataSource/creat', // 创建数据源
-  sourceEdit: 'dataSource/edit', // 编辑数据源
-  sourceById: 'dataSource/id', // 根据id获取数据源
+  sourceList: 'datasource/list', // 获取数据源列表
+  sourceDelete: 'datasource/delete',
+  sourceCreat: 'datasource/creat', // 创建数据源
+  sourceEdit: 'datasource/edit', // 编辑数据源
+  sourceById: 'datasource/id', // 根据id获取数据源
   saveFormContent: 'content/save', // 往已设计好的表单里添加内容
   editFormContent: 'content/edit', // 往已设计好的表单里添加内容
   getContentList: 'content/list', // 获取表单内容列表
