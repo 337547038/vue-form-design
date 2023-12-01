@@ -160,6 +160,10 @@ service.interceptors.response.use(
     }
   },
   (error: any) => {
+    //接口非200异常时
+    //console.log('error', error)
+    const msg = error.response?.data.message || error.message
+    ElMessage({ message: msg, type: 'error' })
     return Promise.reject(error)
   }
 )
