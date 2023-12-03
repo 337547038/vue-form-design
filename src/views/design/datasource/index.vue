@@ -20,7 +20,7 @@
         submit-url="sourceCreat"
         edit-url="sourceEdit"
         request-url="sourceById"
-        :before-ubmit="beforeSubmit"
+        :before-submit="beforeSubmit"
         :after-submit="afterSubmit"
         @btn-click="cancelClick"
       />
@@ -430,7 +430,7 @@
   })
   // 提交表单前校验
   const beforeSubmit = (params: any) => {
-    if (dialog.type === 1) {
+    if (dialog.type === 10) {
       if (!params.tableData.length) {
         ElMessage.error('数据库表字段内容不能为空')
         return false

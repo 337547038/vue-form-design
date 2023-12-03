@@ -32,13 +32,11 @@ layout:'hidden'}}
   }
   const buttonClickInsert = () => {
     const params = {
-      //name: '',
-      //content: '12222',
-      //phone: '13666',
-      other: 'other content',
-      status: 1
+      longText123: 'other content',
+      name: 'name',
+      text: [{ name: '123' }]
     }
-    getRequest('test/add', params)
+    getRequest('test/save', params)
   }
   const buttonClickEdit = () => {
     const params = {

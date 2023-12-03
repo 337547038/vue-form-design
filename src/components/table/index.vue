@@ -115,6 +115,7 @@
                 #default="scope"
               >
                 <el-tag
+                  v-if="scope.row[item.prop] || scope.row[item.prop] === 0"
                   :type="item.config?.tagList[scope.row[item.prop]]"
                   effect="light"
                 >

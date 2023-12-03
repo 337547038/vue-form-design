@@ -436,10 +436,10 @@
             formatRes = afterResponse(result) ?? result
           }
           // 比较适用于导出vue文件
-          if (props.afterResponse && typeof props.afterResponse === 'string') {
-            formatRes = formatResult(result, props.afterResponse, route)
-          } else if (typeof props.afterResponse === 'function') {
+          if (typeof props.afterResponse === 'function') {
             formatRes = props.afterResponse(result) ?? result
+          } else if (props.afterResponse) {
+            formatRes = formatResult(result, props.afterResponse, route)
           }
           if (formatRes === false) {
             return
@@ -487,10 +487,10 @@
             submitParams = formatResult(formatParams, beforeSubmit, route)
           }
         }
-        if (props.beforeSubmit && typeof props.beforeSubmit === 'string') {
-          submitParams = formatResult(formatParams, props.beforeSubmit, route)
-        } else if (typeof props.beforeSubmit === 'function') {
+        if (typeof props.beforeSubmit === 'function') {
           submitParams = props.beforeSubmit(formatParams, route)
+        } else if (props.beforeSubmit) {
+          submitParams = formatResult(formatParams, props.beforeSubmit, route)
         }
         if (submitParams === false) {
           return
