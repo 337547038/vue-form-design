@@ -8,16 +8,18 @@ interface RequestParams {
   afterResponse?: string | Function // 请求后结果后方法
   options?: { [key: string]: any } //请求其他附加参数
   route?: { [key: string]: any } //路由参数
+  formModel?: { [key: string]: any } // 当前表单所有值
 }
 
 /**
- * 统一处理beforeRequest和afterResponse从接口获取数据
+ * 统一处理beforeRequest和afterResponse提交数据接口请求
  * @param requestUrl 请求url或apiKey
  * @param params 请求参数
  * @param beforeRequest 请求后结果后方法
  * @param afterResponse 请求前方法
  * @param options 请求其他附加参数
  * @param route 路由参数
+ * @param formModel // 当前表单所有值
  */
 export const requestResponse = ({
   requestUrl,
@@ -25,15 +27,18 @@ export const requestResponse = ({
   beforeRequest,
   afterResponse,
   options = {},
-  route = {}
+  route = {},
+  formModel
 }: RequestParams) => {
   return new Promise((resolve, reject) => {
     if (!requestUrl) {
       resolve({})
     }
     if (typeof beforeRequest === 'function') {
-      const result = beforeRequest(params, route)
+      const result = beforeRequest(params, route, formModel)
       if (result === false) {
+        //拦截方式beforeRequest返回false阻止发送请求
+        reject({ code: 'return false', message: 'beforeRequest return false' })
         return
       }
       params = result
@@ -43,17 +48,17 @@ export const requestResponse = ({
         let result = res.data
         if (afterResponse) {
           if (typeof afterResponse === 'function') {
-            result = afterResponse(result)
+            result = afterResponse(result) || result
           } else {
             // 这里处理afterResponse使用了字符串类型时
             //result = formatScreen(afterResponse, result)
           }
         }
-        resolve(result)
+        resolve({ data: result, message: res.message })
       })
       .catch((res: any) => {
         ElMessage.error(res.message || '请求异常')
-        reject()
+        reject(res)
       })
   })
 }

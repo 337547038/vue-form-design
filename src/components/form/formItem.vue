@@ -17,7 +17,7 @@
         v-bind="control"
         v-model="value"
         :disabled="disabledEdit"
-        :type="inputType"
+        :type="inputType as any"
         v-if="['input', 'password'].includes(data.type)"
       >
         <template #prepend v-if="config.prepend">
@@ -60,7 +60,7 @@
       >
         <el-radio
           :key="index"
-          :label="transformOption(item.value)"
+          :label="transformOption(item.value) as string"
           v-for="(item, index) in options"
         >
           {{ item.label }}
@@ -100,9 +100,9 @@
       <chunk-upload
         v-if="data.type === 'chunkUpload'"
         v-model="value"
-        :control="control"
+        :control="control as any"
         :disabled="disabledEdit"
-        :config="config"
+        :config="config as any"
       />
       <component
         v-if="['cascader', 'treeSelect'].includes(data.type)"
@@ -178,12 +178,11 @@
   import ExpandUser from './expand/user.vue'
   import AKSelect from './select.vue'
   import { useRoute } from 'vue-router'
-  import formatResult from '@/utils/formatResult'
-  import { getRequest } from '@/api'
   import { debounce } from '@/utils'
   import { useDesignStore } from '@/store/design'
   import UploadFile from './upload.vue'
   import ChunkUpload from './chunkUpload/index.vue'
+  import { requestResponse } from '@/utils/requestRespone.ts'
 
   const props = withDefaults(
     defineProps<{
@@ -292,7 +291,7 @@
     return `el-${props.data.type}`
   })
   // 控制编辑模式下是否可用
-  const disabledEdit = computed(() => {
+  const disabledEdit: boolean = computed(() => {
     if (type.value === 3) {
       return true // 查看模式，为不可编辑状态
     }
@@ -339,7 +338,7 @@
       // 接口数据源
       if (optionsType === 1 && sourceFun) {
         // 当前控件为动态获取数据，防多次加载，先从本地取。data=true时直接请求
-        let newData = Object.assign({}, data, query)
+        const newData = Object.assign({}, data, query)
         const spark = new SparkMD5()
         spark.append(sourceFun + data)
         const key = spark.end()
@@ -357,26 +356,20 @@
             const string = '${' + sourceFunKey.value + '}'
             sourceFun = sourceFun.replace(string, val)
           }
-          // 处理请求前的数据
-          //let newData = Object.assign({}, data || {}, queryParams)
-          if (typeof beforeRequest === 'function') {
-            newData =
-              beforeRequest(newData, route, formProps.value.model) ?? newData
-          }
-          if (newData === false) {
-            return
-          }
-          getRequest(sourceFun, newData, { method: method })
+          requestResponse({
+            requestUrl: sourceFun,
+            params: newData,
+            beforeRequest: beforeRequest,
+            afterResponse: afterResponse,
+            options: { method: method },
+            route: route,
+            formModel: formProps.value.model
+          })
             .then((res: any) => {
               const result = res.data.list || res.data
               let formatRes: any = result
               // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
-              if (typeof afterResponse === 'string' && afterResponse) {
-                formatRes = formatResult(result, afterResponse)
-              } else if (typeof afterResponse === 'function') {
-                // 没有return时，使用原来的，相当于没处理
-                formatRes = afterResponse(result) ?? result
-              } else if (label || value) {
+              if (!afterResponse && (label || value)) {
                 // 没有设置afterResponse时，这里将数据转换为[{label:'',value:''}]形式。只处理一级
                 formatRes = []
                 result.forEach((item: any) => {
@@ -385,9 +378,6 @@
                     value: item[value] || item.value
                   })
                 })
-              }
-              if (formatRes === false) {
-                return
               }
               // console.log('formatRes', formatRes)
               if (props.data.type === 'treeSelect') {

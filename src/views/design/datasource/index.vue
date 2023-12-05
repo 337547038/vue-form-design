@@ -6,6 +6,7 @@
       delete-url="sourceDelete"
       :search-data="searchData"
       :data="tableData"
+      :afterResponse="beforeRequest"
     />
     <el-dialog
       v-model="dialog.visible"
@@ -32,6 +33,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ref, reactive, nextTick, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
+
   const route = useRoute()
   const router = useRouter()
   const tableListEl = ref()
@@ -466,7 +468,9 @@
       dialog.visible = false
     }
   }
-
+  const beforeRequest = (params: any) => {
+    console.log('beforeRequest', params)
+  }
   onMounted(() => {
     if (route.query.source) {
       openEdit(route.query.source)

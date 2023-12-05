@@ -229,13 +229,11 @@
   } from 'vue'
   import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
   import Tooltip from '@/components/tooltip/index.vue'
-  import { getRequest } from '@/api'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormData } from '@/types/form'
   import type { TableData } from '@/types/table'
   import { dateFormatting, getStorage } from '@/utils'
   import ListTreeSide from './treeSide.vue'
-  import formatResult from '@/utils/formatResult'
   import { useDesignStore } from '@/store/design'
   import { permission } from '@/directive/permissions'
   import { requestResponse } from '@/utils/requestRespone'
@@ -385,6 +383,20 @@
   const delKey = computed(() => {
     return props.data.config?.delKey || props.delKey
   })
+
+  const getRequestEvent = (key: string) => {
+    let event
+    const propsEvent = (props as any)[key]
+    if (typeof propsEvent === 'function') {
+      event = propsEvent
+    } else if (
+      props.data.events &&
+      typeof props.data.events[key] === 'function'
+    ) {
+      event = props.data.events[key]
+    }
+    return event
+  }
   // 筛选查询列表数据
   const getListData = (page?: number) => {
     // 优先使用config配置的
@@ -407,64 +419,43 @@
       },
       query: Object.assign({}, formValue, props.query)
     }
-
-    let newData: any = params
-    const beforeRequest = props.data.events?.beforeRequest
-    if (typeof beforeRequest === 'function') {
-      newData = beforeRequest(params, route)
-    }
+    /*let beforeRequest
     if (typeof props.beforeRequest === 'function') {
-      newData = props.beforeRequest(params, route)
-    }
-    if (newData === false) {
-      return
-    }
-    /* let beforeRequest1
-    if (typeof props.beforeRequest === 'function') {
-      beforeRequest1 = props.beforeRequest(params, route)
+      beforeRequest = props.beforeRequest
     } else if (typeof props.data.events?.beforeRequest === 'function') {
-      beforeRequest1 = props.data.events?.beforeRequest
+      beforeRequest = props.data.events?.beforeRequest
     }
+    let afterResponse
+    if (typeof props.afterResponse === 'function') {
+      afterResponse = props.afterResponse
+    } else if (typeof props.data.events?.afterResponse === 'function') {
+      afterResponse = props.data.events?.afterResponse
+    }*/
     requestResponse({
       requestUrl: getUrl,
       params: params,
-      beforeRequest: beforeRequest1,
-      afterResponse: ''
+      beforeRequest: getRequestEvent('beforeRequest'),
+      afterResponse: getRequestEvent('afterResponse'),
+      route: route
     })
-      .then((res: any) => {})
-      .catch(() => {})*/
-    getRequest(getUrl, newData || params)
-      .then((res: { data: any }) => {
-        let formatRes: any = res.data
-        const afterResponse = props.data.events?.afterResponse
-        if (typeof afterResponse === 'string' && afterResponse) {
-          formatRes = formatResult(formatRes, afterResponse, route)
-        } else if (typeof afterResponse === 'function') {
-          formatRes = afterResponse(formatRes) ?? formatRes
-        }
-        if (typeof props.afterResponse === 'function') {
-          formatRes = props.afterResponse(formatRes) ?? formatRes
-        } else if (props.afterResponse) {
-          formatRes = formatResult(formatRes, props.afterResponse, route)
-        }
-        if (formatRes === false) {
-          return
-        }
-        tableDataList.value = formatRes?.list || formatRes // 兼容下可以不返回list
+      .then((res: any) => {
+        const data = res.data
+        tableDataList.value = data?.list || data // 兼容下可以不返回list
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false
         }, 200) // 加个延时主要是等待列表渲染完，即列表查询区域等，计算才准确。
-        state.dict = formatRes.dict || {}
-        state.total = formatRes.pageInfo?.total || 0
+        state.dict = data.dict || {}
+        state.total = data.pageInfo?.total || 0
       })
-      .catch(() => {
-        tableDataList.value = []
-        state.total = 0
-        state.dict = {}
+      .catch((res: any) => {
+        //beforeRequest返回了false时，只拦截请求，不用重置
+        if (res.code !== 'return false') {
+          tableDataList.value = []
+          state.total = 0
+          state.dict = {}
+        }
         state.loading = false
-        //异常时由框架统一拦截，这里无需多次提示
-        //ElMessage.error(res.message || '数据加载异常')
       })
   }
   // 仅清空筛选输入
@@ -487,19 +478,13 @@
     const delParams = {
       id: idList.toString() // 多个时转字符串
     }
-
-    let delParamsAll
-    const beforeDelete = props.data.events?.beforeDelete
-    if (typeof beforeDelete === 'function') {
-      delParamsAll = beforeDelete(delParams, route)
-    }
-    if (typeof props.beforeDelete === 'function') {
-      delParamsAll = props.beforeDelete(delParams, route)
-    }
-    if (delParamsAll === false) {
-      return
-    }
-    getRequest(delUrl, delParamsAll ?? delParams)
+    requestResponse({
+      requestUrl: delUrl,
+      params: delParams,
+      beforeRequest: getRequestEvent('beforeDelete'),
+      afterResponse: getRequestEvent('afterResponse'),
+      route: route
+    })
       .then((res: any) => {
         state.loading = false
         ElMessage.success(res.message || '删除成功')
@@ -589,7 +574,7 @@
     }
   }
 
-  const getParamsJump = (type: string) => {
+  const getParamsJump = (type?: string) => {
     const searchFormVal = searchFormValue.value
     if (type === 'reset') {
       for (const key in searchFormVal) {
