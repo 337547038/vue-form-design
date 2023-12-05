@@ -430,7 +430,7 @@
   })
   // 提交表单前校验
   const beforeSubmit = (params: any) => {
-    if (dialog.type === 10) {
+    if (dialog.type === 1) {
       if (!params.tableData.length) {
         ElMessage.error('数据库表字段内容不能为空')
         return false
@@ -445,6 +445,7 @@
         ElMessage.error(errorTip.join(','))
         return false
       }
+      params.tableData = JSON.stringify(params.tableData)
     }
     if (dialog.type === 2) {
       // 添加编辑提交参数

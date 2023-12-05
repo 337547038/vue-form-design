@@ -238,6 +238,7 @@
   import formatResult from '@/utils/formatResult'
   import { useDesignStore } from '@/store/design'
   import { permission } from '@/directive/permissions'
+  import { requestResponse } from '@/utils/requestRespone'
 
   const props = withDefaults(
     defineProps<{
@@ -406,6 +407,7 @@
       },
       query: Object.assign({}, formValue, props.query)
     }
+
     let newData: any = params
     const beforeRequest = props.data.events?.beforeRequest
     if (typeof beforeRequest === 'function') {
@@ -417,6 +419,20 @@
     if (newData === false) {
       return
     }
+    /* let beforeRequest1
+    if (typeof props.beforeRequest === 'function') {
+      beforeRequest1 = props.beforeRequest(params, route)
+    } else if (typeof props.data.events?.beforeRequest === 'function') {
+      beforeRequest1 = props.data.events?.beforeRequest
+    }
+    requestResponse({
+      requestUrl: getUrl,
+      params: params,
+      beforeRequest: beforeRequest1,
+      afterResponse: ''
+    })
+      .then((res: any) => {})
+      .catch(() => {})*/
     getRequest(getUrl, newData || params)
       .then((res: { data: any }) => {
         let formatRes: any = res.data

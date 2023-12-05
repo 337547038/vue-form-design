@@ -422,6 +422,8 @@
       if (beforeRequest && typeof beforeRequest === 'function') {
         params = beforeRequest({})
       }
+      console.log(config.value)
+      console.log(method)
       getRequest(requestUrl, params, { method: method })
         .then((res: any) => {
           requestResult.value = res.data

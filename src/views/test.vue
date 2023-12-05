@@ -5,6 +5,7 @@
     <el-button @click="buttonClickEdit">edit</el-button>
     <el-button @click="buttonClickDel">del</el-button>
     <el-button @click="buttonClickLogin">login</el-button>
+    <el-button @click="buttonClickById">ById</el-button>
   </div>
 </template>
 <route>
@@ -15,16 +16,17 @@ layout:'hidden'}}
   import { ref, computed, onMounted } from 'vue'
   import { useLayoutStore } from '@/store/layout'
   import { getRequest } from '@/api'
+
   const buttonClick = () => {
     const params = {
-      /*query: {
+      query: {
         status: 1,
         other: '没用的字段'
       },
       pageInfo: {
         pageNum: 1,
-        pageSize: 10
-      }*/
+        pageSize: 20
+      }
     }
     getRequest('test/list', params).then(res => {
       console.log(res)
@@ -32,11 +34,16 @@ layout:'hidden'}}
   }
   const buttonClickInsert = () => {
     const params = {
-      longText123: 'other content',
-      name: 'name',
-      text: [{ name: '123' }]
+      name: 'name12',
+      tableName: '1',
+      category: '',
+      remark: '',
+      status: 1,
+      tableData:
+        '[{"label":"a","name":"a","type":"INT","length":"1","default":"","empty":false,"remark":"","enterable":true}]'
     }
-    getRequest('test/save', params)
+
+    getRequest('datasource/creat', params)
   }
   const buttonClickEdit = () => {
     const params = {
@@ -67,5 +74,11 @@ layout:'hidden'}}
         'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNzAxMTYxOTgyfQ.ikJzCNORJFNYeOlLF1_eGiknGYcwTSQjxALFdVy6t-A'
     }
     getRequest('system/user/login', params)
+  }
+  const buttonClickById = () => {
+    const params = {
+      id: 1
+    }
+    getRequest('test/get', params)
   }
 </script>
