@@ -38,7 +38,6 @@
   } from 'vue'
   import FormGroup from './formGroup.vue'
   import type { FormData, FormList } from '@/types/form'
-  import { getRequest } from '@/api'
   import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import {
@@ -50,9 +49,9 @@
     appendOrRemoveStyle,
     jsonParseStringify
   } from '@/utils/design'
-  import formatResult from '@/utils/formatResult'
   import formChangeValue from '@/utils/formChangeValue'
   import { getStorage } from '@/utils'
+  import { requestResponse } from '@/utils/requestRespone.ts'
 
   const props = withDefaults(
     defineProps<{
@@ -396,9 +395,25 @@
   }
   // 表单设计中按钮组件的点击事件
   provide(constFormBtnEvent, defaultBtnClick)
+
+  /**
+   * 返回当前事件，优先返回props的，否则返回events里的
+   * @param key
+   */
+  const getRequestEvent = (key: string) => {
+    let event
+    const propsEvent = (props as any)[key]
+    const events: any = props.data.events
+    if (typeof propsEvent === 'function') {
+      event = propsEvent
+    } else if (events && typeof events[key] === 'function') {
+      event = events[key]
+    }
+    return event
+  }
   /**
    * 编辑时获取表单数据，外部调用并传入请求参数
-   * @param params
+   * @param params 一般情况下只需传一个id即可{id:xx}
    */
   const getData = (params = {}) => {
     const requestUrl = props.data.config?.requestUrl || props.requestUrl
@@ -409,41 +424,18 @@
     loading.value = true
     const newParams: any = Object.assign({}, params, props.query)
     // 同时可使用props或是events里的事件，根据使用使用其中一种即可
-    let newParams2
-    const beforeRequest = props.data.events?.beforeRequest
-    if (typeof beforeRequest === 'function') {
-      newParams2 = beforeRequest(newParams, route)
-    }
-    if (typeof props.beforeRequest === 'function') {
-      newParams2 = props.beforeRequest(newParams, route)
-    }
-    if (newParams2 === false) {
-      // 停止数据请求
-      return
-    }
-    getRequest(requestUrl, newParams2 ?? newParams)
-      .then((res: { data: any }) => {
-        // console.log(res)
+    requestResponse({
+      requestUrl: requestUrl,
+      params: newParams,
+      beforeRequest: getRequestEvent('beforeRequest'),
+      afterResponse: getRequestEvent('afterResponse'),
+      route: route
+    })
+      .then((res: any) => {
         loading.value = false
         const result = res.data
         if (result) {
-          let formatRes: any = result
-          // 比较适用通用表单，保存在服务端
-          const afterResponse = props.data.events?.afterResponse
-          if (typeof afterResponse === 'string' && afterResponse) {
-            formatRes = formatResult(result, afterResponse, route)
-          } else if (typeof afterResponse === 'function') {
-            formatRes = afterResponse(result) ?? result
-          }
-          // 比较适用于导出vue文件
-          if (typeof props.afterResponse === 'function') {
-            formatRes = props.afterResponse(result) ?? result
-          } else if (props.afterResponse) {
-            formatRes = formatResult(result, props.afterResponse, route)
-          }
-          if (formatRes === false) {
-            return
-          }
+          const formatRes: any = result
           setValue(formatRes.result || formatRes)
           nextTick(() => {
             // 将dict保存，可用于从接口中设置表单组件options。
@@ -455,8 +447,6 @@
       })
       .catch(() => {
         loading.value = false
-        //框架统一提示，这里不重复
-        //return ElMessage.error(res.message)
       })
   }
   /**
@@ -476,63 +466,37 @@
     }
     validate((valid: boolean, fields: any) => {
       if (valid) {
-        const formatParams = Object.assign({}, fields, params, props.params)
-        let submitParams
-        const beforeSubmit = props.data.events?.beforeSubmit
-        //formatResult适用于将设计数据保存于服务端时，需对提交和返回结果进行复杂处理时，可使用此方法在本地操作
-        if (beforeSubmit) {
-          if (typeof beforeSubmit === 'function') {
-            submitParams = beforeSubmit(formatParams, route)
-          } else {
-            submitParams = formatResult(formatParams, beforeSubmit, route)
-          }
-        }
-        if (typeof props.beforeSubmit === 'function') {
-          submitParams = props.beforeSubmit(formatParams, route)
-        } else if (props.beforeSubmit) {
-          submitParams = formatResult(formatParams, props.beforeSubmit, route)
-        }
-        if (submitParams === false) {
-          return
-        }
         loading.value = true
         // 提交保存表单
-        getRequest(apiUrl, submitParams ?? formatParams)
+        requestResponse({
+          requestUrl: apiUrl,
+          params: Object.assign({}, fields, params, props.params),
+          beforeRequest: getRequestEvent('beforeSubmit')
+          //afterResponse: getRequestEvent('afterSubmit') //提交结果只有成功失败之类的，这里不需要处理
+        })
           .then((res: any) => {
-            afterSubmit('success', res)
+            afterSubmitResult('success', res)
           })
           .catch((res: any) => {
-            afterSubmit('fail', res)
+            afterSubmitResult('fail', res)
           })
       } else {
         // 没通过校验
-        afterSubmit('validate', fields)
+        afterSubmitResult('validate', fields)
       }
     })
   }
-  /**
-   * 表单添加或编辑提交结果公共处理方法，执行回调和结果提示
-   * @param type //success or fail or validate(没通过校验)
-   * @param res // 请求结果
-   */
-  const afterSubmit = (type: string, res: any) => {
-    const afterSubmit = props.data.events?.afterSubmit
-    let notReturn
-    if (typeof afterSubmit === 'function') {
-      notReturn = afterSubmit(type, res)
-    } else if (typeof props.afterSubmit === 'function') {
-      notReturn = props.afterSubmit(type, res)
-    }
+  const afterSubmitResult = (type: string, res: any) => {
     loading.value = false
-    if (notReturn === false) {
-      // 有返回false时则不提示
-      return
+    const submitEvent = getRequestEvent('afterSubmit')
+    if (typeof submitEvent === 'function') {
+      if (submitEvent(type, res) === false) {
+        // 有返回false时则不提示
+        return
+      }
     }
     if (type === 'success') {
       ElMessage.success(res.message || '保存成功！')
-    } else if (type === 'fail') {
-      //由框架全局拦截code不等于1的，统一提示
-      //ElMessage.error(res.message || '保存失败！')
     }
   }
   // ------------------------数据处理结束------------------------

@@ -548,7 +548,7 @@
         config = {},
         formItem = {},
         attr = {}
-      }: { control: any; config: any } = controlData.value
+      }: any = controlData.value
       let columnIndex = false // 是否显示序号列
       if (type === 'table') {
         // 表格时处理
@@ -1457,17 +1457,23 @@
     const source = id
     if (source) {
       getRequest('sourceById', { id: source })
-        .then(res => {
+        .then((res: { data: any }) => {
           // console.log(res)
-          const tableData = res.data.result?.tableData
-          if (tableData && tableData.length) {
-            state.dataSourceList = tableData.filter(
+          const tableData = res.data?.tableData
+          let jsonTableData
+          try {
+            jsonTableData = JSON.parse(tableData)
+          } catch (e) {
+            /* empty */
+          }
+          if (jsonTableData && jsonTableData.length) {
+            state.dataSourceList = jsonTableData.filter(
               (item: any) => item.enterable
             )
           }
           callback && callback(state.dataSourceList)
         })
-        .catch(res => {
+        .catch((res: any) => {
           console.log(res)
         })
     }

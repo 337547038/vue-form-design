@@ -221,7 +221,7 @@ function(result)|string
 获取数据接口请求数据返回后方法，可用于对请求回来的数据进行处理转换等操作，以满足使用。
 
 如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串。如`afterResponse="afterResponse"`
-。此时可在`@/utils/formatResult.ts`中的`formatResult`方法进行处理。
+。此时可在`@/utils/requestRespone.ts`中进行自定义处理。
 
 ```javascript
 const afterResponse = (result) => {

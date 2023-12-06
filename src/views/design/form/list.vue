@@ -259,7 +259,7 @@
     }
   }
   const beforeRequest = (params: any) => {
-    params.type = 1 // 表单类型为1
+    params.query.type = 1 // 表单类型为1
     return params
   }
 </script>

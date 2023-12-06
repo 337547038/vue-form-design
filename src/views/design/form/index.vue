@@ -3,7 +3,7 @@
   <div class="design-container">
     <drag-control
       :form-id="state.formOtherData.source"
-      @click-check="searchCheckField"
+      @click-check="searchCheckField as any"
       @click="selectTemplate"
     />
     <div class="main-body">
@@ -121,7 +121,7 @@
       // 获取初始表单数据
       state.loading = true
       getRequest('designById', { id: id })
-        .then(res => {
+        .then((res: { data: any }) => {
           const result = res.data
           // 初始设计搜索时res.data=''
           if (result.data) {
@@ -131,7 +131,9 @@
           // 恢复表单名称
           state.formOtherData.source = result.source
           state.formOtherData.formName = result.name
+          console.log('ok')
           if (result.source && state.designType !== 'search') {
+            console.log('ok2')
             // 加载属性侧边栏的字段标识，搜索时不需要请求
             formControlAttrEl.value.getFormFieldBySource(result.source)
           }
@@ -398,7 +400,7 @@
   // 从数据源点创建表单过来时，带有参数source
   const oneFormCreation = (list: any) => {
     const temp: any = []
-    list.forEach(item => {
+    list.forEach((item: { name: any; label: any }) => {
       temp.push({
         type: 'input',
         control: {
@@ -415,6 +417,7 @@
   }
   onMounted(() => {
     if (route.source) {
+      //从数据源一键创建过来时带有source参数
       formControlAttrEl.value.getFormFieldBySource(
         route.source,
         oneFormCreation

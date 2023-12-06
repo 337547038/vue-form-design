@@ -6,7 +6,6 @@
       delete-url="sourceDelete"
       :search-data="searchData"
       :data="tableData"
-      :afterResponse="beforeRequest"
     />
     <el-dialog
       v-model="dialog.visible"
@@ -23,6 +22,7 @@
         request-url="sourceById"
         :before-submit="beforeSubmit"
         :after-submit="afterSubmit"
+        :after-response="afterResponse"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -80,7 +80,7 @@
           dictKey: 'sys-status'
         }
       },
-      { prop: 'creatName', label: '创建人' },
+      { prop: 'creatUserId', label: '创建人' },
       {
         prop: 'updateDate',
         label: '修改时间',
@@ -430,6 +430,10 @@
       requestUrl: 'sourceById'
     }
   })
+  const afterResponse = (params: any) => {
+    params.tableData = JSON.parse(params.tableData)
+    return params
+  }
   // 提交表单前校验
   const beforeSubmit = (params: any) => {
     if (dialog.type === 1) {
@@ -447,12 +451,12 @@
         ElMessage.error(errorTip.join(','))
         return false
       }
-      params.tableData = JSON.stringify(params.tableData)
     }
     if (dialog.type === 2) {
       // 添加编辑提交参数
       params.id = dialog.id
     }
+    params.tableData = JSON.stringify(params.tableData)
     return params
   }
   // 提交完成事件
@@ -467,9 +471,6 @@
     if (type === 'reset') {
       dialog.visible = false
     }
-  }
-  const beforeRequest = (params: any) => {
-    console.log('beforeRequest', params)
   }
   onMounted(() => {
     if (route.query.source) {

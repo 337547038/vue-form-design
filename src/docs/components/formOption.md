@@ -452,7 +452,7 @@ const beforeSubmit = (params, route) => {
 ```
 
 如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串形式，如`beforeSubmit="beforeSubmit"`
-。此时可在`@/utils/formatResult.ts`中的`formatResult`方法进行处理。
+。此时可在`@/utils/requestRespone.ts`中进行自定义处理。
 
 ```javascript
 /**

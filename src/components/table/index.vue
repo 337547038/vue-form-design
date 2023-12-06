@@ -334,7 +334,11 @@
 
   // 搜索表单的值
   const searchFormValue = computed(() => {
-    return Object.assign({}, searchFormEl.value?.getValue(), state.treeValue)
+    return Object.assign(
+      {},
+      searchFormEl.value?.getValue(true),
+      state.treeValue
+    )
   })
 
   /**
@@ -384,16 +388,18 @@
     return props.data.config?.delKey || props.delKey
   })
 
+  /**
+   * 返回当前事件，优先返回props的，否则返回events里的
+   * @param key
+   */
   const getRequestEvent = (key: string) => {
     let event
     const propsEvent = (props as any)[key]
+    const events: any = props.data.events
     if (typeof propsEvent === 'function') {
       event = propsEvent
-    } else if (
-      props.data.events &&
-      typeof props.data.events[key] === 'function'
-    ) {
-      event = props.data.events[key]
+    } else if (events && typeof events[key] === 'function') {
+      event = events[key]
     }
     return event
   }

@@ -39,7 +39,6 @@ export const getRequest = (
   let obj: any = Object.assign(
     {
       url: url, // 添加个前缀
-      //url: url, // 添加个前缀
       method: method,
       data
     },

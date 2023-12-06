@@ -42,6 +42,8 @@ export const requestResponse = ({
         return
       }
       params = result
+    } else if (beforeRequest && typeof beforeRequest === 'string') {
+      //使用了字符时，这里也可以拦截统一处理，由线上转为线下
     }
     getRequest(requestUrl, params, options)
       .then((res: any) => {

@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 // @ts-ignore
 import routesPage from '~pages'
 import { useLayoutStore } from '@/store/layout'
@@ -43,7 +43,7 @@ const filterRoutePage = (type?: string) => {
 }
 const hiddenLayout = filterRoutePage('hidden')
 
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: '/layout',
     redirect: '/',
@@ -59,7 +59,7 @@ const routes: Array<RouteRecordRaw> = [
     children: filterRoutePage('docs')
   }
 ]
-const routesList: Array<RouteRecordRaw> = [...routes, ...hiddenLayout]
+const routesList = [...routes, ...hiddenLayout]
 console.log('routesList', routesList)
 // 配置路由
 const router = createRouter({
@@ -77,9 +77,9 @@ const includesWhite = (str: string): boolean => {
   })
 }
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to: any, _from: any, next: any) => {
   NProgress.start()
-  let permissions: string | string[] = to.meta?.permissions
+  let permissions: any = to.meta?.permissions
   const hasRoute = router.hasRoute('catchAll')
   if (!hasRoute) {
     router.addRoute({

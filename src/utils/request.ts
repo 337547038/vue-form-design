@@ -150,7 +150,6 @@ service.interceptors.response.use(
         // 这里可以直接跳到登录页
         //return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         ElMessage({ message: msg, type: 'error' })
-        alert(0) //todo
         router.push({ path: '/login' })
         break
       default:
