@@ -23,12 +23,13 @@ layout:'hidden'}}
         status: 1,
         other: '没用的字段'
       },
-      pageInfo: {
+      params: {
         pageNum: 1,
-        pageSize: 20
+        pageSize: 20,
+        columns: 'id,name'
       }
     }
-    getRequest('test/list', params).then(res => {
+    getRequest('test/getList', params).then(res => {
       console.log(res)
     })
   }

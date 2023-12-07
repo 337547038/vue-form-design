@@ -59,7 +59,8 @@ export const requestResponse = ({
         resolve({ data: result, message: res.message })
       })
       .catch((res: any) => {
-        ElMessage.error(res.message || '请求异常')
+        //框架request.js已拦截所有code!=1的统一提示，这里无需要多次提示
+        //ElMessage.error(res.message || '请求异常')
         reject(res)
       })
   })
