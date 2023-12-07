@@ -236,7 +236,7 @@
   import ListTreeSide from './treeSide.vue'
   import { useDesignStore } from '@/store/design'
   import { permission } from '@/directive/permissions'
-  import { requestResponse } from '@/utils/requestRespone'
+  import { getRequestEvent, requestResponse } from '@/utils/requestRespone'
 
   const props = withDefaults(
     defineProps<{
@@ -388,21 +388,6 @@
     return props.data.config?.delKey || props.delKey
   })
 
-  /**
-   * 返回当前事件，优先返回props的，否则返回events里的
-   * @param key
-   */
-  const getRequestEvent = (key: string) => {
-    let event
-    const propsEvent = (props as any)[key]
-    const events: any = props.data.events
-    if (typeof propsEvent === 'function') {
-      event = propsEvent
-    } else if (events && typeof events[key] === 'function') {
-      event = events[key]
-    }
-    return event
-  }
   // 筛选查询列表数据
   const getListData = (page?: number) => {
     // 优先使用config配置的
@@ -421,7 +406,7 @@
       pageInfo: {
         sort: props.data.config?.sort,
         pageSize: state.pageSize,
-        pageIndex: state.currentPage
+        pageNum: state.currentPage
       },
       query: Object.assign({}, formValue, props.query)
     }
@@ -440,8 +425,8 @@
     requestResponse({
       requestUrl: getUrl,
       params: params,
-      beforeRequest: getRequestEvent('beforeRequest'),
-      afterResponse: getRequestEvent('afterResponse'),
+      beforeRequest: getRequestEvent(props, 'beforeRequest'),
+      afterResponse: getRequestEvent(props, 'afterResponse'),
       route: route
     })
       .then((res: any) => {
@@ -487,8 +472,8 @@
     requestResponse({
       requestUrl: delUrl,
       params: delParams,
-      beforeRequest: getRequestEvent('beforeDelete'),
-      afterResponse: getRequestEvent('afterResponse'),
+      beforeRequest: getRequestEvent(props, 'beforeDelete'),
+      afterResponse: getRequestEvent(props, 'afterResponse'),
       route: route
     })
       .then((res: any) => {

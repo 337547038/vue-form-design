@@ -51,7 +51,7 @@
   } from '@/utils/design'
   import formChangeValue from '@/utils/formChangeValue'
   import { getStorage } from '@/utils'
-  import { requestResponse } from '@/utils/requestRespone.ts'
+  import { requestResponse, getRequestEvent } from '@/utils/requestRespone.ts'
 
   const props = withDefaults(
     defineProps<{
@@ -395,22 +395,6 @@
   }
   // 表单设计中按钮组件的点击事件
   provide(constFormBtnEvent, defaultBtnClick)
-
-  /**
-   * 返回当前事件，优先返回props的，否则返回events里的
-   * @param key
-   */
-  const getRequestEvent = (key: string) => {
-    let event
-    const propsEvent = (props as any)[key]
-    const events: any = props.data.events
-    if (typeof propsEvent === 'function') {
-      event = propsEvent
-    } else if (events && typeof events[key] === 'function') {
-      event = events[key]
-    }
-    return event
-  }
   /**
    * 编辑时获取表单数据，外部调用并传入请求参数
    * @param params 一般情况下只需传一个id即可{id:xx}
@@ -427,8 +411,8 @@
     requestResponse({
       requestUrl: requestUrl,
       params: newParams,
-      beforeRequest: getRequestEvent('beforeRequest'),
-      afterResponse: getRequestEvent('afterResponse'),
+      beforeRequest: getRequestEvent(props, 'beforeRequest'),
+      afterResponse: getRequestEvent(props, 'afterResponse'),
       route: route
     })
       .then((res: any) => {
@@ -471,7 +455,7 @@
         requestResponse({
           requestUrl: apiUrl,
           params: Object.assign({}, fields, params, props.params),
-          beforeRequest: getRequestEvent('beforeSubmit')
+          beforeRequest: getRequestEvent(props, 'beforeSubmit')
           //afterResponse: getRequestEvent('afterSubmit') //提交结果只有成功失败之类的，这里不需要处理
         })
           .then((res: any) => {
@@ -488,7 +472,7 @@
   }
   const afterSubmitResult = (type: string, res: any) => {
     loading.value = false
-    const submitEvent = getRequestEvent('afterSubmit')
+    const submitEvent = getRequestEvent(props, 'afterSubmit')
     if (typeof submitEvent === 'function') {
       if (submitEvent(type, res) === false) {
         // 有返回false时则不提示

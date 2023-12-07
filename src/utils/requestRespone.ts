@@ -64,3 +64,20 @@ export const requestResponse = ({
       })
   })
 }
+/**
+ * 返回当前事件，优先返回props的，否则返回events里的
+ * @param props
+ * @param key
+ * @return props[key]或props.data.events[key]
+ */
+export const getRequestEvent = (props: any, key: string) => {
+  let event
+  const propsEvent = (props as any)[key]
+  const events: any = props.data.events
+  if (typeof propsEvent === 'function') {
+    event = propsEvent
+  } else if (events && typeof events[key] === 'function') {
+    event = events[key]
+  }
+  return event
+}
