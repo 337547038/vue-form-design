@@ -23,7 +23,7 @@ layout:'hidden'}}
         status: 1,
         other: '没用的字段'
       },
-      params: {
+      extend: {
         pageNum: 1,
         pageSize: 20,
         columns: 'id,name'
@@ -78,7 +78,8 @@ layout:'hidden'}}
   }
   const buttonClickById = () => {
     const params = {
-      id: 1
+      id: 1,
+      extendColumns: 'id,name'
     }
     getRequest('test/get', params)
   }
