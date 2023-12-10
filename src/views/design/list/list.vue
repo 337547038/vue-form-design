@@ -12,8 +12,8 @@
       <template #sourceName="{ row }">
         <router-link
           :to="`/design/form?id=${row.source}&redirect=/design/list/list`"
-          >{{ row.sourceName }}/{{ row.source }}</router-link
-        >
+          >{{ row.source }}/{{ row.source }}
+        </router-link>
       </template>
     </ak-list>
     <el-dialog
@@ -27,7 +27,7 @@
         :data="dialogFormData"
         :type="2"
         :params="{ id: dialog.id }"
-        edit-url="designChange"
+        edit-url="designEdit"
         :after-submit="afterSubmit"
         @btn-click="cancelClick"
       />
@@ -38,6 +38,7 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { ref, reactive, nextTick } from 'vue'
+
   const router = useRouter()
   const dialog = reactive({
     visible: false,
@@ -64,10 +65,14 @@
           }
         }
       },
-      { prop: 'creatName', label: '创建人' },
       {
-        prop: 'creatDate',
-        label: '创建时间',
+        prop: 'creatUserId',
+        label: '创建人',
+        config: { dictKey: 'creatUser' }
+      },
+      {
+        prop: 'updateDate',
+        label: '更新时间',
         width: 200,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
@@ -257,7 +262,7 @@
   }
 
   const beforeRequest = (params: any) => {
-    // params.type = 2 // 列表类型为2
+    params.extend.formName = true //返回所选表单name
     return params
   }
 </script>

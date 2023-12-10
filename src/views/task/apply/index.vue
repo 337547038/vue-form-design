@@ -36,7 +36,7 @@
     return ''
   }
   const category = computed(() => {
-    const storage = getStorage('akAllDict')
+    const storage = getStorage('akAllDict', true)
     return storage['sys-flow'] || {}
   })
   const getListData = () => {

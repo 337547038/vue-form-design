@@ -11,8 +11,8 @@
             <el-popover placement="bottom" :width="420" trigger="hover">
               <template #reference>
                 <el-button type="primary" plain size="small"
-                  >添加表格列字段</el-button
-                >
+                  >添加表格列字段
+                </el-button>
               </template>
               <div class="table-field-list">
                 <div
@@ -142,8 +142,8 @@
                 <template v-if="state.attrObj.prop === '__control'">
                   <el-form-item>
                     <el-button @click="editOpenDrawer('operateBtn')"
-                      >操作按钮设置</el-button
-                    >
+                      >操作按钮设置
+                    </el-button>
                   </el-form-item>
                 </template>
                 <template v-else>
@@ -351,6 +351,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
+
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '列表页设计' }])
   const vueFileEl = ref()
@@ -882,10 +883,12 @@
   // 获取所有可用的表单数据源
   const getFormSourceList = () => {
     const params = {
-      pageInfo: {
+      extend: {
         pageSize: 100
       },
-      type: 1 // 只获取表单的
+      query: {
+        type: 1 // 只获取表单的
+      }
     }
     getRequest('designList', params).then((res: { data: { list: any } }) => {
       //console.log('获取列表数据源', res)
@@ -940,7 +943,7 @@
     }
     const params = {
       listData: objToStringify(state.tableData), // 列表数据
-      //data: state.searchData, // 搜索表单数据，搜索设置不在这里修改
+      data: '{}', // 搜索表单数据，搜索设置不在这里修改
       source: state.formId,
       name: state.name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 2, // 1表单 2列表

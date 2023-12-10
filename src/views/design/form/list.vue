@@ -26,7 +26,7 @@
         ref="formEl"
         :data="dialogFormData"
         :type="2"
-        edit-url="designChange"
+        edit-url="designEdit"
         :after-submit="afterSubmit"
         :btn-click="btnClick"
       />
@@ -62,20 +62,13 @@
           }
         }
       },
-      { prop: 'creatName', label: '创建人' },
+      { prop: 'creatUserId', label: '创建人' },
       {
-        prop: 'creatDate',
-        label: '创建时间',
+        prop: 'updateDate',
+        label: '更新时间',
         width: 200,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
-      // {
-      //   prop: 'updateDate',
-      //   label: '修改时间',
-      //   width: 200,
-      //   config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
-      // },
-      // { prop: 'editName', label: '最后修改' },
       { label: '操作', prop: '__control', width: '250px', fixed: 'right' }
     ],
     controlBtn: [
@@ -249,10 +242,6 @@
       tableListEl.value.getListData() // 重新拉数据
     }
   }
-  /*const beforeSubmit = (params: any) => {
-    params.id = dialog.row.id
-    return params
-  }*/
   const btnClick = (type: string) => {
     if (type === 'reset') {
       dialog.visible = false

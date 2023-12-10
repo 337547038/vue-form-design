@@ -129,7 +129,7 @@
   }
   const getUserList = () => {
     const params = {
-      pageInfo: {
+      extend: {
         pageNum: page.current,
         pageSize: page.pageSize
       },

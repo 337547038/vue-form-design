@@ -2,7 +2,6 @@ export default {
   designSave: 'design/save', // 保存设计的表单
   designEdit: 'design/edit', // 保存设计的表单
   designList: 'design/list', // 获取所有已设计的表单
-  designChange: 'design/change', // 改变设计表单部分设置内容
   designDelete: 'design/delete', // 根据id删除已设计
   designById: 'design/get', // 根据id获取已设计的表单
   sourceList: 'datasource/list', // 获取数据源列表

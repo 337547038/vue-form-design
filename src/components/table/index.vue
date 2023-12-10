@@ -323,7 +323,7 @@
   })
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
-    const storage = getStorage('akAllDict')
+    const storage = getStorage('akAllDict', true)
     return Object.assign(storage || {}, props.dict, state.dict)
   })
   const isFixedBottomScroll = computed(() => {
@@ -403,7 +403,7 @@
     // 筛选查询一般不存在校验，这里直接取值
     const formValue = searchFormValue.value || {}
     const params = {
-      pageInfo: {
+      extend: {
         sort: props.data.config?.sort,
         pageSize: state.pageSize,
         pageNum: state.currentPage
@@ -437,7 +437,7 @@
           state.loading = false
         }, 200) // 加个延时主要是等待列表渲染完，即列表查询区域等，计算才准确。
         state.dict = data.dict || {}
-        state.total = data.pageInfo?.total || 0
+        state.total = data.total || 0
       })
       .catch((res: any) => {
         //beforeRequest返回了false时，只拦截请求，不用重置

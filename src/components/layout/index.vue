@@ -87,7 +87,7 @@
    * 获取字典作供全局使用。刷新页时没有即请求加载
    */
   const dictList = () => {
-    const storageDict = getStorage('akAllDict')
+    const storageDict = getStorage('akAllDict', true)
     if (!storageDict) {
       getRequest('dictList', { query: { status: 1 } }).then((res: any) => {
         const result = res.data?.list
@@ -104,7 +104,7 @@
               temp[item.type] = list
             }
           })
-          setStorage('akAllDict', temp)
+          setStorage('akAllDict', temp, 0)
         }
       })
     }

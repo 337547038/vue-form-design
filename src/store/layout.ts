@@ -61,7 +61,7 @@ export const useLayoutStore = defineStore('layout', {
       }
       setStorage('token', data.token, time)
       setStorage('refreshToken', data.refreshToken, time * 2)
-      saveUserInfo && setStorage('userInfo', data)
+      saveUserInfo && setStorage('userInfo', data, 0)
     }
   }
 })

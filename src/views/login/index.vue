@@ -104,7 +104,7 @@
     return new Promise(resolve => {
       getRequest('userMenuList', {
         query: { status: 1, navShow: 1 },
-        pageInfo: { sort: 'sort asc' }
+        extend: { sort: 'sort asc' }
       }).then((res: any) => {
         const list = res.data.list || []
         const resources: any[] = [] // 提取所有path作为权限判断依据

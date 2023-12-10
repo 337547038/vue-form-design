@@ -253,7 +253,7 @@
     })
   }
   const dictForm = computed(() => {
-    const storage = getStorage('akAllDict')
+    const storage = getStorage('akAllDict', true)
     // 全局的、当前表单配置的以及接口返回的
     return Object.assign({}, storage || {}, props.dict, resultDict.value)
   })
