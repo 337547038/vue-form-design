@@ -9,10 +9,10 @@
       :before-request="beforeRequest"
       :query="{ type: 2 }"
     >
-      <template #sourceName="{ row }">
+      <template #sourceName="{ row, dict }">
         <router-link
           :to="`/design/form?id=${row.source}&redirect=/design/list/list`"
-          >{{ row.source }}/{{ row.source }}
+          >{{ dict.formName && dict.formName[row.source] }}/{{ row.source }}
         </router-link>
       </template>
     </ak-list>

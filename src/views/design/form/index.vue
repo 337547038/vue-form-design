@@ -125,7 +125,10 @@
           const result = res.data
           // 初始设计搜索时res.data=''
           if (result.data) {
-            state.formData = stringToObj(result.data)
+            const resultData = stringToObj(result.data)
+            if (resultData && Object.keys(resultData).length) {
+              state.formData = resultData
+            }
           }
           state.formDict = string2json(result.dict)
           // 恢复表单名称

@@ -97,7 +97,12 @@
                 <tooltip :content="item.help" />
               </template>
               <template v-if="$slots[item.prop]" #default="scope">
-                <slot :index="scope.$index" :name="item.prop" :row="scope.row">
+                <slot
+                  :index="scope.$index"
+                  :name="item.prop"
+                  :row="scope.row"
+                  :dict="listDict"
+                >
                 </slot>
               </template>
               <template v-else-if="item.config?.imgWidth" #default="scope">
@@ -324,7 +329,7 @@
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
     const storage = getStorage('akAllDict', true)
-    return Object.assign(storage || {}, props.dict, state.dict)
+    return Object.assign(storage || {}, props.dict, state.dict) || {}
   })
   const isFixedBottomScroll = computed(() => {
     // 如果数据里没配置，则使用props

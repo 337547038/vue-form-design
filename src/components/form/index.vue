@@ -182,7 +182,7 @@
   }
   // 注册window事件
   const setWindowEvent = (bool?: boolean) => {
-    if (props.data.list.length > 0) {
+    if (props.data.list?.length > 0) {
       const formName = props.data.form?.name
       if (!formName) {
         // 导出.vue时，name可以没有

@@ -80,7 +80,7 @@
           dictKey: 'sys-status'
         }
       },
-      { prop: 'creatUserId', label: '创建人' },
+      { prop: 'creatUser', label: '创建人' },
       {
         prop: 'updateDate',
         label: '修改时间',

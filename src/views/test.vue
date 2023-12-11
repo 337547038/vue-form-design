@@ -20,16 +20,14 @@ layout:'hidden'}}
   const buttonClick = () => {
     const params = {
       query: {
-        status: 1,
-        other: '没用的字段'
+        formId: 27
       },
       extend: {
-        pageNum: 1,
         pageSize: 20,
-        columns: 'id,name'
+        pageNum: 1
       }
     }
-    getRequest('test/getList', params).then(res => {
+    getRequest('content/list', params).then(res => {
       console.log(res)
     })
   }

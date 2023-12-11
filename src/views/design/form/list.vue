@@ -49,7 +49,12 @@
       { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '表单名称', width: '150px' },
       /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
-      { prop: 'sourceName', label: '数据源名称', width: '150px' },
+      {
+        prop: 'source',
+        label: '数据源名称',
+        width: '150px',
+        config: { dictKey: 'source' }
+      },
       { prop: 'category', label: '分类', config: { dictKey: 'sys-form' } },
       {
         prop: 'status',
@@ -62,7 +67,11 @@
           }
         }
       },
-      { prop: 'creatUserId', label: '创建人' },
+      {
+        prop: 'creatUserId',
+        label: '创建人',
+        config: { dictKey: 'creatUser' }
+      },
       {
         prop: 'updateDate',
         label: '更新时间',
@@ -249,6 +258,7 @@
   }
   const beforeRequest = (params: any) => {
     params.query.type = 1 // 表单类型为1
+    params.extend.source = true //dict返回数据源名称
     return params
   }
 </script>
