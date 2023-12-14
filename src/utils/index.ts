@@ -148,9 +148,9 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
  * 获取storage
  * @param key 保存时的key
  * @param hour 如果保存时使用了时间，则需要传true
- * @param expired 指定已过期时返回的值，过期默认返回undefined
+ * @return 返回保存的值，过期后返回false,其他异常或不存在返回undefined
  */
-export const getStorage = (key: string, hour?: boolean, expired?: string) => {
+export const getStorage = (key: string, hour?: boolean) => {
   let data: any
   if (hour) {
     data = window.localStorage.getItem(key)
@@ -163,11 +163,12 @@ export const getStorage = (key: string, hour?: boolean, expired?: string) => {
           data = data.__value
         } else {
           // 过期了
-          data = expired || undefined
+          data = false
         }
       }
     } catch (e) {
       /* empty */
+      data = undefined
     }
   } else {
     //保存时没传时间的，存在session里

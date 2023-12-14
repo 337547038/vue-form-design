@@ -93,15 +93,18 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
     next()
   } else {
     // 除白名单其他页面需要登录，判断登录
-    // 如没有token过期刷新的需求，这里获取token为空或过期时，直接跳转即可。存在刷新token操作时，过期也不能跳到登录页，否则直接跳转没办法换
-    const token: string = getStorage('token', true, 'expired')
+    // 如没有token过期刷新的需求，这里获取token为空或过期时，直接跳转即可。
+    // 存在刷新refreshToken操作时，token过期也不能跳到登录页，否则直接跳转没办法换
+    //const token: any = getStorage('token', true)
+    const refreshToken: any = getStorage('refreshToken', true)
     // menuList为接口返回的当前用户可用路由或按钮
     const menuList: string[] = getStorage('resources', true) || []
     let nextQuery: any = {
       path: '/login',
       query: { redirect: encodeURI(to.fullPath) }
     }
-    if (token) {
+    //判断refreshToken即可，当token过期还能继续执行刷新token操作
+    if (refreshToken) {
       // 根据菜单权限接口判断有没对应页面的权限
       if (permissions !== 'none') {
         // 需要有指定的权限

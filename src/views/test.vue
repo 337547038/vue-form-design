@@ -20,9 +20,11 @@ layout:'hidden'}}
   const buttonClick = () => {
     const params = {
       query: {
-        formId: 27
+        //name: 'name12',
+        //status: 1
       },
       extend: {
+        formId: 27,
         pageSize: 20,
         pageNum: 1
       }
@@ -76,9 +78,9 @@ layout:'hidden'}}
   }
   const buttonClickById = () => {
     const params = {
-      id: 1,
-      extendColumns: 'id,name'
+      formId: '25',
+      id: '1'
     }
-    getRequest('test/get', params)
+    getRequest('content/get', params)
   }
 </script>

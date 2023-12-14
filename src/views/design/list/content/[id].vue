@@ -9,7 +9,7 @@
       :dict="state.dict"
       request-url="getContentList"
       delete-url="delFormContent"
-      :query="{ formId: state.source }"
+      :before-request="beforeRequest"
       :auto-load="false"
       @btn-click="listBtnClick"
     />
@@ -98,6 +98,11 @@
       //deep: true
     }
   )
+  const beforeRequest = (params: any) => {
+    console.log(params)
+    params.extend.formId = state.source
+    return params
+  }
   /*****弹窗口相关****/
   const formEl = ref()
   const dialog = reactive({

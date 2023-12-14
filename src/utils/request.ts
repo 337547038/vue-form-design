@@ -76,8 +76,8 @@ service.interceptors.request.use(
       config.params = config.data
     }
     //2. 让每个请求携带自定义token 请根据实际情况自行修改。
-    const token: string = getStorage('token', true, 'expired')
-    if (token && token !== 'expired') {
+    const token: any = getStorage('token', true)
+    if (token) {
       config.headers['Authorization'] = token
     }
     //3. 全局防抖拦截，请根据实际情况自行修改
@@ -115,7 +115,7 @@ service.interceptors.request.use(
     // 全局防抖拦截结束
     //4. 无感刷新token开始
     const refreshToken = getStorage('refreshToken', true)
-    if (token === 'expired' && refreshToken) {
+    if (!token && refreshToken) {
       if (!refreshTokenAjax) {
         getNewToken(refreshToken)
       }

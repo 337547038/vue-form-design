@@ -13,7 +13,7 @@ export default {
   editFormContent: 'content/edit', // 往已设计好的表单里添加内容
   getContentList: 'content/list', // 获取表单内容列表
   delFormContent: 'content/delete', // 删除表单内容
-  getFormContent: 'content/id', // 获取表单内容
+  getFormContent: 'content/get', // 获取表单内容
   upload: 'upload/single', // 默认el-upload上传url，也可单独在设计时填写上传地址
   importExcel: '', // 导出excel
   chunkUploadAddGroup: 'upload/group/add', // 选择上传文件添加分组

@@ -10,6 +10,7 @@
       submit-url="saveFormContent"
       edit-url="editFormContent"
       :before-submit="beforeSubmit"
+      :params="{ formId: formId.value }"
       :after-submit="afterSubmit"
     />
   </div>
