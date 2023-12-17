@@ -53,7 +53,7 @@ export const useLayoutStore = defineStore('layout', {
       }
     },
     // 保存登录的信息
-    setLoginInfo(data: { [key: string]: string }, saveUserInfo: boolean) {
+    setLoginInfo(data: { [key: string]: string } = {}, saveUserInfo?: boolean) {
       const expireTime = data.expire_time //有效时间
       let time = 24
       if (expireTime) {

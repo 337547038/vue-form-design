@@ -154,22 +154,10 @@
                 </el-form-item>
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
-                <el-button
-                  @click="
-                    optionsEvent(
-                      'optionsParams',
-                      '请求前处理事件，参数(data,route,form) data请求参数,route页面路由,form表单值'
-                    )
-                  "
+                <el-button @click="optionsEvent('optionsParams')"
                   >beforeRequest
                 </el-button>
-                <el-button
-                  @click="
-                    optionsEvent(
-                      'optionsResult',
-                      '请求返回结束处理；，也可为字符串，如opt=formatTest'
-                    )
-                  "
+                <el-button @click="optionsEvent('optionsResult')"
                   >afterResponse
                 </el-button>
               </el-form-item>
@@ -245,17 +233,8 @@
               </el-form-item>
               <el-form-item>
                 <el-button @click="addRulesFast">快速添加</el-button>
-                <el-button @click="addRules(state.tooltip.rules)"
+                <el-button @click="openAttrDialog('editRules')"
                   >编写校验规则
-                  <el-tooltip
-                    :content="state.tooltip.rules"
-                    placement="top"
-                    raw-content
-                  >
-                    <el-icon>
-                      <QuestionFilled />
-                    </el-icon>
-                  </el-tooltip>
                 </el-button>
               </el-form-item>
             </div>
@@ -275,15 +254,8 @@
           <div v-if="showHide(['grid', 'card', 'gridChild', 'divider', 'div'])">
             <div class="h3"><h3>其他属性</h3></div>
 
-            <el-button
-              size="small"
-              @click="openAttrDialog('', state.tooltip.props)"
+            <el-button size="small" @click="openAttrDialog('editProps')"
               >编辑属性
-              <el-tooltip :content="state.tooltip.props" placement="top">
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
             </el-button>
           </div>
         </el-form>
@@ -343,21 +315,11 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button @click="editFormStyle(state.tooltip.css)"
+            <el-button @click="openAttrDialog('editCss')"
               >编辑表单样式
-              <el-tooltip :content="state.tooltip.css" placement="top">
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
             </el-button>
-            <el-button @click="editFormDict(state.tooltip.dict)"
+            <el-button @click="openAttrDialog('editDict')"
               >设置数据字典
-              <el-tooltip :content="state.tooltip.dict" placement="top">
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
             </el-button>
           </el-form-item>
           <template v-if="!state.isSearch">
@@ -381,44 +343,19 @@
               />
             </el-form-item>
             <el-form-item class="event-btn">
-              <el-button
-                @click="
-                  eventClick(
-                    'beforeRequest',
-                    '获取表单初始数据前事件，可修改请求参数'
-                  )
-                "
+              <el-button @click="openAttrDialog('beforeRequest')"
                 >beforeRequest
               </el-button>
-              <el-button
-                @click="
-                  eventClick(
-                    'afterResponse',
-                    '获取表单初始数据后事件，可对请求返回数据进行处理；也可为字符串，如opt=formatTest'
-                  )
-                "
+              <el-button @click="openAttrDialog('afterResponse')"
                 >afterResponse
               </el-button>
-              <el-button
-                @click="
-                  eventClick(
-                    'beforeSubmit',
-                    '表单数据提交前事件，可对提交数据进行处理；也可为字符串，如opt=formatTest'
-                  )
-                "
+              <el-button @click="openAttrDialog('beforeSubmit')"
                 >beforeSubmit
               </el-button>
-              <el-button
-                @click="eventClick('afterSubmit', '表单数据提交成功事件')"
+              <el-button @click="openAttrDialog('afterSubmit')"
                 >afterSubmit
               </el-button>
-              <el-button
-                @click="
-                  eventClick(
-                    'change',
-                    '表单组件值改变事件。当表单某值改变时，可修改其他组件的值；也可为字符串，如opt=formChange,字符串即为/utils/formChangeValue(name,model,key)中的key值'
-                  )
-                "
+              <el-button @click="openAttrDialog('change')"
                 >表单组件改变事件change
               </el-button>
             </el-form-item>
@@ -1165,8 +1102,6 @@
     ], // 自定义校验规则
     isSearch: designType === 'search',
     tooltip: {
-      css: '当前表单应用页的样式，类似于.vue文件中的style scoped中的样式',
-      dict: '数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。json格式："sex":{"0":"男","1":"女"}',
       rules:
         "可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>",
       props: '可添加当前组件所有prop属性及事件方法'
@@ -1279,7 +1214,7 @@
       // 级联时打开弹窗口
       openAttrDialog('cascader')
     } else if (cType === 'treeSelect') {
-      openAttrDialog('treeSelect', '编辑组件下拉选项数据')
+      openAttrDialog('treeSelect')
     } else {
       if (type === 'tabs') {
         controlData.value.columns.push({
@@ -1294,16 +1229,30 @@
       }
     }
   }
-  // 更多属性弹窗
+  /**
+   * 打开编辑器事件
+   * @param type
+   * @param tooltip
+   */
   const openAttrDialog = (type?: string, tooltip?: string) => {
     let editData = controlData.value.control
     const { type: cType, config, options, control } = controlData.value
+    let codeType: string = ''
     if (cType === 'button') {
       // 按钮组件编辑属性
       editData = config
       type = 'button'
     }
     switch (type) {
+      case 'editCss':
+        codeType = 'css'
+        break
+      case 'editDict':
+        codeType = 'json'
+        break
+      case 'editRules':
+        editData = controlData.value.formItem?.rules || []
+        break
       case 'treeSelect':
         editData = control.data
         break
@@ -1321,10 +1270,20 @@
     const emitsParams = {
       content: editData,
       title: tooltip,
+      codeType: codeType,
       type: type,
-      direction: 'ltr',
       callback: (result: any) => {
         switch (type) {
+          case 'editRules':
+            if (!controlData.value.formItem) {
+              controlData.value.formItem = {}
+            }
+            controlData.value.formItem.rules = result
+            break
+          case 'editProps':
+            controlData.value.control = {}
+            Object.assign(controlData.value.control, result)
+            break
           case 'treeSelect':
             controlData.value.control.data = result
             break
@@ -1340,9 +1299,6 @@
           case 'button':
             controlData.value.config = result
             break
-          default:
-            controlData.value.control = {}
-            Object.assign(controlData.value.control, result)
         }
       }
     }
@@ -1362,22 +1318,6 @@
     } else {
       controlData.value.formItem.rules.splice(0, 1)
     }
-  }
-  // 添加校验规则
-  const addRules = (tooltip: string) => {
-    const rules = controlData.value.formItem?.rules
-    if (!rules) {
-      controlData.value.formItem.rules = []
-    }
-    const params = {
-      content: rules || [],
-      title: tooltip,
-      direction: 'ltr',
-      callback: (result: any) => {
-        Object.assign(rules || [], result)
-      }
-    }
-    emits('openDialog', params)
   }
   // 根据不同类型判断是否显示当前属性
   const showHide = (type: string[], show?: boolean) => {
@@ -1428,23 +1368,7 @@
   const delAddRules = (index: number) => {
     controlData.value.customRules?.splice(index, 1)
   }
-  // 编辑表单样式
-  const editFormStyle = (tooltip: string) => {
-    emits('openDialog', {
-      codeType: 'css',
-      direction: 'ltr',
-      type: 'css',
-      title: tooltip
-    })
-  }
-  const editFormDict = (tooltip: string) => {
-    emits('openDialog', {
-      type: 'dict',
-      direction: 'ltr',
-      codeType: 'json',
-      title: tooltip
-    })
-  }
+
   // 根据选定数据源获取表单字段
   const getFormFieldBySource = (
     id?: string,
@@ -1525,11 +1449,8 @@
     }
   }
   // options动态选项数据源请求时
-  const optionsEvent = (type: string, tooltip?: string) => {
-    openAttrDialog(type, tooltip)
-  }
-  const eventClick = (type: string, tooltip?: string) => {
-    emits('openDialog', { type: type, title: tooltip, direction: 'ltr' })
+  const optionsEvent = (type: string) => {
+    openAttrDialog(type)
   }
   getDataSource()
   defineExpose({ getFormFieldBySource })

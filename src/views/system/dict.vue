@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
   import { ref, reactive, nextTick } from 'vue'
+
   const tableListEl = ref()
   const formEl = ref()
   const formEl2 = ref()
@@ -339,6 +340,7 @@
     return params
   }
   const beforeSubmit2 = (params: any) => {
+    params.children = JSON.stringify(params.children)
     params.id = dialog2.editId // 添加编辑id
     return params
   }

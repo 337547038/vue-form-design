@@ -3,7 +3,7 @@ import { getStorage } from '@/utils'
 import SparkMD5 from 'spark-md5'
 import { ElMessage } from 'element-plus'
 import { useLayoutStore } from '@/store/layout'
-import router from '@/router'
+//import router from '@/router'
 
 //5. 通过运行的命令获取各不同环境的请求api等，无需在根目录添加如.env.development等文件
 const mode = import.meta.env.MODE
@@ -150,7 +150,8 @@ service.interceptors.response.use(
         // 这里可以直接跳到登录页
         //return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         ElMessage({ message: msg, type: 'error' })
-        router.push({ path: '/login' })
+        // todo 这里使用了router后在开发热更新时会导致页面刷新
+        //router.push({ path: '/login' })
         break
       default:
         // 这里可统一处理其他异常拦截，或提示

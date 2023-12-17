@@ -1,5 +1,6 @@
 import { getRequest } from '@/api'
-import { ElMessage } from 'element-plus'
+//import { ElMessage } from 'element-plus'
+import { jsonParseStringify } from '@/utils/design'
 
 interface RequestParams {
   requestUrl: string //请求url
@@ -34,33 +35,49 @@ export const requestResponse = ({
     if (!requestUrl) {
       resolve({})
     }
+    let beforeResult: any = params
     if (typeof beforeRequest === 'function') {
-      const result = beforeRequest(params, route, formModel)
-      if (result === false) {
+      //要求beforeRequest一定要有return，否则不起作用。
+      // 这里修改下不让直接修改params的值也能生效，防止如表单拦截修改时页面会显示被修改后的值
+      beforeResult = beforeRequest(
+        jsonParseStringify(params),
+        route,
+        jsonParseStringify(formModel)
+      )
+      if (beforeResult === false) {
         //拦截方式beforeRequest返回false阻止发送请求
         reject({ code: 'return false', message: 'beforeRequest return false' })
         return
+      } else if (beforeResult && typeof beforeResult === 'string') {
+        console.log('返回字符串处理：' + beforeResult)
+        //返回字符串时，这里可根据返回的自定义字符串标识处理各种复杂的情况
+        //beforeParams = xx
       }
-      params = result
-    } else if (beforeRequest && typeof beforeRequest === 'string') {
-      //使用了字符时，这里也可以拦截统一处理，由线上转为线下
     }
-    getRequest(requestUrl, params, options)
+    getRequest(requestUrl, beforeResult, options)
       .then((res: any) => {
-        let result = res.data
-        if (afterResponse) {
-          if (typeof afterResponse === 'function') {
-            result = afterResponse(result) || result
-          } else {
-            // 这里处理afterResponse使用了字符串类型时
-            //result = formatScreen(afterResponse, result)
+        let result: any = res.data
+        if (typeof afterResponse === 'function') {
+          result = afterResponse('success', result, res)
+          if (typeof result === 'string') {
+            console.log('返回字符串处理：' + result)
+            //返回字符串时，这里可根据返回的自定义字符串标识处理各种复杂的情况
+            //将处理后的值给result即可
+            //result=xx
+          }
+          if (result === false) {
+            reject({
+              code: 'return false',
+              message: 'afterResponse return false'
+            })
           }
         }
         resolve({ data: result, message: res.message })
       })
       .catch((res: any) => {
-        //框架request.js已拦截所有code!=1的统一提示，这里无需要多次提示
-        //ElMessage.error(res.message || '请求异常')
+        if (typeof afterResponse === 'function') {
+          afterResponse('fail', res)
+        }
         reject(res)
       })
   })
@@ -74,7 +91,7 @@ export const requestResponse = ({
 export const getRequestEvent = (props: any, key: string) => {
   let event
   const propsEvent = (props as any)[key]
-  const events: any = props.data.events
+  const events: any = props.data?.events
   if (typeof propsEvent === 'function') {
     event = propsEvent
   } else if (events && typeof events[key] === 'function') {

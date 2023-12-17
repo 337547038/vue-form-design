@@ -130,6 +130,9 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
   if (typeof data === 'object') {
     newData = JSON.stringify(data)
   }
+  if (!data) {
+    return
+  }
   if (hour === 0) {
     window.localStorage.setItem(key, newData)
   } else if (hour && hour > 0) {

@@ -19,8 +19,8 @@
           :key="item.key"
           v-bind="item"
           @click="defaultBtnClick(item)"
-          >{{ item.label }}</el-button
-        >
+          >{{ item.label }}
+        </el-button>
       </div>
       <slot></slot>
     </el-form>
@@ -443,7 +443,7 @@
     const apiUrl = props.type === 1 ? submitUrl : editUrl
     if (props.isSearch || !apiUrl || loading.value) {
       if (!props.isSearch && !apiUrl) {
-        console.error(new Error('请配置表单提交url'))
+        console.error(new Error('请配置表单提交submitUrl'))
       }
       // isSearch列表里作为筛选时，不提交表单
       return
@@ -455,33 +455,30 @@
         requestResponse({
           requestUrl: apiUrl,
           params: Object.assign({}, fields, params, props.params),
-          beforeRequest: getRequestEvent(props, 'beforeSubmit')
-          //afterResponse: getRequestEvent('afterSubmit') //提交结果只有成功失败之类的，这里不需要处理
+          beforeRequest: getRequestEvent(props, 'beforeSubmit'),
+          afterResponse: getRequestEvent(props, 'afterSubmit')
         })
           .then((res: any) => {
-            afterSubmitResult('success', res)
+            loading.value = false
+            ElMessage.success(res.message || '保存成功！')
           })
-          .catch((res: any) => {
-            afterSubmitResult('fail', res)
+          .catch(res => {
+            //接口返回code!=1时已统一提示异常，这里不重复提示
+            //接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
+            if (res.code === undefined) {
+              ElMessage.error(res.message || '处理异常！')
+            }
+            loading.value = false
           })
       } else {
-        // 没通过校验
-        afterSubmitResult('validate', fields)
+        // 没通过校验，这里单独处理，返回校验结果通知
+        loading.value = false
+        const submitEvent = getRequestEvent(props, 'afterSubmit')
+        if (typeof submitEvent === 'function') {
+          submitEvent('validate', fields)
+        }
       }
     })
-  }
-  const afterSubmitResult = (type: string, res: any) => {
-    loading.value = false
-    const submitEvent = getRequestEvent(props, 'afterSubmit')
-    if (typeof submitEvent === 'function') {
-      if (submitEvent(type, res) === false) {
-        // 有返回false时则不提示
-        return
-      }
-    }
-    if (type === 'success') {
-      ElMessage.success(res.message || '保存成功！')
-    }
   }
   // ------------------------数据处理结束------------------------
   // 重置表单方法

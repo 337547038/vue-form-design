@@ -86,10 +86,10 @@
     params.codeId = codeId.value //添加验证码加密id
     return params
   }
-  const afterSubmit = (type: string, res: any) => {
+  const afterSubmit = (type: string, data: any) => {
     if (type === 'success') {
       // 统一方法保存token
-      useStore.setLoginInfo(res.data, true)
+      useStore.setLoginInfo(data, true)
       // 获取权限菜单信息
       getNavList().then(() => {
         // 登录成功跳转
@@ -106,7 +106,7 @@
         query: { status: 1, navShow: 1 },
         extend: { sort: 'sort asc' }
       }).then((res: any) => {
-        const list = res.data.list || []
+        const list = res.data?.list || []
         const resources: any[] = [] // 提取所有path作为权限判断依据
         const menuList: any[] = [] // 过滤掉btn类型的菜单
         list.forEach((item: { [key: string]: any }) => {

@@ -36,7 +36,7 @@ export const getRequest = (
     method = url.split('|')[0]
     url = url.replace(/.*\|/, '')
   }
-  let obj: any = Object.assign(
+  const obj: any = Object.assign(
     {
       url: url, // 添加个前缀
       method: method,
@@ -46,7 +46,7 @@ export const getRequest = (
   )
   // localhost和github演示时使用下面地址
   // 使用node接口时可使用本地ip地址访问或注释下面代码
-  const host: string = window.location.host
+  /*const host: string = window.location.host
   if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
     const { type = '', id = '', formId = '' } = data
     let params: string = type + id + formId
@@ -72,7 +72,7 @@ export const getRequest = (
       },
       options
     )
-  }
+  }*/
   return request(obj)
 }
 export const uploadUrl: string = '/api/' + allApi.upload // el-upload上传地址
