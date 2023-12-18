@@ -129,7 +129,8 @@
 
 <style lang="scss" scoped>
   .login {
-    background: url(../../assets/img/login-bg.png) no-repeat center center;
+    background: url(../../assets/img/login-bg.png) no-repeat center center /
+      100% 100%;
     width: 100vw;
     height: 100vh;
     display: flex;

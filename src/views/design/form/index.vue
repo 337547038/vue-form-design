@@ -74,7 +74,7 @@
   } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
   import type { FormData } from '@/types/form'
-  import { getDrawerTitle, getDrawerContent } from './components/tooptip'
+  import { getDrawerTitle, getDrawerContent } from '../components/aceTooptip'
 
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
@@ -287,7 +287,7 @@
       case 'optionsParams':
       case 'optionsResult':
         if (!content) {
-          editData = 'beforeRequest'
+          editData = getDrawerContent(type)
         } else {
           editData = objToStringify(content, true)
         }

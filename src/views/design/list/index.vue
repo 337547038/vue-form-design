@@ -265,13 +265,8 @@
                 <el-button @click="editOpenDrawer('tableConfig')"
                   >编辑表格属性
                 </el-button>
-                <el-button @click="editOpenDrawer('dict')"
+                <el-button @click="editOpenDrawer('editDict')"
                   >设置数据字典
-                  <el-tooltip :content="tooltip.dict" placement="top">
-                    <el-icon>
-                      <QuestionFilled />
-                    </el-icon>
-                  </el-tooltip>
                 </el-button>
               </el-form-item>
               <div class="h3"><h3>接口数据事件</h3></div>
@@ -342,8 +337,6 @@
     objToStringify,
     string2json,
     stringToObj,
-    beforeRequest,
-    afterResponse,
     formatNumber
   } from '@/utils/design'
   import { getRequest } from '@/api'
@@ -351,6 +344,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
+  import { getDrawerContent, getDrawerTitle } from '../components/aceTooptip'
 
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '列表页设计' }])
@@ -615,15 +609,6 @@
         ) {
           has = true
         }
-        /*if (item.prop) {
-          if (item.prop === row.prop) {
-            has = true
-          }
-        } else {
-          if (item.type === row.type) {
-            has = true
-          }
-        }*/
       })
       if (!has) {
         state.tableData.columns.push(row)
@@ -695,28 +680,30 @@
     })
   }
   const editOpenDrawer = (type: string) => {
+    let codeType = ''
+    let editData
+    let title = ''
     switch (type) {
-      case 'dict':
-        dialogOpen(state.dict || {}, { type: type, title: tooltip.dict })
+      case 'editDict':
+        codeType = 'json'
+        editData = state.dict || {}
         break
       case 'tableConfig':
-        dialogOpen(state.tableData.tableProps || {}, {
-          type: type,
-          title: 'el-table的相关属性'
-        })
+        title = 'el-table的相关属性'
+        editData = state.tableData.tableProps || {}
         break
       case 'beforeRequest':
       case 'afterResponse':
       case 'beforeDelete':
         // eslint-disable-next-line no-case-declarations
-        const newData = state.tableData.events || {}
-        dialogOpen(newData[type], { type: type, title: tooltip[type] })
+        const newData: any = state.tableData.events || {}
+        editData = newData[type]
         break
       case 'tree':
         // eslint-disable-next-line no-case-declarations
-        let tree = state.tableData.treeData || {}
-        if (Object.keys(tree).length === 1) {
-          tree = {
+        editData = state.tableData.treeData || {}
+        if (Object.keys(editData).length === 1) {
+          editData = {
             show: true,
             treeProps: {}, // tree props
             name: '唯一标识', // 唯一标识，用于
@@ -724,64 +711,60 @@
             requestUrl: ''
           }
         }
-        dialogOpen(tree, {
-          title: '更多参数详见ak-list组件',
-          type: type
-        })
+        title = '更多参数详见ak-list组件'
         break
       case 'treeBeforeRequest':
-        // eslint-disable-next-line no-case-declarations
-        const treeData = state.tableData.treeData?.beforeRequest
-        dialogOpen(treeData, {
-          type: type,
-          title: '侧栏树请求前处理事件，可对参数作处理'
-        })
+        editData = state.tableData.treeData?.beforeRequest
+        title = '侧栏树请求前处理事件，可对参数作处理'
         break
       case 'treeAfterResponse':
-        // eslint-disable-next-line no-case-declarations
-        const treeData2 = state.tableData.treeData?.afterResponse
-        dialogOpen(treeData2, {
-          type: type,
-          title:
-            '侧栏树请求返回事件，可对返回数据处理；也可为字符串，如opt="formatTest"'
-        })
+        editData = state.tableData.treeData?.afterResponse
+        title = '侧栏树请求返回事件，可对返回数据处理；支持返回字符串'
         break
       case 'operateBtn':
-        dialogOpen(state.tableData.operateBtn || operateBtnList, {
-          type: type,
-          title:
-            '可设置多个操作按钮，其中key=edit/del有内置处理事件，还可根据条件显示与隐藏。可使用permission:"xx"添加权限控制'
-        })
+        editData = state.tableData.operateBtn || operateBtnList
+        title =
+          '可设置多个操作按钮，其中key=edit/del有内置处理事件，还可根据条件显示与隐藏。可使用permission:"xx"添加权限控制'
         break
       case 'controlBtn':
-        dialogOpen(state.tableData.controlBtn || controlBtnList, {
-          type: type,
-          title:
-            '可设置多个操作按钮，其中key=add/del有内置处理事件。可使用permission:"xx"添加权限控制',
-          direction: 'rtl'
-        })
+        editData = state.tableData.controlBtn || controlBtnList
+        title =
+          '可设置多个操作按钮，其中key=add/del有内置处理事件。可使用permission:"xx"添加权限控制'
         break
     }
+    const params = {
+      codeType: codeType,
+      type: type,
+      title: title
+    }
+    dialogOpen(editData, params)
   }
   const dialogOpen = (obj: any, params: any = {}) => {
     drawer.visible = true
     Object.assign(drawer, { direction: 'ltr' }, params)
-    let editData = objToStringify(obj, true)
-    switch (params.type) {
-      case 'dict':
+    if (!drawer.title) {
+      drawer.title = (getDrawerTitle as any)[params.type]
+    }
+    let editData
+    switch (params.codeType) {
+      case 'json':
         editData = json2string(obj, true)
         break
+      default:
+        editData = objToStringify(obj, true)
+    }
+    switch (params.type) {
       case 'beforeRequest':
       case 'beforeDelete':
       case 'treeBeforeRequest':
         if (!obj) {
-          editData = beforeRequest
+          editData = getDrawerContent('beforeRequest')
         }
         break
       case 'afterResponse':
       case 'treeAfterResponse':
         if (!obj) {
-          editData = afterResponse
+          editData = getDrawerContent('afterResponse')
         }
         break
     }
@@ -794,7 +777,6 @@
         state.tableData = val
         break
       case 'tree':
-        console.log(val)
         state.tableData.treeData = val
         break
       case 'operateBtn':
@@ -803,7 +785,7 @@
       case 'controlBtn':
         state.tableData.controlBtn = val
         break
-      case 'dict':
+      case 'editDict':
         state.dict = string2json(content)
         break
       case 'beforeRequest':
@@ -815,7 +797,6 @@
         state.tableData.events[drawer.type] = val
         break
       case 'tableConfig':
-        //if(state.tableData.p)
         state.tableData.tableProps = val
         break
       case 'treeBeforeRequest':

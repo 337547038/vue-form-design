@@ -154,10 +154,10 @@
                 </el-form-item>
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
-                <el-button @click="optionsEvent('optionsParams')"
+                <el-button @click="openAttrDialog('optionsParams')"
                   >beforeRequest
                 </el-button>
-                <el-button @click="optionsEvent('optionsResult')"
+                <el-button @click="openAttrDialog('optionsResult')"
                   >afterResponse
                 </el-button>
               </el-form-item>
@@ -1234,7 +1234,7 @@
    * @param type
    * @param tooltip
    */
-  const openAttrDialog = (type?: string, tooltip?: string) => {
+  const openAttrDialog = (type?: string) => {
     let editData = controlData.value.control
     const { type: cType, config, options, control } = controlData.value
     let codeType: string = ''
@@ -1261,7 +1261,6 @@
         break
       case 'optionsParams': // 选项请求附加参数
         editData = config.beforeRequest
-        // params.codeType = 'json'
         break
       case 'optionsResult':
         editData = config.afterResponse
@@ -1269,7 +1268,6 @@
     }
     const emitsParams = {
       content: editData,
-      title: tooltip,
       codeType: codeType,
       type: type,
       callback: (result: any) => {
@@ -1447,10 +1445,6 @@
     if (filter && filter.length) {
       item.message = filter[0].message
     }
-  }
-  // options动态选项数据源请求时
-  const optionsEvent = (type: string) => {
-    openAttrDialog(type)
   }
   getDataSource()
   defineExpose({ getFormFieldBySource })

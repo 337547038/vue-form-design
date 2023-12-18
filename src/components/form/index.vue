@@ -366,11 +366,12 @@
       }
       // 支持在线方式数据处理，如A组件值改变时，可自动修改B组件的值，可参考请假流程自动时长计算
       const onFormChange = props.data.events?.change
-      if (onFormChange) {
-        if (typeof onFormChange === 'function') {
-          model.value = onFormChange(key, model.value)
-        } else {
-          model.value = formChangeValue(key, model.value, onFormChange)
+      if (typeof onFormChange === 'function') {
+        const returnVal = onFormChange(key, model.value)
+        if (returnVal && typeof returnVal === 'string') {
+          model.value = formChangeValue(key, model.value, returnVal)
+        } else if (typeof returnVal === 'object') {
+          model.value = returnVal
         }
       }
       // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分

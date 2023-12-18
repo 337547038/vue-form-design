@@ -50,6 +50,9 @@ layout:'hidden'}}
         console.log('123456')
         console.log(type, res)
         return false
+      },
+      change: (key, model) => {
+        console.log(key)
       }
     }
   })

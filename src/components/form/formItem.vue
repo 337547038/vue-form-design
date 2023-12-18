@@ -270,7 +270,10 @@
     //const iReg = new RegExp('\\${.*?}', 'g') // 结果会包含开头和结尾=>${name}
     const apiUrl = config.value.optionsFun
     const replace = apiUrl?.match(iReg)
-    return replace && replace[0]
+    if (replace?.length) {
+      return replace[0]
+    }
+    return ''
   })
   const getLabel = (ele: FormItem) => {
     const showColon = formProps.value.showColon ? '：' : ''
@@ -402,12 +405,14 @@
       setFormDict(formProps.value.dict) // 表格里新增时行时需要重新设一次
     }
   })
-  const unWatch1 = watch(
-    () => formProps.value.model[sourceFunKey.value],
-    () => {
-      getAxiosOptions()
-    }
-  )
+  const unWatch1 = sourceFunKey.value
+    ? watch(
+        () => formProps.value.model[sourceFunKey.value],
+        () => {
+          getAxiosOptions()
+        }
+      )
+    : null
   // 处理自定义校验规则，将customRules转换后追加到rules里
   const formatCustomRules = () => {
     const rulesList = props.data.customRules
@@ -520,7 +525,7 @@
       })
   }
   onBeforeRouteLeave(() => {
-    unWatch1() //销毁监听器
+    unWatch1 && unWatch1() //销毁监听器
     unWatch2()
     unWatch3()
   })
