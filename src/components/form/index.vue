@@ -452,10 +452,19 @@
     validate((valid: boolean, fields: any) => {
       if (valid) {
         loading.value = true
+        // 处理数据格式，将多选表格之类的转为字符串形式提交
+        const temp: any = {}
+        for (const key in fields) {
+          if (typeof fields[key] === 'object') {
+            temp[key] = JSON.stringify(fields[key])
+          } else {
+            temp[key] = fields[key]
+          }
+        }
         // 提交保存表单
         requestResponse({
           requestUrl: apiUrl,
-          params: Object.assign({}, fields, params, props.params),
+          params: Object.assign({}, temp, params, props.params),
           beforeRequest: getRequestEvent(props, 'beforeSubmit'),
           afterResponse: getRequestEvent(props, 'afterSubmit')
         })

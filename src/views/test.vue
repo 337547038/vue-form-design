@@ -40,11 +40,12 @@ layout:'hidden'}}
       category: '',
       remark: '',
       status: 1,
+      formId: 25,
       tableData:
         '[{"label":"a","name":"a","type":"INT","length":"1","default":"","empty":false,"remark":"","enterable":true}]'
     }
 
-    getRequest('datasource/creat', params)
+    getRequest('content/save', params)
   }
   const buttonClickEdit = () => {
     const params = {
