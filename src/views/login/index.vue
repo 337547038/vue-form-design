@@ -6,7 +6,7 @@
         :after-submit="afterSubmit"
         :data="formData"
         submit-url="loginSubmit"
-        :beforeSubmit="beforeSubmit"
+        :before-submit="beforeSubmit"
       />
     </div>
   </div>
