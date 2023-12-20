@@ -7,7 +7,7 @@
     <el-button @click="buttonClickLogin">login</el-button>
     <el-button @click="buttonClickById">ById</el-button>
   </div>
-  <Progress />
+  <Progress v-model="val" />
 </template>
 <route>
 {meta:{
@@ -19,6 +19,7 @@ layout:'hidden'}}
   import { getRequest } from '@/api'
   import Progress from './progress.vue'
 
+  const val = ref(0.25)
   const buttonClick = () => {
     const params = {
       query: {

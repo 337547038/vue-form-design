@@ -3,10 +3,7 @@
     <span
       v-for="item in 4"
       :key="item"
-      :class="{
-        [`progress-${item}`]: true,
-        active: currentValue.includes(item)
-      }"
+      :class="{ [`progress-${item}`]: true, active: modelValue * 4 >= item }"
       @click="spanClick(item)"
     ></span>
   </div>
@@ -17,44 +14,36 @@
     defineProps<{
       radius?: number
       color?: string
-      modelValue?: number[]
+      modelValue?: number
     }>(),
     {
       radius: 50,
       color: '#ddd',
-      modelValue: () => {
-        return []
-      }
+      modelValue: 0
     }
   )
+
   const emits = defineEmits<{
-    (e: 'update:modelValue', val: number[]): void
+    (e: 'update:modelValue', val: number): void
   }>()
-  const currentValue = ref(props.modelValue)
-  watch(
-    () => props.modelValue,
-    (val: number[]) => {
-      currentValue.value = val
-    }
-  )
+
+  const currentColor = computed(() => {
+    const color: any = ['#ddd', 'gray', 'red', 'blue', 'yellow']
+    return color[props.modelValue * 4]
+  })
   const style = computed(() => {
     return {
       width: `${props.radius}px`,
       height: `${props.radius}px`,
-      borderColor: props.color,
-      background: props.modelValue?.length === 4 ? props.color : ''
+      borderColor: props.color
     }
   })
   const spanClick = (num: number) => {
-    const index = props.modelValue.indexOf(num)
-    console.log(num, index)
-    if (index !== -1) {
-      //删除
-      currentValue.value.splice(index, 1)
-    } else {
-      currentValue.value.push(num)
+    let val = num / 4
+    if (props.modelValue === 0.25 && num === 1) {
+      val = 0
     }
-    emits('update:modelValue', currentValue.value)
+    emits('update:modelValue', val)
   }
 </script>
 <style scoped lang="scss">
@@ -88,7 +77,7 @@
       transition: all 0.3s;
       cursor: pointer;
       &.active {
-        background: v-bind(color);
+        background: v-bind(currentColor);
       }
       &.progress-2 {
         left: 0;

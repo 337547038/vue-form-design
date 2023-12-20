@@ -380,13 +380,6 @@
     content: '',
     codeType: ''
   })
-  const tooltip = reactive({
-    dict: '数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式JSON："sex":{"0":"男","1":"女"}',
-    afterResponse:
-      '提示：获取列表初始数据后事件，可对请求返回数据进行处理，也可为字符串，如opt="formatTest"',
-    beforeRequest: '提示：获取列表初始数据前事件，可修改请求参数',
-    beforeDelete: '提示：可对删除前提交参数处理'
-  })
   const controlBtnList = [
     {
       label: '新增',

@@ -257,7 +257,7 @@
               size: 'small',
               placeholder: '中文标题名称'
             },
-            config: {},
+            config: { disabledEdit: true },
             name: 'label',
             formItem: {
               label: '标题'
@@ -267,9 +267,10 @@
             type: 'input',
             control: {
               modelValue: '',
-              size: 'small'
+              size: 'small',
+              placeholder: '数据库字段名称'
             },
-            config: {},
+            config: { disabledEdit: true },
             name: 'name',
             formItem: {
               label: '表名字'
@@ -321,7 +322,8 @@
               }
             ],
             config: {
-              optionsType: 0
+              optionsType: 0,
+              disabledEdit: true
             },
             name: 'type',
             formItem: {
@@ -341,7 +343,7 @@
               modelValue: '',
               size: 'small'
             },
-            config: {},
+            config: { disabledEdit: true },
             name: 'length',
             formItem: {
               label: '长度/值'
@@ -353,7 +355,7 @@
               modelValue: '',
               size: 'small'
             },
-            config: {},
+            config: { disabledEdit: true },
             name: 'default',
             formItem: {
               label: '默认'
@@ -365,7 +367,7 @@
               modelValue: false,
               size: 'small'
             },
-            config: {},
+            config: { disabledEdit: true },
             name: 'empty',
             formItem: {
               label: '空'
@@ -377,7 +379,9 @@
               modelValue: '',
               size: 'small'
             },
-            config: {},
+            config: {
+              disabledEdit: true
+            },
             name: 'remark',
             formItem: {
               label: '注释'
@@ -389,7 +393,9 @@
               modelValue: true,
               size: 'small'
             },
-            config: {},
+            config: {
+              disabledEdit: true
+            },
             name: 'enterable',
             formItem: {
               label: '可录入'
@@ -401,7 +407,7 @@
           border: true
         },
         config: {
-          disabledEdit: true,
+          disabledEdit: false,
           addBtnText: '添加一行',
           delBtnText: '删除',
           span: 24
@@ -430,25 +436,34 @@
       requestUrl: 'sourceById'
     }
   })
-  const afterResponse = (params: any) => {
+  const afterResponse = (type, params: any) => {
+    console.log(params)
     params.tableData = JSON.parse(params.tableData)
     return params
   }
   // 提交表单前校验
   const beforeSubmit = (params: any) => {
     if (dialog.type === 1) {
-      if (!params.tableData.length) {
+      console.log(params)
+      const tableData = JSON.parse(params.tableData)
+      if (!tableData?.length) {
         ElMessage.error('数据库表字段内容不能为空')
         return false
       }
       const errorTip: string[] = []
-      params.tableData.forEach((item: any) => {
+      const temp: string[] = []
+      tableData.forEach((item: any) => {
         if (['INT', 'VARCHAR'].includes(item.type) && !item.length) {
           errorTip.push(`名字列${item.name}的长度值不能为空`)
         }
+        if (temp.includes(item.name)) {
+          errorTip.push(`表名字${item.name}有重复`)
+        } else {
+          temp.push(item.name)
+        }
       })
       if (errorTip.length) {
-        ElMessage.error(errorTip.join(','))
+        ElMessage.error(errorTip[0])
         return false
       }
     }
