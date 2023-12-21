@@ -10,7 +10,7 @@
   import { ref, watch, onMounted } from 'vue'
   import { getRequest } from '@/api'
 
-  withDefaults(
+  const props = withDefaults(
     defineProps<{
       placeholder?: string
     }>(),
@@ -18,7 +18,7 @@
   )
   const emits = defineEmits<{
     (e: 'update:modelValue', obj: any): void
-    (e: 'focus', obj: string): void
+    (e: 'focus', obj: string, fn: any): void
   }>()
   const value = ref('')
   const src = ref()
@@ -30,11 +30,11 @@
     }
   )
   const focusInput = () => {
-    emits('focus', codeId.value)
+    emits('focus', codeId.value, getCaptcha)
   }
   const getCaptcha = () => {
     getRequest('getCaptcha', {})
-      .then(res => {
+      .then((res: { data: { base64: any; codeId: any } }) => {
         const { base64, codeId: a } = res.data
         src.value = 'data:image/png;base64,' + base64
         codeId.value = a

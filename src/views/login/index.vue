@@ -3,6 +3,7 @@
     <div class="main">
       <h3>后台管理系统</h3>
       <ak-form
+        ref="formEl"
         :after-submit="afterSubmit"
         :data="formData"
         submit-url="loginSubmit"
@@ -24,10 +25,12 @@
   import { getRequest } from '@/api'
   import { flatToTree } from '@/utils/flatTree.ts'
 
+  const formEl = ref()
   const useStore = useLayoutStore()
   const router = useRouter()
   const route = useRoute()
   const codeId = ref()
+  const refreshKey = ref()
   const formData = ref({
     list: [
       {
@@ -63,8 +66,9 @@
         control: {
           modelValue: '',
           placeholder: '请输入验证码',
-          onFocus: (val: string) => {
+          onFocus: (val: string, refreshFn: any) => {
             codeId.value = val
+            refreshKey.value = refreshFn
           }
         },
         config: { componentName: markRaw(CodeCom) },
@@ -98,6 +102,9 @@
           router.push({ path: path })
         })
       })
+    } else {
+      //刷新验证码，执行获取焦点时提供的方法用于刷新验证码
+      refreshKey.value && refreshKey.value()
     }
   }
   const getNavList = () => {

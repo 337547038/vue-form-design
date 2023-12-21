@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <el-table :data="tableData" style="margin-bottom: 10px">
       <el-table-column
         v-for="item in columns"
@@ -7,16 +7,20 @@
         :prop="item.prop"
         :label="item.label"
       />
-      <el-table-column width="120px">
+      <el-table-column width="110px">
         <template #default="{ row, $index }">
-          <el-button link @click="rowEditClick(row, $index)">编辑</el-button>
-          <el-button link @click="rowDelClick(row, $index)">删除</el-button>
+          <el-button type="primary" link @click="rowEditClick(row, $index)"
+            >编辑</el-button
+          >
+          <el-button type="primary" link @click="rowDelClick(row, $index)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
     <el-button @click="showFormClick" size="small">添加一行</el-button>
     <div v-show="showForm">
-      <ak-form ref="formEl" :data="formData">
+      <ak-form ref="formEl" :data="formData" :type="statusType">
         <el-button @click="addRowSubmit">保存</el-button>
       </ak-form>
     </div>
@@ -36,10 +40,12 @@
     empty?: string
     search?: string
     filedType?: string
+    isNew?: number
   }
   const props = withDefaults(
     defineProps<{
       modelValue?: TableList[] // 当前数据
+      type: number
     }>(),
     {
       modelValue: () => {
@@ -51,18 +57,19 @@
     (e: 'update:modelValue', data: TableList[]): void
   }>()
   const formEl = ref()
-  const type = ref(2) //1新增
   const editRowIndex = ref()
-  const defaultData = ref([]) //设置编辑时的默认值,只提取name
   const tableData = ref([])
+  const statusType = ref(props.type)
   watch(
     () => props.modelValue,
     (val: TableList[]) => {
-      if (defaultData.value.length === 0 && val?.length) {
-        //只设置一次
-        defaultData.value = val.map(item => item.name)
-      }
       tableData.value = val
+      //如果有isNew标识则删除
+      tableData.value.forEach((item: TableList) => {
+        if (item.isNew) {
+          delete item.isNew
+        }
+      })
     },
     { deep: true, immediate: true }
   )
@@ -185,7 +192,7 @@
         config: { disabledEdit: true },
         name: 'empty',
         formItem: {
-          label: '是否为空'
+          label: '空'
         }
       },
       {
@@ -253,8 +260,7 @@
           }
         ],
         config: {
-          optionsType: 0,
-          disabledEdit: true
+          optionsType: 0
         },
         name: 'filedType',
         formItem: {
@@ -266,21 +272,12 @@
         control: {
           modelValue: false
         },
-        config: {
-          disabledEdit: true
-        },
+        config: {},
         name: 'search',
         formItem: {
           label: '模糊搜索'
         }
       }
-      /*{
-        type: 'txt',
-        control: {
-          modelValue: '提示：默认会添加id自增主键'
-        },
-        config: { span: 24 }
-      }*/
     ],
     form: {
       labelWidth: '60px',
@@ -288,13 +285,11 @@
       size: 'small',
       name: 'source'
     },
-    config: {
-      //submitCancel: true
-    }
+    config: {}
   })
   const columns = computed(() => {
-    const temp = []
-    formData.value.list.forEach((item: TableList) => {
+    const temp: any = []
+    formData.value.list.forEach((item: any) => {
       temp.push({
         label: item.formItem?.label,
         prop: item.name
@@ -306,21 +301,23 @@
     showForm.value = true
     formEl.value.setValue(row)
     editRowIndex.value = index
+    statusType.value = props.type
   }
   const rowDelClick = (row: TableList, index: number) => {
-    if (type.value === 2) {
+    showForm.value = false //如果已有展开添加行时，则收起
+    if (props.type === 2) {
       //编辑状态，在编辑状态下新添加的才允许删，以前的不能删
-      //如果要删除的name存在于defaultData中，说明是以前的数据不能删
-      if (defaultData.value.includes(row.name)) {
-        ElMessage.error(`新添加的才能删`)
+      if (row.isNew !== 1) {
+        ElMessage.error(`新添加的才能删除`)
+        return
       }
-      return
     }
     tableData.value.splice(index, 1)
   }
   const showFormClick = () => {
     formEl.value.resetFields() //先清空上一次的
     showForm.value = true
+    statusType.value = 1 // 点新增一行，表单都为增加模式
   }
   /**
    * 添加行
@@ -343,15 +340,23 @@
               hasFiled = true
             }
           })
+          if (
+            ['INT', 'VARCHAR'].includes(fieldValue.type) &&
+            !fieldValue.length
+          ) {
+            ElMessage.error(`名字列${fieldValue.name}的长度值不能为空`)
+            return
+          }
           if (hasFiled) {
             ElMessage.error(`数据表名字${fieldValue.name}已存在`)
-          } else {
-            tableData.value.push(fieldValue)
-            showForm.value = false
+            return
           }
+          fieldValue.isNew = 1 // 添加一个标识，标注为刚新增的
+          tableData.value.push(fieldValue)
+          showForm.value = false
         }
       })
     }
-    emits('emits', tableData.value)
+    emits('update:modelValue', tableData.value)
   }
 </script>

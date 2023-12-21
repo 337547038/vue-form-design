@@ -10,8 +10,9 @@
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
-      width="800px"
+      width="1000px"
       destroy-on-close
+      :before-close="beforeClose"
     >
       <ak-form
         ref="formEl"
@@ -25,7 +26,12 @@
         :after-response="afterResponse"
         :params="{ id: dialog.id }"
         @btn-click="cancelClick"
-      />
+      >
+        <child-table v-model="childTableData" :type="dialog.type" />
+      </ak-form>
+      <div class="tips">
+        提示：默认会添加id自增主键；其中标题作为表单的label值，组件类型仅用于一健创建表单；模糊搜索用于条件查询时
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -34,11 +40,13 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ref, reactive, nextTick, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
+  import childTable from './table.vue'
 
   const route = useRoute()
   const router = useRouter()
   const tableListEl = ref()
   const formEl = ref()
+  const childTableData = ref([])
   const dialog = reactive({
     visible: false,
     title: '',
@@ -247,180 +255,6 @@
           span: 24
         },
         name: 'title'
-      },
-      {
-        type: 'table',
-        list: [
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small',
-              placeholder: '中文标题名称'
-            },
-            config: { disabledEdit: true },
-            name: 'label',
-            formItem: {
-              label: '标题'
-            }
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small',
-              placeholder: '数据库字段名称'
-            },
-            config: { disabledEdit: true },
-            name: 'name',
-            formItem: {
-              label: '表名字'
-            },
-            customRules: [
-              {
-                type: 'required',
-                message: '名字不能为空',
-                trigger: 'blur'
-              },
-              {
-                type: 'numberLetter',
-                message: '只能为字母数字',
-                trigger: 'blur'
-              }
-            ]
-          },
-          {
-            type: 'select',
-            control: {
-              modelValue: '',
-              appendToBody: true,
-              size: 'small'
-            },
-            options: [
-              {
-                label: 'INT',
-                value: 'INT'
-              },
-              {
-                label: 'VARCHAR',
-                value: 'VARCHAR'
-              },
-              {
-                label: 'TEXT',
-                value: 'TEXT'
-              },
-              {
-                label: 'DATETIME',
-                value: 'DATETIME'
-              },
-              {
-                label: 'FLOAT',
-                value: 'FLOAT'
-              },
-              {
-                label: 'BOOLEAN',
-                value: 'BOOLEAN'
-              }
-            ],
-            config: {
-              optionsType: 0,
-              disabledEdit: true
-            },
-            name: 'type',
-            formItem: {
-              label: '类型'
-            },
-            customRules: [
-              {
-                type: 'required',
-                message: '类型不能为空',
-                trigger: 'change'
-              }
-            ]
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small'
-            },
-            config: { disabledEdit: true },
-            name: 'length',
-            formItem: {
-              label: '长度/值'
-            }
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small'
-            },
-            config: { disabledEdit: true },
-            name: 'default',
-            formItem: {
-              label: '默认'
-            }
-          },
-          {
-            type: 'switch',
-            control: {
-              modelValue: false,
-              size: 'small'
-            },
-            config: { disabledEdit: true },
-            name: 'empty',
-            formItem: {
-              label: '空'
-            }
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small'
-            },
-            config: {
-              disabledEdit: true
-            },
-            name: 'remark',
-            formItem: {
-              label: '注释'
-            }
-          },
-          {
-            type: 'switch',
-            control: {
-              modelValue: true,
-              size: 'small'
-            },
-            config: {
-              disabledEdit: true
-            },
-            name: 'enterable',
-            formItem: {
-              label: '可录入'
-            }
-          }
-        ],
-        tableData: [],
-        control: {
-          border: true
-        },
-        config: {
-          disabledEdit: false,
-          addBtnText: '添加一行',
-          delBtnText: '删除',
-          span: 24
-        },
-        name: 'tableData'
-      },
-      {
-        type: 'txt',
-        control: {
-          modelValue: '提示：默认会添加id自增主键'
-        },
-        config: { span: 24 }
       }
     ],
     form: {
@@ -437,40 +271,18 @@
     }
   })
   const afterResponse = (type: string, params: any) => {
-    console.log(params)
-    params.tableData = JSON.parse(params.tableData)
+    childTableData.value = JSON.parse(params.tableData)
     return params
   }
   // 提交表单前校验
   const beforeSubmit = (params: any) => {
     if (dialog.type === 1) {
-      console.log(params)
-      const tableData = JSON.parse(params.tableData)
-      if (!tableData?.length) {
+      if (!childTableData.value.length) {
         ElMessage.error('数据库表字段内容不能为空')
         return false
       }
-      const errorTip: string[] = []
-      const temp: string[] = []
-      tableData.forEach((item: any) => {
-        if (['INT', 'VARCHAR'].includes(item.type) && !item.length) {
-          errorTip.push(`名字列${item.name}的长度值不能为空`)
-        }
-        if (temp.includes(item.name)) {
-          errorTip.push(`表名字${item.name}有重复`)
-        } else {
-          temp.push(item.name)
-        }
-      })
-      if (errorTip.length) {
-        ElMessage.error(errorTip[0])
-        return false
-      }
     }
-    //if (dialog.type === 2) {
-    // 添加编辑提交参数
-    //params.id = dialog.id
-    //}
+    params.tableData = JSON.stringify(childTableData.value)
     return params
   }
   // 提交完成事件
@@ -479,12 +291,19 @@
       dialog.visible = false
       tableListEl.value.getListData()
     }
+    beforeClose()
   }
   // 添加编辑窗口取消
   const cancelClick = (type?: string) => {
     if (type === 'reset') {
       dialog.visible = false
+      beforeClose()
     }
+  }
+  //关闭时清空
+  const beforeClose = (done?: any) => {
+    childTableData.value = []
+    done && done()
   }
   onMounted(() => {
     if (route.query.source) {
