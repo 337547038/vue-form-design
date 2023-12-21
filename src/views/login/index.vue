@@ -39,7 +39,7 @@
         },
         config: {},
         name: 'userName',
-        formItem: { label: '用户名', showLabel: true },
+        formItem: { label: '用户名', hideLabel: true },
         customRules: [
           { type: 'required', message: '请输入登录账号', trigger: 'blur' }
         ]
@@ -53,7 +53,7 @@
         },
         config: {},
         name: 'password',
-        formItem: { label: '密码', showLabel: true },
+        formItem: { label: '密码', hideLabel: true },
         customRules: [
           { type: 'required', message: '请输入密码', trigger: 'blur' }
         ]
@@ -69,7 +69,7 @@
         },
         config: { componentName: markRaw(CodeCom) },
         name: 'code',
-        formItem: { label: '验证码', showLabel: true },
+        formItem: { label: '验证码', hideLabel: true },
         customRules: [
           { type: 'required', message: '请输入验证码', trigger: 'blur' }
         ]

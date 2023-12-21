@@ -65,7 +65,7 @@
         name: 'input',
         formItem: {
           label: '单行文本',
-          showLabel: false,
+          hideLabel: false,
           rules: []
         },
         customRules: [
@@ -98,7 +98,7 @@
         name: 'textarea',
         formItem: {
           label: '多行文本',
-          showLabel: false,
+          hideLabel: false,
           rules: []
         }
       },
@@ -145,7 +145,7 @@
         name: 'radio',
         formItem: {
           label: '单选框组',
-          showLabel: false
+          hideLabel: false
         }
       },
       {
@@ -189,7 +189,7 @@
         name: 'checkbox',
         formItem: {
           label: '多选框组',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -244,7 +244,7 @@
         name: 'radio',
         formItem: {
           label: '下拉选择框',
-          showLabel: false
+          hideLabel: false
         }
       },
       {
@@ -313,7 +313,7 @@
         name: 'datePicker',
         formItem: {
           label: '日期选择器',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -343,7 +343,7 @@
         name: 'timePicker',
         formItem: {
           label: '时间选择器',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -371,7 +371,7 @@
         name: 'colorPicker',
         formItem: {
           label: '取色器',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -401,7 +401,7 @@
         name: 'switch',
         formItem: {
           label: '开关',
-          showLabel: false
+          hideLabel: false
         }
       },
       {
@@ -422,7 +422,7 @@
         name: 'inputNumber',
         formItem: {
           label: '计数器',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -476,7 +476,7 @@
         name: 'cascader',
         formItem: {
           label: '级联选择器',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -506,7 +506,7 @@
         name: 'rate',
         formItem: {
           label: '评分',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -537,7 +537,7 @@
         name: 'slider',
         formItem: {
           label: '滑块',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,
@@ -592,7 +592,7 @@
         name: 'treeSelect',
         formItem: {
           label: '树形控件',
-          showLabel: false,
+          hideLabel: false,
           rules: [
             {
               required: true,

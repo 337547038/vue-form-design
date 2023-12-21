@@ -8,7 +8,9 @@
       submit-url="test/t"
       edit-url=""
       :before-submit="beforeSubmit"
-    />
+    >
+      <childTable v-model="childList" />
+    </ak-form>
   </div>
 </template>
 <route>
@@ -16,7 +18,8 @@
 layout:'hidden'}}
 </route>
 <script setup lang="ts">
-  import { ref, computed, provide } from 'vue'
+  import { ref, computed, provide, markRaw } from 'vue'
+  import childTable from './design/datasource/table.vue'
 
   const formNameEl = ref()
   const formData = ref({
@@ -28,13 +31,29 @@ layout:'hidden'}}
         name: 'input1702736142369',
         formItem: { label: '单行文本' }
       }
+      /*{
+        type: 'component',
+        control: {
+          modelValue: ''
+        },
+        config: {
+          componentName: markRaw(childTable)
+        },
+        name: 'component1703137043652',
+        formItem: {
+          label: '自定义组件',
+          hideLabel: true
+        }
+      }*/
     ],
     form: { size: 'default' },
-    config: { submitCancel: true },
+    config: {
+      //submitCancel: true
+    },
     events: {
       beforeRequest: (data, route) => {
         // data经过处理后返回
-        console.log('beforeRequest', data)
+        // console.log('beforeRequest', data)
         return data
       },
       /*beforeSubmit: (data, route) => {
@@ -60,7 +79,7 @@ layout:'hidden'}}
   const formType = computed(() => {
     return 1
   })
-
+  const childList = ref([{ label: '1', name: '1', type: 'FLOAT' }])
   // 表单提交时参数处理
   const beforeSubmit = (params: any) => {
     // 如编辑时添加参数

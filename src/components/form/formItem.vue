@@ -278,7 +278,7 @@
   const getLabel = (ele: FormItem) => {
     const showColon = formProps.value.showColon ? '：' : ''
     if (ele) {
-      return ele.showLabel ? '' : ele.label + showColon
+      return ele.hideLabel ? '' : ele.label + showColon
     } else {
       return ''
     }

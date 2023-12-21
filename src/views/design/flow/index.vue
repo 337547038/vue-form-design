@@ -160,7 +160,7 @@
         name: 'roleId',
         formItem: {
           label: '角色权限',
-          showLabel: false
+          hideLabel: false
         }
       },
       {
@@ -174,7 +174,7 @@
         name: 'remark',
         formItem: {
           label: '备注说明',
-          showLabel: false
+          hideLabel: false
         }
       }
     ],

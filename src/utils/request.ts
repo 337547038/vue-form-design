@@ -3,17 +3,14 @@ import { getStorage } from '@/utils'
 import SparkMD5 from 'spark-md5'
 import { ElMessage } from 'element-plus'
 import { useLayoutStore } from '@/store/layout'
-//import router from '@/router'
 
-//5. 通过运行的命令获取各不同环境的请求api等，无需在根目录添加如.env.development等文件
+//5. 通过运行的命令获取各不同环境的请求api等，此处不使用在根目录添加如.env.development等文件方式
 const mode = import.meta.env.MODE
 const baseUrl: any = {
   development: '/api/', // 默认命令dev
   production: '', // build
   preRelease: '' // 自定义其他环境如 "build:pre": "vite build --mode preRelease"
 }
-/*const source = axios.CancelToken.source()
-const cancelToken = source.token*/
 
 const service = axios.create({
   baseURL: baseUrl[mode],
@@ -82,7 +79,7 @@ service.interceptors.request.use(
     }
     //3. 全局防抖拦截，请根据实际情况自行修改
     // formData提交时
-    const dataParams: any = config.data
+    /*const dataParams: any = config.data
     if (config.data instanceof FormData) {
       //获取 FormData 对象的键值对数组
       const formDataEntries = config.data.entries()
@@ -111,7 +108,7 @@ service.interceptors.request.use(
           message: '数据正在处理，请勿重复提交'
         })
       }
-    }
+    }*/
     // 全局防抖拦截结束
     //4. 无感刷新token开始
     const refreshToken = getStorage('refreshToken', true)
@@ -152,6 +149,7 @@ service.interceptors.response.use(
         ElMessage({ message: msg, type: 'error' })
         // todo 这里使用了router后在开发热更新时会导致页面刷新
         //router.push({ path: '/login' })
+        window.location.href = '/login'
         break
       default:
         // 这里可统一处理其他异常拦截，或提示

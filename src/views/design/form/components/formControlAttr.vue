@@ -594,8 +594,8 @@
         },
         {
           label: '隐藏label',
-          value: formItem.showLabel,
-          path: 'formItem.showLabel',
+          value: formItem.hideLabel,
+          path: 'formItem.hideLabel',
           type: 'switch',
           vHide: [
             'table',

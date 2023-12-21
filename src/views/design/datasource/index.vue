@@ -23,6 +23,7 @@
         :before-submit="beforeSubmit"
         :after-submit="afterSubmit"
         :after-response="afterResponse"
+        :params="{ id: dialog.id }"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -417,8 +418,7 @@
       {
         type: 'txt',
         control: {
-          modelValue:
-            '提示：默认会添加id自增主键；可录入表示要在表单里作入录入字段，如更新时间这类字段一般为不可录入，其他字段对应数据库字段'
+          modelValue: '提示：默认会添加id自增主键'
         },
         config: { span: 24 }
       }
@@ -436,7 +436,7 @@
       requestUrl: 'sourceById'
     }
   })
-  const afterResponse = (type, params: any) => {
+  const afterResponse = (type: string, params: any) => {
     console.log(params)
     params.tableData = JSON.parse(params.tableData)
     return params
@@ -467,11 +467,10 @@
         return false
       }
     }
-    if (dialog.type === 2) {
-      // 添加编辑提交参数
-      params.id = dialog.id
-    }
-    params.tableData = JSON.stringify(params.tableData)
+    //if (dialog.type === 2) {
+    // 添加编辑提交参数
+    //params.id = dialog.id
+    //}
     return params
   }
   // 提交完成事件

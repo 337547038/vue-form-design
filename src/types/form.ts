@@ -13,7 +13,7 @@ export interface FormItem {
   showMessage?: boolean
   inlineMessage?: boolean
   size?: string
-  showLabel?: boolean
+  hideLabel?: boolean
 }
 
 export interface FormList {

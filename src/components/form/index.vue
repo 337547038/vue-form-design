@@ -13,6 +13,7 @@
       }"
     >
       <form-group :data="data.list" />
+      <slot></slot>
       <div class="group group-btn" v-if="defaultBtnList.length">
         <el-button
           v-for="item in defaultBtnList"
@@ -22,7 +23,6 @@
           >{{ item.label }}
         </el-button>
       </div>
-      <slot></slot>
     </el-form>
   </div>
 </template>
@@ -324,7 +324,7 @@
       }
       return obj
     } else {
-      return model.value
+      return jsonParseStringify(model.value)
     }
   }
   /**
@@ -420,8 +420,17 @@
         loading.value = false
         const result = res.data
         if (result) {
-          const formatRes: any = result
-          setValue(formatRes.result || formatRes)
+          const formatRes: any = result.result || result || {} //兼容两种返回格式
+          // 这里尝试将string转obj以恢复提交保存时的转换
+          const temp: any = {}
+          for (const key in formatRes) {
+            try {
+              temp[key] = JSON.parse(formatRes[key])
+            } catch (e) {
+              temp[key] = formatRes[key]
+            }
+          }
+          setValue(temp)
           nextTick(() => {
             // 将dict保存，可用于从接口中设置表单组件options。
             if (formatRes.dict && Object.keys(formatRes.dict).length) {
