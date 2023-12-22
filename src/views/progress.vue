@@ -9,17 +9,19 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue'
+  import { computed } from 'vue'
   const props = withDefaults(
     defineProps<{
       radius?: number
-      color?: string
       modelValue?: number
+      color?: string[]
     }>(),
     {
-      radius: 50,
-      color: '#ddd',
-      modelValue: 0
+      radius: 30,
+      modelValue: 0,
+      color: () => {
+        return ['#b8b8b8', '#b81733', '#b88e17', '#1786b8', '#17b894']
+      }
     }
   )
 
@@ -28,14 +30,13 @@
   }>()
 
   const currentColor = computed(() => {
-    const color: any = ['#ddd', 'gray', 'red', 'blue', 'yellow']
-    return color[props.modelValue * 4]
+    return props.color[props.modelValue * 4]
   })
   const style = computed(() => {
     return {
       width: `${props.radius}px`,
       height: `${props.radius}px`,
-      borderColor: props.color
+      borderColor: currentColor.value
     }
   })
   const spanClick = (num: number) => {
@@ -58,7 +59,7 @@
       display: block;
       width: 100%;
       height: 1px;
-      border-top: 1px solid v-bind(color);
+      border-top: 1px solid v-bind(currentColor);
       position: absolute;
       left: 0;
       top: 50%;

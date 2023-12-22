@@ -52,15 +52,52 @@ layout:'hidden'}}
   }
   const buttonClickEdit = () => {
     const params = {
-      //name: 'name123',
-      content: '12222',
-      phone: '13666',
-      other: 'other content',
+      name: '示例测试',
+      tableName: 'demo-test',
+      category: 0,
+      remark: '',
       status: 1,
-      password: '123456',
-      id: 1
+      id: 19,
+      creatDate: '2023-12-06T08:29:34.000+00:00',
+      updateDate: '2023-12-10T05:07:49.000+00:00',
+      creatUserId: 1,
+      updateUserId: 1,
+      tableData: JSON.stringify([
+        {
+          label: '名称标题',
+          name: 'name2',
+          type: 'VARCHAR',
+          length: '50',
+          default: '',
+          empty: false,
+          remark: '',
+          enterable: true,
+          isNew: true
+        },
+        {
+          label: '内容',
+          name: 'content2',
+          type: 'VARCHAR',
+          length: '50',
+          default: '',
+          empty: true,
+          remark: '',
+          enterable: true,
+          isNew: true
+        },
+        {
+          label: '时间',
+          name: 'dateTime2',
+          type: 'DATETIME',
+          length: '',
+          default: '',
+          empty: true,
+          remark: '',
+          enterable: true
+        }
+      ])
     }
-    getRequest('test/edit', params)
+    getRequest('datasource/edit', params)
   }
   const buttonClickDel = () => {
     const params = {

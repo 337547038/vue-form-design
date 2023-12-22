@@ -38,7 +38,7 @@
     default?: string
     remark?: string
     empty?: string
-    search?: string
+    search?: boolean
     filedType?: string
     isNew?: number
   }
