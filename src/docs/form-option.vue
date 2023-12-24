@@ -131,14 +131,14 @@
           label: 'label',
           value: 'value',
           query: {},
-          beforeRequest: data => {
+          beforeFetch: data => {
             // data经过处理后返回
-            console.log('beforeRequest', data)
+            console.log('beforeFetch', data)
             return data
           },
-          afterResponse: res => {
+          afterFetch: res => {
             // res返回数据
-            console.log('afterResponse', res)
+            console.log('afterFetch', res)
             return res
           }
         },
@@ -175,14 +175,14 @@
           optionsFun: '',
           method: 'get',
           query: {},
-          beforeRequest: (data, route) => {
+          beforeFetch: (data, route) => {
             // data经过处理后返回
-            console.log('beforeRequest', data)
+            console.log('beforeFetch', data)
             return data
           },
-          afterResponse: res => {
+          afterFetch: res => {
             // res返回数据
-            console.log('afterResponse', res)
+            console.log('afterFetch', res)
             return res
           }
         },
@@ -229,14 +229,14 @@
           label: 'label',
           value: 'value',
           queryName: '远程搜索name',
-          beforeRequest: data => {
+          beforeFetch: data => {
             // data经过处理后返回
-            console.log('beforeRequest', data)
+            console.log('beforeFetch', data)
             return data
           },
-          afterResponse: res => {
+          afterFetch: res => {
             // res返回数据
-            console.log('afterResponse', res)
+            console.log('afterFetch', res)
             return res
           },
           addAll: '全部'
@@ -267,14 +267,14 @@
           optionsFun: '/api',
           query: {},
           method: 'post',
-          beforeRequest: (data, route) => {
+          beforeFetch: (data, route) => {
             // data经过处理后返回
-            console.log('beforeRequest', data)
+            console.log('beforeFetch', data)
             return data
           },
-          afterResponse: res => {
+          afterFetch: res => {
             // res返回数据
-            console.log('afterResponse', res)
+            console.log('afterFetch', res)
             return res
           },
           label: 'label',
@@ -462,14 +462,14 @@
           method: 'post',
           label: 'label',
           value: 'value',
-          beforeRequest: (data, route) => {
+          beforeFetch: (data, route) => {
             // data经过处理后返回
-            console.log('beforeRequest', data)
+            console.log('beforeFetch', data)
             return data
           },
-          afterResponse: res => {
+          afterFetch: res => {
             // res返回数据
-            console.log('afterResponse', res)
+            console.log('afterFetch', res)
             return res
           }
         },
@@ -577,14 +577,14 @@
           optionsFun: '/api',
           query: {},
           method: 'get',
-          beforeRequest: (data, route) => {
+          beforeFetch: (data, route) => {
             // data经过处理后返回
-            console.log('beforeRequest', data)
+            console.log('beforeFetch', data)
             return data
           },
-          afterResponse: res => {
+          afterFetch: res => {
             // res返回数据
-            console.log('afterResponse', res)
+            console.log('afterFetch', res)
             return res
           },
           transformData: 'none'
@@ -831,24 +831,24 @@
       submitCancel: true
     },
     events: {
-      beforeRequest: data => {
+      beforeFetch: data => {
         // data经过处理后返回
-        console.log('beforeRequest', data)
+        console.log('beforeFetch', data)
         return data
       },
-      afterResponse: res => {
+      afterFetch: res => {
         // res返回数据
-        console.log('afterResponse', res)
+        console.log('afterFetch', res)
         return res
       },
       beforeSubmit: data => {
         // data经过处理后返回
-        console.log('beforeRequest', data)
+        console.log('beforeFetch', data)
         return data
       },
       afterSubmit: res => {
         // res返回数据
-        console.log('afterResponse', res)
+        console.log('afterFetch', res)
         return res
       },
       change: (key, model) => {

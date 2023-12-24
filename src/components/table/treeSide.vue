@@ -23,7 +23,7 @@
 <script setup lang="ts">
   import { ref, reactive, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
-  import { requestResponse } from '@/utils/requestRespone'
+  import { requestResponse } from '@/utils/requestResponse.ts'
 
   interface Tree {
     id: number
@@ -65,12 +65,7 @@
     emits('nodeClick', data.id || data.label)
   }
   const init = (name?: string) => {
-    const {
-      requestUrl,
-      method = 'post',
-      beforeRequest,
-      afterResponse
-    } = props.data
+    const { requestUrl, method = 'post', beforeFetch, afterFetch } = props.data
     if (requestUrl && method) {
       // 处理请求前的数据
       const params = name ? { [name]: filterText.value } : {}
@@ -78,8 +73,8 @@
       requestResponse({
         requestUrl: requestUrl,
         params: params,
-        beforeRequest: beforeRequest,
-        afterResponse: afterResponse,
+        beforeFetch: beforeFetch,
+        afterFetch: afterFetch,
         options: options,
         route: route
       })

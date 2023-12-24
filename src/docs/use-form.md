@@ -138,18 +138,18 @@ const result =[{name:'name',id:'1'}]
 // 转换后的数据
 const format =[{label:'name',value:'1'}]
 ```
-注意：设置了`afterResponse`时这三个参数无效
+注意：设置了`afterFetch`时这三个参数无效
 
 **尝试转换value数据类型**
 
 当表单组件对应的值的数字时，这里回显则会异常，这时可以尝试将value转为string或number形式
 
 
-可通过配置`beforeRequest`来添加指定请求参数配置，同时可使用`afterResponse`事件编辑方法对获取到的数据进行处理，最后再return回去。这两方法同表单配置的`beforeRequest`
-和`afterResponse`。
+可通过配置`beforeFetch`来添加指定请求参数配置，同时可使用`afterFetch`事件编辑方法对获取到的数据进行处理，最后再return回去。这两方法同表单配置的`beforeFetch`
+和`afterFetch`。
 
 ```javascript
-//　beforeRequest
+//　beforeFetch
 opt = (data, route, form) => {
   // data表求的数据　route 页面路由信息　form当前表单值
   return data
@@ -315,12 +315,12 @@ opt = [
 
 同理于新增url，同props.requestUrl
 
-**4.beforeRequest：**
+**4.beforeFetch：**
 
-在请求获取表单数据前事件，同props.beforeRequest，如：
+在请求获取表单数据前事件，同props.beforeFetch，如：
 
 ```javascript
-const beforeRequest = (params, route) => {
+const beforeFetch = (params, route) => {
   // 此处可对请求参数params进行修改处理后返回，route为当前路由信息
   // 如当路由参数name为true时，添加id参数
   if (route.query.name) {
@@ -330,21 +330,21 @@ const beforeRequest = (params, route) => {
 }
 ```
 
-**5.afterResponse：**
+**5.afterFetch：**
 
-同props.afterResponse，即`requestUrl`请求结果返回时。可对返回的数据进行处理，如
+同props.afterFetch，即`requestUrl`请求结果返回时。可对返回的数据进行处理，如
 
 ```javascript
-const afterResponse = (result) => {
+const afterFetch = (result) => {
   //　这里是处理逻辑
   return result // return false时不处理请求结果
 }
 ```
 
-当处理逻辑比较复杂时，通过在线编辑器编辑`afterResponse`处理逻辑明显是不适合的，此时可设置为字符串格式，即设置一个key。则会自执行本地`/utils/formatResult`方法，如：
+当处理逻辑比较复杂时，通过在线编辑器编辑`afterFetch`处理逻辑明显是不适合的，此时可设置为字符串格式，即设置一个key。则会自执行本地`/utils/formatResult`方法，如：
 
 ```javascript
-// const afterResponse = 'formatTest'
+// const afterFetch = 'formatTest'
 const formatResult = (res: any, key: string) => {
   // key即为formatTest，可根据设置的key设置不同的处理方法
   return res
@@ -355,11 +355,11 @@ const formatResult = (res: any, key: string) => {
 
 **6.beforeSubmit：**
 
-同props.beforeSubmit。表单提交前处理事件，方法跟beforeRequest一样
+同props.beforeSubmit。表单提交前处理事件，方法跟beforeFetch一样
 
 **7.afterSubmit：**
 
-同props.afterSubmit。表单提交后返回处理事件，方法跟afterResponse一样
+同props.afterSubmit。表单提交后返回处理事件，方法跟afterFetch一样
 
 **8.表单组件改变事件change:**
 

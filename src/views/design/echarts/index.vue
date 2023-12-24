@@ -64,20 +64,20 @@
             <!--              <el-button-->
             <!--                @click="-->
             <!--                  eventClick(-->
-            <!--                    'beforeRequest',-->
+            <!--                    'beforeFetch',-->
             <!--                    '获取图表初始数据前事件，可修改请求参数'-->
             <!--                  )-->
             <!--                "-->
-            <!--                >beforeRequest-->
+            <!--                >beforeFetch-->
             <!--              </el-button>-->
             <!--              <el-button-->
             <!--                @click="-->
             <!--                  eventClick(-->
-            <!--                    'afterResponse',-->
+            <!--                    'afterFetch',-->
             <!--                    '获取图表初始数据后事件，可对请求返回数据进行处理'-->
             <!--                  )-->
             <!--                "-->
-            <!--                >afterResponse-->
+            <!--                >afterFetch-->
             <!--              </el-button>-->
             <!--            </el-form-item>-->
           </el-tab-pane>
@@ -117,8 +117,8 @@
   import VueFile from '../components/vueFile.vue'
   import {
     aceEdit,
-    afterResponse,
-    beforeRequest,
+    afterFetch,
+    beforeFetch,
     objToStringify,
     stringToObj
   } from '@/utils/design'
@@ -243,18 +243,18 @@
     }
     let editData = objToStringify(obj, true)
     switch (params.type) {
-      case 'beforeRequest':
-        if (obj.config?.beforeRequest) {
-          editData = objToStringify(obj.config.beforeRequest, true)
+      case 'beforeFetch':
+        if (obj.config?.beforeFetch) {
+          editData = objToStringify(obj.config.beforeFetch, true)
         } else {
-          editData = beforeRequest
+          editData = beforeFetch
         }
         break
-      case 'afterResponse':
-        if (obj.config?.afterResponse) {
-          editData = objToStringify(obj.config.afterResponse, true)
+      case 'afterFetch':
+        if (obj.config?.afterFetch) {
+          editData = objToStringify(obj.config.afterFetch, true)
         } else {
-          editData = afterResponse
+          editData = afterFetch
         }
         break
     }
@@ -270,8 +270,8 @@
           // 生成脚本预览
           echartsEl.value.setDataList(val)
           break
-        case 'beforeRequest':
-        case 'afterResponse':
+        case 'beforeFetch':
+        case 'afterFetch':
           const data = echartsEl.value.getData()
           data.config[state.dialogType] = val
           break

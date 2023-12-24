@@ -384,23 +384,23 @@
   const globalScreen = inject('globalScreen', {})
   const requestResult = ref()
   const newValue = computed(() => {
-    const { getGlobal, afterResponse } = props.data.events || {}
+    const { getGlobal, afterFetch } = props.data.events || {}
     const type = config.value.optionsType
     if (typeof getGlobal === 'function' && type === 2) {
       // 从全局接口获取
       return getGlobal(getDataByType.value, globalScreen.value)
     }
-    if (type === 1 && requestResult.value && afterResponse) {
+    if (type === 1 && requestResult.value && afterFetch) {
       // 单独从url获取
-      if (typeof afterResponse === 'function') {
-        return afterResponse(
+      if (typeof afterFetch === 'function') {
+        return afterFetch(
           requestResult.value,
           getDataByType.value,
           globalScreen.value || {}
         )
       } else {
         return formatScreen(
-          afterResponse,
+          afterFetch,
           requestResult.value,
           getDataByType.value,
           globalScreen.value || {}
@@ -415,28 +415,28 @@
       return // 不支持动态数据获取的return
     }
     const { optionsType, requestUrl, method = 'post' } = config.value
-    const { beforeRequest = '' } = props.data.events || {}
+    const { beforeFetch = '' } = props.data.events || {}
 
     if (optionsType === 1 && requestUrl) {
       let params = {}
-      if (beforeRequest && typeof beforeRequest === 'function') {
-        params = beforeRequest({})
+      if (beforeFetch && typeof beforeFetch === 'function') {
+        params = beforeFetch({})
       }
       console.log(config.value)
       console.log(method)
       getRequest(requestUrl, params, { method: method })
         .then((res: any) => {
           requestResult.value = res.data
-          /*if (afterResponse) {
-            if (typeof afterResponse === 'function') {
-              newValue.value = afterResponse(
+          /*if (afterFetch) {
+            if (typeof afterFetch === 'function') {
+              newValue.value = afterFetch(
                 result,
                 getDataByType.value,
                 globalScreen.value || {}
               )
             } else {
               newValue.value = formatScreen(
-                afterResponse,
+                afterFetch,
                 result,
                 getDataByType.value,
                 globalScreen.value || {}

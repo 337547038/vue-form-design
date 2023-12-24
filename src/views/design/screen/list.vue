@@ -6,7 +6,7 @@
       delete-url="designDelete"
       :search-data="searchData"
       :data="tableData"
-      :before-request="beforeRequest"
+      :query="{ type: 4 }"
     />
     <el-dialog
       v-model="dialog.visible"
@@ -18,7 +18,7 @@
         ref="formEl"
         :data="dialogFormData"
         :type="2"
-        edit-url="designChange"
+        edit-url="designEdit"
         :after-submit="afterSubmit"
         @btn-click="cancelClick"
       />
@@ -29,6 +29,7 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { ref, reactive, nextTick } from 'vue'
+
   const router = useRouter()
   const dialog = reactive({
     visible: false
@@ -52,7 +53,11 @@
           }
         }
       },
-      { prop: 'creatName', label: '创建人' },
+      {
+        prop: 'creatUserId',
+        label: '创建人',
+        config: { dictKey: 'creatUser' }
+      },
       {
         prop: 'creatDate',
         label: '创建时间',
@@ -226,10 +231,5 @@
     if (type === 'reset') {
       dialog.visible = false
     }
-  }
-
-  const beforeRequest = (params: any) => {
-    params.type = 4 // 列表类型为4
-    return params
   }
 </script>

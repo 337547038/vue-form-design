@@ -272,9 +272,9 @@
         // 格式化一下
         editData = json2string(state.formDict, true)
         break
-      case 'beforeRequest':
+      case 'beforeFetch':
       case 'beforeSubmit':
-      case 'afterResponse':
+      case 'afterFetch':
       case 'afterSubmit':
       case 'change':
         const beforeData: any = state.formData.events || {}
@@ -329,9 +329,9 @@
         case 'editDict':
           state.formDict = newObj
           break
-        case 'beforeRequest':
+        case 'beforeFetch':
         case 'beforeSubmit':
-        case 'afterResponse':
+        case 'afterFetch':
         case 'afterSubmit':
         case 'change':
           if (!state.formData.events) {

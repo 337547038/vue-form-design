@@ -155,10 +155,10 @@
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
                 <el-button @click="openAttrDialog('optionsParams')"
-                  >beforeRequest
+                  >beforeFetch
                 </el-button>
                 <el-button @click="openAttrDialog('optionsResult')"
-                  >afterResponse
+                  >afterFetch
                 </el-button>
               </el-form-item>
             </template>
@@ -343,11 +343,11 @@
               />
             </el-form-item>
             <el-form-item class="event-btn">
-              <el-button @click="openAttrDialog('beforeRequest')"
-                >beforeRequest
+              <el-button @click="openAttrDialog('beforeFetch')"
+                >beforeFetch
               </el-button>
-              <el-button @click="openAttrDialog('afterResponse')"
-                >afterResponse
+              <el-button @click="openAttrDialog('afterFetch')"
+                >afterFetch
               </el-button>
               <el-button @click="openAttrDialog('beforeSubmit')"
                 >beforeSubmit
@@ -1260,10 +1260,10 @@
         editData = options
         break
       case 'optionsParams': // 选项请求附加参数
-        editData = config.beforeRequest
+        editData = config.beforeFetch
         break
       case 'optionsResult':
-        editData = config.afterResponse
+        editData = config.afterFetch
         break
     }
     const emitsParams = {
@@ -1289,10 +1289,10 @@
             controlData.value.options = result
             break
           case 'optionsParams':
-            controlData.value.config.beforeRequest = result
+            controlData.value.config.beforeFetch = result
             break
           case 'optionsResult':
-            controlData.value.config.afterResponse = result
+            controlData.value.config.afterFetch = result
             break
           case 'button':
             controlData.value.config = result

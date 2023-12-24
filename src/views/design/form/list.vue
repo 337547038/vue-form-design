@@ -6,7 +6,8 @@
       delete-url="designDelete"
       :search-data="searchData"
       :data="tableData"
-      :before-request="beforeRequest"
+      :before-fetch="beforeFetch"
+      :query="{ type: 1 }"
     >
       <template #sourceName="{ row }">
         <router-link
@@ -255,10 +256,5 @@
     if (type === 'reset') {
       dialog.visible = false
     }
-  }
-  const beforeRequest = (params: any) => {
-    params.query.type = 1 // 表单类型为1
-    params.extend.source = true //dict返回数据源名称
-    return params
   }
 </script>

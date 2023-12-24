@@ -3,9 +3,9 @@ export const getDrawerTitle = {
     '表单组件值改变事件。这里可修改其他组件的值。返回字符串形式可在@/utils/formChangeValue中处理',
   afterSubmit: '表单提交响应事件；支持返回字符串形式',
   beforeSubmit: '表单数据提交前事件，可对提交数据进行处理；支持返回字符串形式',
-  afterResponse:
+  afterFetch:
     '获取表单初始数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式',
-  beforeRequest:
+  beforeFetch:
     '获取表单初始数据请求发送之前事件，可对请求参数进行处理；支持返回字符串形式',
   optionsParams: '请求发送之前事件，可对请求参数进行处理；支持返回字符串形式',
   optionsResult: '请求响应事件处理；支持返回字符串形式',
@@ -17,11 +17,13 @@ export const getDrawerTitle = {
     "可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>",
   editProps: '可添加当前组件所有prop属性及事件方法',
   button: '可添加当前组件所有prop属性及事件方法',
-  beforeDelete: '请求发送之前事件，可对请求参数进行处理'
+  beforeDelete: '请求发送之前事件，可对请求参数进行处理',
+  afterFetchScreen:
+    '获取数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式'
 }
 export const getDrawerContent = (key: string) => {
   switch (key) {
-    case 'beforeRequest':
+    case 'beforeFetch':
     case 'optionsParams':
       return (
         'opt=(data, route) => {\n' +
@@ -30,10 +32,10 @@ export const getDrawerContent = (key: string) => {
         '  return data\n' +
         '}'
       )
-    case 'afterResponse':
+    case 'afterFetch':
     case 'optionsResult':
       return (
-        'opt=(res) => {\n' +
+        'opt=(type, res) => {\n' +
         '  // 请求响应结果\n' +
         `  console.log('${key}',data)\n` +
         '  return res\n' +
@@ -61,6 +63,14 @@ export const getDrawerContent = (key: string) => {
         '  // key当前改变组件的name值,model表单的值，可修改后返回新值\n' +
         "  console.log('change',key)\n" +
         '  return model\n' +
+        '}'
+      )
+    case 'afterFetchScreen':
+      return (
+        'opt=(type, data, option, global) => {\n' +
+        '  // type(success,fail),data响应数据, 当前图表option，global全局数据\n' +
+        "  console.log('afterFetchScreen',data)\n" +
+        '  return option //返回新的图表数据\n' +
         '}'
       )
   }

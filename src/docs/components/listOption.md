@@ -197,14 +197,14 @@ string
 
 ## event
 
-## beforeRequest
+## beforeFetch
 
 function(params, route)
 
 获取数据发送接口请求前方法，可用于对请求的数据进行处理转换等操作，以提交符合接口的数据要求
 
 ```javascript
-const beforeRequest = (params, route) => {
+const beforeFetch = (params, route) => {
   // 此处可对请求参数params进行修改处理后返回，route为当前路由信息
   // 如当路由参数name为true时，添加id参数
   if (route.query.name) {
@@ -214,17 +214,17 @@ const beforeRequest = (params, route) => {
 }
 ```
 
-### afterResponse
+### afterFetch
 
 function(result)|string
 
 获取数据接口请求数据返回后方法，可用于对请求回来的数据进行处理转换等操作，以满足使用。
 
-如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串。如`afterResponse="afterResponse"`
-。此时可在`@/utils/requestRespone.ts`中进行自定义处理。
+如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串。如`afterFetch="afterFetch"`
+。此时可在`@/utils/requestResponse.ts`中进行自定义处理。
 
 ```javascript
-const afterResponse = (result) => {
+const afterFetch = (result) => {
   //　这里是处理逻辑
   return result // return false时不处理请求结果
 }

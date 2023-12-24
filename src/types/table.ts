@@ -5,8 +5,8 @@ export interface TableData {
   events?: any
   treeData?: {
     show: boolean
-    beforeRequest?: Function
-    afterResponse?: Function | string
+    beforeFetch?: Function | string
+    afterFetch?: Function | string
     method: string
     requestUrl: string
     name: string

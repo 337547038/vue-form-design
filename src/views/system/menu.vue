@@ -6,7 +6,7 @@
       request-url="menuList"
       delete-url="menuDelete"
       :data="tableData"
-      :after-response="afterResponse"
+      :after-fetch="afterFetch"
       :dict="dict"
     >
       <template #name="{ row }">
@@ -335,7 +335,7 @@
     }
   }
 
-  const afterResponse = (result: any) => {
+  const afterFetch = (type: string, result: any) => {
     result.list = flatToTree(result.list)
     return result
   }

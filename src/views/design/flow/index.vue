@@ -15,7 +15,7 @@
           request-url="designById"
           :before-submit="beforeSubmit"
           :after-submit="afterSubmit"
-          :after-response="afterResponse"
+          :after-fetch="afterFetch"
         />
       </el-tab-pane>
       <el-tab-pane label="审批流程" name="flow">
@@ -77,10 +77,11 @@
           debug: true,
           label: 'name',
           value: 'id',
-          beforeRequest: (data: any) => {
+          beforeFetch: (data: any) => {
             // data经过处理后返回
-            // console.log('beforeRequest', data)
-            data.type = 1
+            //console.log('beforeFetch', data)
+            data.query = {}
+            data.query.type = 1
             return data
           }
         },
@@ -202,20 +203,13 @@
     if (id.value) {
       params.id = id.value
     }
-    if (params.icon) {
-      params.icon = params.icon?.join(',')
-    }
     params.type = 3
     if (flowEl.value?.getValue) {
       params.data = objToStringify(flowEl.value?.getValue())
-      //console.log('flowEl.value.getValue()', flowEl.value.getValue())
     }
     return params
   }
-  const afterResponse = (res: any) => {
-    if (res.icon) {
-      res.icon = res.icon.split(',')
-    }
+  const afterFetch = (type: string, res: any) => {
     flowEl.value.setValue(stringToObj(res.data))
     return res
   }
@@ -225,8 +219,10 @@
       if (tabName.value === 'info') {
         tabName.value = 'flow'
         if (!id.value) {
-          const id = res.data.insertId
-          router.push({ path: '/design/flow', query: { id: id, tabs: 'flow' } })
+          router.push({
+            path: '/design/flow',
+            query: { id: res, tabs: 'flow' }
+          })
           nextTick(() => {
             getInitData()
           })

@@ -26,7 +26,7 @@
 
 ### 全局数据
 
-当可视化大屏引用组件比较多时，若每个组件都单独从接口获取数据，这种做法明显不合理，后端同学可能也不会这么提供。因此引入全局数据请求接口，将数据接口处理好提供给每个组件调用。如可在`afterResponse`中对接口返回数据处理。这里return的res可在每个组件的全局或动态数据方法中获取
+当可视化大屏引用组件比较多时，若每个组件都单独从接口获取数据，这种做法明显不合理，后端同学可能也不会这么提供。因此引入全局数据请求接口，将数据接口处理好提供给每个组件调用。如可在`afterFetch`中对接口返回数据处理。这里return的res可在每个组件的全局或动态数据方法中获取
 
 ```javascript
 opt = (res) =>
@@ -44,11 +44,11 @@ opt = (res) =>
 
 ## 数据
 
-### beforeRequest
+### beforeFetch
 
 当前组件数据请求前事件，可对添加请求参数
 
-### afterResponse
+### afterFetch
 
 数据请求结果完成事件，需要此事件对数据进行处理。使用此方法对组件设置，可满足各种图表数据展示，而无需对`echarts`进行层层封装，可直接从echarts官网将图表配置好，复制过来替换好接口数据即可。减少学习成本
 
@@ -60,9 +60,9 @@ opt = (data, option, global) =>
   // global大屏全局数据返回的内容
   option.xAsis.data = data.xAsis
   option.series.data = data.series
-  console.log("afterResponse", data, option, global);
+  console.log("afterFetch", data, option, global);
   return option;
 }
 ```
 
-注意：`afterResponse`事件在大屏配置接口数据处理事件只有`data`参数，此处可将请求到的数据处理后返回给单组件该事件中使用，即上面的`global`
+注意：`afterFetch`事件在大屏配置接口数据处理事件只有`data`参数，此处可将请求到的数据处理后返回给单组件该事件中使用，即上面的`global`

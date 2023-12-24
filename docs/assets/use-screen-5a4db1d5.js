@@ -2,7 +2,7 @@
 {
   <span class="hljs-comment">// res接口返回的数据</span>
   <span class="hljs-keyword">return</span> res;
-}</code></pre><h2 id="位置属性">位置属性</h2><p>可编辑当前组件的位置图层等信息，可使用<code>left、right、top、bottom</code>定位。</p><p>提示：当使用<code>top</code>或者<code>bottom</code>定位时，对应的<code>left</code>或者<code>top</code>将被修正为<code>auto</code>，并且当前组件不能进行拖动和缩放操作</p><h2 id="数据">数据</h2><h3 id="beforerequest">beforeRequest</h3><p>当前组件数据请求前事件，可对添加请求参数</p><h3 id="afterresponse">afterResponse</h3><p>数据请求结果完成事件，需要此事件对数据进行处理。使用此方法对组件设置，可满足各种图表数据展示，而无需对<code>echarts</code>进行层层封装，可直接从echarts官网将图表配置好，复制过来替换好接口数据即可。减少学习成本</p><pre class="language-javascript"><code class="hljs">opt = <span class="hljs-function">(<span class="hljs-params">data, option, <span class="hljs-variable language_">global</span></span>) =&gt;</span>
+}</code></pre><h2 id="位置属性">位置属性</h2><p>可编辑当前组件的位置图层等信息，可使用<code>left、right、top、bottom</code>定位。</p><p>提示：当使用<code>top</code>或者<code>bottom</code>定位时，对应的<code>left</code>或者<code>top</code>将被修正为<code>auto</code>，并且当前组件不能进行拖动和缩放操作</p><h2 id="数据">数据</h2><h3 id="beforeFetch">beforeFetch</h3><p>当前组件数据请求前事件，可对添加请求参数</p><h3 id="afterresponse">afterResponse</h3><p>数据请求结果完成事件，需要此事件对数据进行处理。使用此方法对组件设置，可满足各种图表数据展示，而无需对<code>echarts</code>进行层层封装，可直接从echarts官网将图表配置好，复制过来替换好接口数据即可。减少学习成本</p><pre class="language-javascript"><code class="hljs">opt = <span class="hljs-function">(<span class="hljs-params">data, option, <span class="hljs-variable language_">global</span></span>) =&gt;</span>
 {
   <span class="hljs-comment">// data接口返回的数据</span>
   <span class="hljs-comment">// options当前组件所需数据，图表时直接修改option中的数据即可，如</span>

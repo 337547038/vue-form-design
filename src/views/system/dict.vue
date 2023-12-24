@@ -320,8 +320,10 @@
             value: '0'
           }
         ],
+        name: 'status',
         config: {
-          optionsType: 0
+          optionsType: 0,
+          transformData: 'string'
         },
         formItem: {
           label: '状态'
@@ -340,7 +342,6 @@
     return params
   }
   const beforeSubmit2 = (params: any) => {
-    params.children = JSON.stringify(params.children)
     params.id = dialog2.editId // 添加编辑id
     return params
   }
@@ -354,5 +355,6 @@
       dialog.visible = false
       dialog2.visible = false
     }
+    console.log('btn click')
   }
 </script>

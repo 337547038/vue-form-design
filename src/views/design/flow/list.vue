@@ -6,14 +6,15 @@
       delete-url="designDelete"
       :search-data="searchData"
       :data="tableData"
-      :before-request="beforeRequest"
-      ><template #sourceName="{ row }">
-        <router-link
-          :to="`/design/form?id=${row.source}&redirect=/design/flow/list`"
-          >{{ row.sourceName }}/{{ row.source }}</router-link
-        >
-      </template></ak-list
+      :query="{ type: 3 }"
     >
+      <template #source="{ row, dict }">
+        <router-link
+          :to="`/design/form?id=${row.source}&redirect=/design/list/list`"
+          >{{ dict.formName && dict.formName[row.source] }}
+        </router-link>
+      </template>
+    </ak-list>
   </div>
 </template>
 
@@ -62,7 +63,7 @@
     columns: [
       { label: '多选', type: 'selection' },
       { label: '流程名称', prop: 'name' },
-      { label: '流程表单', prop: 'sourceName' },
+      { label: '流程表单', prop: 'source', config: { dictKey: 'formName' } },
       {
         label: '分类',
         prop: 'category',
@@ -112,8 +113,4 @@
       { label: '删除', key: 'del' }
     ]
   })
-  const beforeRequest = (params: any) => {
-    params.type = 3 // 列表类型为3
-    return params
-  }
 </script>

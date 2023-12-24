@@ -2,8 +2,9 @@ import { getRequest } from '@/api'
 import { stringToObj, appendOrRemoveStyle } from '@/utils/design'
 import { ElMessage } from 'element-plus'
 import formatScreen from '@/utils/formatScreen'
+import { requestResponse } from '@/utils/requestResponse'
 
-export const getInitData = (id: string | number) => {
+export const getInitData = (id: string | number, route?: any) => {
   return new Promise((resolve, reject) => {
     if (!id) {
       return reject()
@@ -16,7 +17,16 @@ export const getInitData = (id: string | number) => {
         if (resultData.config?.style) {
           appendOrRemoveStyle('screenStyle', resultData.config.style, true)
         }
-        getGlobalData(resultData.config)
+        const { requestUrl, beforeFetch, afterFetch, method }: any =
+          resultData.config
+        requestResponse({
+          requestUrl,
+          beforeFetch,
+          afterFetch,
+          route,
+          params: {},
+          options: { method: method }
+        })
           .then((data: any) => {
             resolve({ screenData: resultData, globalData: data })
           })
@@ -33,13 +43,13 @@ export const getInitData = (id: string | number) => {
 // @ts-ignore
 export const getGlobalData = ({
   requestUrl,
-  afterResponse,
-  beforeRequest,
+  afterFetch,
+  beforeFetch,
   method
 }: {
   requestUrl: string
-  afterResponse: any
-  beforeRequest: any
+  afterFetch: any
+  beforeFetch: any
   method: string
 }) => {
   return new Promise((resolve, reject) => {
@@ -47,18 +57,18 @@ export const getGlobalData = ({
       resolve({})
     }
     let params = {}
-    if (typeof beforeRequest === 'function') {
-      params = beforeRequest({})
+    if (typeof beforeFetch === 'function') {
+      params = beforeFetch({})
     }
     getRequest(requestUrl, params, { method: method })
       .then((res: any) => {
         const result = res.data
         let formatRes
-        if (afterResponse) {
-          if (typeof afterResponse === 'function') {
-            formatRes = afterResponse(result)
+        if (afterFetch) {
+          if (typeof afterFetch === 'function') {
+            formatRes = afterFetch(result)
           } else {
-            formatRes = formatScreen(afterResponse, result)
+            formatRes = formatScreen(afterFetch, result)
           }
         }
         resolve(formatRes || result)

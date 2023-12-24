@@ -105,14 +105,14 @@
       name: '唯一标识',
       method: 'post',
       requestUrl: '',
-      beforeRequest: (data, route) => {
+      beforeFetch: (data, route) => {
         // data经过处理后返回
-        console.log('beforeRequest', data)
+        console.log('beforeFetch', data)
         return data
       },
-      afterResponse: res => {
+      afterFetch: res => {
         // res返回数据
-        console.log('afterResponse', res)
+        console.log('afterFetch', res)
         return res
       }
     },
@@ -138,19 +138,19 @@
       }
     ],
     events: {
-      beforeRequest: (data, route) => {
+      beforeFetch: (data, route) => {
         // data经过处理后返回
-        console.log('beforeRequest', data)
+        console.log('beforeFetch', data)
         return data
       },
-      afterResponse: res => {
+      afterFetch: res => {
         // res返回数据
-        console.log('afterResponse', res)
+        console.log('afterFetch', res)
         return res
       },
       beforeDelete: (data, route) => {
         // data经过处理后返回
-        console.log('beforeRequest', data)
+        console.log('beforeFetch', data)
         return data
       }
     }

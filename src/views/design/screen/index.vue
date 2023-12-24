@@ -76,6 +76,7 @@
   import { removeUnit } from './utils'
   import RightMenu from './components/rightMenu.vue'
   import { randomString } from '@/utils'
+  import { getDrawerContent, getDrawerTitle } from '../components/aceTooptip'
 
   const route = useRoute()
   const router = useRouter()
@@ -158,37 +159,42 @@
   }
   const dialogConfirm = (editVal: string) => {
     try {
+      let newObj
+      switch (drawer.codeType) {
+        case 'json':
+          newObj = string2json(editVal)
+          break
+        case 'css':
+          newObj = editVal
+          break
+        default:
+          newObj = stringToObj(editVal)
+      }
       if (typeof drawer.callback === 'function') {
-        // callback
-        const newObj =
-          drawer.codeType === 'json'
-            ? string2json(editVal)
-            : stringToObj(editVal)
         drawer.callback(newObj)
-      } else {
-        switch (drawer.type) {
-          case 'css':
-            // 表单属性－编辑表单样式
-            screenData.value.config.style = editVal
-            appendOrRemoveStyle('screenStyle', editVal, true)
-            break
-          case 'json':
-            screenData.value = stringToObj(editVal)
-            setLayerList()
-            break
-        }
+      }
+      switch (drawer.type) {
+        case 'editCss':
+          // 表单属性－编辑表单样式
+          screenData.value.config.style = editVal
+          appendOrRemoveStyle('screenStyle', editVal, true)
+          break
+        case 'json':
+          screenData.value = stringToObj(editVal)
+          setLayerList()
+          break
       }
       dialogCancel()
-    } catch (res) {
-      /* empty */
+    } catch (res: any) {
+      ElMessage.error(res.message || '未知原因')
     }
   }
   const openDrawer = (params: OpenDrawer) => {
-    const { type, direction, codeType, title, callback, content } = params
+    const { type = '', direction, codeType, title, callback, content } = params
     drawer.direction = direction || 'ltr' // 窗口位置ltr/rtl
     drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
     drawer.codeType = codeType || '' // 显示代码类型
-    drawer.title = title ? `提示：${title}` : ''
+    drawer.title = title || (getDrawerTitle as any)[type]
     drawer.visible = true
     drawer.callback = callback
     let editData =
@@ -196,8 +202,15 @@
         ? json2string(content, true)
         : objToStringify(content, true)
     switch (type) {
-      case 'css':
+      case 'editCss':
         editData = screenData.value.config.style || ''
+        break
+      case 'beforeFetch':
+      case 'afterFetch':
+      case 'afterFetchScreen':
+        if (!content) {
+          editData = getDrawerContent(type)
+        }
         break
     }
     drawer.content = editData

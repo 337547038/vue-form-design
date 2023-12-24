@@ -6,8 +6,8 @@ export interface Config {
   requestUrl?: string
   method?: string
   loopTime?: number
-  beforeRequest?: Function
-  afterResponse?: Function | string
+  beforeFetch?: Function
+  afterFetch?: Function | string
 }
 export interface CSSProperties {
   width: number | string

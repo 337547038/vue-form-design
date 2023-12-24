@@ -23,7 +23,7 @@
         request-url="sourceById"
         :before-submit="beforeSubmit"
         :after-submit="afterSubmit"
-        :after-response="afterResponse"
+        :after-fetch="afterFetch"
         :params="{ id: dialog.id }"
         @btn-click="cancelClick"
       >
@@ -270,7 +270,7 @@
       requestUrl: 'sourceById'
     }
   })
-  const afterResponse = (type: string, params: any) => {
+  const afterFetch = (type: string, params: any) => {
     childTableData.value = JSON.parse(params.tableData)
     return params
   }

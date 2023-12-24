@@ -9,7 +9,7 @@
       :dict="state.dict"
       request-url="getContentList"
       delete-url="delFormContent"
-      :before-request="beforeRequest"
+      :before-fetch="beforeFetch"
       :auto-load="false"
       @btn-click="listBtnClick"
     />
@@ -98,7 +98,7 @@
       //deep: true
     }
   )
-  const beforeRequest = (params: any) => {
+  const beforeFetch = (params: any) => {
     console.log(params)
     params.extend.formId = state.source
     return params

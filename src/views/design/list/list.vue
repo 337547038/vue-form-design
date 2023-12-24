@@ -6,7 +6,6 @@
       delete-url="designDelete"
       :search-data="searchData"
       :data="tableData"
-      :before-request="beforeRequest"
       :query="{ type: 2 }"
     >
       <template #sourceName="{ row, dict }">
@@ -259,10 +258,5 @@
     if (type === 'reset') {
       dialog.visible = false
     }
-  }
-
-  const beforeRequest = (params: any) => {
-    params.extend.formName = true //返回所选表单name
-    return params
   }
 </script>

@@ -51,7 +51,7 @@
   } from '@/utils/design'
   import formChangeValue from '@/utils/formChangeValue'
   import { getStorage } from '@/utils'
-  import { requestResponse, getRequestEvent } from '@/utils/requestRespone.ts'
+  import { requestResponse, getRequestEvent } from '@/utils/requestResponse.ts'
 
   const props = withDefaults(
     defineProps<{
@@ -59,8 +59,8 @@
       type?: number // 1新增；2修改；3查看（表单模式） ；4查看； 5设计
       disabled?: boolean // 禁用表单提交
       requestUrl?: string // 编辑数据请求url
-      beforeRequest?: Function // 请求编辑数据前参数处理方法，可对请求参数处理
-      afterResponse?: Function | string // 请求数据加载完成后数据处理方法，可对返回数据处理
+      beforeFetch?: Function // 请求编辑数据前参数处理方法，可对请求参数处理
+      afterFetch?: Function | string // 请求数据加载完成后数据处理方法，可对返回数据处理
       submitUrl?: string // 表单数据新增提交保存url
       editUrl?: string // 表单数据修改保存提交url
       beforeSubmit?: Function | string // 表单提交前数据处理，可对提交数据处理，新增和保存都会触发
@@ -68,7 +68,7 @@
       dict?: { [key: string]: any } // 固定匹配的字典
       btnClick?: (key: string) => boolean | void // 按钮点击事件
       isSearch?: boolean // 列表里作为筛选使用
-      query?: { [key: string]: any } // 一些附加的请求参数。也可在`beforeRequest`处添加
+      query?: { [key: string]: any } // 一些附加的请求参数。也可在`beforeFetch`处添加
       params?: { [key: string]: any } // 提交表单一些附加参数，如在提交修改时可添加id等信息。而不需要在提交前拦截处理
     }>(),
     {
@@ -412,8 +412,8 @@
     requestResponse({
       requestUrl: requestUrl,
       params: newParams,
-      beforeRequest: getRequestEvent(props, 'beforeRequest'),
-      afterResponse: getRequestEvent(props, 'afterResponse'),
+      beforeFetch: getRequestEvent(props, 'beforeFetch'),
+      afterFetch: getRequestEvent(props, 'afterFetch'),
       route: route
     })
       .then((res: any) => {
@@ -474,8 +474,8 @@
         requestResponse({
           requestUrl: apiUrl,
           params: Object.assign({}, temp, params, props.params),
-          beforeRequest: getRequestEvent(props, 'beforeSubmit'),
-          afterResponse: getRequestEvent(props, 'afterSubmit')
+          beforeFetch: getRequestEvent(props, 'beforeSubmit'),
+          afterFetch: getRequestEvent(props, 'afterSubmit')
         })
           .then((res: any) => {
             loading.value = false

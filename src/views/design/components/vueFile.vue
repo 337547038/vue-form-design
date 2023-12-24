@@ -262,8 +262,8 @@
       globalImport = `import { getGlobalData } from '@/views/design/screen/getData'`
       globalData = `const globalScreen = ref({})
   provide('globalScreen', globalScreen)
-  const {requestUrl, afterResponse, beforeRequest, method} = screenData.value.config
-  getGlobalData({requestUrl, afterResponse, beforeRequest, method})
+  const {requestUrl, afterFetch, beforeFetch, method} = screenData.value.config
+  getGlobalData({requestUrl, afterFetch, beforeFetch, method})
   .then((res: any) => {
        globalScreen.value = res
    })`

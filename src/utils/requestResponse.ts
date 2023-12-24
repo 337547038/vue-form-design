@@ -5,19 +5,19 @@ import { jsonParseStringify } from '@/utils/design'
 interface RequestParams {
   requestUrl: string //请求url
   params: { [key: string]: any } // 请求参数
-  beforeRequest?: Function // 请求前方法
-  afterResponse?: string | Function // 请求后结果后方法
+  beforeFetch?: Function // 请求前方法
+  afterFetch?: string | Function // 请求后结果后方法
   options?: { [key: string]: any } //请求其他附加参数
   route?: { [key: string]: any } //路由参数
   formModel?: { [key: string]: any } // 当前表单所有值
 }
 
 /**
- * 统一处理beforeRequest和afterResponse提交数据接口请求
+ * 统一处理beforeFetch和afterFetch提交数据接口请求
  * @param requestUrl 请求url或apiKey
  * @param params 请求参数
- * @param beforeRequest 请求后结果后方法
- * @param afterResponse 请求前方法
+ * @param beforeFetch 请求后结果后方法
+ * @param afterFetch 请求前方法
  * @param options 请求其他附加参数
  * @param route 路由参数
  * @param formModel // 当前表单所有值
@@ -25,8 +25,8 @@ interface RequestParams {
 export const requestResponse = ({
   requestUrl,
   params = {},
-  beforeRequest,
-  afterResponse,
+  beforeFetch,
+  afterFetch,
   options = {},
   route = {},
   formModel
@@ -36,17 +36,17 @@ export const requestResponse = ({
       resolve({})
     }
     let beforeResult: any = params
-    if (typeof beforeRequest === 'function') {
-      //要求beforeRequest一定要有return，否则不起作用。
+    if (typeof beforeFetch === 'function') {
+      //要求beforeFetch一定要有return，否则不起作用。
       // 这里修改下不让直接修改params的值也能生效，防止如表单拦截修改时页面会显示被修改后的值
-      beforeResult = beforeRequest(
+      beforeResult = beforeFetch(
         jsonParseStringify(params),
         route,
         jsonParseStringify(formModel)
       )
       if (beforeResult === false) {
-        //拦截方式beforeRequest返回false阻止发送请求
-        reject({ code: 'return false', message: 'beforeRequest return false' })
+        //拦截方式beforeFetch返回false阻止发送请求
+        reject({ code: 'return false', message: 'before return false' })
         return
       } else if (beforeResult && typeof beforeResult === 'string') {
         console.log('返回字符串处理：' + beforeResult)
@@ -54,11 +54,12 @@ export const requestResponse = ({
         //beforeParams = xx
       }
     }
-    getRequest(requestUrl, beforeResult, options)
+    //没有返回时使用原始的params
+    getRequest(requestUrl, beforeResult || params, options)
       .then((res: any) => {
         let result: any = res.data
-        if (typeof afterResponse === 'function') {
-          result = afterResponse('success', result, res)
+        if (typeof afterFetch === 'function') {
+          result = afterFetch('success', result, res)
           if (typeof result === 'string') {
             console.log('返回字符串处理：' + result)
             //返回字符串时，这里可根据返回的自定义字符串标识处理各种复杂的情况
@@ -68,15 +69,16 @@ export const requestResponse = ({
           if (result === false) {
             reject({
               code: 'return false',
-              message: 'afterResponse return false'
+              message: 'response return false'
             })
           }
         }
-        resolve({ data: result, message: res.message })
+        //没有return值时使用返回没经处理的值
+        resolve({ data: result || res.data, message: res.message })
       })
       .catch((res: any) => {
-        if (typeof afterResponse === 'function') {
-          afterResponse('fail', res)
+        if (typeof afterFetch === 'function') {
+          afterFetch('fail', res)
         }
         reject(res)
       })

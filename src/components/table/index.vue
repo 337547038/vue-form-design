@@ -241,15 +241,16 @@
   import ListTreeSide from './treeSide.vue'
   import { useDesignStore } from '@/store/design'
   import { permission } from '@/directive/permissions'
-  import { getRequestEvent, requestResponse } from '@/utils/requestRespone'
+  import { getRequestEvent, requestResponse } from '@/utils/requestResponse.ts'
 
   const props = withDefaults(
     defineProps<{
       data: TableData
       searchData?: FormData
-      beforeRequest?: (params: any, rout: any) => any
-      afterResponse?: (result: any) => any | string
+      beforeFetch?: (params: any, rout: any) => any
+      afterFetch?: (result: any) => any | string
       beforeDelete?: (params: any, route: any) => any
+      afterDelete?: (result: any) => any | string
       showPage?: boolean
       requestUrl?: string // 请求的api
       deleteUrl?: string // 删除的api
@@ -415,26 +416,15 @@
       },
       query: Object.assign({}, formValue, props.query)
     }
-    /*let beforeRequest
-    if (typeof props.beforeRequest === 'function') {
-      beforeRequest = props.beforeRequest
-    } else if (typeof props.data.events?.beforeRequest === 'function') {
-      beforeRequest = props.data.events?.beforeRequest
-    }
-    let afterResponse
-    if (typeof props.afterResponse === 'function') {
-      afterResponse = props.afterResponse
-    } else if (typeof props.data.events?.afterResponse === 'function') {
-      afterResponse = props.data.events?.afterResponse
-    }*/
     requestResponse({
       requestUrl: getUrl,
       params: params,
-      beforeRequest: getRequestEvent(props, 'beforeRequest'),
-      afterResponse: getRequestEvent(props, 'afterResponse'),
+      beforeFetch: getRequestEvent(props, 'beforeFetch'),
+      afterFetch: getRequestEvent(props, 'afterFetch'),
       route: route
     })
       .then((res: any) => {
+        // console.log('res', res)
         const data = res.data
         tableDataList.value = data?.list || data // 兼容下可以不返回list
         setTimeout(() => {
@@ -445,7 +435,7 @@
         state.total = data.total || 0
       })
       .catch((res: any) => {
-        //beforeRequest返回了false时，只拦截请求，不用重置
+        //beforeFetch返回了false时，只拦截请求，不用重置
         if (res.code !== 'return false') {
           tableDataList.value = []
           state.total = 0
@@ -477,8 +467,8 @@
     requestResponse({
       requestUrl: delUrl,
       params: delParams,
-      beforeRequest: getRequestEvent(props, 'beforeDelete'),
-      afterResponse: getRequestEvent(props, 'afterResponse'),
+      beforeFetch: getRequestEvent(props, 'beforeDelete'),
+      afterFetch: getRequestEvent(props, 'afterDelete'),
       route: route
     })
       .then((res: any) => {
@@ -486,9 +476,17 @@
         ElMessage.success(res.message || '删除成功')
         getListData() // 请求列表数据
       })
-      .catch((res: { message: any }) => {
+      .catch((res: { message: string; code: string | number }) => {
         state.loading = false
-        ElMessage.error(res.message || '删除失败')
+        if (res.code !== 'return false') {
+          ElMessage.error(res.message || '删除失败')
+        }
+        //给个提示方便方便操作异常时不知错在哪里
+        if (res.code === 'return false') {
+          console.error(new Error('拦截事件返回阻止事件处理'))
+          return
+        }
+        getListData() // 不管什么情况都刷新下请求列表数据
       })
   }
 
@@ -571,7 +569,12 @@
   }
 
   const getParamsJump = (type?: string) => {
-    const searchFormVal = searchFormValue.value
+    const searchFormVal = Object.assign(
+      {},
+      searchFormEl.value?.getValue(),
+      state.treeValue
+    ) //这里需要获取到搜索表单全部的字段
+
     if (type === 'reset') {
       for (const key in searchFormVal) {
         searchFormVal[key] = undefined

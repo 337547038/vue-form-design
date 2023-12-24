@@ -19,15 +19,15 @@
 | type          | number/1                       | 表单展示模式，1新增；2修改；3查看（表单模式） ；4查看； 5设计                                                          |
 | disabled      | boolean/false                  | 表单禁用模式，类似于表单模式查看                                                                            |
 | requestUrl    | string                         | 表单编辑初始数据加载。适用于导出vue文件                                                                       |
-| beforeRequest | function (params,route)        | 请求编辑数据前参数处理方法，可对请求参数处理。适用于导出vue文件，`return false`时不请求                                        |
-| afterResponse | function/string                | 请求编辑数据完成后数据处理方法。适用于导出vue文件，`return false`阻止事件运行                                             |
+| beforeFetch | function (params,route)        | 请求编辑数据前参数处理方法，可对请求参数处理。适用于导出vue文件，`return false`时不请求                                        |
+| afterFetch | function/string                | 请求编辑数据完成后数据处理方法。适用于导出vue文件，`return false`阻止事件运行                                             |
 | submitUrl     | string                         | 表单数据新增提交保存url                                                                               |
 | editUrl       | string                         | 表单数据修改保存提交url                                                                               |
 | beforeSubmit  | function (params,route)/string | 表单提交前数据处理。适用于导出vue文件，`return false`时不发送请求                                                   |
 | afterSubmit   | function(type,res)             | 表单提交后，默认提示提交结果，可return false阻止提示。res接口返回参数,type提交结果类型success/fail/validate。validate表单没通过校验时 |
 | dict          | object                         | 用于匹配的字典数据，一般不设置，从接口获取                                                                       |
 | btnClick      | function(key)                  | 表单按钮事件，拖拽设计和快速添加的按钮，`return false`可阻止默认事件                                                   |
-| query         | object                         | 一些附加的请求参数。也可在`beforeRequest`处添加                                                             |
+| query         | object                         | 一些附加的请求参数。也可在`beforeFetch`处添加                                                             |
 | params        | object                         | 提交表单一些附加参数，如在提交修改时可添加id等信息。而不需要在提交前拦截处理                                                     |
 ### Events
 | 事件名      | 说明                                                                                                               |
@@ -137,13 +137,13 @@ formData = {
     addLoad: false // 新增表单时是否从接口加载默认数据
   },
   events: { // 同props事件
-    beforeRequest: (data, route) => {
+    beforeFetch: (data, route) => {
       return data
     },
-    afterResponse: (res) => {
+    afterFetch: (res) => {
       return res
     },
-    // afterResponse:'formatTest', // 也可以是字符串，将执行/utils/formatResutl里的方法，值为方法里的key
+    // afterFetch:'formatTest', // 也可以是字符串，将执行/utils/formatResutl里的方法，值为方法里的key
     beforeSubmit: (data, route) => {
       return data
     },

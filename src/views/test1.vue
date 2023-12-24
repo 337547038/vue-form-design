@@ -51,15 +51,15 @@ layout:'hidden'}}
       //submitCancel: true
     },
     events: {
-      beforeRequest: (data, route) => {
+      beforeFetch: (data, route) => {
         // data经过处理后返回
-        // console.log('beforeRequest', data)
+        // console.log('beforeFetch', data)
         return data
       },
       /*beforeSubmit: (data, route) => {
         // data经过处理后返回
         data.yyyyy = 'yyyyy'
-        console.log('beforeRequest', data)
+        console.log('beforeFetch', data)
         return data
       }*/
       beforeSubmit: (data, route) => {
@@ -84,7 +84,7 @@ layout:'hidden'}}
   const beforeSubmit = (params: any) => {
     // 如编辑时添加参数
     //  params.id='xxx'
-    console.log('beforeRequest', params)
+    console.log('beforeFetch', params)
     params.xxxx = 'xxxx'
     /*const eventsBeforeSubmit = formData.value.events?.beforeSubmit
     if (typeof eventsBeforeSubmit === 'function') {

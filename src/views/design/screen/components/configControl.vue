@@ -154,13 +154,13 @@
               <h3>接口数据处理事件</h3>
             </el-form-item>
             <el-form-item>
-              <el-button @click="openEventsDrawer('beforeRequest')"
-                >beforeRequest</el-button
+              <el-button @click="openDrawer('beforeFetch')"
+                >beforeFetch</el-button
               >
             </el-form-item>
             <el-form-item>
-              <el-button @click="openEventsDrawer('afterResponse')"
-                >afterResponse</el-button
+              <el-button @click="openDrawer('afterFetchScreen')"
+                >afterFetch</el-button
               >
             </el-form-item>
           </template>
@@ -230,7 +230,7 @@
             >
           </el-form-item>
           <el-form-item>
-            <el-button @click="editStyle">编辑样式</el-button>
+            <el-button @click="openDrawer('editCss')">编辑样式</el-button>
           </el-form-item>
           <el-form-item>
             <h3>全局数据</h3>
@@ -265,13 +265,13 @@
             <h3>接口数据处理事件</h3>
           </el-form-item>
           <el-form-item>
-            <el-button @click="openEventsDrawer('beforeRequest', 'global')"
-              >beforeRequest</el-button
+            <el-button @click="openDrawer('beforeFetch', true)"
+              >beforeFetch</el-button
             >
           </el-form-item>
           <el-form-item>
-            <el-button @click="openEventsDrawer('afterResponse', 'global')"
-              >afterResponse</el-button
+            <el-button @click="openDrawer('afterFetch', true)"
+              >afterFetch</el-button
             >
           </el-form-item>
         </el-form>
@@ -625,12 +625,46 @@
     }
   }
   // ace编辑器相关
-  const editStyle = () => {
-    emits('openDrawer', {
-      codeType: 'css',
-      type: 'css',
-      title: '当前应用页的样式，类似于.vue文件中的style scoped中的样式'
-    })
+
+  const openDrawer = (type: string, isGlobal?: boolean) => {
+    let codeType: string = ''
+    let editData
+    switch (type) {
+      case 'editCss':
+        codeType = 'css'
+        break
+      case 'beforeFetch':
+      case 'afterFetch':
+      case 'afterFetchScreen':
+        if (isGlobal) {
+          editData = props.config && (props.config as any)[type]
+        } else {
+          editData = current.value.events && current.value.events[type]
+        }
+        break
+    }
+    const emitsParams = {
+      content: editData,
+      codeType: codeType,
+      type: type,
+      callback: (result: any) => {
+        switch (type) {
+          case 'beforeFetch':
+          case 'afterFetch':
+          case 'afterFetchScreen':
+            if (isGlobal) {
+              ;(props.config as any)[type] = result
+            } else {
+              if (!current.value.events) {
+                current.value.events = {}
+              }
+              current.value.events[type] = result
+            }
+            break
+        }
+      }
+    }
+    emits('openDrawer', emitsParams)
   }
   // 打开图像option编辑
   const echartsEdit = () => {
@@ -677,52 +711,6 @@
       title: '表格列设置，可参考table-column属性',
       callback: (res: any) => {
         current.value.columns = res
-      }
-    })
-  }
-  const openEventsDrawer = (type: string, source?: string) => {
-    let content
-    if (source === 'global') {
-      content = props.config && (props.config as any)[type]
-    } else {
-      content = current.value.events && current.value.events[type]
-    }
-    if (!content) {
-      if (type === 'beforeRequest') {
-        content = (data: any) => {
-          // data经过处理后返回
-          console.log('beforeRequest', data)
-          return data
-        }
-      } else {
-        if (source === 'global') {
-          content = (res: any) => {
-            console.log('afterResponse', res)
-            return res
-          }
-        } else {
-          content = (data: any, option: any, global: any) => {
-            console.log('afterResponse', data, option, global)
-            return option
-          }
-        }
-      }
-    }
-    emits('openDrawer', {
-      content: content,
-      title:
-        type === 'beforeRequest'
-          ? '这里可处理请求前的参数，返回相应参数给接口'
-          : '接口数据处理。也可为字符串，如opt=formatTest',
-      callback: (res: any) => {
-        if (source === 'global') {
-          ;(props.config as any)[type] = res
-        } else {
-          if (!current.value.events) {
-            current.value.events = {}
-          }
-          current.value.events[type] = res
-        }
       }
     })
   }

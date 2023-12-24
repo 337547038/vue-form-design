@@ -182,7 +182,7 @@
   import { useDesignStore } from '@/store/design'
   import UploadFile from './upload.vue'
   import ChunkUpload from './chunkUpload/index.vue'
-  import { requestResponse } from '@/utils/requestRespone.ts'
+  import { requestResponse } from '@/utils/requestResponse.ts'
 
   const props = withDefaults(
     defineProps<{
@@ -329,8 +329,8 @@
       optionsType,
       optionsFun,
       method = 'post',
-      afterResponse,
-      beforeRequest,
+      afterFetch,
+      beforeFetch,
       label,
       value,
       query = {},
@@ -362,8 +362,8 @@
           requestResponse({
             requestUrl: sourceFun,
             params: newData,
-            beforeRequest: beforeRequest,
-            afterResponse: afterResponse,
+            beforeFetch: beforeFetch,
+            afterFetch: afterFetch,
             options: { method: method },
             route: route,
             formModel: formProps.value.model
@@ -372,8 +372,8 @@
               const result = res.data.list || res.data
               let formatRes: any = result
               // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
-              if (!afterResponse && (label || value)) {
-                // 没有设置afterResponse时，这里将数据转换为[{label:'',value:''}]形式。只处理一级
+              if (!afterFetch && (label || value)) {
+                // 没有设置afterFetch时，这里将数据转换为[{label:'',value:''}]形式。只处理一级
                 formatRes = []
                 result.forEach((item: any) => {
                   formatRes.push({

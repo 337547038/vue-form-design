@@ -7,6 +7,10 @@
       :search-data="searchData"
       :data="tableData"
       :dict="dict"
+      :beforeDelete="beforeDelete"
+      :afterDelete="afterDelete"
+      :beforeFetch="beforeFetch"
+      :afterFetch="afterFetch"
     />
   </div>
 </template>
