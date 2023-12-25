@@ -75,7 +75,9 @@
           <el-form-item
             v-if="['line', 'bar', 'pie', 'echarts'].includes(type as string)"
           >
-            <el-button type="primary" @click="echartsEdit">图表编辑</el-button>
+            <el-button type="primary" @click="openDrawer('echartsEdit')"
+              >图表编辑</el-button
+            >
           </el-form-item>
           <el-form-item
             v-if="
@@ -89,15 +91,15 @@
               ].includes(type as string)
             "
           >
-            <el-button type="primary" @click="styleEdit"
+            <el-button type="primary" @click="openDrawer('style')"
               >编辑更多内联样式</el-button
             >
           </el-form-item>
           <el-form-item v-if="['table'].includes(type as string)">
-            <el-button type="primary" @click="tablePropsEdit"
+            <el-button type="primary" @click="openDrawer('tablePropsEdit')"
               >表格属性</el-button
             >
-            <el-button type="primary" @click="tableColumnEdit"
+            <el-button type="primary" @click="openDrawer('tableColumnEdit')"
               >Table-column</el-button
             >
           </el-form-item>
@@ -127,7 +129,9 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="current.config.optionsType !== 1">
-            <el-button type="primary" @click="editData">编辑数据</el-button>
+            <el-button type="primary" @click="openDrawer('editData')"
+              >编辑数据</el-button
+            >
           </el-form-item>
           <template v-if="current.config.optionsType === 1">
             <el-form-item>
@@ -629,6 +633,7 @@
   const openDrawer = (type: string, isGlobal?: boolean) => {
     let codeType: string = ''
     let editData
+    let title: string = ''
     switch (type) {
       case 'editCss':
         codeType = 'css'
@@ -642,11 +647,60 @@
           editData = current.value.events && current.value.events[type]
         }
         break
+      case 'style':
+        codeType = 'json'
+        editData = current.value.config?.style || {}
+        title = '可输入更多的css样式，须为json格式'
+        break
+      case 'echartsEdit':
+        editData = current.value.option
+        title = '可参考echarts相关例子编辑'
+        break
+      case 'tablePropsEdit':
+        codeType = 'json'
+        editData = current.value.config?.props || {}
+        title = '支持所有表格props属性，可参考el-table。json格式'
+        break
+      case 'tableColumnEdit':
+        editData = current.value.columns
+        if (!columns || !columns.length) {
+          editData = [{ prop: '', label: '' }]
+        }
+        codeType = 'json'
+        title = '表格列设置，可参考table-column属性'
+        break
+      case 'editData':
+        const optionsType = current.value.config.optionsType
+        if (optionsType === 2) {
+          // 全局
+          title = '从大屏配置的全局数据里获取指定数据'
+          editData = current.value.events?.getGlobal
+          /*if (!editData) {
+            content = (data: any, global: any) => {
+              console.log('getGlobalData', data, global)
+              return data
+            }
+          }*/
+        } else {
+          // 静态
+          title = '图表数据，替换相关数据返回即可'
+          if (['text', 'sText'].includes(type.value)) {
+            editData = current.value.config?.text
+            title = '编辑文本内容数据'
+          } else {
+            editData = current.value.option
+          }
+          if (type.value === 'table') {
+            title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
+          }
+        }
+        break
     }
     const emitsParams = {
       content: editData,
       codeType: codeType,
       type: type,
+      title: title,
       callback: (result: any) => {
         switch (type) {
           case 'beforeFetch':
@@ -661,105 +715,37 @@
               current.value.events[type] = result
             }
             break
+          case 'style':
+            current.value.config.style = result
+            break
+          case 'echartsEdit':
+            current.value.option = result
+            break
+          case 'tablePropsEdit':
+            current.value.config.props = result
+            break
+          case 'tableColumnEdit':
+            current.value.columns = result
+            break
+          case 'editData':
+            const optionsType = current.value.config.optionsType
+            if (optionsType === 2) {
+              if (!current.value.events) {
+                current.value.events = {}
+              }
+              current.value.events.getGlobal = result
+            } else {
+              if (['text', 'sText'].includes(type.value)) {
+                current.value.config.text = result
+              } else {
+                current.value.option = result
+              }
+            }
+            break
         }
       }
     }
     emits('openDrawer', emitsParams)
-  }
-  // 打开图像option编辑
-  const echartsEdit = () => {
-    emits('openDrawer', {
-      // type: 'echarts',
-      content: current.value.option,
-      title: '可参考echarts相关例子编辑',
-      callback: (res: any) => {
-        current.value.option = res
-      }
-    })
-  }
-  // 编辑内联样式
-  const styleEdit = () => {
-    emits('openDrawer', {
-      // type: 'style',
-      codeType: 'json',
-      content: current.value.config?.style || {},
-      title: '可输入更多的css样式，须为json格式',
-      callback: (res: any) => {
-        current.value.config.style = res
-      }
-    })
-  }
-  // 表格组件属性
-  const tablePropsEdit = () => {
-    emits('openDrawer', {
-      codeType: 'json',
-      content: current.value.config?.props || {},
-      title: '支持所有表格props属性，可参考el-table。json格式',
-      callback: (res: any) => {
-        current.value.config.props = res
-      }
-    })
-  }
-  const tableColumnEdit = () => {
-    let columns = current.value.columns
-    if (!columns || !columns.length) {
-      columns = [{ prop: '', label: '' }]
-    }
-    emits('openDrawer', {
-      codeType: 'json',
-      content: columns,
-      title: '表格列设置，可参考table-column属性',
-      callback: (res: any) => {
-        current.value.columns = res
-      }
-    })
-  }
-  // 编辑静态/全局数据
-  const editData = () => {
-    let content
-    let title
-    const optionsType = current.value.config.optionsType
-    if (optionsType === 2) {
-      // 全局
-      title = '从大屏配置的全局数据里获取指定数据'
-      content = current.value.events?.getGlobal
-      if (!content) {
-        content = (data: any, global: any) => {
-          console.log('getGlobalData', data, global)
-          return data
-        }
-      }
-    } else {
-      // 静态
-      title = '图表数据，替换相关数据返回即可'
-      if (['text', 'sText'].includes(type.value)) {
-        content = current.value.config?.text
-        title = '编辑文本内容数据'
-      } else {
-        content = current.value.option
-      }
-      if (type.value === 'table') {
-        title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
-      }
-    }
-    emits('openDrawer', {
-      content: content,
-      title: title,
-      callback: (res: any) => {
-        if (optionsType === 2) {
-          if (!current.value.events) {
-            current.value.events = {}
-          }
-          current.value.events.getGlobal = res
-        } else {
-          if (['text', 'sText'].includes(type.value)) {
-            current.value.config.text = res
-          } else {
-            current.value.option = res
-          }
-        }
-      }
-    })
   }
   onBeforeRouteLeave(() => {
     unWatch() //销毁监听器

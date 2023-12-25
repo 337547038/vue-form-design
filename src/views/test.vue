@@ -7,9 +7,6 @@
     <el-button @click="buttonClickLogin">login</el-button>
     <el-button @click="buttonClickById">ById</el-button>
   </div>
-  <div style="margin: 250px">
-    <Progress v-model="val" :radius="50" />
-  </div>
 </template>
 <route>
 {meta:{
@@ -19,7 +16,6 @@ layout:'hidden'}}
   import { ref, computed, onMounted } from 'vue'
   import { useLayoutStore } from '@/store/layout'
   import { getRequest } from '@/api'
-  import Progress from './progress.vue'
 
   const val = ref(0.25)
   const buttonClick = () => {
