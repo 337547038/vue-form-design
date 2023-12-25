@@ -129,7 +129,15 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="current.config.optionsType !== 1">
-            <el-button type="primary" @click="openDrawer('editData')"
+            <el-button
+              type="primary"
+              @click="
+                openDrawer(
+                  current.config.optionsType === 2
+                    ? 'editDataGlobal'
+                    : 'editData'
+                )
+              "
               >编辑数据</el-button
             >
           </el-form-item>
@@ -670,30 +678,21 @@
         title = '表格列设置，可参考table-column属性'
         break
       case 'editData':
-        const optionsType = current.value.config.optionsType
-        if (optionsType === 2) {
-          // 全局
-          title = '从大屏配置的全局数据里获取指定数据'
-          editData = current.value.events?.getGlobal
-          /*if (!editData) {
-            content = (data: any, global: any) => {
-              console.log('getGlobalData', data, global)
-              return data
-            }
-          }*/
+        // 静态
+        title = '图表数据，替换相关数据返回即可'
+        if (['text', 'sText'].includes(type.value)) {
+          editData = current.value.config?.text
+          title = '编辑文本内容数据'
         } else {
-          // 静态
-          title = '图表数据，替换相关数据返回即可'
-          if (['text', 'sText'].includes(type.value)) {
-            editData = current.value.config?.text
-            title = '编辑文本内容数据'
-          } else {
-            editData = current.value.option
-          }
-          if (type.value === 'table') {
-            title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
-          }
+          editData = current.value.option
         }
+        if (type.value === 'table') {
+          title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
+        }
+        break
+      case 'editDataGlobal': // 从全局提取
+        title = '从大屏配置的全局数据里获取指定数据'
+        editData = current.value.events?.getGlobal
         break
     }
     const emitsParams = {
@@ -728,19 +727,17 @@
             current.value.columns = result
             break
           case 'editData':
-            const optionsType = current.value.config.optionsType
-            if (optionsType === 2) {
-              if (!current.value.events) {
-                current.value.events = {}
-              }
-              current.value.events.getGlobal = result
+            if (['text', 'sText'].includes(type.value)) {
+              current.value.config.text = result
             } else {
-              if (['text', 'sText'].includes(type.value)) {
-                current.value.config.text = result
-              } else {
-                current.value.option = result
-              }
+              current.value.option = result
             }
+            break
+          case 'editDataGlobal':
+            if (!current.value.events) {
+              current.value.events = {}
+            }
+            current.value.events.getGlobal = result
             break
         }
       }

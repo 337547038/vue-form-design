@@ -37,7 +37,7 @@ export const getDrawerContent = (key: string) => {
       return (
         'opt=(type, res) => {\n' +
         '  // 请求响应结果\n' +
-        `  console.log('${key}',data)\n` +
+        `  console.log('${key}',res)\n` +
         '  return res\n' +
         '}'
       )
@@ -73,5 +73,10 @@ export const getDrawerContent = (key: string) => {
         '  return option //返回新的图表数据\n' +
         '}'
       )
+    case 'editDataGlobal':
+      return `opt=(data, global) => {
+         console.log('editDataGlobal', data, global)
+         return data
+      }`
   }
 }

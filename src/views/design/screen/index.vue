@@ -208,6 +208,7 @@
       case 'beforeFetch':
       case 'afterFetch':
       case 'afterFetchScreen':
+      case 'editDataGlobal':
         if (!content) {
           editData = getDrawerContent(type)
         }
