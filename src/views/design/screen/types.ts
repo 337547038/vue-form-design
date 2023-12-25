@@ -36,7 +36,8 @@ export interface OpenDrawer {
   content?: any
   codeType?: string
   callback?: Function | string
-  type?: string
+  type: string
+  tips?: string
 }
 
 export interface UpdatePosition {

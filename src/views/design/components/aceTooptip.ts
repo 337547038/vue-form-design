@@ -21,7 +21,7 @@ export const getDrawerTitle = {
   afterFetchScreen:
     '获取数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式'
 }
-export const getDrawerContent = (key: string) => {
+export const getDrawerContent = (key: string, tips?: string) => {
   switch (key) {
     case 'beforeFetch':
     case 'optionsParams':
@@ -36,7 +36,7 @@ export const getDrawerContent = (key: string) => {
     case 'optionsResult':
       return (
         'opt=(type, res) => {\n' +
-        '  // 请求响应结果\n' +
+        `  // 请求响应结果 ${tips || ''}\n` +
         `  console.log('${key}',res)\n` +
         '  return res\n' +
         '}'

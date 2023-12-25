@@ -190,7 +190,15 @@
     }
   }
   const openDrawer = (params: OpenDrawer) => {
-    const { type = '', direction, codeType, title, callback, content } = params
+    const {
+      type = '',
+      direction,
+      codeType,
+      title,
+      callback,
+      content,
+      tips
+    } = params
     drawer.direction = direction || 'ltr' // 窗口位置ltr/rtl
     drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
     drawer.codeType = codeType || '' // 显示代码类型
@@ -210,7 +218,7 @@
       case 'afterFetchScreen':
       case 'editDataGlobal':
         if (!content) {
-          editData = getDrawerContent(type)
+          editData = getDrawerContent(type, tips)
         }
         break
     }

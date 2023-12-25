@@ -642,6 +642,7 @@
     let codeType: string = ''
     let editData
     let title: string = ''
+    let tips = ''
     switch (type) {
       case 'editCss':
         codeType = 'css'
@@ -650,6 +651,9 @@
       case 'afterFetch':
       case 'afterFetchScreen':
         if (isGlobal) {
+          if (type === 'afterFetch') {
+            tips = '这里返回的数据可在global中获取'
+          }
           editData = props.config && (props.config as any)[type]
         } else {
           editData = current.value.events && current.value.events[type]
@@ -671,7 +675,7 @@
         break
       case 'tableColumnEdit':
         editData = current.value.columns
-        if (!columns || !columns.length) {
+        if (!editData || !editData.length) {
           editData = [{ prop: '', label: '' }]
         }
         codeType = 'json'
@@ -679,14 +683,15 @@
         break
       case 'editData':
         // 静态
+        const typeVal = current.value.type
         title = '图表数据，替换相关数据返回即可'
-        if (['text', 'sText'].includes(type.value)) {
+        if (['text', 'sText'].includes(typeVal)) {
           editData = current.value.config?.text
           title = '编辑文本内容数据'
         } else {
           editData = current.value.option
         }
-        if (type.value === 'table') {
+        if (typeVal === 'table') {
           title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
         }
         break
@@ -700,6 +705,7 @@
       codeType: codeType,
       type: type,
       title: title,
+      tips: tips,
       callback: (result: any) => {
         switch (type) {
           case 'beforeFetch':
@@ -727,7 +733,8 @@
             current.value.columns = result
             break
           case 'editData':
-            if (['text', 'sText'].includes(type.value)) {
+            const typeVal = current.value.type
+            if (['text', 'sText'].includes(typeVal)) {
               current.value.config.text = result
             } else {
               current.value.option = result

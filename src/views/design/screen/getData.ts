@@ -26,8 +26,8 @@ export const getInitData = (id: string | number, route?: any) => {
           params: {},
           options: { method: method }
         })
-          .then((data: any) => {
-            resolve({ screenData: resultData, globalData: data })
+          .then((res: any) => {
+            resolve({ screenData: resultData, globalData: res.data })
           })
           .catch(() => {
             reject()
