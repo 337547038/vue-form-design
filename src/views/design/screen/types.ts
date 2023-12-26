@@ -19,15 +19,19 @@ export interface CSSProperties {
   zIndex?: number
   display?: boolean
 }
+interface TableData {
+  columns: any
+  list: any
+}
 export interface ScreenData {
   type: string
   position: CSSProperties
-  columns?: any
   option?: any
   config?: any
   events?: any
   groupId?: string
   id?: string
+  tableData?: TableData
 }
 export interface OpenDrawer {
   //visible: boolean

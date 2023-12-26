@@ -55,7 +55,7 @@
     >
       <span v-if="!config.src">请选择或上传图片</span>
     </div>
-    <div v-if="data.type === 'table'" ref="tableEl">
+    <div v-if="data.type === 'table'" ref="tableEl" class="screen-table">
       <el-table
         v-bind="config.props"
         :data="tableData"
@@ -64,7 +64,7 @@
       >
         <el-table-column
           v-bind="col"
-          v-for="col in data.columns"
+          v-for="col in data.tableData?.columns"
           :key="col.prop"
         />
       </el-table>
@@ -82,7 +82,7 @@
     <echarts-init
       v-if="['line', 'bar', 'pie', 'echarts'].includes(data.type)"
       :height="data.position.height"
-      :option="newValue || data.option"
+      :option="(newValue || data.option) as any"
       :width="data.position.width || '100%'"
     />
   </div>
@@ -104,10 +104,9 @@
   import MyMarquee from './marquee.vue'
   import EchartsInit from '../../components/echartsInt.vue'
   import type { ScreenData, UpdatePosition, Contextmenu } from '../types'
-  import { getRequest } from '@/api'
   import formatScreen from '@/utils/formatScreen'
   import { cannotDragResize, addUnit, removeUnit } from '../utils'
-  //import { debounce } from '@/utils'
+  import { requestResponse } from '@/utils/requestResponse.ts'
 
   const props = withDefaults(
     defineProps<{
@@ -322,7 +321,7 @@
   // 表格相关
   const tableData = computed(() => {
     // 如果开启了轮播时，复制一份数据追加到最后
-    const option = newValue.value || props.data.option
+    const option = newValue.value || props.data.tableData?.list
     if (config.value.carousel) {
       return [...option, ...option]
     }
@@ -356,7 +355,7 @@
     }
   }
   const unWatch = watch(
-    () => props.data.option,
+    () => props.data.tableData,
     () => {
       nextTick(() => {
         setTableCarousel()
@@ -377,7 +376,7 @@
       case 'pie':
       case 'echarts':
       case 'table':
-        return props.data.option
+        return props.data.tableData
     }
     return ''
   })
@@ -391,21 +390,7 @@
       return getGlobal(getDataByType.value, globalScreen.value)
     }
     if (type === 1 && requestResult.value && afterFetch) {
-      // 单独从url获取
-      if (typeof afterFetch === 'function') {
-        return afterFetch(
-          requestResult.value,
-          getDataByType.value,
-          globalScreen.value || {}
-        )
-      } else {
-        return formatScreen(
-          afterFetch,
-          requestResult.value,
-          getDataByType.value,
-          globalScreen.value || {}
-        )
-      }
+      return requestResult.value
     }
     return false
   })
@@ -415,34 +400,32 @@
       return // 不支持动态数据获取的return
     }
     const { optionsType, requestUrl, method = 'post' } = config.value
-    const { beforeFetch = '' } = props.data.events || {}
-
+    const { beforeFetch, afterFetch } = props.data.events || {}
     if (optionsType === 1 && requestUrl) {
-      let params = {}
-      if (beforeFetch && typeof beforeFetch === 'function') {
-        params = beforeFetch({})
-      }
-      console.log(config.value)
-      console.log(method)
-      getRequest(requestUrl, params, { method: method })
+      requestResponse({
+        requestUrl,
+        params: {},
+        beforeFetch,
+        //afterFetch,这里不能传after事件，这个要特殊处理。回调的参数不一样
+        options: { method: method }
+        //route
+      })
         .then((res: any) => {
-          requestResult.value = res.data
-          /*if (afterFetch) {
-            if (typeof afterFetch === 'function') {
-              newValue.value = afterFetch(
-                result,
-                getDataByType.value,
-                globalScreen.value || {}
-              )
-            } else {
-              newValue.value = formatScreen(
-                afterFetch,
-                result,
-                getDataByType.value,
-                globalScreen.value || {}
-              )
-            }
-          }*/
+          const resultData = res.data
+          if (typeof afterFetch === 'function') {
+            requestResult.value = afterFetch(
+              resultData,
+              getDataByType.value,
+              globalScreen.value || {}
+            )
+          } else {
+            requestResult.value = formatScreen(
+              afterFetch,
+              resultData,
+              getDataByType.value,
+              globalScreen.value || {}
+            )
+          }
         })
         .catch((res: any) => {
           console.log(res)

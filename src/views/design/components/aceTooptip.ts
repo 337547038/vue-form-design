@@ -18,8 +18,7 @@ export const getDrawerTitle = {
   editProps: '可添加当前组件所有prop属性及事件方法',
   button: '可添加当前组件所有prop属性及事件方法',
   beforeDelete: '请求发送之前事件，可对请求参数进行处理',
-  afterFetchScreen:
-    '获取数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式'
+  afterFetchScreen: '获取数据响应处理之后事件，可对请求返回数据进行处理；'
 }
 export const getDrawerContent = (key: string, tips?: string) => {
   switch (key) {
@@ -67,10 +66,10 @@ export const getDrawerContent = (key: string, tips?: string) => {
       )
     case 'afterFetchScreen':
       return (
-        'opt=(type, data, option, global) => {\n' +
-        '  // type(success,fail),data响应数据, 当前图表option，global全局数据\n' +
+        'opt=(res, data, global) => {\n' +
+        '  // res响应数据, 当前组件数据data，global全局数据\n' +
         "  console.log('afterFetchScreen',data)\n" +
-        '  return option //返回新的图表数据\n' +
+        '  return data //返回新的图表数据\n' +
         '}'
       )
     case 'editDataGlobal':

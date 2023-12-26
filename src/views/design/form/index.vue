@@ -292,8 +292,8 @@
           editData = objToStringify(content, true)
         }
         break
-      default:
-        editData = objToStringify(content, true)
+      //default:
+      //  editData = objToStringify(content, true)
     }
     drawer.content = editData
   }

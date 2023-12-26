@@ -202,8 +202,10 @@
             width: 500,
             height: 300
           },
-          option: [],
-          columns: []
+          tableData: {
+            columns: [],
+            list: []
+          }
         }
       ]
     },

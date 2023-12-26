@@ -99,9 +99,6 @@
             <el-button type="primary" @click="openDrawer('tablePropsEdit')"
               >表格属性</el-button
             >
-            <el-button type="primary" @click="openDrawer('tableColumnEdit')"
-              >Table-column</el-button
-            >
           </el-form-item>
         </el-form>
         <el-form
@@ -643,6 +640,10 @@
     let editData
     let title: string = ''
     let tips = ''
+    let eventType = type
+    if (type === 'afterFetchScreen') {
+      eventType = 'afterFetch'
+    }
     switch (type) {
       case 'editCss':
         codeType = 'css'
@@ -654,9 +655,9 @@
           if (type === 'afterFetch') {
             tips = '这里返回的数据可在global中获取'
           }
-          editData = props.config && (props.config as any)[type]
+          editData = props.config && (props.config as any)[eventType]
         } else {
-          editData = current.value.events && current.value.events[type]
+          editData = current.value.events && current.value.events[eventType]
         }
         break
       case 'style':
@@ -672,14 +673,6 @@
         codeType = 'json'
         editData = current.value.config?.props || {}
         title = '支持所有表格props属性，可参考el-table。json格式'
-        break
-      case 'tableColumnEdit':
-        editData = current.value.columns
-        if (!editData || !editData.length) {
-          editData = [{ prop: '', label: '' }]
-        }
-        codeType = 'json'
-        title = '表格列设置，可参考table-column属性'
         break
       case 'editData':
         // 静态
@@ -712,12 +705,12 @@
           case 'afterFetch':
           case 'afterFetchScreen':
             if (isGlobal) {
-              ;(props.config as any)[type] = result
+              ;(props.config as any)[eventType] = result
             } else {
               if (!current.value.events) {
                 current.value.events = {}
               }
-              current.value.events[type] = result
+              current.value.events[eventType] = result
             }
             break
           case 'style':
@@ -728,9 +721,6 @@
             break
           case 'tablePropsEdit':
             current.value.config.props = result
-            break
-          case 'tableColumnEdit':
-            current.value.columns = result
             break
           case 'editData':
             const typeVal = current.value.type
