@@ -6,6 +6,7 @@
     <el-button @click="buttonClickDel">del</el-button>
     <el-button @click="buttonClickLogin">login</el-button>
     <el-button @click="buttonClickById">ById</el-button>
+    <el-button @click="buttonClickTest">test</el-button>
   </div>
 </template>
 <route>
@@ -121,5 +122,10 @@ layout:'hidden'}}
       id: '1'
     }
     getRequest('content/get', params)
+  }
+  const buttonClickTest = () => {
+    //getRequest('demo/select', {})
+    //getRequest('demo/dict', {})
+    getRequest('demo/echarts', {})
   }
 </script>

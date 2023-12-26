@@ -59,12 +59,12 @@
       type?: number // 1新增；2修改；3查看（表单模式） ；4查看； 5设计
       disabled?: boolean // 禁用表单提交
       requestUrl?: string // 编辑数据请求url
-      beforeFetch?: Function // 请求编辑数据前参数处理方法，可对请求参数处理
+      beforeFetch?: Function | string // 请求编辑数据前参数处理方法，可对请求参数处理
       afterFetch?: Function | string // 请求数据加载完成后数据处理方法，可对返回数据处理
       submitUrl?: string // 表单数据新增提交保存url
       editUrl?: string // 表单数据修改保存提交url
       beforeSubmit?: Function | string // 表单提交前数据处理，可对提交数据处理，新增和保存都会触发
-      afterSubmit?: Function // 表单提交后，默认提示提交结果，可return false阻止提示
+      afterSubmit?: Function | string // 表单提交后，默认提示提交结果，可return false阻止提示
       dict?: { [key: string]: any } // 固定匹配的字典
       btnClick?: (key: string) => boolean | void // 按钮点击事件
       isSearch?: boolean // 列表里作为筛选使用

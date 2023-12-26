@@ -2,7 +2,7 @@
 <template>
   <div class="main-right" :class="{ lock: isLockDisplay }">
     <el-tabs class="tabs" model-value="position">
-      <el-tab-pane label="位置属性" name="position">
+      <el-tab-pane label="属性配置" name="position">
         <el-form size="small">
           <el-form-item
             :label="item.label"
