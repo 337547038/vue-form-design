@@ -569,10 +569,12 @@
         loading.value = false
         screenData.value = res.screenData
         globalScreen.value = res.globalData
+        //同时保存在window里，以方便调用
+        window.screenGlobalData = res.globalData
         setLayerList()
       })
       .catch((res: any) => {
-        if (res.screenData) {
+        if (res?.screenData) {
           //一个请求成功进
           screenData.value = res.screenData
         }

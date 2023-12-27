@@ -128,4 +128,35 @@ layout:'hidden'}}
     //getRequest('demo/dict', {})
     getRequest('demo/echarts', {})
   }
+  const bbb = () => {
+    return {
+      name: 123
+    }
+  }
+  const aaa = '123'
+  const opt2 = `opt={
+    name: '123',
+    callback: () => {
+      return 'abc'
+    },
+    list: [{ name: 1}],
+    obj: { name: 2 },
+    const:aaa
+  }`
+
+  const opt3 = {
+    name: '123',
+    callback: () => {
+      return 'abc'
+    },
+    list: [{ name: 1 }],
+    obj: { name: 2 },
+    const: aaa
+  }
+
+  console.log(opt3)
+
+  function evil(fn: any) {
+    return new Function('return ' + fn)()
+  }
 </script>

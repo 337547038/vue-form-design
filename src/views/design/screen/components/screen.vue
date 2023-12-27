@@ -355,7 +355,7 @@
     }
   }
   const unWatch = watch(
-    () => props.data.tableData,
+    () => props.data.option?.list,
     () => {
       nextTick(() => {
         setTableCarousel()

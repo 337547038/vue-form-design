@@ -100,6 +100,10 @@
       &:hover {background: #409eff;color: #fff}
     }
   }
+  .screen-table{
+    .el-table tr{background: none;
+    th{background: none}}
+  }
 }
 
 .design-canvas {
