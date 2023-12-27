@@ -64,7 +64,7 @@
       >
         <el-table-column
           v-bind="col"
-          v-for="col in data.tableData?.columns"
+          v-for="col in data.option?.columns"
           :key="col.prop"
         />
       </el-table>
@@ -321,7 +321,7 @@
   // 表格相关
   const tableData = computed(() => {
     // 如果开启了轮播时，复制一份数据追加到最后
-    const option = newValue.value || props.data.tableData?.list
+    const option = newValue.value || props.data.option?.list
     if (config.value.carousel) {
       return [...option, ...option]
     }
@@ -376,7 +376,7 @@
       case 'pie':
       case 'echarts':
       case 'table':
-        return props.data.tableData
+        return props.data.option
     }
     return ''
   })

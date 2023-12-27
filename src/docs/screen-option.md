@@ -68,9 +68,9 @@ opt=(data, global) => {
 复制过来替换好接口数据即可。减少学习成本
 
 ```javascript
-opt=(type, data, option, global) => {
-    // type(success,fail),data响应数据, 当前图表option，global全局数据
+opt=(res, data, global) => {
+    // res响应数据, 当前组件数据data，global全局数据
     console.log('afterFetchScreen',data)
-    return option //返回新的图表数据
+    return data //返回新的图表数据
 }
 ```

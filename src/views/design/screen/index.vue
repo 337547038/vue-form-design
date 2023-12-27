@@ -571,7 +571,11 @@
         globalScreen.value = res.globalData
         setLayerList()
       })
-      .catch(() => {
+      .catch((res: any) => {
+        if (res.screenData) {
+          //一个请求成功进
+          screenData.value = res.screenData
+        }
         loading.value = false
       })
   }

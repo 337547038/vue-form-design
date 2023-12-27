@@ -19,10 +19,6 @@ export interface CSSProperties {
   zIndex?: number
   display?: boolean
 }
-interface TableData {
-  columns: any
-  list: any
-}
 export interface ScreenData {
   type: string
   position: CSSProperties
@@ -31,7 +27,6 @@ export interface ScreenData {
   events?: any
   groupId?: string
   id?: string
-  tableData?: TableData
 }
 export interface OpenDrawer {
   //visible: boolean

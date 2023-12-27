@@ -30,7 +30,7 @@ export const getInitData = (id: string | number, route?: any) => {
             resolve({ screenData: resultData, globalData: res.data })
           })
           .catch(() => {
-            reject()
+            reject({ screenData: resultData })
           })
       })
       .catch((res: any) => {
