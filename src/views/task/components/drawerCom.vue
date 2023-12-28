@@ -97,7 +97,7 @@
       id: obj.flowId
     }
     // 获取设计的流程信息
-    getRequest('flowById', params).then((res: any) => {
+    getRequest('flowFrom', params).then((res: any) => {
       const { flow, form } = res.data
       flowEl.value.setValue(stringToObj(flow.data))
       formData.value = stringToObj(form.data)

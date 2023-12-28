@@ -77,7 +77,7 @@
       id: route.query.flowId
     }
     // 获取设计的流程信息
-    getRequest('flowById', params).then((res: any) => {
+    getRequest('flowFrom', params).then((res: any) => {
       const { flow, form } = res.data
       flowEl.value.setValue(stringToObj(flow.data))
       formData.value = stringToObj(form.data)
@@ -91,11 +91,6 @@
       }
     })
   }
-  // 表单提交
-  /*const beforeSubmit = (params: Record<string, any>) => {
-    // return Object.assign({}, params, submitParams.value)
-    return params
-  }*/
   const afterSubmit = (type: string) => {
     if (type === 'success') {
       router.push({ path: '/task/applyed' })

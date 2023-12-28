@@ -95,7 +95,6 @@
     onMounted,
     nextTick,
     watch,
-    inject,
     reactive,
     onBeforeUnmount
   } from 'vue'
@@ -382,7 +381,7 @@
   })
   const requestResult = ref()
   const newValue = computed(() => {
-    const { afterFetch } = props.data.events || {}
+    //const { afterFetch } = props.data.events || {}
     const type = config.value.optionsType
     //type1动态
     if (type === 1 && requestResult.value) {

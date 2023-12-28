@@ -101,8 +101,10 @@
     }
   }
   .screen-table{
+    .el-table{background: none}
     .el-table tr{background: none;
-    th{background: none}}
+    th{background: none}
+    }
   }
 }
 

@@ -53,13 +53,26 @@ console.log(getScreenGlobal('list')) //输出 1
 
 提示：当使用`top`或者`bottom`定位时，对应的`left`或者`top`将被修正为`auto`，并且当前组件不能进行拖动和缩放操作
 
+### 自定义组件
 
-## 数据
+当使用自定义组件时，组件名称应为全局注册的组件名。
+
+作为导出vue使用时，可以为当前`import`的组件，如
+
+```javascript
+import { markRaw } from 'vue'
+import myComponents from 'xxxx';
+config:{
+  componentName: markRaw(myComponents)
+}
+```
+
+### 数据
 数据类型：
 - 1.静态/全局：对于图表即为option部分，这里可使用`getScreenGlobal()`从全局数据中获取相应数据
 - 2.动态：从`url`获取，同时在当前`afterFetch`事件中也可取到全局的数据
 
-### afterFetch
+#### afterFetch
 
 数据请求结果完成事件，需要此事件对数据进行处理。
 使用此方法对组件设置，可满足各种图表数据展示，而无需对`echarts`进行层层封装，可直接从`echarts`官网将图表配置好，

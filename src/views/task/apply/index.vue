@@ -41,7 +41,9 @@
   })
   const getListData = () => {
     const params = {
-      type: 3
+      query: {
+        type: 3
+      }
     }
     getRequest('designList', params).then((res: any) => {
       const result = res.data.list
