@@ -380,16 +380,12 @@
     }
     return ''
   })
-  const globalScreen = inject('globalScreen', {})
   const requestResult = ref()
   const newValue = computed(() => {
-    const { getGlobal, afterFetch } = props.data.events || {}
+    const { afterFetch } = props.data.events || {}
     const type = config.value.optionsType
-    if (typeof getGlobal === 'function' && type === 2) {
-      // 从全局接口获取
-      return getGlobal(getDataByType.value, globalScreen.value)
-    }
-    if (type === 1 && requestResult.value && afterFetch) {
+    //type1动态
+    if (type === 1 && requestResult.value) {
       return requestResult.value
     }
     return false
@@ -413,17 +409,12 @@
         .then((res: any) => {
           const resultData = res.data
           if (typeof afterFetch === 'function') {
-            requestResult.value = afterFetch(
-              resultData,
-              getDataByType.value,
-              globalScreen.value || {}
-            )
+            requestResult.value = afterFetch(resultData, getDataByType.value)
           } else {
             requestResult.value = formatScreen(
               afterFetch,
               resultData,
-              getDataByType.value,
-              globalScreen.value || {}
+              getDataByType.value
             )
           }
         })

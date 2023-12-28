@@ -120,21 +120,14 @@
           </el-form-item>
           <el-form-item label="数据类型">
             <el-radio-group v-model="current.config.optionsType">
-              <el-radio :label="0" style="margin-right: 4px">静态</el-radio>
-              <el-radio :label="2" style="margin-right: 4px">全局</el-radio>
+              <el-radio :label="0" style="margin-right: 4px"
+                >静态/全局</el-radio
+              >
               <el-radio :label="1">动态</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="current.config.optionsType !== 1">
-            <el-button
-              type="primary"
-              @click="
-                openDrawer(
-                  current.config.optionsType === 2
-                    ? 'editDataGlobal'
-                    : 'editData'
-                )
-              "
+            <el-button type="primary" @click="openDrawer('editData')"
               >编辑数据</el-button
             >
           </el-form-item>
@@ -653,7 +646,7 @@
       case 'afterFetchScreen':
         if (isGlobal) {
           if (type === 'afterFetch') {
-            tips = '这里返回的数据可在global中获取'
+            tips = '这里返回的数据在当前页面可使用getScreenGlobal()方法获取'
           }
           editData = props.config && (props.config as any)[eventType]
         } else {
@@ -687,10 +680,6 @@
         if (typeVal === 'table') {
           title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
         }
-        break
-      case 'editDataGlobal': // 从全局提取
-        title = '从大屏配置的全局数据里获取指定数据'
-        editData = current.value.events?.getGlobal
         break
     }
     const emitsParams = {
@@ -729,12 +718,6 @@
             } else {
               current.value.option = result
             }
-            break
-          case 'editDataGlobal':
-            if (!current.value.events) {
-              current.value.events = {}
-            }
-            current.value.events.getGlobal = result
             break
         }
       }

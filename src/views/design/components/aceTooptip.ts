@@ -66,16 +66,11 @@ export const getDrawerContent = (key: string, tips?: string) => {
       )
     case 'afterFetchScreen':
       return (
-        'opt=(res, data, global) => {\n' +
-        '  // res响应数据, 当前组件数据data，global全局数据\n' +
+        'opt=(res, data) => {\n' +
+        '  // res响应数据, 当前组件数据data\n' +
         "  console.log('afterFetchScreen',data)\n" +
         '  return data //返回新的图表数据\n' +
         '}'
       )
-    case 'editDataGlobal':
-      return `opt=(data, global) => {
-         console.log('editDataGlobal', data, global)
-         return data
-      }`
   }
 }

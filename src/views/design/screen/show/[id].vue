@@ -12,15 +12,13 @@
 {meta:{layout:'hidden',permissions:false}}
 </route>
 <script setup lang="ts">
-  import { ref, onMounted, computed, provide } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   import { useRoute } from 'vue-router'
   import AScreen from '../components/screen.vue'
   import { getInitData } from '../getData'
 
   const route = useRoute()
   const loading = ref(true)
-  const globalScreen = ref({})
-  provide('globalScreen', globalScreen)
   const screenData = ref({ list: [], config: {} })
   const screenStyle = computed(() => {
     const { width, height, background, primary } = screenData.value.config
@@ -37,9 +35,16 @@
       .then((res: any) => {
         loading.value = false
         screenData.value = res.screenData
-        globalScreen.value = res.globalData
+        //将全局数据保存在window里，以方便调用
+        window.getScreenGlobal = (key: string) => {
+          return key ? res.globalData[key] : res.globalData
+        }
       })
-      .catch(() => {
+      .catch(res => {
+        if (res?.screenData) {
+          //一个请求成功进
+          screenData.value = res.screenData
+        }
         loading.value = false
       })
   }

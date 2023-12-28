@@ -18,6 +18,7 @@ layout:'hidden'}}
   import { useLayoutStore } from '@/store/layout'
   import { getRequest } from '@/api'
 
+  defineOptions({ name: 'test001' })
   const val = ref(0.25)
   const buttonClick = () => {
     const params = {
@@ -134,6 +135,17 @@ layout:'hidden'}}
     }
   }
   const aaa = '123'
+  window.getGlobal = key => {
+    const global = {
+      line: '12',
+      label: 'label',
+      list: {
+        x: [1, 2, 3],
+        data: [4, 5, 6]
+      }
+    }
+    return key ? global[key] : global
+  }
   const opt2 = `opt={
     name: '123',
     callback: () => {
@@ -141,9 +153,9 @@ layout:'hidden'}}
     },
     list: [{ name: 1}],
     obj: { name: 2 },
-    const:aaa
+    const:getGlobal("list.data")
   }`
-
+  window.aaab = '12'
   const opt3 = {
     name: '123',
     callback: () => {
@@ -151,10 +163,13 @@ layout:'hidden'}}
     },
     list: [{ name: 1 }],
     obj: { name: 2 },
-    const: aaa
+    const: aaab
   }
 
-  console.log(opt3)
+  const optResult = evil(opt2)
+
+  console.log(optResult)
+  // console.log(evil(opt2))
 
   function evil(fn: any) {
     return new Function('return ' + fn)()

@@ -45,7 +45,7 @@
 {meta:{permissions:'none'}}
 </route>
 <script lang="ts" setup>
-  import { ref, reactive, onMounted, onBeforeUnmount, provide } from 'vue'
+  import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import {
     json2string,
@@ -110,8 +110,6 @@
       primary: '#409eff'
     }
   })
-  const globalScreen = ref({})
-  provide('globalScreen', globalScreen)
 
   /**
    * 设计左侧图层信息
@@ -216,7 +214,6 @@
       case 'beforeFetch':
       case 'afterFetch':
       case 'afterFetchScreen':
-      case 'editDataGlobal':
         if (!content) {
           editData = getDrawerContent(type, tips)
         }
@@ -568,9 +565,10 @@
       .then((res: any) => {
         loading.value = false
         screenData.value = res.screenData
-        globalScreen.value = res.globalData
-        //同时保存在window里，以方便调用
-        window.screenGlobalData = res.globalData
+        //将全局数据保存在window里，以方便调用
+        window.getScreenGlobal = (key: string) => {
+          return key ? res.globalData[key] : res.globalData
+        }
         setLayerList()
       })
       .catch((res: any) => {

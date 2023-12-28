@@ -259,13 +259,12 @@
     }
     if (obj.config.requestUrl) {
       // 全局大屏数据
-      globalImport = `import { getGlobalData } from '@/views/design/screen/getData'`
-      globalData = `const globalScreen = ref({})
-  provide('globalScreen', globalScreen)
-  const {requestUrl, afterFetch, beforeFetch, method} = screenData.value.config
-  getGlobalData({requestUrl, afterFetch, beforeFetch, method})
+      globalImport = `import { getRequest } from '@/api'`
+      globalData = `
+      const {requestUrl,method} = screenData.value.config
+  getRequest(requestUrl,{},{method:method})
   .then((res: any) => {
-       globalScreen.value = res
+      // 这里处理数据
    })`
     }
     const html = `<template>

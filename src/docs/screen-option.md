@@ -34,10 +34,17 @@ opt=(data, route) => {
 
 ```javascript
 opt=(type, res) => {
-// 请求响应结果 这里返回的数据可在global中获取
+// 请求响应结果 这里返回的数据在当前页面可使用getScreenGlobal()方法获取
     console.log('afterFetch',res)
-    return res // 这里处理后返回的数据可在组件方法中的global中取到
+    return res // 这里返回的数据在当前页面可使用getScreenGlobal()方法获取
 }
+```
+
+这里返回的数据在当前页面可使用`getScreenGlobal()`方法获取，可带参数返回指定的key
+```javascript
+//假如返回的数据为global这种形式
+const global = {list:[1],data:[],name:''}
+console.log(getScreenGlobal('list')) //输出 1
 ```
 
 ## 属性配置
@@ -49,27 +56,18 @@ opt=(type, res) => {
 
 ## 数据
 数据类型：
-- 1.静态：对于图表即为option部分
-- 2.全局：即从前面大屏配置的`afterFetch`返回的数据中提取
-- 3.动态：从`url`获取，同时在当前`afterFetch`事件中也可取到全局的数据
-
-```javascript
-//全局
-opt=(data, global) => {
-    // data当前组件所需数据，global为大屏配置获取到的数据
-    return data
-}
-```
+- 1.静态/全局：对于图表即为option部分，这里可使用`getScreenGlobal()`从全局数据中获取相应数据
+- 2.动态：从`url`获取，同时在当前`afterFetch`事件中也可取到全局的数据
 
 ### afterFetch
 
 数据请求结果完成事件，需要此事件对数据进行处理。
-使用此方法对组件设置，可满足各种图表数据展示，而无需对`echarts`进行层层封装，可直接从echarts官网将图表配置好，
+使用此方法对组件设置，可满足各种图表数据展示，而无需对`echarts`进行层层封装，可直接从`echarts`官网将图表配置好，
 复制过来替换好接口数据即可。减少学习成本
 
 ```javascript
-opt=(res, data, global) => {
-    // res响应数据, 当前组件数据data，global全局数据
+opt=(res, data) => {
+    // res响应数据, 当前组件数据data
     console.log('afterFetchScreen',data)
     return data //返回新的图表数据
 }
