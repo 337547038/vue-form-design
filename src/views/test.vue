@@ -17,6 +17,7 @@ layout:'hidden'}}
   import { ref, computed, onMounted } from 'vue'
   import { useLayoutStore } from '@/store/layout'
   import { getRequest } from '@/api'
+  import { objToStringify } from '@/utils/design.ts'
 
   defineOptions({ name: 'test001' })
   const val = ref(0.25)
@@ -129,49 +130,27 @@ layout:'hidden'}}
     //getRequest('demo/dict', {})
     getRequest('demo/echarts', {})
   }
-  const bbb = () => {
-    return {
-      name: 123
-    }
-  }
-  const aaa = '123'
-  window.getGlobal = key => {
-    const global = {
-      line: '12',
-      label: 'label',
-      list: {
-        x: [1, 2, 3],
-        data: [4, 5, 6]
-      }
-    }
-    return key ? global[key] : global
-  }
-  const opt2 = `opt={
-    name: '123',
-    callback: () => {
-      return 'abc'
-    },
-    list: [{ name: 1}],
-    obj: { name: 2 },
-    const:getGlobal("list.data")
-  }`
-  window.aaab = '12'
-  const opt3 = {
-    name: '123',
-    callback: () => {
-      return 'abc'
-    },
-    list: [{ name: 1 }],
-    obj: { name: 2 },
-    const: aaab
-  }
 
-  const optResult = evil(opt2)
-
-  console.log(optResult)
-  // console.log(evil(opt2))
-
-  function evil(fn: any) {
-    return new Function('return ' + fn)()
+  window.globalDa = {
+    line: 123,
+    data: [1, 2, 3],
+    multiple: 'multiplemultiple'
   }
+  /* const str = 'This is a {{example}} string with {{multiple}} occurrences'
+  //let matches = str.match(/{{(.*?)}}/g);
+  //console.log(matches);  // 输出: ["{{example}}", "{{multiple}}"]
+  console.log(str.replace(/{{(.*?)}}/g, $))*/
+
+  const str = '{text:"文本{{globalDa.line}}",data:"{{globalDa.data}}"}'
+  const newStr = str
+    .replace(/"{{.*?}}"/g, function (match) {
+      //const str = match.slice(3, -3)
+      return match.slice(3, -3)
+      //return new Function('return ' + str)()
+    })
+    .replace(/{{.*?}}/g, function (match) {
+      const str = match.slice(2, -2)
+      return new Function('return ' + str)()
+    })
+  console.log(newStr) // 输出: This is a  string with  occurrences
 </script>

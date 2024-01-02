@@ -36,9 +36,7 @@
         loading.value = false
         screenData.value = res.screenData
         //将全局数据保存在window里，以方便调用
-        window.getScreenGlobal = (key: string) => {
-          return key ? res.globalData[key] : res.globalData
-        }
+        window.getScreenGlobal = res.globalData
       })
       .catch(res => {
         if (res?.screenData) {
