@@ -40,7 +40,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ref, reactive, nextTick, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
-  import childTable from './table.vue'
+  import childTable from './components/table.vue'
 
   const route = useRoute()
   const router = useRouter()
@@ -290,8 +290,8 @@
     if (type === 'success') {
       dialog.visible = false
       tableListEl.value.getListData()
+      beforeClose()
     }
-    beforeClose()
   }
   // 添加编辑窗口取消
   const cancelClick = (type?: string) => {

@@ -19,7 +19,7 @@ layout:'hidden'}}
 </route>
 <script setup lang="ts">
   import { ref, computed, provide, markRaw } from 'vue'
-  import childTable from './design/datasource/table.vue'
+  import childTable from './design/datasource/components/table.vue'
 
   const formNameEl = ref()
   const formData = ref({

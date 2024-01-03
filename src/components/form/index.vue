@@ -53,6 +53,7 @@
   import { getStorage } from '@/utils'
   import { requestResponse, getRequestEvent } from '@/utils/requestResponse.ts'
 
+  defineOptions({ name: 'akForm' })
   const props = withDefaults(
     defineProps<{
       data: FormData

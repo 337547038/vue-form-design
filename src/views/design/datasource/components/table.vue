@@ -12,7 +12,11 @@
           <el-button type="primary" link @click="rowEditClick(row, $index)"
             >编辑</el-button
           >
-          <el-button type="primary" link @click="rowDelClick(row, $index)"
+          <el-button
+            type="primary"
+            link
+            @click="rowDelClick(row, $index)"
+            v-if="row.isNew"
             >删除</el-button
           >
         </template>
@@ -21,7 +25,7 @@
     <el-button @click="showFormClick" size="small">添加一行</el-button>
     <div v-show="showForm">
       <ak-form ref="formEl" :data="formData" :type="statusType">
-        <el-button @click="addRowSubmit">保存</el-button>
+        <el-button @click="addRowSubmit" type="primary">保存</el-button>
       </ak-form>
     </div>
   </div>
@@ -332,6 +336,7 @@
     } else {
       formEl.value.validate((valid: boolean, fieldValue: TableList) => {
         if (valid) {
+          console.log(fieldValue)
           //判断表名字重复
           let hasFiled = false
           tableData.value.forEach((item: TableList) => {

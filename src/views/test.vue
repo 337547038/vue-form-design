@@ -38,64 +38,32 @@ layout:'hidden'}}
   }
   const buttonClickInsert = () => {
     const params = {
-      name: 'name12',
-      tableName: '1',
+      name: 'demotesst',
+      tableName: 'demotesst',
       category: '',
-      remark: '',
+      remark: 'remark',
       status: 1,
-      formId: 25,
+      id: '',
       tableData:
-        '[{"label":"a","name":"a","type":"INT","length":"1","default":"","empty":false,"remark":"","enterable":true}]'
+        '[{"name":"name","type":"VARCHAR","length":"50","label":"title name"}]'
     }
 
-    getRequest('content/save', params)
+    getRequest('datasource/creat', params)
   }
   const buttonClickEdit = () => {
     const params = {
-      name: '示例测试',
-      tableName: 'demo-test',
+      name: '调试demo',
+      tableName: 'demo_test',
       category: 0,
-      remark: '',
+      remark: '调试demo_test',
       status: 1,
-      id: 19,
-      creatDate: '2023-12-06T08:29:34.000+00:00',
-      updateDate: '2023-12-10T05:07:49.000+00:00',
+      id: 24,
+      creatDate: '2024-01-02T09:54:40.000+00:00',
+      updateDate: '2024-01-02T09:54:40.000+00:00',
       creatUserId: 1,
-      updateUserId: 1,
-      tableData: JSON.stringify([
-        {
-          label: '名称标题',
-          name: 'name2',
-          type: 'VARCHAR',
-          length: '50',
-          default: '',
-          empty: false,
-          remark: '',
-          enterable: true,
-          isNew: true
-        },
-        {
-          label: '内容',
-          name: 'content2',
-          type: 'VARCHAR',
-          length: '50',
-          default: '',
-          empty: true,
-          remark: '',
-          enterable: true,
-          isNew: true
-        },
-        {
-          label: '时间',
-          name: 'dateTime2',
-          type: 'DATETIME',
-          length: '',
-          default: '',
-          empty: true,
-          remark: '',
-          enterable: true
-        }
-      ])
+      updateUserId: 'null',
+      tableData:
+        '[{"name":"name","type":"VARCHAR","length":"50","label":"标题","filedType":"text"}]'
     }
     getRequest('datasource/edit', params)
   }
@@ -127,51 +95,7 @@ layout:'hidden'}}
   const buttonClickTest = () => {
     //getRequest('demo/select', {})
     //getRequest('demo/dict', {})
-    getRequest('demo/echarts', {})
-  }
-  const bbb = () => {
-    return {
-      name: 123
-    }
-  }
-  const aaa = '123'
-  window.getGlobal = key => {
-    const global = {
-      line: '12',
-      label: 'label',
-      list: {
-        x: [1, 2, 3],
-        data: [4, 5, 6]
-      }
-    }
-    return key ? global[key] : global
-  }
-  const opt2 = `opt={
-    name: '123',
-    callback: () => {
-      return 'abc'
-    },
-    list: [{ name: 1}],
-    obj: { name: 2 },
-    const:getGlobal("list.data")
-  }`
-  window.aaab = '12'
-  const opt3 = {
-    name: '123',
-    callback: () => {
-      return 'abc'
-    },
-    list: [{ name: 1 }],
-    obj: { name: 2 },
-    const: aaab
-  }
-
-  const optResult = evil(opt2)
-
-  console.log(optResult)
-  // console.log(evil(opt2))
-
-  function evil(fn: any) {
-    return new Function('return ' + fn)()
+    //getRequest('demo/echarts', {})
+    getRequest('test/t', {})
   }
 </script>
