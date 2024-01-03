@@ -34,17 +34,17 @@ opt=(data, route) => {
 
 ```javascript
 opt=(type, res) => {
-// 请求响应结果 这里返回的数据在当前页面可使用getScreenGlobal()方法获取
+// 请求响应结果 这里返回的数据在当前页面可使用getScreenGlobal获取
     console.log('afterFetch',res)
-    return res // 这里返回的数据在当前页面可使用getScreenGlobal()方法获取
+    return res // 这里返回的数据在当前页面可使用getScreenGlobal获取
 }
 ```
 
-这里返回的数据在当前页面可使用`getScreenGlobal()`方法获取，可带参数返回指定的key
+这里返回的数据在当前页面可使用`getScreenGlobal`方法获取
 ```javascript
 //假如返回的数据为global这种形式
 const global = {list:[1],data:[],name:''}
-console.log(getScreenGlobal('list')) //输出 1
+console.log(getScreenGlobal.list) //输出 1
 ```
 
 ## 属性配置
@@ -69,7 +69,12 @@ config:{
 
 ### 数据
 数据类型：
-- 1.静态/全局：对于图表即为option部分，这里可使用`getScreenGlobal()`从全局数据中获取相应数据
+- 1.静态/全局：对于图表即为option部分，这里可使用`getScreenGlobal`从全局数据中获取相应数据，在此处使用时需按约定使用特殊标识包起来，如
+```javascript 
+{
+  data: "{{getScreenGlobal.xxxx}}"
+}
+```
 - 2.动态：从`url`获取，同时在当前`afterFetch`事件中也可取到全局的数据
 
 #### afterFetch
@@ -81,6 +86,7 @@ config:{
 ```javascript
 opt=(res, data) => {
     // res响应数据, 当前组件数据data
+    // 这里可直接使用getScreenGlobal取得全局的数据
     console.log('afterFetchScreen',data)
     return data //返回新的图表数据
 }

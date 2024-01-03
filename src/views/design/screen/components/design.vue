@@ -36,7 +36,7 @@
           <ak-screen
             v-if="getScreenShowHide(element)"
             :current="state.activeIndex === index"
-            :data="element"
+            :data="getReplaceGlobal(element)"
             :scale="state.scale"
             :type="0"
             @contextmenu="contextmenuScreen"
@@ -109,6 +109,7 @@
   import ARuler from './ruler.vue'
   import { useDesignStore } from '@/store/design'
   import { getRandom } from '@/utils'
+  import { objToStringify, stringToObj } from '@/utils/design.ts'
 
   const props = withDefaults(
     defineProps<{
@@ -542,6 +543,22 @@
         (document.documentElement.clientLeft || 0)
     })
   }
+
+  const getReplaceGlobal = (data: ScreenData) => {
+    //转为字符串好替换预定的数据标识
+    //即将1. data:"{{getScreenGlobal.line.xAxis}}"转为data:getScreenGlobal.line.xAxis
+    //2. text:"标题{{getScreenGlobal.title}}"转为 标题xxx
+    const newStr = objToStringify(data)
+      .replace(/"{{.*?}}"/g, function (match) {
+        return match.slice(3, -3)
+      })
+      .replace(/{{.*?}}/g, function (match) {
+        //2,-2即减去{{和}}，得到括号内的文本，作为函数执行
+        return new Function('return ' + match.slice(2, -2))()
+      })
+    return stringToObj(newStr)
+  }
+
   onMounted(() => {
     getInit()
     document.addEventListener('keydown', controlMoveByKeydown)
