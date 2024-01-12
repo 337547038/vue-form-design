@@ -928,6 +928,8 @@
       // 编辑状态 当前记录id
       Object.assign(params, { id: routeQuery.id })
       apiKey = 'designEdit'
+    } else {
+      params.status = 1 //添加时默认启用
     }
     state.loading = true
     getRequest(apiKey, params)

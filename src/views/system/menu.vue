@@ -38,6 +38,7 @@
 <script setup lang="ts">
   import { nextTick, reactive, ref } from 'vue'
   import { flatToTree } from '@/utils/flatTree'
+
   const tableListEl = ref()
   const formNameEl = ref()
   const dict = {
@@ -45,41 +46,41 @@
   }
   const refreshTable = ref(true)
   /*const searchData = ref({
-    list: [
-      {
-        type: 'input',
-        control: {
-          modelValue: '',
-          placeholder: '请输入菜单名称'
-        },
-        name: 'name',
-        formItem: {
-          label: '菜单名称'
-        }
+  list: [
+    {
+      type: 'input',
+      control: {
+        modelValue: '',
+        placeholder: '请输入菜单名称'
       },
-      {
-        type: 'select',
-        control: {
-          modelValue: ''
-        },
-        options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-        },
-        name: 'status',
-        formItem: {
-          label: '状态'
-        }
+      name: 'name',
+      formItem: {
+        label: '菜单名称'
       }
-    ],
-    config: {
-      submitCancel: true
     },
-    form: {
-      size: 'default'
+    {
+      type: 'select',
+      control: {
+        modelValue: ''
+      },
+      options: [],
+      config: {
+        optionsType: 2,
+        optionsFun: 'sys-status'
+      },
+      name: 'status',
+      formItem: {
+        label: '状态'
+      }
     }
-  })*/
+  ],
+  config: {
+    submitCancel: true
+  },
+  form: {
+    size: 'default'
+  }
+})*/
   const tableData = ref({
     tableProps: {
       rowKey: 'id',
@@ -213,8 +214,14 @@
           method: 'post',
           label: 'name',
           value: 'id',
-          query: { type: 2 },
-          hidden: '$.type!==3'
+          hidden: '$.type!==3',
+          debug: true,
+          beforeFetch: data => {
+            data.query = {
+              type: 2
+            }
+            return data
+          }
         },
         name: 'contentList',
         formItem: { label: '内容列表' }

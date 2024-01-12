@@ -125,6 +125,10 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
               message: '没有权限查看该页面',
               type: 'error'
             })
+            //返回来源页
+            nextQuery = {
+              path: _from.fullPath
+            }
           } else {
             nextQuery = ''
           }

@@ -139,7 +139,6 @@
         click: (row: any) => {
           router.push({
             path: '/design/list/content/' + row.id
-            //query: { id: row.id }
           })
         }
       },

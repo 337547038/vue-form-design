@@ -504,10 +504,9 @@
         {
           label: '字段标识',
           value: name,
-          type:
-            Object.keys(state.dataSourceList).length > 0 ? 'select' : 'text',
+          type: state.dataSourceFiledList?.length ? 'select' : 'text',
           placeholder: '字段唯一标识，对应数据库',
-          dict: state.dataSourceList,
+          dict: state.dataSourceFiledList,
           path: 'name',
           vHide: [
             'grid',
@@ -1088,7 +1087,7 @@
   })
   const designType = inject('formDesignType')
   const state = reactive({
-    dataSourceList: {},
+    dataSourceFiledList: [],
     customRulesList: [
       ...validate,
       {
@@ -1101,11 +1100,6 @@
       }
     ], // 自定义校验规则
     isSearch: designType === 'search',
-    tooltip: {
-      rules:
-        "可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>",
-      props: '可添加当前组件所有prop属性及事件方法'
-    },
     tabsName: 'second'
   })
   watch(
@@ -1140,7 +1134,7 @@
         // 选择字段标识时，同时修改显示标题
         // 根据value找key
         if (obj.type === 'select') {
-          state.dataSourceList.forEach((item: any) => {
+          state.dataSourceFiledList.forEach((item: any) => {
             if (item.name === val) {
               if (controlData.value.formItem) {
                 controlData.value.formItem.label = item.label
@@ -1382,18 +1376,12 @@
         .then((res: { data: any }) => {
           // console.log(res)
           const tableData = res.data?.tableData
-          let jsonTableData
           try {
-            jsonTableData = JSON.parse(tableData)
+            state.dataSourceFiledList = JSON.parse(tableData)
           } catch (e) {
-            /* empty */
+            state.dataSourceFiledList = []
           }
-          if (jsonTableData && jsonTableData.length) {
-            state.dataSourceList = jsonTableData.filter(
-              (item: any) => item.enterable
-            )
-          }
-          callback && callback(state.dataSourceList)
+          callback && callback(state.dataSourceFiledList)
         })
         .catch((res: any) => {
           console.log(res)

@@ -241,7 +241,8 @@
   import ListTreeSide from './treeSide.vue'
   import { useDesignStore } from '@/store/design'
   import { permission } from '@/directive/permissions'
-  import { getRequestEvent, requestResponse } from '@/utils/requestResponse.ts'
+  import { getRequestEvent, requestResponse } from '@/utils/requestResponse'
+  import { useEventListener } from '@/utils/useEvent'
 
   const props = withDefaults(
     defineProps<{
@@ -708,6 +709,9 @@
       deep: true
     }
   )
+
+  useEventListener(scrollBox.value, 'scroll', setFixedBottomScroll)
+  useEventListener(window, 'resize', setFixedBottomScroll)
   onBeforeRouteLeave(() => {
     unWatch() //销毁监听器
   })
@@ -717,17 +721,8 @@
       // 列表其他数据通过接口获取时，需先加载列表配置数据，才能请求列表的数据
       getListData(1)
     }
-    if (isFixedBottomScroll.value) {
-      scrollBox.value.addEventListener('scroll', setFixedBottomScroll)
-      window.addEventListener('resize', setFixedBottomScroll)
-    }
   })
-  onBeforeUnmount(() => {
-    if (isFixedBottomScroll.value) {
-      scrollBox.value.removeEventListener('scroll', setFixedBottomScroll)
-      window.removeEventListener('resize', setFixedBottomScroll)
-    }
-  })
+  onBeforeUnmount(() => {})
   defineExpose({
     getListData,
     delClick,

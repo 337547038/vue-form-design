@@ -22,6 +22,6 @@ export default {
   userMenuList: 'system/menu/list', // 当前登陆用户的菜单权限列表
   getCaptcha: 'captcha/get', //获取图片验证码
   loginSubmit: 'system/user/login', //登录
-  loginLogList: '/system/loginLog/list', // 登录日志列表
-  loginLogDelete: '/system/loginLog/delete' // 登录日志列表
+  loginLogList: 'system/loginLog/list', // 登录日志列表
+  loginLogDelete: 'system/loginLog/delete' // 登录日志列表
 }

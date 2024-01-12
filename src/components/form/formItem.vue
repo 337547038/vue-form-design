@@ -333,7 +333,6 @@
       beforeFetch,
       label,
       value,
-      query = {},
       debug // =true可用于调试，不缓存
     } = config.value
     if (optionsType !== 0) {
@@ -341,7 +340,6 @@
       // 接口数据源
       if (optionsType === 1 && sourceFun) {
         // 当前控件为动态获取数据，防多次加载，先从本地取。data=true时直接请求
-        const newData = Object.assign({}, data, query)
         const spark = new SparkMD5()
         spark.append(sourceFun + data)
         const key = spark.end()
@@ -361,7 +359,7 @@
           }
           requestResponse({
             requestUrl: sourceFun,
-            params: newData,
+            params: data,
             beforeFetch: beforeFetch,
             afterFetch: afterFetch,
             options: { method: method },

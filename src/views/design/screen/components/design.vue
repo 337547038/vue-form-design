@@ -464,7 +464,7 @@
    * 键盘按下事件 支持键盘控制调整位置
    * @param event
    */
-  const controlMoveByKeydown = (event: KeyboardEvent) => {
+  addEventListener(document, 'keydown', (event: KeyboardEvent) => {
     //console.log(event)
     // 按住ctrl键
     if (event.key === 'Control') {
@@ -488,17 +488,17 @@
       // 这里会导致在选中时当前页面没办法使用光标键
       event.preventDefault()
     }
-  }
+  })
   /**
    * 键盘弹起事件
    */
-  const onkeyup = () => {
+  addEventListener(document, 'keyup', () => {
     // 恢复
     if (state.activeTool !== 'mouse') {
       state.activeTool = 'mouse'
     }
     state.ctrlPress = false
-  }
+  })
 
   const contextmenuScreen = (data: Contextmenu) => {
     const params = Object.assign({}, data, {
@@ -547,7 +547,7 @@
   const getReplaceGlobal = (data: ScreenData) => {
     //转为字符串好替换预定的数据标识
     //即将1. data:"{{getScreenGlobal.line.xAxis}}"转为data:getScreenGlobal.line.xAxis
-    //2. text:"标题{{getScreenGlobal.title}}"转为 标题xxx
+    //2. text:"标题{{getScreenGlobal.title}}"转为 text:"标题xxx"
     const newStr = objToStringify(data)
       .replace(/"{{.*?}}"/g, function (match) {
         return match.slice(3, -3)
@@ -561,11 +561,6 @@
 
   onMounted(() => {
     getInit()
-    document.addEventListener('keydown', controlMoveByKeydown)
-    document.addEventListener('keyup', onkeyup)
   })
-  onBeforeUnmount(() => {
-    document.removeEventListener('keydown', controlMoveByKeydown)
-    document.removeEventListener('keyup', onkeyup)
-  })
+  onBeforeUnmount(() => {})
 </script>

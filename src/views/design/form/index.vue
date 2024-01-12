@@ -75,7 +75,9 @@
   import { useLayoutStore } from '@/store/layout'
   import type { FormData } from '@/types/form'
   import { getDrawerTitle, getDrawerContent } from '../components/aceTooptip'
+  import getOneFormCreation from './components/oneFormCreation'
 
+  defineOptions({ name: 'designFormIndex' })
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
@@ -212,6 +214,8 @@
       // 编辑状态 当前记录id
       Object.assign(params, { id: route.id })
       apiKey = 'designEdit'
+    } else {
+      params.status = 1 //添加时默认启用
     }
     // 列表搜索模式下只有修改
     if (state.designType === 'search') {
@@ -292,6 +296,9 @@
           editData = objToStringify(content, true)
         }
         break
+      case 'creatJson':
+        editData = objToStringify(content, true)
+        break
       //default:
       //  editData = objToStringify(content, true)
     }
@@ -341,7 +348,7 @@
           break
         case 'creatJson':
           state.formData = newObj
-          return
+          break
       }
       dialogCancel()
     } catch (e: any) {
@@ -384,30 +391,17 @@
     state.formData.list.push(data)
   }
   getInitData()
-  // 从数据源点创建表单过来时，带有参数source
-  const oneFormCreation = (list: any) => {
-    const temp: any = []
-    list.forEach((item: { name: any; label: any }) => {
-      temp.push({
-        type: 'input',
-        control: {
-          modelValue: ''
-        },
-        config: {},
-        name: `${item.name}`,
-        formItem: {
-          label: `${item.label}`
-        }
-      })
-    })
-    state.formData.list = temp
-  }
   onMounted(() => {
     if (route.source) {
       //从数据源一键创建过来时带有source参数
       formControlAttrEl.value.getFormFieldBySource(
         route.source,
-        oneFormCreation
+        (list: any) => {
+          state.formData.list = getOneFormCreation(list)
+          state.formData.config = {
+            submitCancel: true
+          }
+        }
       )
     }
   })

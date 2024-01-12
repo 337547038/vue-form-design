@@ -220,7 +220,11 @@
         options: [
           {
             label: '单行文本',
-            value: 'text'
+            value: 'input'
+          },
+          {
+            label: '多行文本',
+            value: 'textarea'
           },
           {
             label: '单选框组',
@@ -321,6 +325,7 @@
   const showFormClick = () => {
     formEl.value.resetFields() //先清空上一次的
     showForm.value = true
+    editRowIndex.value = undefined
     statusType.value = 1 // 点新增一行，表单都为增加模式
   }
   /**
@@ -336,7 +341,7 @@
     } else {
       formEl.value.validate((valid: boolean, fieldValue: TableList) => {
         if (valid) {
-          console.log(fieldValue)
+          // console.log(fieldValue)
           //判断表名字重复
           let hasFiled = false
           tableData.value.forEach((item: TableList) => {

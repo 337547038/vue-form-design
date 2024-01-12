@@ -10,6 +10,7 @@
       request-url="getContentList"
       delete-url="delFormContent"
       :before-fetch="beforeFetch"
+      :before-delete="beforeDelete"
       :auto-load="false"
       @btn-click="listBtnClick"
     />
@@ -29,8 +30,8 @@
         request-url="getFormContent"
         submit-url="saveFormContent"
         edit-url="editFormContent"
-        :before-submit="beforeSubmit"
         :after-submit="afterSubmit"
+        :params="{ formId: state.source }"
         @btn-click="dialogBtnClick"
         :query="{ formId: state.source, id: dialog.editId }"
       />
@@ -99,8 +100,20 @@
     }
   )
   const beforeFetch = (params: any) => {
-    console.log(params)
+    // props.beforeFetch事件存在时，events.beforeFetch会无效，此处在加上
     params.extend.formId = state.source
+    const eventBefore = state.tableData.events?.beforeFetch
+    if (typeof eventBefore === 'function') {
+      return eventBefore(params, route)
+    }
+    return params
+  }
+  const beforeDelete = (params: any) => {
+    params.formId = state.source
+    const eventBefore = state.tableData.events?.beforeDelete
+    if (typeof eventBefore === 'function') {
+      return eventBefore(params, route)
+    }
     return params
   }
   /*****弹窗口相关****/
@@ -177,15 +190,15 @@
       }
     }
   }
-  const beforeSubmit = (params: any) => {
-    params.formId = state.source
-    return params
-  }
   const afterSubmit = (type: string) => {
     if (type === 'success') {
       // 添加成功，刷新列表数据
       closeResetDialog()
       listEl.value.getListData()
+    }
+    const eventBefore = dialog.formData.events?.afterSubmit
+    if (typeof eventBefore === 'function') {
+      return eventBefore(type)
     }
   }
   const dialogBtnClick = (type: string) => {
