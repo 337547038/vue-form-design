@@ -36,28 +36,27 @@ export const getRequest = (
     method = url.split('|')[0]
     url = url.replace(/.*\|/, '')
   }
-  const obj: any = Object.assign(
+  let obj: any = Object.assign(
     {
-      url: url, // 添加个前缀
+      url: 'api/' + url, // 添加个前缀
       method: method,
       data
     },
     options
   )
-  // localhost和github演示时使用下面地址
-  // 使用node接口时可使用本地ip地址访问或注释下面代码
-  /*const host: string = window.location.host
-  if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
-    const { type = '', id = '', formId = '' } = data
-    let params: string = type + id + formId
+  // localhost演示时使用下面地址
+  // 使用接口时可使用本地ip地址访问或注释下面代码
+  const host: string = window.location.host
+  if (host.indexOf('localhost') !== -1) {
+    const { query = {}, id = '', formId = '' } = data
+    let params: string = (query.type || '') + id + formId
     if (
-      url.includes('/save') ||
-      url.includes('/edit') ||
-      url.includes('/delete') ||
-      url.includes('/creat') ||
-      url.includes('/change') ||
-      url.includes('/single')
+      url.includes('/get') ||
+      url.includes('/list') ||
+      url.includes('/login')
     ) {
+      /* empty */
+    } else {
       url = 'ok'
       params = ''
     }
@@ -66,13 +65,13 @@ export const getRequest = (
     }
     obj = Object.assign(
       {
-        url: `./mock/${url}${params}.json`,
+        url: `mock/${url}${params}.json`,
         method: 'GET'
         //params: data
       },
       options
     )
-  }*/
+  }
   return request(obj)
 }
 export const uploadUrl: string = '/api/' + allApi.upload // el-upload上传地址

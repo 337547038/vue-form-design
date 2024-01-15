@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { getStorage } from '@/utils'
-import SparkMD5 from 'spark-md5'
+//import SparkMD5 from 'spark-md5'
 import { ElMessage } from 'element-plus'
 import { useLayoutStore } from '@/store/layout'
 
 //5. 通过运行的命令获取各不同环境的请求api等，此处不使用在根目录添加如.env.development等文件方式
 const mode = import.meta.env.MODE
 const baseUrl: any = {
-  development: '/api/', // 默认命令dev
+  development: '', // 默认命令dev
   production: '', // build
   preRelease: '' // 自定义其他环境如 "build:pre": "vite build --mode preRelease"
 }

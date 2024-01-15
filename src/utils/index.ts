@@ -159,7 +159,10 @@ export const getStorage = (key: string, hour?: boolean) => {
     data = window.localStorage.getItem(key)
     try {
       data = JSON.parse(data)
-      if (typeof data === 'object' && data.__value && data.__time) {
+      if (typeof data === 'object' && data.__time) {
+        if (!data.__value) {
+          data = undefined
+        }
         // 使用了时间的
         // 在当前时间后，表示没过期
         if (new Date().getTime() < data.__time) {

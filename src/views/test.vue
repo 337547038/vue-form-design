@@ -25,16 +25,15 @@ layout:'hidden'}}
   const buttonClick = () => {
     const params = {
       query: {
-        //name: 'name12',
-        //status: 1
+        type: 1
       },
       extend: {
-        formId: 27,
+        // formId: 27,
         pageSize: 20,
         pageNum: 1
       }
     }
-    getRequest('content/list', params)
+    getRequest('design/list', params)
       .then(res => {
         console.log(res)
       })
