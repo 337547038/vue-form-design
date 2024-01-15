@@ -565,8 +565,6 @@
       .then((res: any) => {
         loading.value = false
         screenData.value = res.screenData
-        //将全局数据保存在window里，以方便调用
-        window.getScreenGlobal = res.globalData
         setLayerList()
       })
       .catch((res: any) => {
