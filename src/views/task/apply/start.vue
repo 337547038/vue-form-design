@@ -6,10 +6,10 @@
         <ak-form
           ref="formEl"
           :data="formData"
+          :before-submit="beforeSubmit"
           :after-submit="afterSubmit"
           :type="formType"
           :disabled="!!route.query.id"
-          :params="submitParams"
           request-url="getFormContent"
           submit-url="flowSave"
           edit-url="editFormContent"
@@ -40,6 +40,7 @@
   import { stringToObj } from '@/utils/design'
 
   import { useLayoutStore } from '@/store/layout'
+  import { getStorage } from '@/utils'
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '工作台' }, { label: '发起流程' }])
 
@@ -52,25 +53,16 @@
     form: {}
   })
   const loading = ref(true)
-  const sourceId = ref()
+  const formId = ref()
   const flowName = ref()
-  const submitParams = computed(() => {
-    return {
-      flow: {
-        flowId: route.query.flowId,
-        sourceId: sourceId.value,
-        id: route.query.id,
-        userId: '', // 当前登录用户id
-        title: `user提交的${flowName.value}审批`,
-        creatTime: new Date()
-      }
-    }
-  })
   const formType = computed(() => {
     if (route.query.id) {
       return 2 // 编辑
     }
     return 1
+  })
+  const userInfo = computed(() => {
+    return getStorage('userInfo', true)
   })
   const getInitData = () => {
     const params = {
@@ -81,7 +73,7 @@
       const { flow, form } = res.data
       flowEl.value.setValue(stringToObj(flow.data))
       formData.value = stringToObj(form.data)
-      sourceId.value = form.source
+      formId.value = form.id
       flowName.value = flow.name
       loading.value = false
       // 修改时获取表单初始值
@@ -91,9 +83,27 @@
       }
     })
   }
+  const beforeSubmit = (params: any) => {
+    const newParams = {
+      form: params,
+      flow: {
+        flowId: route.query.flowId,
+        formId: formId.value,
+        id: route.query.id,
+        userId: userInfo.value.id, // 当前登录用户id
+        title: `${userInfo.value.userName}提交的${flowName.value}申请审批`,
+        creatTime: new Date()
+      }
+    }
+    const eventBefore = formData.value.events?.beforeSubmit
+    if (typeof eventBefore === 'function') {
+      return eventBefore(newParams)
+    }
+    return newParams
+  }
   const afterSubmit = (type: string) => {
     if (type === 'success') {
-      router.push({ path: '/task/applyed' })
+      //todo router.push({ path: '/task/applyed' })
     } else {
       console.log('提交失败')
     }

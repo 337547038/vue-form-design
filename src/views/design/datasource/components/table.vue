@@ -49,7 +49,7 @@
   const props = withDefaults(
     defineProps<{
       modelValue?: TableList[] // 当前数据
-      type: number
+      type?: number
     }>(),
     {
       modelValue: () => {

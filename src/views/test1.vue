@@ -1,97 +1,51 @@
 <template>
-  <div>
-    <ak-form
-      ref="formNameEl"
-      :type="formType"
-      :data="formData"
-      request-url=""
-      submit-url="test/t"
-      edit-url=""
-      :before-submit="beforeSubmit"
-    >
-      <childTable v-model="childList" />
-    </ak-form>
+  <div :style="screenStyle" class="design-canvas">
+    <ak-screen
+      v-for="(element, index) in screenData.list"
+      :key="index"
+      :data="element"
+    />
   </div>
 </template>
-<route>
-{meta:{
-layout:'hidden'}}
-</route>
-<script setup lang="ts">
-  import { ref, computed, provide, markRaw } from 'vue'
-  import childTable from './design/datasource/components/table.vue'
 
-  const formNameEl = ref()
-  const formData = ref({
+<script setup lang="ts">
+  import { ref, computed, provide } from 'vue'
+  import akScreen from './design/screen/components/screen.vue'
+
+  const loading = ref(true)
+  const screenData = ref({
     list: [
       {
-        type: 'input',
-        control: { modelValue: '' },
-        config: {},
-        name: 'input1702736142369',
-        formItem: { label: '单行文本' }
+        type: 'line',
+        position: { width: 400, height: 300, left: 232, top: 91 },
+        option: {
+          xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          },
+          yAxis: { type: 'value' },
+          grid: { left: 0, top: 0, right: 0, bottom: 30 },
+          series: [{ data: [150, 230, 224, 218, 135, 147, 260], type: 'line' }]
+        },
+        config: { optionsType: 1, method: 'post', requestUrl: 'getdict' }
       }
-      /*{
-        type: 'component',
-        control: {
-          modelValue: ''
-        },
-        config: {
-          componentName: markRaw(childTable)
-        },
-        name: 'component1703137043652',
-        formItem: {
-          label: '自定义组件',
-          hideLabel: true
-        }
-      }*/
     ],
-    form: { size: 'default' },
     config: {
-      //submitCancel: true
-    },
-    events: {
-      beforeFetch: (data, route) => {
-        // data经过处理后返回
-        // console.log('beforeFetch', data)
-        return data
-      },
-      /*beforeSubmit: (data, route) => {
-        // data经过处理后返回
-        data.yyyyy = 'yyyyy'
-        console.log('beforeFetch', data)
-        return data
-      }*/
-      beforeSubmit: (data, route) => {
-        return 'beforeSubmitTest'
-      },
-      afterSubmit: (type, res) => {
-        console.log('123456')
-        console.log(type, res)
-        return false
-      },
-      change: (key, model) => {
-        console.log(key)
-      }
+      width: '1920px',
+      height: '1080px',
+      background: '#000',
+      style: '',
+      primary: '#409eff'
     }
   })
-  // todo 存在编辑时，可根据路由等参数设置当前表单模式 1新增 2编辑
-  const formType = computed(() => {
-    return 1
+  const screenStyle = computed(() => {
+    const { width, height, background, primary } = screenData.value.config
+    return {
+      width: width,
+      height: height,
+      background: background,
+      color: primary,
+      position: 'relative'
+    }
   })
-  const childList = ref([{ label: '1', name: '1', type: 'FLOAT' }])
-  // 表单提交时参数处理
-  const beforeSubmit = (params: any) => {
-    // 如编辑时添加参数
-    //  params.id='xxx'
-    console.log('beforeFetch', params)
-    params.xxxx = 'xxxx'
-    /*const eventsBeforeSubmit = formData.value.events?.beforeSubmit
-    if (typeof eventsBeforeSubmit === 'function') {
-      params = eventsBeforeSubmit(params)
-    } else if (eventsBeforeSubmit && typeof eventsBeforeSubmit === 'string') {
-      return eventsBeforeSubmit
-    }*/
-    return params
-  }
 </script>

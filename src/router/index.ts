@@ -103,7 +103,6 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
       path: '/login',
       query: { redirect: encodeURI(to.fullPath) }
     }
-    console.log('refreshToken', refreshToken)
     //判断refreshToken即可，当token过期还能继续执行刷新token操作
     if (refreshToken) {
       // 根据菜单权限接口判断有没对应页面的权限

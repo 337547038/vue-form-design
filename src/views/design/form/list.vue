@@ -6,7 +6,6 @@
       delete-url="designDelete"
       :search-data="searchData"
       :data="tableData"
-      :before-fetch="beforeFetch"
       :query="{ type: 1 }"
     >
       <template #sourceName="{ row }">

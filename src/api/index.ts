@@ -48,12 +48,13 @@ export const getRequest = (
   // 使用接口时可使用本地ip地址访问或注释下面代码
   const host: string = window.location.host
   if (host.indexOf('localhost') !== -1) {
-    const { query = {}, id = '', formId = '' } = data
-    let params: string = (query.type || '') + id + formId
+    const { query = {}, id = '', extend = {} } = data
+    let params: string = (query.type || '') + id + (extend.formId || '')
     if (
       url.includes('/get') ||
       url.includes('/list') ||
-      url.includes('/login')
+      url.includes('/login') ||
+      url.includes('/flow/form')
     ) {
       /* empty */
     } else {

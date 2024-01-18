@@ -109,7 +109,8 @@
   import ARuler from './ruler.vue'
   import { useDesignStore } from '@/store/design'
   import { getRandom } from '@/utils'
-  import { objToStringify, stringToObj } from '@/utils/design.ts'
+  import { objToStringify, stringToObj } from '@/utils/design'
+  import { useEventListener } from '@/utils/useEvent'
 
   const props = withDefaults(
     defineProps<{
@@ -464,7 +465,7 @@
    * 键盘按下事件 支持键盘控制调整位置
    * @param event
    */
-  addEventListener(document, 'keydown', (event: KeyboardEvent) => {
+  useEventListener(document, 'keydown', (event: KeyboardEvent) => {
     //console.log(event)
     // 按住ctrl键
     if (event.key === 'Control') {
@@ -492,7 +493,7 @@
   /**
    * 键盘弹起事件
    */
-  addEventListener(document, 'keyup', () => {
+  useEventListener(document, 'keyup', () => {
     // 恢复
     if (state.activeTool !== 'mouse') {
       state.activeTool = 'mouse'

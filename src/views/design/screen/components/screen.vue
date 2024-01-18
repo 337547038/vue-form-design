@@ -391,6 +391,7 @@
   })
 
   const getUrlData = () => {
+    console.log('getUrlData111')
     if (['image', 'background', 'border', 'clock'].includes(props.data.type)) {
       return // 不支持动态数据获取的return
     }

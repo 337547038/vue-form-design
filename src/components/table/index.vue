@@ -534,7 +534,7 @@
     if (btn.key === 'del') {
       if (type === 'down') {
         // 下拉菜单删除时警告
-        ElMessageBox.confirm(btn.tip, '温馨提示', {
+        ElMessageBox.confirm(btn.tip || '确定删除该记录?', '温馨提示', {
           confirmButtonText: '删除',
           cancelButtonText: '取消',
           type: 'warning'
