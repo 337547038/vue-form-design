@@ -88,6 +88,10 @@ opt=(res, data) => {
     // res响应数据, 当前组件数据data
     // 这里可直接使用getScreenGlobal取得全局的数据
     console.log('afterFetchScreen',data)
+  　//如对当前组件进行赋值
+  　//data.xAxis.data = res.line.xAxis
+  　//data.series[0].data = res.line.data
+  　//data.series[1].data = res.line.data1
     return data //返回新的图表数据
 }
 ```

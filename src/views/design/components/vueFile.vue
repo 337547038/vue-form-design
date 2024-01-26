@@ -281,6 +281,7 @@
 <script setup lang="ts">
   import { ref, computed, provide } from 'vue'
   ${globalImport}
+  import AKScreen from '@/views/design/screen/components/screen.vue' //可根据需求是否全局注册
   const loading = ref(true)
   const screenData = ref(${objToStringify(obj)})
   const screenStyle = computed(() => {

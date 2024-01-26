@@ -68,6 +68,7 @@ export const getDrawerContent = (key: string, tips?: string) => {
       return (
         'opt=(res, data) => {\n' +
         '  // res响应数据, 当前组件数据data\n' +
+        '  // 这里可直接使用getScreenGlobal取得全局的数据\n' +
         "  console.log('afterFetchScreen',data)\n" +
         '  return data //返回新的图表数据\n' +
         '}'
