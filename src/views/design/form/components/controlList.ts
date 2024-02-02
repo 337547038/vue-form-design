@@ -272,7 +272,7 @@ export default [
       },
       {
         type: 'flex',
-        label: '弹性布局',
+        label: '弹性字段',
         icon: 'flex',
         list: [],
         tableData: [], // 值集合

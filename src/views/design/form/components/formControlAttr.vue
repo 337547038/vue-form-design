@@ -1226,7 +1226,6 @@
   /**
    * 打开编辑器事件
    * @param type
-   * @param tooltip
    */
   const openAttrDialog = (type?: string) => {
     let editData = controlData.value.control

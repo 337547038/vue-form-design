@@ -7,7 +7,7 @@
 ```text
 nodejs 模拟后端接口
 public
- ├─mock json模拟数据
+ ├─mock 模拟数据
  ├─static 静态资源
    ├─ iconfont icon图标
    └─ plugins 表单设计编辑器及富文本编辑器相关js
@@ -44,12 +44,25 @@ src
 
 ## 快速上手
 
-clone并进入项目安装依赖包
+进入项目安装依赖包
 
 ```text
 git clone https://github.com/337547038/vue-form-design.git
 pnpm install
 pnpm run dev
+```
+
+## nodejs模拟接口
+
+体验完整的流程可启动`nodejs`模拟接口数据，使用`mock/json`数据只能查看；
+
+先将`/nodejs/akform.sql`导入到`mysql`数据库里，在`db.js`里修改数据库连接配置
+
+进入`nodejs`目录安装依赖
+
+```text
+pnpm install
+pnpm dev
 ```
 
 浏览器进入 http://localhost:3000 开始体验

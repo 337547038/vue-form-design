@@ -15,12 +15,18 @@ const getInitList = (list: any) => {
           control: {
             appendToBody: true
           },
-          options: []
+          options: [],
+          config: {
+            optionsType: 0
+          }
         }
         break
       case 'radio':
         custom = {
-          options: []
+          options: [],
+          config: {
+            optionsType: 0
+          }
         }
         break
       case 'checkbox':

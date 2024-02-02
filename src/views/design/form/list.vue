@@ -108,12 +108,6 @@
         }
       },
       {
-        label: '一键创建列表',
-        click: (row: any) => {
-          router.push({ path: '/design/list', query: { form: row.id } })
-        }
-      },
-      {
         label: '编辑',
         click: (row: any) => {
           // 跳转到表单设计编辑页
@@ -123,6 +117,12 @@
       {
         label: '删除',
         key: 'del'
+      },
+      {
+        label: '一键创建列表',
+        click: (row: any) => {
+          router.push({ path: '/design/list', query: { form: row.id } })
+        }
       }
     ],
     config: {

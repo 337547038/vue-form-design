@@ -271,7 +271,14 @@
     }
   })
   const afterFetch = (type: string, params: any) => {
-    childTableData.value = JSON.parse(params.tableData)
+    const tableData = JSON.parse(params.tableData)
+    //如果有isNew标识则删除
+    tableData.forEach((item: any) => {
+      if (item.isNew) {
+        delete item.isNew
+      }
+    })
+    childTableData.value = tableData
     return params
   }
   // 提交表单前校验

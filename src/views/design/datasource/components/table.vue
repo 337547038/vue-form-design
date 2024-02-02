@@ -68,12 +68,6 @@
     () => props.modelValue,
     (val: TableList[]) => {
       tableData.value = val
-      //如果有isNew标识则删除
-      tableData.value.forEach((item: TableList) => {
-        if (item.isNew) {
-          delete item.isNew
-        }
-      })
     },
     { deep: true, immediate: true }
   )
@@ -191,7 +185,7 @@
       {
         type: 'switch',
         control: {
-          modelValue: false
+          modelValue: true
         },
         config: { disabledEdit: true },
         name: 'empty',
@@ -341,7 +335,6 @@
     } else {
       formEl.value.validate((valid: boolean, fieldValue: TableList) => {
         if (valid) {
-          // console.log(fieldValue)
           //判断表名字重复
           let hasFiled = false
           tableData.value.forEach((item: TableList) => {

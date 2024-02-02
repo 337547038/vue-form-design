@@ -41,7 +41,7 @@ function getNewToken(refreshToken: any) {
   const layoutStore = useLayoutStore()
   const params: any = { refreshToken: refreshToken }
   axios
-    .post(baseUrl[mode] + '/system/user/refreshToken', params)
+    .post(baseUrl[mode] + '/api/system/user/refreshToken', params)
     .then((result: any) => {
       console.log(result)
       if (result.data.code === 1) {
