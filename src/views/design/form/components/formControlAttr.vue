@@ -997,6 +997,13 @@
           placeholder: '显示在输入框中的格式'
         },
         {
+          label: 'value-format',
+          value: control.valueFormat,
+          path: 'control.valueFormat',
+          vShow: ['datePicker', 'timePicker'],
+          placeholder: '绑定的值'
+        },
+        {
           label: 'color-format',
           value: control.colorFormat,
           path: 'control.colorFormat',

@@ -27,6 +27,9 @@
         </div>
         <ak-flow :type="1" ref="flowEl" />
       </el-tab-pane>
+      <el-tab-pane label="流转记录" name="change" v-if="$route.query.id">
+        <ak-list ref="tableListEl" :data="changeTableData" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -41,11 +44,16 @@
 
   import { useLayoutStore } from '@/store/layout'
   import { getStorage } from '@/utils'
-  const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '工作台' }, { label: '发起流程' }])
 
   const route = useRoute()
   const router = useRouter()
+  const layoutStore = useLayoutStore()
+
+  layoutStore.changeBreadcrumb([
+    { label: '工作台' },
+    { label: route.query.id ? '我发起的' : '发起流程' }
+  ])
+
   const flowEl = ref()
   const formEl = ref()
   const formData = ref({
@@ -103,11 +111,51 @@
   }
   const afterSubmit = (type: string) => {
     if (type === 'success') {
-      //todo router.push({ path: '/task/applyed' })
+      router.push({ path: '/task/applyed' })
     } else {
       console.log('提交失败')
     }
   }
+
+  //流转记录
+  const changeTableData = ref({
+    columns: [
+      {
+        label: '节点名称',
+        prop: 'nodeName'
+      },
+      {
+        label: '处理人',
+        prop: 'name'
+      },
+      {
+        label: '任务状态', // 发起/已审批/审批中/已拒绝/已撤回/完成
+        prop: 'status',
+        config: {}
+      },
+      {
+        label: '开始时间',
+        prop: 'startTime',
+        config: {
+          formatter: '{y}-{m}-{d} {h}:{i}:{s}'
+        }
+      },
+      {
+        label: '结束时间',
+        prop: 'endTime',
+        config: {
+          formatter: '{y}-{m}-{d} {h}:{i}:{s}'
+        }
+      },
+      {
+        label: '审批意见',
+        prop: 'remark'
+      }
+    ],
+    config: {
+      columnsSetting: false
+    }
+  })
   onMounted(() => {
     getInitData()
   })

@@ -36,9 +36,13 @@ export const getRequest = (
     method = url.split('|')[0]
     url = url.replace(/.*\|/, '')
   }
+  //不是以/和http开头的，添加全局前缀
+  if (!(url.startsWith('/') || url.startsWith('http'))) {
+    url = 'api/' + url
+  }
   let obj: any = Object.assign(
     {
-      url: 'api/' + url, // 添加个前缀
+      url: url, // 添加个前缀
       method: method,
       data
     },

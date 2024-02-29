@@ -686,7 +686,9 @@
   const setSearchValueFormQuery = () => {
     const routeQuery = route.query
     if (Object.keys(routeQuery).length) {
-      searchFormEl.value.setValue(routeQuery, true)
+      if (searchFormEl.value) {
+        searchFormEl.value.setValue(routeQuery, true)
+      }
       const { show, name } = treeData.value
       const val = routeQuery[name]
       if (show && val) {

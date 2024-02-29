@@ -77,6 +77,8 @@
     <component
       :is="config.component"
       v-bind="config"
+      :height="data.position.height"
+      :width="data.position.width || '100%'"
       v-if="['component'].includes(data.type)"
     />
     <echarts-init

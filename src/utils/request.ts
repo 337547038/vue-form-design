@@ -153,7 +153,7 @@ service.interceptors.response.use(
         break
       default:
         // 这里可统一处理其他异常拦截，或提示
-        ElMessage({ message: msg, type: 'error' })
+        msg && ElMessage({ message: msg, type: 'error' })
         return Promise.reject(res.data)
     }
   },

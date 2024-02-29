@@ -30,8 +30,12 @@
   const list = ref({})
   const getIcon = (icon: string, index: number) => {
     if (icon) {
-      const temp = icon.split(',')
-      return temp[index]
+      try {
+        return JSON.parse(icon)[index]
+      } catch (e) {
+        const temp = icon.split(',')
+        return temp[index]
+      }
     }
     return ''
   }

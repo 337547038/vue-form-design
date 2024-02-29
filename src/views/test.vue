@@ -44,17 +44,17 @@ layout:'hidden'}}
   }
   const buttonClickInsert = () => {
     const params = {
-      name: 'demotesst',
-      tableName: 'demotesst',
-      category: '',
-      remark: 'remark',
+      name: '1',
+      phone: '',
+      weixin: '',
+      company: '',
       status: 1,
-      id: '',
-      tableData:
-        '[{"name":"name","type":"VARCHAR","length":"50","label":"title name"}]'
+      intention: 1,
+      remark: '',
+      formId: 27
     }
 
-    getRequest('datasource/creat', params)
+    getRequest('content/save', params)
   }
   const buttonClickEdit = () => {
     const params = {

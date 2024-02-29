@@ -11,6 +11,7 @@ import './assets/scss/element-var.scss'
 import '@/assets/scss/index.scss'
 import ComComponents from '@/components/index'
 import Directive from '@/directive'
+
 // 实例化 Pinia
 const pinia = createPinia()
 const app = createApp(App)
@@ -34,3 +35,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册一个全局组件用于自定义组件测试
 import componentTest from '@/docs/components/componentTest.vue'
 app.component('ComponentTest', componentTest)
+//大屏自定义组件
+import ScreenDemoComponent from './views/design/screen/demo/map.vue'
+app.component('echartsMap', ScreenDemoComponent)
