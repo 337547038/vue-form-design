@@ -3,15 +3,16 @@
     <ak-list
       v-if="refreshTable"
       ref="tableListEl"
-      requestUrl="menuList"
-      deleteUrl="menuDelete"
-      :searchData="searchData"
-      :tableData="tableData"
-      afterResponse="transformDataToChild"
+      request-url="menuList"
+      delete-url="menuDelete"
+      :search-data="searchData"
+      :data="tableData"
+      :after-response="afterResponse"
       :dict="dict"
     >
-      <template #icon="{ row }">
-        <i :class="row.icon"></i>
+      <template #name="{ row }">
+        <i :class="row.icon"></i
+        ><span style="padding-left: 5px">{{ row.name }}</span>
       </template>
     </ak-list>
     <el-dialog
@@ -23,27 +24,25 @@
       <ak-form
         ref="formNameEl"
         :type="dialog.formType"
-        :formData="formData"
-        addUrl="menuSave"
-        editUrl="menuEdit"
-        :beforeSubmit="beforeSubmit"
-        :afterSubmit="afterSubmit"
+        :data="formData"
+        submit-url="menuSave"
+        edit-url="menuEdit"
+        :before-submit="beforeSubmit"
+        :after-submit="afterSubmit"
         @btn-click="btnClick"
         :dict="dict"
+        @change="formValueChange"
       />
     </el-dialog>
   </div>
 </template>
-
 <script setup lang="ts">
-  import { ref, reactive, nextTick } from 'vue'
-  //import iconfont from '@/components/iconfont.vue'
-  import { useRouter } from 'vue-router'
-  const router = useRouter()
+  import { nextTick, reactive, ref } from 'vue'
+  import { flatToTree } from '@/utils/flatTree'
   const tableListEl = ref()
   const formNameEl = ref()
   const dict = {
-    menuType: { 1: '菜单', 2: '按钮' }
+    menuType: { 1: '菜单', 2: '按钮', 3: '设计内容' }
   }
   const refreshTable = ref(true)
   const searchData = ref({
@@ -54,9 +53,8 @@
           modelValue: '',
           placeholder: '请输入菜单名称'
         },
-        config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '菜单名称'
         }
       },
@@ -68,31 +66,17 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'status'
+          optionsFun: 'sys-status'
         },
         name: 'status',
-        item: {
+        formItem: {
           label: '状态'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '搜索',
-          key: 'submit',
-          type: 'primary'
-        },
-        config: {}
-      },
-      {
-        type: 'button',
-        control: {
-          label: '重置',
-          key: 'reset'
-        },
-        config: {}
       }
     ],
+    config: {
+      submitCancel: true
+    },
     form: {
       size: 'default'
     }
@@ -109,11 +93,6 @@
         prop: 'path'
       },
       {
-        label: '图标',
-        prop: 'icon',
-        width: 60
-      },
-      {
         label: '排序',
         prop: 'sort',
         width: 60
@@ -121,14 +100,17 @@
       {
         label: '类型',
         prop: 'type',
-        width: 70,
-        config: { dictKey: 'menuType', tagList: { 1: 'success', 2: 'info' } }
+        width: 100,
+        config: {
+          dictKey: 'menuType',
+          tagList: { 1: 'success', 2: 'info', 3: 'warning' }
+        }
       },
       {
         label: '状态',
         prop: 'status',
         width: 70,
-        config: { dictKey: 'status', tagList: { 1: 'success', 2: 'info' } }
+        config: { dictKey: 'sys-status', tagList: { 1: 'success', 2: 'info' } }
       },
       { label: '操作', prop: '__control', width: 140 }
     ],
@@ -157,7 +139,6 @@
     ],
     operateBtn: [
       {
-        visible: '$.parentId!==1',
         label: '新增',
         click: (row: any) => {
           dialog.visible = true
@@ -169,13 +150,9 @@
         }
       },
       {
-        //visible: '$.parentId!==1',
         label: '编辑',
         click: (row: any) => {
-          if (row.parentId === 1) {
-            router.push({ path: '/design/dataList/list' })
-            return
-          }
+          // console.log(row)
           dialog.visible = true
           dialog.title = '编辑菜单'
           dialog.formType = 2
@@ -187,8 +164,8 @@
       },
       {
         label: '删除',
-        key: 'del',
-        visible: '$.parentId!==0&&$.parentId!==1' // 一级不让删
+        key: 'del'
+        //visible: '$.children?.length>0' // 一级不让删
       }
     ],
     config: {
@@ -210,14 +187,13 @@
         control: {
           modelValue: '',
           disabled: true,
-          placeholder: '父级'
+          placeholder: '父级ID'
         },
-        config: {},
         name: 'parentId',
-        item: { label: '父级ID' }
+        formItem: { label: '父级ID' }
       },
       {
-        type: 'radio',
+        type: 'select',
         control: { modelValue: 1 },
         options: [],
         config: {
@@ -225,14 +201,30 @@
           optionsFun: 'menuType'
         },
         name: 'type',
-        item: { label: '类型' }
+        formItem: { label: '类型' }
+      },
+      {
+        type: 'select',
+        control: { modelValue: '' },
+        options: [],
+        config: {
+          optionsType: 1,
+          optionsFun: 'designList',
+          method: 'post',
+          label: 'name',
+          value: 'id',
+          query: { type: 2 },
+          hidden: '$.type!==3'
+        },
+        name: 'contentList',
+        formItem: { label: '内容列表' }
       },
       {
         type: 'input',
         control: { modelValue: '', placeholder: '请输入菜单名称' },
         config: {},
         name: 'name',
-        item: { label: '菜单名称' },
+        formItem: { label: '菜单名称' },
         customRules: [
           { type: 'required', message: '菜单名称不能为空', trigger: 'blur' }
         ]
@@ -240,9 +232,11 @@
       {
         type: 'input',
         control: { modelValue: '', placeholder: '请输入访问地址/类型标识' },
-        config: {},
+        config: {
+          disabled: '$.type===3'
+        },
         name: 'path',
-        item: { label: '访问地址' }
+        formItem: { label: '访问地址' }
       },
       {
         type: 'component',
@@ -251,10 +245,10 @@
         },
         config: {
           // componentName: markRaw(iconfont)
-          componentName: 'DiyIconfont'
+          componentName: 'diyIconfont'
         },
         name: 'icon',
-        item: {
+        formItem: {
           label: 'icon图标'
         }
       },
@@ -263,7 +257,7 @@
         control: { modelValue: 0, controlsPosition: 'right' },
         config: {},
         name: 'sort',
-        item: { label: '排序' }
+        formItem: { label: '排序' }
       },
       {
         type: 'radio',
@@ -271,10 +265,10 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'status'
+          optionsFun: 'sys-status'
         },
         name: 'status',
-        item: { label: '状态' }
+        formItem: { label: '状态' }
       },
       {
         type: 'textarea',
@@ -285,26 +279,9 @@
           span: 24
         },
         name: 'remark',
-        item: {
+        formItem: {
           label: '备注'
         }
-      },
-      {
-        type: 'div',
-        control: {},
-        config: { textAlign: 'center', span: 24 },
-        list: [
-          {
-            type: 'button',
-            control: { label: '确定', type: 'primary', key: 'submit' },
-            config: { span: 0 }
-          },
-          {
-            type: 'button',
-            control: { label: '取消', key: 'reset' },
-            config: { span: 0 }
-          }
-        ]
       }
     ],
     form: {
@@ -312,13 +289,16 @@
       labelWidth: '100px',
       size: 'default'
     },
-    config: {}
+    config: {
+      submitCancel: true
+    }
   })
   const beforeSubmit = (params: any) => {
     // 如编辑时添加参数
     if (dialog.formType === 2) {
       params.id = dialog.editId
     }
+    delete params.contentList
     return params
   }
   // 表单提交完成事件
@@ -333,6 +313,28 @@
   const btnClick = (type: string) => {
     if (type === 'reset') {
       dialog.visible = false
+    }
+  }
+
+  const afterResponse = (result: any) => {
+    result.list = flatToTree(result.list)
+    return result
+  }
+
+  const formValueChange = ({
+    key,
+    label,
+    model,
+    value
+  }: {
+    key: string
+    label: string
+    model: any
+    value: string
+  }) => {
+    if (key === 'contentList') {
+      model.path = '/design/list/content/' + value
+      model.name = label
     }
   }
 </script>

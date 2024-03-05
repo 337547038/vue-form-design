@@ -8,7 +8,7 @@
         :style="{ paddingLeft: `${(anchor.indent - 2) * 15}px` }"
         @click="rollTo(anchor)"
         :key="index"
-      >{{ anchor.title }}</a
+        >{{ anchor.title }}</a
       >
     </div>
 
@@ -31,7 +31,7 @@
             :index="ch.to"
             v-for="(ch, i) in item.children"
             :key="i"
-          >{{ ch.title }}</el-menu-item
+            >{{ ch.title }}</el-menu-item
           >
         </el-sub-menu>
         <el-menu-item :index="item.to" v-else>{{ item.title }}</el-menu-item>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
   import '../scss/style.scss'
-  import 'vite-plugin-vuedoc/style.css'
+  import 'vite-plugin-doc-preview/style/style.css'
   import { ref, nextTick, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   const router = useRouter()
@@ -63,7 +63,7 @@
     nextTick(() => {
       setTimeout(() => {
         if (articleEl.value) {
-          const anchors = articleEl.value.querySelectorAll('h2,h3')
+          const anchors = articleEl.value.querySelectorAll('h2,h3,h4')
           // 删除标题头尾的空格
           const titles = Array.from(anchors).filter(
             (title: any) => !!title.innerText.trim()
@@ -74,7 +74,7 @@
           }
           titleList.value = titles.map((el: any) => ({
             title: el.id, // 标题内容
-            lineIndex: el.getAttribute('data-source-line'), // 标签line id
+            //lineIndex: el.getAttribute('data-source-line'), // 标签line id
             indent: parseInt(el.tagName.replace(/h/gi, '')) // 标签层级
             //height: el.offsetTop // 标签距离顶部距离
           }))
@@ -83,9 +83,10 @@
     })
   }
   const rollTo = (item: any) => {
-    const heading = document.querySelector(
+    /*const heading = document.querySelector(
       `[data-source-line="${item.lineIndex}"]`
-    )
+    )*/
+    const heading = document.getElementById(item.title)
     // 页面跳转
     if (heading) {
       heading.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -121,9 +122,9 @@
       to: '/docs/use',
       children: [
         { title: '快速开始', to: '/docs/use-start' },
-        { title: '数据源', to: '/docs/use-dataSource' },
-        { title: 'ak-form', to: '/docs/use-form' },
-        { title: 'ak-list', to: '/docs/use-list' },
+        { title: '数据源', to: '/docs/use-datasource' },
+        { title: 'ak-form配置项手册', to: '/docs/form-option' },
+        { title: 'ak-list配置项手册', to: '/docs/list-option' },
         { title: '可视化数据大屏', to: '/docs/use-screen' }
       ]
     }

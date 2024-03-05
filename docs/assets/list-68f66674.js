@@ -1,1 +1,0 @@
-import{a1 as t,a as e,c as o}from"./index-ea7eee8a.js";const s={name:"List",components:{},props:{},data(){return{}},computed:{},mounted(){},methods:{}};function n(a,c,r,p,d,m){return e(),o("div")}const i=t(s,[["render",n]]);export{i as default};

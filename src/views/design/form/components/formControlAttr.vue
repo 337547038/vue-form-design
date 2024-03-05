@@ -32,60 +32,12 @@
               />
               <el-input
                 v-else
-                :type="item.inputStyle"
+                :type="item.inputStyle as any"
                 v-model="item.value"
                 :placeholder="item.placeholder"
                 @input="controlChange(item, $event)"
               />
             </el-form-item>
-          </template>
-          <template v-if="controlData.config">
-            <el-form-item label="联动条件">
-              <el-switch v-model="controlData.config.linkKey" />
-            </el-form-item>
-            <template v-if="controlData.config.linkKey">
-              <el-form-item>
-                <el-input
-                  type="textarea"
-                  v-model="controlData.config.linkValue"
-                  placeholder="表达式如: $.input>1 $表示为当前表单数据，input为字段标识"
-                />
-              </el-form-item>
-              <el-form-item
-                label="联动结果"
-                v-if="
-                  showHide(
-                    [
-                      'input',
-                      'textarea',
-                      'radio',
-                      'checkbox',
-                      'select',
-                      'date',
-                      'switch',
-                      'number',
-                      'cascader',
-                      'slider',
-                      'datePicker',
-                      'timePicker',
-                      'colorPicker',
-                      'inputNumber',
-                      'rate',
-                      'treeSelect'
-                    ],
-                    true
-                  )
-                "
-              >
-                <el-radio-group
-                  class="option-radio"
-                  v-model="controlData.config.linkResult"
-                >
-                  <el-radio label="hidden">隐藏(默认)</el-radio>
-                  <el-radio label="disabled">禁用</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </template>
           </template>
           <template v-if="showHide(['tabs'], true)">
             <div class="h3"><h3>标签配置项</h3></div>
@@ -362,7 +314,7 @@
             <el-switch
               v-else-if="item.type === 'switch'"
               v-model="item.value"
-              @input="formAttrChange(item)"
+              @input="formAttrChange(item, $event)"
             />
             <el-input
               v-else
@@ -412,19 +364,19 @@
             <div class="h3"><h3>接口数据事件</h3></div>
             <el-form-item label="新增数据保存url">
               <el-input
-                placeholder="表单提交的url，非特殊不需要设置"
-                v-model="formConfig.addUrl"
+                placeholder="表单提交的url，通用提交时可不设置"
+                v-model="formConfig.submitUrl"
               />
             </el-form-item>
             <el-form-item label="修改数据保存url">
               <el-input
-                placeholder="修改提交的url，非特殊不需要设置"
+                placeholder="修改提交的url，通用提交时可不设置"
                 v-model="formConfig.editUrl"
               />
             </el-form-item>
             <el-form-item label="获取表单数据url">
               <el-input
-                placeholder="获取表单数据url，非特殊不需要设置"
+                placeholder="获取表单数据url，通用提交时可不设置"
                 v-model="formConfig.requestUrl"
               />
             </el-form-item>
@@ -481,10 +433,10 @@
   import { reactive, computed, toRefs, ref, watch, inject } from 'vue'
   //import { useRoute } from 'vue-router'
   import { getRequest } from '@/api'
-  import { useDesignFormStore } from '@/store/designForm'
-  import validate from './validate'
+  import { useDesignStore } from '@/store/design'
+  import validate from '@/components/form/validate'
   import { ElMessage } from 'element-plus'
-  import { formatNumber } from '../../utils'
+  import { formatNumber } from '@/utils/design'
 
   const props = withDefaults(
     defineProps<{
@@ -505,11 +457,9 @@
   const emits = defineEmits<{
     (e: 'openDialog', data: any): void
     (e: 'update:formOtherData', data: any): void
-    //(e: 'update:formData', data: any): void
-    //(e: 'update:formConfig', data: any): void
   }>()
   const { formConfig, formData } = toRefs(props)
-  const store = useDesignFormStore() as any
+  const store = useDesignStore() as any
   //const route = useRoute()
   const controlData = computed(() => {
     return store.controlAttr
@@ -579,15 +529,14 @@
           { label: 'default', value: 'default' },
           { label: 'small', value: 'small' }
         ]
-      }
-      /*{
-        label: '筛选条件展开/收起',
-        value: formConfig.value.expand,
+      },
+      {
+        label: '快速添加确定取消按钮',
+        value: formConfig.value.submitCancel,
         type: 'switch',
         path: 'config',
-        key: 'expand',
-        hide: !isSearch
-      }*/
+        key: 'submitCancel'
+      }
     ]
   })
   const attrList = computed(() => {
@@ -597,13 +546,13 @@
         type,
         name,
         config = {},
-        item = {},
+        formItem = {},
         attr = {}
       }: { control: any; config: any } = controlData.value
       let columnIndex = false // 是否显示序号列
       if (type === 'table') {
         // 表格时处理
-        const list = controlData.value && controlData.value.list
+        const list = controlData.value?.list
         if (list && list.length > 0) {
           columnIndex = list[0].type === 'index'
         }
@@ -690,21 +639,9 @@
           vShow: ['button']
         },
         {
-          label: '对齐方式',
-          value: config.textAlign,
-          path: 'config.textAlign',
-          type: 'select',
-          dict: {
-            left: 'left',
-            right: 'right',
-            center: 'center'
-          },
-          vShow: ['button', 'div']
-        },
-        {
           label: 'label值',
-          value: item.label,
-          path: 'item.label',
+          value: formItem.label,
+          path: 'formItem.label',
           vHide: [
             'table',
             'grid',
@@ -720,8 +657,8 @@
         },
         {
           label: '隐藏label',
-          value: item.showLabel,
-          path: 'item.showLabel',
+          value: formItem.showLabel,
+          path: 'formItem.showLabel',
           type: 'switch',
           vHide: [
             'table',
@@ -737,6 +674,47 @@
             'button',
             'txt'
           ]
+        },
+        {
+          label: '显示类型',
+          value: config.showType,
+          path: 'config.showType',
+          type: 'select',
+          dict: {
+            input: '文本选择框',
+            img: '图片',
+            btn: '上传按钮'
+          },
+          vShow: ['chunkUpload']
+        },
+        {
+          label: '按钮文本',
+          value: config.btnText,
+          placeholder: '按钮文本，默认为选择文件',
+          path: 'config.btnText',
+          vShow: ['chunkUpload'],
+          vIf: config.showType === 'img'
+        },
+        {
+          label: '可选数量',
+          value: config.limit,
+          placeholder: '可选择的个数，默认1个',
+          path: 'config.limit',
+          vShow: ['chunkUpload']
+        },
+        {
+          label: '接受的文件类型',
+          value: config.accept,
+          placeholder: '接受的文件类型，input原生属性',
+          path: 'config.accept',
+          vShow: ['chunkUpload']
+        },
+        {
+          label: '是否自动上传',
+          value: config.auto,
+          path: 'config.auto',
+          type: 'switch',
+          vShow: ['chunkUpload']
         },
         {
           label: '帮助信息',
@@ -763,13 +741,6 @@
           vHide: ['gridChild'],
           isNum: true
         },
-        /*{
-          label: '行类样式',
-          value: config.inline,
-          type: 'switch',
-          path: 'config.inline',
-          vShow: ['div']
-        },*/
         {
           label: '文本值',
           value: control.modelValue,
@@ -825,22 +796,6 @@
           vShow: ['switch'],
           isNum: true
         },
-        // {
-        //   label: '转换格式化值',
-        //   value: config.transform,
-        //   path: 'config.transform',
-        //   type: 'switch',
-        //   vShow: [
-        //     'checkbox',
-        //     'select',
-        //     'switch',
-        //     'cascader',
-        //     'slider',
-        //     'table',
-        //     'flex',
-        //     'treeSelect'
-        //   ]
-        // },
         {
           label: '增加按钮文案',
           value: config.addBtnText,
@@ -889,14 +844,16 @@
             'upload',
             'rate',
             'tinymce',
-            'treeSelect'
+            'treeSelect',
+            'datePicker',
+            'timePicker'
           ],
           vIf: state.isSearch
         },
         {
           label: '是否禁用编辑',
-          value: config.editDisabled,
-          path: 'config.editDisabled',
+          value: config.disabledEdit,
+          path: 'config.disabledEdit',
           type: 'switch',
           vShow: [
             'input',
@@ -912,30 +869,32 @@
             'upload',
             'treeSelect',
             'table',
-            'flex'
+            'flex',
+            'datePicker',
+            'timePicker'
           ],
           vIf: state.isSearch
         },
         {
           label: '添加页隐藏',
-          value: config.disabledAdd,
-          path: 'config.disabledAdd',
+          value: config.displayAdd,
+          path: 'config.displayAdd',
           type: 'switch',
           vIf: state.isSearch,
           vHide: ['inputSlot']
         },
         {
           label: '编辑页隐藏',
-          value: config.disabledEdit,
-          path: 'config.disabledEdit',
+          value: config.displayEdit,
+          path: 'config.displayEdit',
           type: 'switch',
           vIf: state.isSearch,
           vHide: ['inputSlot']
         },
         {
           label: '详情页隐藏',
-          value: config.disabledDetail,
-          path: 'config.disabledDetail',
+          value: config.displayDetail,
+          path: 'config.displayDetail',
           type: 'switch',
           vIf: state.isSearch,
           vHide: ['inputSlot']
@@ -993,13 +952,6 @@
           vShow: ['table'],
           eventName: 'tableColumn1'
         },
-        /*{
-        label: '操作列',
-        value: columnOperate,
-        type: 'switch',
-        vShow: ['table'],
-        eventName: 'tableColumn2'
-      },*/
         {
           label: '组件名',
           value: config.componentName,
@@ -1019,18 +971,6 @@
           value: control.name,
           placeholder: '上传的文件字段名,默认file',
           path: 'control.name',
-          vShow: ['upload']
-        },
-        {
-          label: '列表类型',
-          value: control.listType,
-          type: 'select',
-          dict: {
-            text: 'text',
-            picture: 'picture',
-            'picture-card': 'picture-card'
-          },
-          path: 'control.listType',
           vShow: ['upload']
         },
         {
@@ -1165,6 +1105,29 @@
           type: 'select',
           dict: { default: 'default', simple: 'simple' },
           vShow: ['tinymce']
+        },
+        {
+          label: '隐藏显示',
+          value: config.hidden,
+          path: 'config.hidden',
+          placeholder: '条件表达式，如$.name===1'
+        },
+        {
+          label: '禁用显示',
+          value: config.disabled,
+          path: 'config.disabled',
+          placeholder: '条件表达式，如$.name===1',
+          vHide: [
+            'txt',
+            'title',
+            'table',
+            'grid',
+            'tabs',
+            'card',
+            'flex',
+            'divider',
+            'div'
+          ]
         }
       ]
       // 过滤显示对应的值
@@ -1223,13 +1186,14 @@
     // select多选属性，
     switch (obj.eventName) {
       case 'selectMultiple':
-        if (val) {
+        /*if (val) {
           // 多选，将值改为数组
           controlData.value.control.modelValue = []
         } else {
           // 单选
           controlData.value.control.modelValue = ''
-        }
+        }*/
+        controlData.value.control.modelValue = val ? [] : ''
         break
       case 'tableColumn1':
         tableColumnAdd(val)
@@ -1243,8 +1207,8 @@
         if (obj.type === 'select') {
           state.dataSourceList.forEach((item: any) => {
             if (item.name === val) {
-              if (controlData.value.item) {
-                controlData.value.item.label = item.label
+              if (controlData.value.formItem) {
+                controlData.value.formItem.label = item.label
               }
               controlData.value.name = item.label
             }
@@ -1310,10 +1274,11 @@
   }
   // 多选固定选项增加
   const addSelectOption = (type: string) => {
-    if (controlData.value.type === 'cascader') {
+    const cType = controlData.value.type
+    if (cType === 'cascader') {
       // 级联时打开弹窗口
       openAttrDialog('cascader')
-    } else if (controlData.value.type === 'treeSelect') {
+    } else if (cType === 'treeSelect') {
       openAttrDialog('treeSelect', '编辑组件下拉选项数据')
     } else {
       if (type === 'tabs') {
@@ -1332,24 +1297,25 @@
   // 更多属性弹窗
   const openAttrDialog = (type?: string, tooltip?: string) => {
     let editData = controlData.value.control
-    if (controlData.value.type === 'button') {
+    const { type: cType, config, options, control } = controlData.value
+    if (cType === 'button') {
       // 按钮组件编辑属性
-      editData = controlData.value.config
+      editData = config
       type = 'button'
     }
     switch (type) {
       case 'treeSelect':
-        editData = controlData.value.control.data
+        editData = control.data
         break
       case 'cascader':
-        editData = controlData.value.options
+        editData = options
         break
       case 'optionsParams': // 选项请求附加参数
-        editData = controlData.value.config.beforeRequest
+        editData = config.beforeRequest
         // params.codeType = 'json'
         break
       case 'optionsResult':
-        editData = controlData.value.config.afterResponse
+        editData = config.afterResponse
         break
     }
     const emitsParams = {
@@ -1384,30 +1350,31 @@
   }
   // 必填校验
   const requiredChange = (val: boolean) => {
-    if (!controlData.value.item?.rules) {
-      controlData.value.item.rules = []
+    if (!controlData.value.formItem?.rules) {
+      controlData.value.formItem.rules = []
     }
     if (val) {
-      controlData.value.item.rules.push({
+      controlData.value.formItem.rules.push({
         required: true,
         message: '必填项',
         trigger: 'change'
       })
     } else {
-      controlData.value.item.rules.splice(0, 1)
+      controlData.value.formItem.rules.splice(0, 1)
     }
   }
   // 添加校验规则
   const addRules = (tooltip: string) => {
-    if (!controlData.value.item?.rules) {
-      controlData.value.item.rules = []
+    const rules = controlData.value.formItem?.rules
+    if (!rules) {
+      controlData.value.formItem.rules = []
     }
     const params = {
-      content: controlData.value.item?.rules,
+      content: rules || [],
       title: tooltip,
       direction: 'ltr',
       callback: (result: any) => {
-        Object.assign(controlData.value.item.rules, result)
+        Object.assign(rules || [], result)
       }
     }
     emits('openDialog', params)
@@ -1443,7 +1410,7 @@
   }
   // 校验规则必填勾选设置，存在校验规则时勾选
   const checkboxRequired = computed(() => {
-    const val = controlData.value && controlData.value.item?.rules
+    const val = controlData.value?.formItem?.rules
     return val && val.length > 0
   })
   // 快速添加一条校验规则
@@ -1459,8 +1426,7 @@
   }
   // 删除一条校验规则
   const delAddRules = (index: number) => {
-    controlData.value.customRules &&
-      controlData.value.customRules.splice(index, 1)
+    controlData.value.customRules?.splice(index, 1)
   }
   // 编辑表单样式
   const editFormStyle = (tooltip: string) => {
@@ -1480,7 +1446,10 @@
     })
   }
   // 根据选定数据源获取表单字段
-  const getFormFieldBySource = (id?: string) => {
+  const getFormFieldBySource = (
+    id?: string,
+    callback?: (list: any) => void
+  ) => {
     if (state.isSearch) {
       // 搜索设计这里不需要数据源
       return
@@ -1496,6 +1465,7 @@
               (item: any) => item.enterable
             )
           }
+          callback && callback(state.dataSourceList)
         })
         .catch(res => {
           console.log(res)
@@ -1507,7 +1477,6 @@
     if (!state.isSearch) {
       getRequest('sourceList').then((res: any) => {
         dataSourceOption.value = res.data.list
-        //dataSourceOption.value.unshift({ name: '无', id: '' })
       })
     }
   }
@@ -1536,7 +1505,7 @@
   const getOptionPlaceholder = (type: number) => {
     switch (type) {
       case 1:
-        return '数据源接口URL,可带参数'
+        return '数据源接口URL或api的key,可带参数'
       case 2:
         return '字典key，默认为字段标识'
     }

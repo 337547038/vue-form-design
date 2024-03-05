@@ -1,18 +1,5 @@
-const selectOption: any = [
-  /*{
-    label: '标签1',
-    value: 'value1'
-  },
-  {
-    label: '标签2',
-    value: 'value2'
-  },
-  {
-    label: '标签3',
-    value: 'value3'
-  }*/
-]
-const config = {
+const selectOption: any = []
+const config: { optionsType: number } = {
   optionsType: 0 // 0固定 1数据源 2 接口字典
 }
 export default [
@@ -222,6 +209,15 @@ export default [
         config: {}
       },
       {
+        type: 'chunkUpload',
+        label: '选择上传',
+        icon: 'upload',
+        control: {
+          modelValue: ''
+        },
+        config: {}
+      },
+      {
         type: 'tinymce',
         label: 'tinymce富文本',
         icon: 'tinymce',
@@ -272,8 +268,7 @@ export default [
         icon: 'card',
         list: [],
         control: {},
-        config: {},
-        item: {} // label标题相关
+        config: {}
       },
       {
         type: 'flex',

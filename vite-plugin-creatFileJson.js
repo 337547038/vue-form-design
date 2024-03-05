@@ -1,6 +1,7 @@
 // 将public/static/screen目录下的文件生成json，实现在大屏设计时可选择本地资源图片
-const path = require('path')
-const fs = require('fs')
+
+import path from 'path'
+import fs from 'fs'
 //const fse = require('fs-extra')
 
 const checkDirExist = function (dir) {
@@ -38,8 +39,8 @@ const checkDirExist = function (dir) {
 //     })
 //   })
 // }
-let temp = {}
-const screenSource = (directory) => {
+const temp = {}
+const screenSource = directory => {
   // 将public/screen下的素材图片生成json
   const from = path.join('./public/static/screen', directory || '')
   if (!checkDirExist(from)) {
@@ -47,7 +48,7 @@ const screenSource = (directory) => {
     return
   }
   const dir = fs.readdirSync(from)
-  dir.forEach((file) => {
+  dir.forEach(file => {
     const filePath = path.resolve(from, file)
     const stats = fs.statSync(filePath)
     if (stats.isFile()) {
@@ -64,7 +65,7 @@ const screenSource = (directory) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 let viteConfig = null
 
-module.exports = function (options) {
+export default function (options) {
   return {
     name: 'vite-plugin-copy',
     enforce: 'post',
@@ -82,7 +83,7 @@ module.exports = function (options) {
       fs.writeFile(
         './src/views/design/dataScreen/components/fileJson.json',
         JSON.stringify(temp, null, 2),
-        (err) => {
+        err => {
           if (err) {
             return
           }

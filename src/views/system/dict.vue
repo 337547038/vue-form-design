@@ -2,10 +2,10 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl="dictList"
-      deleteUrl="dictDelete"
-      :searchData="searchData"
-      :tableData="tableData"
+      request-url="dictList"
+      delete-url="dictDelete"
+      :search-data="searchData"
+      :data="tableData"
     />
     <el-dialog
       v-model="dialog.visible"
@@ -15,12 +15,12 @@
     >
       <ak-form
         ref="formEl"
-        :formData="dialog.formData"
+        :data="dialog.formData"
         :type="dialog.type"
-        addUrl="dictSave"
-        editUrl="dictEdit"
-        :beforeSubmit="beforeSubmit"
-        :afterSubmit="afterSubmit"
+        submit-url="dictSave"
+        edit-url="dictEdit"
+        :before-submit="beforeSubmit"
+        :after-submit="afterSubmit"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -32,11 +32,11 @@
     >
       <ak-form
         ref="formEl2"
-        :formData="dialog2.formData"
+        :data="dialog2.formData"
         :type="2"
-        editUrl="dictEdit"
-        :beforeSubmit="beforeSubmit2"
-        :afterSubmit="afterSubmit"
+        edit-url="dictEdit"
+        :before-submit="beforeSubmit2"
+        :after-submit="afterSubmit"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -45,9 +45,6 @@
 
 <script setup lang="ts">
   import { ref, reactive, nextTick } from 'vue'
-  // import { useLayoutStore } from '@/store/layout'
-  // const layoutStore = useLayoutStore()
-  // layoutStore.changeBreadcrumb([{ label: '系统管理' }, { label: '字典管理' }])
   const tableListEl = ref()
   const formEl = ref()
   const formEl2 = ref()
@@ -65,7 +62,7 @@
           },
           config: {},
           name: 'name',
-          item: {
+          formItem: {
             label: '字典名称'
           },
           customRules: [
@@ -83,10 +80,10 @@
             placeholder: '请输入字典标识'
           },
           config: {
-            editDisabled: true
+            disabledEdit: true
           },
           name: 'type',
-          item: {
+          formItem: {
             label: '字典标识'
           },
           customRules: [
@@ -116,7 +113,7 @@
             optionsType: 0
           },
           name: 'status',
-          item: {
+          formItem: {
             label: '状态'
           }
         },
@@ -127,29 +124,8 @@
           },
           config: {},
           name: 'remark',
-          item: {
+          formItem: {
             label: '说明描述'
-          }
-        },
-        {
-          type: 'button',
-          control: {
-            label: '保存',
-            type: 'primary',
-            key: 'submit'
-          },
-          config: {
-            span: 0
-          }
-        },
-        {
-          type: 'button',
-          control: {
-            label: '取消',
-            key: 'reset'
-          },
-          config: {
-            span: 0
           }
         }
       ],
@@ -157,7 +133,7 @@
         labelWidth: '',
         size: 'default'
       },
-      config: {}
+      config: { submitCancel: true }
     }
   })
   const dialog2 = reactive({
@@ -174,7 +150,7 @@
           },
           config: {},
           name: 'name',
-          item: {
+          formItem: {
             label: '字典名称'
           }
         },
@@ -189,7 +165,7 @@
               },
               config: {},
               name: 'label',
-              item: {
+              formItem: {
                 label: '字典标签'
               }
             },
@@ -200,7 +176,7 @@
               },
               config: {},
               name: 'value',
-              item: {
+              formItem: {
                 label: '键值'
               }
             }
@@ -212,36 +188,6 @@
             delBtnText: '删除'
           },
           name: 'children'
-        },
-        {
-          type: 'div',
-          control: {},
-          config: {
-            textAlign: 'center'
-          },
-          list: [
-            {
-              type: 'button',
-              control: {
-                label: '保存',
-                type: 'primary',
-                key: 'submit'
-              },
-              config: {
-                span: 0
-              }
-            },
-            {
-              type: 'button',
-              control: {
-                label: '取消',
-                key: 'reset'
-              },
-              config: {
-                span: 0
-              }
-            }
-          ]
         }
       ],
       form: {
@@ -249,6 +195,7 @@
         size: 'default'
       },
       config: {
+        submitCancel: true,
         style:
           '.flex-item{display:flex}\n.flex-item .el-form-item{ margin-right:10px}'
       }
@@ -268,7 +215,7 @@
             0: 'info',
             1: 'success'
           },
-          dictKey: 'status'
+          dictKey: 'sys-status'
         }
       },
       // { label: '说明', prop: 'remark' },
@@ -278,7 +225,7 @@
         width: 170,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
-      { label: '操作', prop: '__control', width: 180 }
+      { label: '操作', prop: '__control', width: 200 }
     ],
     controlBtn: [
       {
@@ -326,7 +273,7 @@
           dialog.type = 2
           dialog.editId = row.id
           nextTick(() => {
-            formEl.value.setValue(row)
+            formEl.value.setValue(row, true)
           })
         }
       },
@@ -338,7 +285,8 @@
       }
     ],
     config: {
-      expand: true
+      expand: true,
+      searchJump: true
     }
   })
   const searchData = ref({
@@ -351,7 +299,7 @@
         },
         config: {},
         name: 'name',
-        item: {
+        formItem: {
           label: '字典名称'
         }
       },
@@ -374,27 +322,9 @@
         config: {
           optionsType: 0
         },
-        item: {
+        formItem: {
           label: '状态'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          type: 'primary',
-          key: 'submit',
-          icon: 'search'
-        },
-        config: {}
-      },
-      {
-        type: 'button',
-        control: {
-          label: '清空',
-          key: 'reset'
-        },
-        config: {}
       }
     ],
     form: {
@@ -402,7 +332,7 @@
       class: '',
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   }) // 筛选表单
   const beforeSubmit = (params: any) => {
     params.id = dialog.editId // 添加编辑id

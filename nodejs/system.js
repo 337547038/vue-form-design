@@ -1,6 +1,7 @@
 const express = require('express')
 const sqlQuery = require('./db')
 const router = express.Router()
+const creatJsonMock = require('./creatJsonMock')
 /*************************字典管理*********************/
 router.post('/dict/save', async (req, res) => {
   const params = { updateTime: new Date() }
@@ -27,6 +28,7 @@ router.post('/dict/edit', async (req, res) => {
     // 转字符串保存
     query.children = JSON.stringify(query.children)
   }
+  query.updateTime = new Date()
   commEdit(req, res, 'dict', query)
 })
 /*************************字典管理结束*********************/
@@ -77,30 +79,16 @@ router.post('/menu/list', async (req, res) => {
   }
   where += ` order by sort asc`
   const sql = `SELECT * FROM \`menu\` ${where}`
-  sqlQuery(sql, [], res, (result) => {
-    let allResult = result
-    // 获取内容管理的
-    const contentSql =
-      'SELECT id,icon,name,status FROM `design` WHERE showMenu=1 and type=2'
-    sqlQuery(contentSql, [], res, (list) => {
-      if (list && list.length) {
-        list.forEach((item) => {
-          allResult.push({
-            path: `/design/dataList/content?id=${item.id}`,
-            parentId: 1,
-            type: 1,
-            ...item
-          })
-        })
-      }
-      return res.json({
-        code: 1,
-        data: {
-          list: allResult
-        },
-        message: '成功'
-      })
-    })
+  sqlQuery(sql, [], res, result => {
+    const resJson = {
+      code: 1,
+      data: {
+        list: result
+      },
+      message: '成功'
+    }
+    res.json(resJson)
+    creatJsonMock(req.originalUrl, resJson, req.body)
   })
 })
 /*************************菜单管理结束*********************/
@@ -133,6 +121,15 @@ router.post('/user/delete', async (req, res) => {
 router.post('/user/list', async (req, res) => {
   await commList(req, res, 'user')
 })
+router.post('/user/login', (req, res) => {
+  const resJson = {
+    code: 1,
+    data: { token: 'token', refreshToken: 'refreshToken' },
+    message: '登录成功'
+  }
+  res.json(resJson)
+  creatJsonMock(req.originalUrl, resJson, req.body)
+})
 /*************************用户管理结束*********************/
 
 const commList = async (req, res, tableName, whereParams = [], order) => {
@@ -147,8 +144,8 @@ const commList = async (req, res, tableName, whereParams = [], order) => {
   const sql = `SELECT * FROM \`${tableName}\` ${where} Limit ${start},${pageSize}`
   const countSql = `select count(id) as num from \`${tableName}\`` + where
   const count = await sqlQuery(countSql)
-  sqlQuery(sql, [], res, (result) => {
-    return res.json({
+  sqlQuery(sql, [], res, result => {
+    const resJson = {
       code: 1,
       data: {
         dict: { status: { 1: '正常', 0: '停用' } },
@@ -158,7 +155,9 @@ const commList = async (req, res, tableName, whereParams = [], order) => {
         }
       },
       message: '成功'
-    })
+    }
+    res.json(resJson)
+    creatJsonMock(req.originalUrl, resJson, req.body)
   })
 }
 const commEdit = (req, res, tableName, params) => {
@@ -171,7 +170,7 @@ const commEdit = (req, res, tableName, params) => {
   }
   const sql = `update \`${tableName}\` set ? where id=?`
   const data = [query, query.id]
-  sqlQuery(sql, data, res, (result) => {
+  sqlQuery(sql, data, res, result => {
     res.json({
       code: 1,
       data: result,
@@ -183,7 +182,7 @@ const commSave = (req, res, tableName, params = {}) => {
   const query = req.body
   const sql = `insert into \`${tableName}\` set ?`
   const data = Object.assign(query, params)
-  sqlQuery(sql, data, res, (result) => {
+  sqlQuery(sql, data, res, result => {
     res.json({
       code: 1,
       data: result,
@@ -199,7 +198,7 @@ const commDel = (req, res, tableName, params = []) => {
       message: 'id不能为空'
     })
   }
-  let where = params
+  const where = params
   let whereId = `id=${id}`
   if (id.toString().includes(',')) {
     // 批量删除

@@ -15,19 +15,20 @@
 
 | 参数            | 类型                             | 说明                                                                                          |
 |---------------|--------------------------------|---------------------------------------------------------------------------------------------|
-| formData      | object                         | 设计的生成表单数据                                                                                   |
+| data          | object                         | 设计的生成表单数据                                                                                   |
 | type          | number/1                       | 表单展示模式，1新增；2修改；3查看（表单模式） ；4查看； 5设计                                                          |
 | disabled      | boolean/false                  | 表单禁用模式，类似于表单模式查看                                                                            |
 | requestUrl    | string/boolean                 | 表单编辑初始数据加载。适用于导出vue文件                                                                       |
 | beforeRequest | function (params,route)        | 请求编辑数据前参数处理方法，可对请求参数处理。适用于导出vue文件，`return false`时不请求                                        |
 | afterResponse | function/string                | 请求编辑数据完成后数据处理方法。适用于导出vue文件，`return false`阻止事件运行                                             |
-| addUrl        | string                         | 表单数据新增提交保存url                                                                               |
+| submitUrl     | string                         | 表单数据新增提交保存url                                                                               |
 | editUrl       | string                         | 表单数据修改保存提交url                                                                               |
 | beforeSubmit  | function (params,route)/string | 表单提交前数据处理。适用于导出vue文件，`return false`时不发送请求                                                   |
 | afterSubmit   | function(type,res)             | 表单提交后，默认提示提交结果，可return false阻止提示。res接口返回参数,type提交结果类型success/fail/validate。validate表单没通过校验时 |
-| value         | object                         | 表单初始值，同setValue                                                                             |
-| options       | object                         | 表单选项数据，同setOptions，不管选项配置如何配置，这里设置都会生效                                                      |
 | dict          | object                         | 用于匹配的字典数据，一般不设置，从接口获取                                                                       |
+| btnClick      | function(key)                  | 表单按钮事件，拖拽设计和快速添加的按钮，`return false`可阻止默认事件                                                   |
+| query         | object                         | 一些附加的请求参数。也可在`beforeRequest`处添加                                                             |
+| params        | object                         | 提交表单一些附加参数，如在提交修改时可添加id等信息。而不需要在提交前拦截处理                                                     |
 ### Events
 | 事件名      | 说明                                                                                                               |
 |----------|------------------------------------------------------------------------------------------------------------------|
@@ -60,9 +61,11 @@
 | default | -   |
 
 
-### formData
+### data
 
-代码编辑输入框可支持`json`或`javascript`，初始使用时可通过修改`/src/utils/form.ts`里的`EDITTYPE`的值
+更多数据详细配置可查看[配置手册](/#/docs/form-option)
+
+代码编辑输入框可支持`json`或`javascript`，初始使用时可通过修改`/src/utils/design.ts`里的`EDITTYPE`的值
 
 ```javascript
 formData = {
@@ -76,12 +79,12 @@ formData = {
         },
       config: // 其他一些扩展配置信息
         {
-          linkKey: true, // 开启联动
-          linkValue: "$.name===1", // 联动表达式，即当表单中字段标识为`name`的控件值为`1`时，当前控件才显示
-          editDisabled: true // 编辑状态下禁用，即表单部分字段只能添加，不允许编辑时可使用此设置
+          hidden: "$.name===1", // 联动表达式，即当表单中字段标识为`name`的控件值为`1`时，当前控件隐藏
+          disabled: "$.name===1", // 联动表达式，即当表单中字段标识为`name`的控件值为`1`时，当前控件禁用
+          disabledEdit: true // 编辑状态下禁用，即表单部分字段只能添加，不允许编辑时可使用此设置
         },
       customRules: [], // 使用快速方法添加的校验规则，会自动合并到`item.rules`
-      item:// 组件el-form-item的参数配置
+      formItem:// 组件el-form-item的参数配置
         {
           label: "单行文本",
           rules: [] // 校验规则
@@ -113,7 +116,7 @@ formData = {
           label:'', // 指定label的属性,仅optionsType＝1有效
           debug:true // optionsType＝1时会将请求结束保存在sessionStorage,减少不必要的请求，debug=true时不保存方便调试
         },
-      item:
+      formItem:
         {
           label: "下拉选择框"
         }
@@ -126,7 +129,7 @@ formData = {
       name: "form1660637148435"
     },
   config: {
-    addUrl: "", // 表单提交保存接口url
+    submitUrl: "", // 表单提交保存接口url
     editUrl: "", // 表单修改保存接口url
     requestUrl: "", // 获取表单初始数据url
     style: '', // 表单css样式，相当于scope

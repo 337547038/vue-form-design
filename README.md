@@ -1,6 +1,6 @@
 # AK-Design 可视化低代码快速开发平台
 
-AK-Design 是一个纯前端的`拖拽式`、`可视化`、`低代码`数据可视化开发平台，主包括表单设计、列表页设计、流程设计、数据可视化大屏设计、数据统计设计
+AK-Design 是一个纯前端的`拖拽式`、`可视化`、`低代码`数据可视化设计器开发平台，主包括表单设计、列表页设计、流程设计、数据可视化大屏设计、数据统计设计
 
 使用基于 Vue 3.x 的桌面端组件库 Elemnet-Plus ，使用广泛，扩展方便
 
@@ -89,19 +89,20 @@ https://337547038.github.io/vue-form-design/
 
 ```text
 public
- ├─mock // 模拟数据
+ ├─mock 模拟数据
 src
- ├─api // 数据请求接口
- ├─docs // 使用说明文档
- └─views // 页面
-   ├─design // 表单设计主程序组件
-     ├─components // 公共组件
-     ├─dataList // 列表页设计
-     ├─dataScreen // 数据大屏设计
-     ├─dataSource // 数据源设计
-     ├─flow // 流程设计
-     └─form // 表单设计
-   └─system // 系统框架基本页面，导出vue文件示例
+ ├─api 数据请求接口
+ ├─docs 使用说明文档
+ └─views 页面
+   ├─design 表单设计主程序组件
+     ├─components 公共组件
+     ├─list 列表页设计
+     ├─screen 数据大屏设计
+     ├─datasource 数据源设计
+     ├─flow 流程设计
+     └─form 表单设计
+   ├─system 系统框架基本页面，导出vue文件示例
+   └─task 流程任务
 ```
 
 ### 启动项目
@@ -112,20 +113,18 @@ src
 git clone https://github.com/337547038/vue-form-design.git
 
 # 安装依赖
-yarn install
+pnpm install
 
 # 运行项目
-yarn dev
+pnpm dev
 
 # 使用json模拟数据（建议使用node模拟接口，方法见启动node模拟接口）
 
- 将/src/api/index.ts约25行 
- if (window.location.host.indexOf('github') !== -1)中的github
- 修改为你本地运行的地址如 localost或192.128.xx
+默认下github示例和localhost访问时使用json模拟数据，使用node接口时可使用http://192.168.xx.xx形式访问
+ 或注释将/src/api/index.ts约27行代码注释即可
  
 # 打包项目
-yarn build
-
+pnpm build
 
 ```
 
@@ -143,11 +142,11 @@ cd nodejs
 
 # 安装依赖
 
-yarn install
+pnpm install
 
 #运行项目
 
-yarn dev
+pnpm dev
 
 ```
 
@@ -155,9 +154,9 @@ yarn dev
 | 名称           | 版本      |
 |--------------|---------|
 | node         | 16.15.x |
-| yarn         | 1.22.19 |
-| vite         | 4.3.x   |
-| vue          | 3.2.x   |
+| pnpm         | 8.6.x   |
+| vite         | 4.4.x   |
+| vue          | 3.3.x   |
 | element-plus | 2.3.x   |
 
 ### 贡献者

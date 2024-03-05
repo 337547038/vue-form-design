@@ -2,12 +2,12 @@
   <div>
     <ak-list
       ref="tableListEl"
-      requestUrl="userList"
-      deleteUrl="userDelete"
-      :searchData="searchData"
-      :tableData="tableData"
+      request-url="userList"
+      delete-url="userDelete"
+      :search-data="searchData"
+      :data="tableData"
       @btn-click="listBtnClick"
-      :autoLoad="false"
+      :auto-load="false"
     />
     <el-dialog
       destroy-on-close
@@ -17,13 +17,13 @@
     >
       <ak-form
         ref="formEl"
-        :formData="formData"
+        :data="formData"
         :dict="dialog.dict"
         :type="dialog.formType"
-        addUrl="userSave"
-        editUrl="userEdit"
-        :beforeSubmit="beforeSubmit"
-        :afterSubmit="afterSubmit"
+        submit-url="userSave"
+        edit-url="userEdit"
+        :before-submit="beforeSubmit"
+        :after-submit="afterSubmit"
         @btn-click="dialogBtnClick"
       />
     </el-dialog>
@@ -32,11 +32,15 @@
 
 <script setup>
   import { useRoute } from 'vue-router'
-  import { ref, nextTick, reactive, onMounted } from 'vue'
-  import { jsonParseStringify } from '@/utils'
+  import { nextTick, onMounted, reactive, ref } from 'vue'
+  import { jsonParseStringify } from '@/utils/design'
+  import { flatToTree } from '@/utils/flatTree'
+
   const route = useRoute()
-  // const router = useRouter()
   const tableListEl = ref()
+  const afterResponse = result => {
+    return flatToTree(result.list || result)
+  }
   const searchData = ref({
     list: [
       {
@@ -47,7 +51,7 @@
         },
         config: {},
         name: 'userName',
-        item: {
+        formItem: {
           label: '登录名称'
         }
       },
@@ -59,7 +63,7 @@
         },
         config: {},
         name: 'nickName',
-        item: {
+        formItem: {
           label: '昵称'
         }
       },
@@ -71,7 +75,7 @@
         },
         config: {},
         name: 'phone',
-        item: {
+        formItem: {
           label: '手机号'
         }
       },
@@ -84,10 +88,11 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'status'
+          optionsFun: 'sys-status',
+          transformData: 'string'
         },
         name: 'status',
-        item: {
+        formItem: {
           label: '用户状态'
         }
       },
@@ -106,32 +111,15 @@
           value: 'id' // 指定id为value的值
         },
         name: 'role',
-        item: {
+        formItem: {
           label: '角色'
         }
-      },
-      {
-        type: 'button',
-        control: {
-          label: '查询',
-          type: 'primary',
-          key: 'submit'
-        },
-        config: {}
-      },
-      {
-        type: 'button',
-        control: {
-          label: '清空',
-          key: 'reset'
-        },
-        config: {}
       }
     ],
     form: {
       size: 'default'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const tableData = ref({
     columns: [
@@ -144,7 +132,7 @@
       {
         label: '状态',
         prop: 'status',
-        config: { dictKey: 'status', tagList: { 1: 'success', 0: 'info' } }
+        config: { dictKey: 'sys-status', tagList: { 1: 'success', 0: 'info' } }
       },
       {
         prop: 'dateTime',
@@ -155,7 +143,7 @@
       },
       { label: '操作', prop: '__control' }
     ],
-    config: { openType: 'dialog' },
+    config: { openType: 'dialog', searchJump: true },
     operateBtn: [
       { label: '编辑', key: 'edit' },
       { label: '删除', key: 'del' }
@@ -179,6 +167,7 @@
     treeData: {
       show: true,
       treeProps: {
+        nodeKey: 'id',
         props: {
           label: 'name'
         }
@@ -186,7 +175,7 @@
       name: 'department',
       method: 'post',
       requestUrl: 'deptList',
-      afterResponse: 'transformDataToChild'
+      afterResponse: afterResponse
     }
   })
   const formEl = ref()
@@ -200,7 +189,7 @@
         },
         config: {},
         name: 'userName',
-        item: {
+        formItem: {
           label: '用户名称'
         },
         customRules: [
@@ -219,7 +208,7 @@
         },
         config: {},
         name: 'nickName',
-        item: {
+        formItem: {
           label: '用户昵称'
         }
       },
@@ -231,7 +220,7 @@
         },
         config: {},
         name: 'password',
-        item: {
+        formItem: {
           label: '登录密码'
         },
         customRules: [
@@ -247,7 +236,7 @@
         control: { modelValue: '', placeholder: '请输入确认登录密码' },
         config: {},
         name: 'password2',
-        item: {
+        formItem: {
           label: '确认密码',
           rules: [
             {
@@ -283,7 +272,7 @@
         },
         config: {},
         name: 'phone',
-        item: {
+        formItem: {
           label: '手机号码'
         },
         customRules: [
@@ -299,16 +288,20 @@
         control: {
           modelValue: '',
           data: [],
-          renderAfterExpand: false
+          renderAfterExpand: false,
+          props: {
+            label: 'name',
+            value: 'id'
+          }
         },
         config: {
           optionsType: 1,
           optionsFun: 'deptList',
           method: 'post',
-          afterResponse: 'transformDataToChild'
+          afterResponse: afterResponse
         },
         name: 'department',
-        item: {
+        formItem: {
           label: '归属部门'
         }
       },
@@ -323,7 +316,7 @@
           optionsType: 0
         },
         name: 'post',
-        item: {
+        formItem: {
           label: '岗位'
         }
       },
@@ -335,10 +328,10 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'status'
+          optionsFun: 'sys-status'
         },
         name: 'status',
-        item: {
+        formItem: {
           label: '状态'
         }
       },
@@ -359,7 +352,7 @@
           transformData: 'string'
         },
         name: 'role',
-        item: {
+        formItem: {
           label: '角色'
         }
       },
@@ -375,37 +368,6 @@
         item: {
           label: '备注'
         }
-      },
-      {
-        type: 'div',
-        control: {},
-        config: {
-          span: 24,
-          textAlign: 'center'
-        },
-        list: [
-          {
-            type: 'button',
-            control: {
-              label: '确定',
-              type: 'primary',
-              key: 'submit'
-            },
-            config: {
-              span: 0
-            }
-          },
-          {
-            type: 'button',
-            control: {
-              label: '取消',
-              key: 'reset'
-            },
-            config: {
-              span: 0
-            }
-          }
-        ]
       }
     ],
     form: {
@@ -414,7 +376,7 @@
       labelWidth: '100px',
       name: 'userForm'
     },
-    config: {}
+    config: { submitCancel: true }
   })
   const dialog = reactive({
     visible: false,
@@ -432,12 +394,6 @@
       dialog.title = btn.key === 'add' ? '新增' : '编辑'
       dialog.formType = btn.key === 'add' ? 1 : 2
       dialog.editId = newRow && newRow.id
-      // if (btn.key === 'add' && formData.value.config?.addLoad) {
-      //   // 添加时需要加载数据
-      //   nextTick(() => {
-      //     formEl.value.getData()
-      //   })
-      // }
       // 编辑，根据id加载
       if (btn.key === 'edit') {
         nextTick(() => {

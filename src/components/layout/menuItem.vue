@@ -8,7 +8,7 @@
         <i v-if="item.icon" :class="`icon ${item.icon}`"></i>
         <span>{{ item.name }}</span>
       </template>
-      <menu-item :data="item.children" />
+      <menu-item :data="item.children" v-if="item.children.length" />
     </el-sub-menu>
     <el-menu-item v-else :index="item.path || item.name">
       <el-icon v-if="item.elIcon">
@@ -21,21 +21,21 @@
 </template>
 
 <script setup lang="ts">
-interface Data {
-  children?: any
-  elIcon?: string
-  name: string
-  path?: string
-}
+  interface Data {
+    children?: any
+    elIcon?: string
+    name: string
+    path?: string
+  }
 
-withDefaults(
-  defineProps<{
-    data: Data
-  }>(),
-  {
-    data: () => {
-      return []
-    },
-  },
-)
+  withDefaults(
+    defineProps<{
+      data: Data[]
+    }>(),
+    {
+      data: () => {
+        return []
+      }
+    }
+  )
 </script>

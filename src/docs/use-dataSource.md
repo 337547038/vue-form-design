@@ -3,7 +3,7 @@
 即mysql数据表，用于存储表单提交的数据，因此在设计一个表单前应先为该表单创建一个数据源
 
 ## 设计入口
-https://337547038.github.io/vue-form-design/#/design/dataSource
+https://337547038.github.io/vue-form-design/#/design/datasource
 
 ![](./img/data-source1.png)
 
