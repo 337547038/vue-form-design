@@ -125,33 +125,10 @@ pnpm dev
 
 # 使用json模拟数据（建议使用node模拟接口，方法见启动node模拟接口）
 
-默认下github示例和localhost访问时使用json模拟数据，使用node接口时可使用http://192.168.xx.xx形式访问
- 或注释将/src/api/index.ts约27行代码注释即可
+默认下github示例和localhost访问时使用json模拟数据
  
 # 打包项目
 pnpm build
-
-```
-
-### 启动node模拟接口
-
-```Bash
-
-1.将/src/nodejs/akform.sql导入mysql中
-
-2./src/nodejs/db.js修改连接数据库用户密码相关信息
-
-# 进入nodejs目录
-
-cd nodejs
-
-# 安装依赖
-
-pnpm install
-
-#运行项目
-
-pnpm dev
 
 ```
 
