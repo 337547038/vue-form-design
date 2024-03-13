@@ -97,13 +97,19 @@
                 <tooltip :content="item.help" />
               </template>
               <template v-if="$slots[item.prop]" #default="scope">
-                <slot :index="scope.$index" :name="item.prop" :row="scope.row">
+                <slot
+                  :index="scope.$index"
+                  :name="item.prop"
+                  :row="scope.row"
+                  :dict="listDict"
+                >
                 </slot>
               </template>
               <template v-else-if="item.config?.imgWidth" #default="scope">
                 <img
                   :width="item.config.imgWidth"
                   :src="scope.row[item.prop]"
+                  alt=""
                 />
               </template>
               <template
@@ -114,6 +120,7 @@
                 #default="scope"
               >
                 <el-tag
+                  v-if="scope.row[item.prop] || scope.row[item.prop] === 0"
                   :type="item.config?.tagList[scope.row[item.prop]]"
                   effect="light"
                 >
@@ -227,23 +234,24 @@
   } from 'vue'
   import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
   import Tooltip from '@/components/tooltip/index.vue'
-  import { getRequest } from '@/api'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormData } from '@/types/form'
   import type { TableData } from '@/types/table'
   import { dateFormatting, getStorage } from '@/utils'
   import ListTreeSide from './treeSide.vue'
-  import formatResult from '@/utils/formatResult'
   import { useDesignStore } from '@/store/design'
   import { permission } from '@/directive/permissions'
+  import { getRequestEvent, requestResponse } from '@/utils/requestResponse'
+  import { useEventListener } from '@/utils/useEvent'
 
   const props = withDefaults(
     defineProps<{
       data: TableData
       searchData?: FormData
-      beforeRequest?: (params: any, rout: any) => any
-      afterResponse?: (result: any) => any | string
+      beforeFetch?: (params: any, rout: any) => any
+      afterFetch?: (result: any) => any | string
       beforeDelete?: (params: any, route: any) => any
+      afterDelete?: (result: any) => any | string
       showPage?: boolean
       requestUrl?: string // 请求的api
       deleteUrl?: string // 删除的api
@@ -286,7 +294,7 @@
   const state = reactive({
     loading: false,
     currentPage: 1,
-    pageSize: props.data.config?.pageSize || 20,
+    pageSize: parseInt(props.data.config?.pageSize) || 20,
     total: 0,
     selectionChecked: [],
     dict: {}, // 接口返回的
@@ -322,8 +330,8 @@
   })
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
-    const storage = getStorage('akAllDict')
-    return Object.assign(storage || {}, props.dict, state.dict)
+    const storage = getStorage('akAllDict', true)
+    return Object.assign(storage || {}, props.dict, state.dict) || {}
   })
   const isFixedBottomScroll = computed(() => {
     // 如果数据里没配置，则使用props
@@ -386,6 +394,7 @@
   const delKey = computed(() => {
     return props.data.config?.delKey || props.delKey
   })
+
   // 筛选查询列表数据
   const getListData = (page?: number) => {
     // 优先使用config配置的
@@ -399,61 +408,41 @@
     }
     state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
-    const formValue = searchFormValue.value
-    let newData: any = formValue
-    const beforeRequest = props.data.events?.beforeRequest
-    if (typeof beforeRequest === 'function') {
-      newData = beforeRequest(formValue || {}, route)
-    }
-    if (typeof props.beforeRequest === 'function') {
-      newData = props.beforeRequest(formValue || {}, route)
-    }
-    if (newData === false) {
-      return
-    }
-    if (!newData) {
-      // beforeRequest没有return时
-      newData = formValue
-    }
+    const formValue = searchFormValue.value || {}
     const params = {
-      pageInfo: {
+      extend: {
+        sort: props.data.config?.sort,
         pageSize: state.pageSize,
-        pageIndex: state.currentPage
+        pageNum: state.currentPage
       },
-      ...props.query,
-      ...newData
+      query: Object.assign({}, formValue, props.query)
     }
-    getRequest(getUrl, params)
-      .then((res: { data: any }) => {
-        let formatRes: any = res.data
-        const afterResponse = props.data.events?.afterResponse
-        if (typeof afterResponse === 'string' && afterResponse) {
-          formatRes = formatResult(formatRes, afterResponse, route)
-        } else if (typeof afterResponse === 'function') {
-          formatRes = afterResponse(formatRes) ?? formatRes
-        }
-        if (props.afterResponse && typeof props.afterResponse === 'string') {
-          formatRes = formatResult(formatRes, props.afterResponse, route)
-        } else if (typeof props.afterResponse === 'function') {
-          formatRes = props.afterResponse(formatRes) ?? formatRes
-        }
-        if (formatRes === false) {
-          return
-        }
-        tableDataList.value = formatRes?.list || formatRes // 兼容下可以不返回list
+    requestResponse({
+      requestUrl: getUrl,
+      params: params,
+      beforeFetch: getRequestEvent(props, 'beforeFetch'),
+      afterFetch: getRequestEvent(props, 'afterFetch'),
+      route: route
+    })
+      .then((res: any) => {
+        // console.log('res', res)
+        const data = res.data
+        tableDataList.value = data?.list || data // 兼容下可以不返回list
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false
         }, 200) // 加个延时主要是等待列表渲染完，即列表查询区域等，计算才准确。
-        state.dict = formatRes.dict || {}
-        state.total = formatRes.pageInfo?.total || 0
+        state.dict = data.dict || {}
+        state.total = data.total || 0
       })
       .catch((res: any) => {
-        tableDataList.value = []
-        state.total = 0
-        state.dict = {}
+        //beforeFetch返回了false时，只拦截请求，不用重置
+        if (res.code !== 'return false') {
+          tableDataList.value = []
+          state.total = 0
+          state.dict = {}
+        }
         state.loading = false
-        ElMessage.error(res.message || '数据加载异常')
       })
   }
   // 仅清空筛选输入
@@ -470,37 +459,35 @@
     getListData(page)
   }
   // 删除 idList支持多个 ,params为附近参数
-  const delClick = (idList: string | number | string[], params?: any) => {
+  const delClick = (idList: string | number | string[]) => {
     state.loading = true
     const delUrl = props.data.config?.deleteUrl || props.deleteUrl
-    const delParams = Object.assign(
-      {},
-      {
-        id: idList.toString() // 多个时转字符串
-      },
-      params || {},
-      props.query
-    )
-    let delParamsAll
-    const beforeDelete = props.data.events?.beforeDelete
-    if (typeof beforeDelete === 'function') {
-      delParamsAll = beforeDelete(delParams, route)
+    const delParams = {
+      id: idList.toString() // 多个时转字符串
     }
-    if (typeof props.beforeDelete === 'function') {
-      delParamsAll = props.beforeDelete(delParams, route)
-    }
-    if (delParamsAll === false) {
-      return
-    }
-    getRequest(delUrl, delParamsAll ?? delParams)
+    requestResponse({
+      requestUrl: delUrl,
+      params: delParams,
+      beforeFetch: getRequestEvent(props, 'beforeDelete'),
+      afterFetch: getRequestEvent(props, 'afterDelete'),
+      route: route
+    })
       .then((res: any) => {
         state.loading = false
         ElMessage.success(res.message || '删除成功')
         getListData() // 请求列表数据
       })
-      .catch((res: { message: any }) => {
+      .catch((res: { message: string; code: string | number }) => {
         state.loading = false
-        ElMessage.error(res.message || '删除失败')
+        if (res.code !== 'return false') {
+          ElMessage.error(res.message || '删除失败')
+        }
+        //给个提示方便方便操作异常时不知错在哪里
+        if (res.code === 'return false') {
+          console.error(new Error('拦截事件返回阻止事件处理'))
+          return
+        }
+        getListData() // 不管什么情况都刷新下请求列表数据
       })
   }
 
@@ -534,6 +521,7 @@
    * 表格每行的操作按钮点击事件
    * @param btn
    * @param row
+   * @param type
    */
   const operateBtnClick = (btn: any, row: any, type?: string) => {
     emits('btnClick', btn, row)
@@ -546,7 +534,7 @@
     if (btn.key === 'del') {
       if (type === 'down') {
         // 下拉菜单删除时警告
-        ElMessageBox.confirm(btn.tip, '温馨提示', {
+        ElMessageBox.confirm(btn.tip || '确定删除该记录?', '温馨提示', {
           confirmButtonText: '删除',
           cancelButtonText: '取消',
           type: 'warning'
@@ -581,14 +569,25 @@
     }
   }
 
-  const getParamsJump = () => {
-    const params = Object.assign({}, route.query, searchFormValue.value)
+  const getParamsJump = (type?: string) => {
+    const searchFormVal = Object.assign(
+      {},
+      searchFormEl.value?.getValue(),
+      state.treeValue
+    ) //这里需要获取到搜索表单全部的字段
+
+    if (type === 'reset') {
+      for (const key in searchFormVal) {
+        searchFormVal[key] = undefined
+      }
+    }
+    const params = Object.assign({}, route.query, searchFormVal)
     router.push({ path: route.path, query: params })
   }
   const formBtnClick = (type: string) => {
     if (searchJump.value) {
       // 带参数跳转
-      getParamsJump()
+      getParamsJump(type)
     } else {
       if (type === 'submit') {
         getListData(1)
@@ -687,7 +686,9 @@
   const setSearchValueFormQuery = () => {
     const routeQuery = route.query
     if (Object.keys(routeQuery).length) {
-      searchFormEl.value.setValue(routeQuery, true)
+      if (searchFormEl.value) {
+        searchFormEl.value.setValue(routeQuery, true)
+      }
       const { show, name } = treeData.value
       const val = routeQuery[name]
       if (show && val) {
@@ -710,6 +711,9 @@
       deep: true
     }
   )
+
+  useEventListener(scrollBox.value, 'scroll', setFixedBottomScroll)
+  useEventListener(window, 'resize', setFixedBottomScroll)
   onBeforeRouteLeave(() => {
     unWatch() //销毁监听器
   })
@@ -719,17 +723,8 @@
       // 列表其他数据通过接口获取时，需先加载列表配置数据，才能请求列表的数据
       getListData(1)
     }
-    if (isFixedBottomScroll.value) {
-      scrollBox.value.addEventListener('scroll', setFixedBottomScroll)
-      window.addEventListener('resize', setFixedBottomScroll)
-    }
   })
-  onBeforeUnmount(() => {
-    if (isFixedBottomScroll.value) {
-      scrollBox.value.removeEventListener('scroll', setFixedBottomScroll)
-      window.removeEventListener('resize', setFixedBottomScroll)
-    }
-  })
+  onBeforeUnmount(() => {})
   defineExpose({
     getListData,
     delClick,

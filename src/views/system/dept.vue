@@ -6,7 +6,7 @@
       delete-url="deptDelete"
       :search-data="searchData"
       :data="tableData"
-      :after-response="afterResponse"
+      :after-fetch="afterFetch"
     />
     <el-dialog
       v-model="dialog.visible"
@@ -220,6 +220,7 @@
     // 如编辑时添加参数
     if (dialog.formType === 2) {
       params.id = dialog.editId
+      delete params.children
     }
     return params
   }
@@ -238,7 +239,7 @@
     }
   }
   // 处理表格数据，转换为可折叠表格
-  const afterResponse = (result: any) => {
+  const afterFetch = (type: string, result: any) => {
     const list = result.list
     const treeList = flatToTree(list)
     departmentTree.value = treeList

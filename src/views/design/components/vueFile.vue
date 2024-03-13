@@ -259,13 +259,13 @@
     }
     if (obj.config.requestUrl) {
       // 全局大屏数据
-      globalImport = `import { getGlobalData } from '@/views/design/screen/getData'`
-      globalData = `const globalScreen = ref({})
-  provide('globalScreen', globalScreen)
-  const {requestUrl, afterResponse, beforeRequest, method} = screenData.value.config
-  getGlobalData({requestUrl, afterResponse, beforeRequest, method})
+      globalImport = `import { getRequest } from '@/api'`
+      globalData = `
+      const {requestUrl,method} = screenData.value.config
+  getRequest(requestUrl,{},{method:method})
   .then((res: any) => {
-       globalScreen.value = res
+      // 这里处理数据，直接对screenData设置值即可，无须使用全局或afterFetch之类的方法设值
+      //
    })`
     }
     const html = `<template>
@@ -281,6 +281,7 @@
 <script setup lang="ts">
   import { ref, computed, provide } from 'vue'
   ${globalImport}
+  import AKScreen from '@/views/design/screen/components/screen.vue' //可根据需求是否全局注册
   const loading = ref(true)
   const screenData = ref(${objToStringify(obj)})
   const screenStyle = computed(() => {

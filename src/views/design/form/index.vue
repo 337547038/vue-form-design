@@ -3,7 +3,7 @@
   <div class="design-container">
     <drag-control
       :form-id="state.formOtherData.source"
-      @click-check="searchCheckField"
+      @click-check="searchCheckField as any"
       @click="selectTemplate"
     />
     <div class="main-body">
@@ -67,9 +67,6 @@
   import { ElMessage } from 'element-plus'
   import { useRoute, useRouter } from 'vue-router'
   import {
-    afterResponse,
-    beforeRequest,
-    onChange,
     json2string,
     objToStringify,
     string2json,
@@ -77,7 +74,10 @@
   } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
   import type { FormData } from '@/types/form'
+  import { getDrawerTitle, getDrawerContent } from '../components/aceTooptip'
+  import getOneFormCreation from './components/oneFormCreation'
 
+  defineOptions({ name: 'designFormIndex' })
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
@@ -121,17 +121,22 @@
       // 获取初始表单数据
       state.loading = true
       getRequest('designById', { id: id })
-        .then(res => {
+        .then((res: { data: any }) => {
           const result = res.data
           // 初始设计搜索时res.data=''
           if (result.data) {
-            state.formData = stringToObj(result.data)
+            const resultData = stringToObj(result.data)
+            if (resultData && Object.keys(resultData).length) {
+              state.formData = resultData
+            }
           }
           state.formDict = string2json(result.dict)
           // 恢复表单名称
           state.formOtherData.source = result.source
           state.formOtherData.formName = result.name
+          console.log('ok')
           if (result.source && state.designType !== 'search') {
+            console.log('ok2')
             // 加载属性侧边栏的字段标识，搜索时不需要请求
             formControlAttrEl.value.getFormFieldBySource(result.source)
           }
@@ -162,9 +167,7 @@
         store.setActiveKey('')
         store.setControlAttr({})
         state.previewVisible = true
-        // eslint-disable-next-line no-case-declarations
         let stringPreview = objToStringify(state.formData) // 防止预览窗口数据修改影响
-        // eslint-disable-next-line no-case-declarations
         const formName = state.formData.form.name
         // eslint-disable-next-line no-case-declarations
         const reg = new RegExp(`get${formName}ControlByName`, 'g')
@@ -177,11 +180,7 @@
         break
       case 'json':
         // 生成脚本预览
-        openAceEditDrawer({
-          direction: 'rtl',
-          content: state.formData,
-          title: '可编辑修改或将已生成的脚本粘贴进来'
-        })
+        openAceEditDrawer({ type: 'creatJson', content: state.formData })
         break
       case 'save':
         saveData()
@@ -189,49 +188,6 @@
       case 'vue':
         vueFileEl.value.open(state.formData)
         break
-    }
-  }
-  // 弹窗确认
-  const dialogConfirm = (editVal: string) => {
-    // 生成脚本预览和导入json，都是将编辑器内容更新至state.formData
-    try {
-      if (typeof drawer.callback === 'function') {
-        // callback
-        const newObj =
-          drawer.codeType === 'json'
-            ? string2json(editVal)
-            : stringToObj(editVal)
-        drawer.callback(newObj)
-      } else {
-        switch (drawer.type) {
-          case 'css':
-            // 表单属性－编辑表单样式
-            if (!state.formData.config) {
-              state.formData.config = {}
-            }
-            state.formData.config.style = editVal
-            break
-          case 'dict':
-            state.formDict = string2json(editVal)
-            break
-          case 'beforeRequest':
-          case 'beforeSubmit':
-          case 'afterResponse':
-          case 'afterSubmit':
-          case 'change':
-            if (!state.formData.events) {
-              state.formData.events = {}
-            }
-            state.formData.events[drawer.type] = stringToObj(editVal)
-            break
-          default:
-            state.formData = stringToObj(editVal)
-        }
-      }
-      dialogCancel()
-    } catch (res) {
-      // console.log(res.message)
-      //ElMessage.error(res.message)
     }
   }
   // 将数据保存在服务端
@@ -258,6 +214,8 @@
       // 编辑状态 当前记录id
       Object.assign(params, { id: route.id })
       apiKey = 'designEdit'
+    } else {
+      params.status = 1 //添加时默认启用
     }
     // 列表搜索模式下只有修改
     if (state.designType === 'search') {
@@ -297,67 +255,105 @@
     store.setActiveKey('')
     store.setControlAttr({})
   }
+  /**
+   * 打开编辑器
+   * @param params
+   */
   const openAceEditDrawer = (params: any) => {
-    const { type, direction, codeType, title, callback, content } = params
-    drawer.direction = direction // 窗口位置ltr/rtl
+    const { type, direction, codeType, callback, content } = params
+    drawer.direction = direction || 'ltr' // 窗口位置ltr/rtl
     drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
     drawer.codeType = codeType || '' // 显示代码类型
-    drawer.title = title ? `提示：${title}` : ''
+    drawer.title = (getDrawerTitle as any)[type]
     drawer.visible = true
     drawer.callback = callback
-    let editData =
-      codeType === 'json'
-        ? json2string(content, true)
-        : objToStringify(content, true)
+    let editData
     switch (type) {
-      case 'css':
+      case 'editCss':
         editData = state.formData.config?.style || ''
         break
-      case 'dict':
+      case 'editDict':
         // 格式化一下
         editData = json2string(state.formDict, true)
         break
-      case 'beforeRequest':
+      case 'beforeFetch':
       case 'beforeSubmit':
-      case 'afterResponse':
+      case 'afterFetch':
       case 'afterSubmit':
       case 'change':
-        // eslint-disable-next-line no-case-declarations
-        const beforeData = state.formData.events || {}
+        const beforeData: any = state.formData.events || {}
         if (beforeData[type]) {
           editData = objToStringify(beforeData[type], true)
         } else {
-          if (['afterResponse', 'afterSubmit'].includes(type)) {
-            editData = afterResponse
-          } else if (type === 'change') {
-            editData = onChange
-          } else {
-            editData = beforeRequest
-          }
+          editData = getDrawerContent(type)
         }
         break
-      // case 'afterResponse':
-      // case 'afterSubmit':
-      //   const newData = state.formData.events || {}
-      //   if (newData[type]) {
-      //     editData = objToStringify(newData[type], true)
-      //   } else {
-      //     editData = afterResponse
-      //   }
-      //   break
-
       case 'optionsParams':
-        if (!content) {
-          editData = beforeRequest
-        }
-        break
       case 'optionsResult':
         if (!content) {
-          editData = afterResponse
+          editData = getDrawerContent(type)
+        } else {
+          editData = objToStringify(content, true)
         }
         break
+      case 'creatJson':
+        editData = objToStringify(content, true)
+        break
+      default:
+        editData = objToStringify(content, true)
     }
     drawer.content = editData
+  }
+  /**
+   * 编辑器确认事件
+   * @param editVal
+   */
+  const dialogConfirm = (editVal: string) => {
+    // 生成脚本预览和导入json，都是将编辑器内容更新至state.formData
+    try {
+      let newObj
+      switch (drawer.codeType) {
+        case 'json':
+          newObj = string2json(editVal)
+          break
+        case 'css':
+          newObj = editVal
+          break
+        default:
+          newObj = stringToObj(editVal)
+      }
+      if (typeof drawer.callback === 'function') {
+        drawer.callback(newObj)
+      }
+      switch (drawer.type) {
+        case 'editCss':
+          // 表单属性－编辑表单样式
+          if (!state.formData.config) {
+            state.formData.config = {}
+          }
+          state.formData.config.style = newObj
+          break
+        case 'editDict':
+          state.formDict = newObj
+          break
+        case 'beforeFetch':
+        case 'beforeSubmit':
+        case 'afterFetch':
+        case 'afterSubmit':
+        case 'change':
+          if (!state.formData.events) {
+            state.formData.events = {}
+          }
+          state.formData.events[drawer.type] = newObj
+          break
+        case 'creatJson':
+          state.formData = newObj
+          break
+      }
+      dialogCancel()
+    } catch (e: any) {
+      ElMessage.error(e.message || '未知原因')
+    }
   }
   const drawerBeforeClose = () => {
     dialogCancel()
@@ -395,29 +391,17 @@
     state.formData.list.push(data)
   }
   getInitData()
-  // 从数据源点创建表单过来时，带有参数source
-  const oneFormCreation = (list: any) => {
-    const temp: any = []
-    list.forEach(item => {
-      temp.push({
-        type: 'input',
-        control: {
-          modelValue: ''
-        },
-        config: {},
-        name: `${item.name}`,
-        formItem: {
-          label: `${item.label}`
-        }
-      })
-    })
-    state.formData.list = temp
-  }
   onMounted(() => {
     if (route.source) {
+      //从数据源一键创建过来时带有source参数
       formControlAttrEl.value.getFormFieldBySource(
         route.source,
-        oneFormCreation
+        (list: any) => {
+          state.formData.list = getOneFormCreation(list)
+          state.formData.config = {
+            submitCancel: true
+          }
+        }
       )
     }
   })

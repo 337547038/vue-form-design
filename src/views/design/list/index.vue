@@ -11,8 +11,8 @@
             <el-popover placement="bottom" :width="420" trigger="hover">
               <template #reference>
                 <el-button type="primary" plain size="small"
-                  >添加表格列字段</el-button
-                >
+                  >添加表格列字段
+                </el-button>
               </template>
               <div class="table-field-list">
                 <div
@@ -142,8 +142,8 @@
                 <template v-if="state.attrObj.prop === '__control'">
                   <el-form-item>
                     <el-button @click="editOpenDrawer('operateBtn')"
-                      >操作按钮设置</el-button
-                    >
+                      >操作按钮设置
+                    </el-button>
                   </el-form-item>
                 </template>
                 <template v-else>
@@ -254,24 +254,19 @@
                 <el-button @click="editOpenDrawer('tree')"
                   >编辑侧栏树属性
                 </el-button>
-                <el-button @click="editOpenDrawer('treeBeforeRequest')"
-                  >beforeRequest
+                <el-button @click="editOpenDrawer('treeBeforeFetch')"
+                  >beforeFetch
                 </el-button>
-                <el-button @click="editOpenDrawer('treeAfterResponse')"
-                  >afterResponse
+                <el-button @click="editOpenDrawer('treeAfterFetch')"
+                  >afterFetch
                 </el-button>
               </el-form-item>
               <el-form-item class="event-btn">
                 <el-button @click="editOpenDrawer('tableConfig')"
                   >编辑表格属性
                 </el-button>
-                <el-button @click="editOpenDrawer('dict')"
+                <el-button @click="editOpenDrawer('editDict')"
                   >设置数据字典
-                  <el-tooltip :content="tooltip.dict" placement="top">
-                    <el-icon>
-                      <QuestionFilled />
-                    </el-icon>
-                  </el-tooltip>
                 </el-button>
               </el-form-item>
               <div class="h3"><h3>接口数据事件</h3></div>
@@ -294,11 +289,11 @@
                 />
               </el-form-item>
               <el-form-item class="event-btn">
-                <el-button @click="editOpenDrawer('beforeRequest')"
-                  >beforeRequest
+                <el-button @click="editOpenDrawer('beforeFetch')"
+                  >beforeFetch
                 </el-button>
-                <el-button @click="editOpenDrawer('afterResponse')"
-                  >afterResponse
+                <el-button @click="editOpenDrawer('afterFetch')"
+                  >afterFetch
                 </el-button>
                 <el-button @click="editOpenDrawer('beforeDelete')"
                   >beforeDelete
@@ -342,8 +337,6 @@
     objToStringify,
     string2json,
     stringToObj,
-    beforeRequest,
-    afterResponse,
     formatNumber
   } from '@/utils/design'
   import { getRequest } from '@/api'
@@ -351,6 +344,8 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
+  import { getDrawerContent, getDrawerTitle } from '../components/aceTooptip'
+
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '列表页设计' }])
   const vueFileEl = ref()
@@ -384,13 +379,6 @@
     direction: 'ltr',
     content: '',
     codeType: ''
-  })
-  const tooltip = reactive({
-    dict: '数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。格式JSON："sex":{"0":"男","1":"女"}',
-    afterResponse:
-      '提示：获取列表初始数据后事件，可对请求返回数据进行处理，也可为字符串，如opt="formatTest"',
-    beforeRequest: '提示：获取列表初始数据前事件，可修改请求参数',
-    beforeDelete: '提示：可对删除前提交参数处理'
   })
   const controlBtnList = [
     {
@@ -448,18 +436,6 @@
         value: state.name,
         key: 'name'
       },
-      // {
-      //   label: '类别',
-      //   placeholder: '保存的类别，方便管理',
-      //   value: state.category,
-      //   type: 'select',
-      //   key: 'category',
-      //   options: [
-      //     { label: 'large', value: '1' },
-      //     { label: 'default', value: '2' },
-      //     { label: 'small', value: '3' }
-      //   ]
-      // },
       {
         label: '数据添加编辑打开方式',
         placeholder: '默认新页面打开',
@@ -538,6 +514,22 @@
         placeholder: '大于设定个数的以下拉形式显示'
       },
       {
+        label: '分页设置',
+        value: state.tableData.config?.pageSize,
+        key: 'pageSize',
+        type: 'input',
+        path: 'config',
+        placeholder: '每页分多少条'
+      },
+      {
+        label: '查询排序',
+        value: state.tableData.config?.sort,
+        key: 'sort',
+        type: 'input',
+        path: 'config',
+        placeholder: '查询排序，id desc'
+      },
+      {
         label: '开启侧栏树',
         value: state.tableData.treeData?.show,
         key: 'tree',
@@ -610,15 +602,6 @@
         ) {
           has = true
         }
-        /*if (item.prop) {
-          if (item.prop === row.prop) {
-            has = true
-          }
-        } else {
-          if (item.type === row.type) {
-            has = true
-          }
-        }*/
       })
       if (!has) {
         state.tableData.columns.push(row)
@@ -690,28 +673,30 @@
     })
   }
   const editOpenDrawer = (type: string) => {
+    let codeType = ''
+    let editData
+    let title = ''
     switch (type) {
-      case 'dict':
-        dialogOpen(state.dict || {}, { type: type, title: tooltip.dict })
+      case 'editDict':
+        codeType = 'json'
+        editData = state.dict || {}
         break
       case 'tableConfig':
-        dialogOpen(state.tableData.tableProps || {}, {
-          type: type,
-          title: 'el-table的相关属性'
-        })
+        title = 'el-table的相关属性'
+        editData = state.tableData.tableProps || {}
         break
-      case 'beforeRequest':
-      case 'afterResponse':
+      case 'beforeFetch':
+      case 'afterFetch':
       case 'beforeDelete':
         // eslint-disable-next-line no-case-declarations
-        const newData = state.tableData.events || {}
-        dialogOpen(newData[type], { type: type, title: tooltip[type] })
+        const newData: any = state.tableData.events || {}
+        editData = newData[type]
         break
       case 'tree':
         // eslint-disable-next-line no-case-declarations
-        let tree = state.tableData.treeData || {}
-        if (Object.keys(tree).length === 1) {
-          tree = {
+        editData = state.tableData.treeData || {}
+        if (Object.keys(editData).length === 1) {
+          editData = {
             show: true,
             treeProps: {}, // tree props
             name: '唯一标识', // 唯一标识，用于
@@ -719,64 +704,60 @@
             requestUrl: ''
           }
         }
-        dialogOpen(tree, {
-          title: '更多参数详见ak-list组件',
-          type: type
-        })
+        title = '更多参数详见ak-list组件'
         break
-      case 'treeBeforeRequest':
-        // eslint-disable-next-line no-case-declarations
-        const treeData = state.tableData.treeData?.beforeRequest
-        dialogOpen(treeData, {
-          type: type,
-          title: '侧栏树请求前处理事件，可对参数作处理'
-        })
+      case 'treeBeforeFetch':
+        editData = state.tableData.treeData?.beforeFetch
+        title = '侧栏树请求前处理事件，可对参数作处理'
         break
-      case 'treeAfterResponse':
-        // eslint-disable-next-line no-case-declarations
-        const treeData2 = state.tableData.treeData?.afterResponse
-        dialogOpen(treeData2, {
-          type: type,
-          title:
-            '侧栏树请求返回事件，可对返回数据处理；也可为字符串，如opt="formatTest"'
-        })
+      case 'treeAfterFetch':
+        editData = state.tableData.treeData?.afterFetch
+        title = '侧栏树请求返回事件，可对返回数据处理；支持返回字符串'
         break
       case 'operateBtn':
-        dialogOpen(state.tableData.operateBtn || operateBtnList, {
-          type: type,
-          title:
-            '可设置多个操作按钮，其中key=edit/del有内置处理事件，还可根据条件显示与隐藏。可使用permission:"xx"添加权限控制'
-        })
+        editData = state.tableData.operateBtn || operateBtnList
+        title =
+          '可设置多个操作按钮，其中key=edit/del有内置处理事件，还可根据条件显示与隐藏。可使用permission:"xx"添加权限控制'
         break
       case 'controlBtn':
-        dialogOpen(state.tableData.controlBtn || controlBtnList, {
-          type: type,
-          title:
-            '可设置多个操作按钮，其中key=add/del有内置处理事件。可使用permission:"xx"添加权限控制',
-          direction: 'rtl'
-        })
+        editData = state.tableData.controlBtn || controlBtnList
+        title =
+          '可设置多个操作按钮，其中key=add/del有内置处理事件。可使用permission:"xx"添加权限控制'
         break
     }
+    const params = {
+      codeType: codeType,
+      type: type,
+      title: title
+    }
+    dialogOpen(editData, params)
   }
   const dialogOpen = (obj: any, params: any = {}) => {
     drawer.visible = true
     Object.assign(drawer, { direction: 'ltr' }, params)
-    let editData = objToStringify(obj, true)
-    switch (params.type) {
-      case 'dict':
+    if (!drawer.title) {
+      drawer.title = (getDrawerTitle as any)[params.type]
+    }
+    let editData
+    switch (params.codeType) {
+      case 'json':
         editData = json2string(obj, true)
         break
-      case 'beforeRequest':
+      default:
+        editData = objToStringify(obj, true)
+    }
+    switch (params.type) {
+      case 'beforeFetch':
       case 'beforeDelete':
-      case 'treeBeforeRequest':
+      case 'treeBeforeFetch':
         if (!obj) {
-          editData = beforeRequest
+          editData = getDrawerContent('beforeFetch')
         }
         break
-      case 'afterResponse':
-      case 'treeAfterResponse':
+      case 'afterFetch':
+      case 'treeAfterFetch':
         if (!obj) {
-          editData = afterResponse
+          editData = getDrawerContent('afterFetch')
         }
         break
     }
@@ -789,7 +770,6 @@
         state.tableData = val
         break
       case 'tree':
-        console.log(val)
         state.tableData.treeData = val
         break
       case 'operateBtn':
@@ -798,11 +778,11 @@
       case 'controlBtn':
         state.tableData.controlBtn = val
         break
-      case 'dict':
+      case 'editDict':
         state.dict = string2json(content)
         break
-      case 'beforeRequest':
-      case 'afterResponse':
+      case 'beforeFetch':
+      case 'afterFetch':
       case 'beforeDelete':
         if (!state.tableData.events) {
           state.tableData.events = {}
@@ -810,14 +790,13 @@
         state.tableData.events[drawer.type] = val
         break
       case 'tableConfig':
-        //if(state.tableData.p)
         state.tableData.tableProps = val
         break
-      case 'treeBeforeRequest':
-        state.tableData.treeData.beforeRequest = val
+      case 'treeBeforeFetch':
+        state.tableData.treeData.beforeFetch = val
         break
-      case 'treeAfterResponse':
-        state.tableData.treeData.afterResponse = val
+      case 'treeAfterFetch':
+        state.tableData.treeData.afterFetch = val
         break
     }
     drawerBeforeClose()
@@ -878,10 +857,12 @@
   // 获取所有可用的表单数据源
   const getFormSourceList = () => {
     const params = {
-      pageInfo: {
+      extend: {
         pageSize: 100
       },
-      type: 1 // 只获取表单的
+      query: {
+        type: 1 // 只获取表单的
+      }
     }
     getRequest('designList', params).then((res: { data: { list: any } }) => {
       //console.log('获取列表数据源', res)
@@ -936,7 +917,7 @@
     }
     const params = {
       listData: objToStringify(state.tableData), // 列表数据
-      //data: state.searchData, // 搜索表单数据，搜索设置不在这里修改
+      data: '{}', // 搜索表单数据，搜索设置不在这里修改
       source: state.formId,
       name: state.name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 2, // 1表单 2列表
@@ -947,6 +928,8 @@
       // 编辑状态 当前记录id
       Object.assign(params, { id: routeQuery.id })
       apiKey = 'designEdit'
+    } else {
+      params.status = 1 //添加时默认启用
     }
     state.loading = true
     getRequest(apiKey, params)

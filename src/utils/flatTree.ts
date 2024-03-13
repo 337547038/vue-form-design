@@ -27,7 +27,7 @@ export const getTreeNodeById = (
   props?: PropsKey,
   address: any = []
 ): string[] => {
-  const { id = 'id', name = '' }: PropsKey = props || {}
+  const { id = 'id', name = '' } = props || {}
   for (let i: number = 0; i < data.length; i++) {
     const obj = name ? data[i][name] : data[i] // name为值时返回name值，否则返回整对象
     if (data[i][id] === targetId) {
@@ -87,13 +87,11 @@ export const getFlatNodeById = (
   props?: PropsKey
 ): string[] => {
   const path: string[] = []
-  const {
-    id = 'id',
-    name = 'name',
-    parentId = 'parentId'
-  }: PropsKey = props || {}
+  const { id = 'id', name = 'name', parentId = 'parentId' } = props || {}
   const getItemById = (itemId: number | string): Data | undefined => {
-    return data.find(item => item[id] === itemId)
+    return data.find(
+      (item: { [x: string]: string | number }) => item[id] === itemId
+    )
   }
 
   const buildPath = (itemId: number | string): void => {
@@ -130,18 +128,22 @@ const fullCity=getFlatNodeById(node,4) //=>['广东', '广州', '白云区']
 export const flatToTree = (data: Data, props?: PropsKey): Data[] => {
   const nodeMap: { [key: number]: Data } = {}
   const tree: Data[] = []
-  const { id = 'id', parentId = 'parentId' }: PropsKey = props || {}
+  const { id = 'id', parentId = 'parentId' } = props || {}
+  // @ts-ignore
   for (const n: any of data) {
     nodeMap[n[id]] = { ...n }
   }
+  // @ts-ignore
   for (const n: any of data) {
     const node: Data = nodeMap[n[id]]
     if (n[parentId]) {
       const parent: Data = nodeMap[n[parentId]]
-      if (!parent.children) {
-        parent.children = []
+      if (parent) {
+        if (!parent.children) {
+          parent.children = []
+        }
+        parent.children.push(node)
       }
-      parent.children.push(node)
     } else {
       tree.push(node)
     }
@@ -154,7 +156,7 @@ export const flatToTree = (data: Data, props?: PropsKey): Data[] => {
  * @param props
  */
 export const treeToFlat = (data: Data, props?: PropsKey) => {
-  const { parentId = 'parentId', id = 'id' }: PropsKey = props || {}
+  const { parentId = 'parentId', id = 'id' } = props || {}
   const result: any = []
 
   function flatten(obj: Data, parentKey?: string | number): void {

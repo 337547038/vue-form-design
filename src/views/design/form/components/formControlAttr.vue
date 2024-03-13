@@ -154,23 +154,11 @@
                 </el-form-item>
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
-                <el-button
-                  @click="
-                    optionsEvent(
-                      'optionsParams',
-                      '请求前处理事件，参数(data,route,form) data请求参数,route页面路由,form表单值'
-                    )
-                  "
-                  >beforeRequest
+                <el-button @click="openAttrDialog('optionsParams')"
+                  >beforeFetch
                 </el-button>
-                <el-button
-                  @click="
-                    optionsEvent(
-                      'optionsResult',
-                      '请求返回结束处理；，也可为字符串，如opt=formatTest'
-                    )
-                  "
-                  >afterResponse
+                <el-button @click="openAttrDialog('optionsResult')"
+                  >afterFetch
                 </el-button>
               </el-form-item>
             </template>
@@ -245,17 +233,8 @@
               </el-form-item>
               <el-form-item>
                 <el-button @click="addRulesFast">快速添加</el-button>
-                <el-button @click="addRules(state.tooltip.rules)"
+                <el-button @click="openAttrDialog('editRules')"
                   >编写校验规则
-                  <el-tooltip
-                    :content="state.tooltip.rules"
-                    placement="top"
-                    raw-content
-                  >
-                    <el-icon>
-                      <QuestionFilled />
-                    </el-icon>
-                  </el-tooltip>
                 </el-button>
               </el-form-item>
             </div>
@@ -275,15 +254,8 @@
           <div v-if="showHide(['grid', 'card', 'gridChild', 'divider', 'div'])">
             <div class="h3"><h3>其他属性</h3></div>
 
-            <el-button
-              size="small"
-              @click="openAttrDialog('', state.tooltip.props)"
+            <el-button size="small" @click="openAttrDialog('editProps')"
               >编辑属性
-              <el-tooltip :content="state.tooltip.props" placement="top">
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
             </el-button>
           </div>
         </el-form>
@@ -343,21 +315,11 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button @click="editFormStyle(state.tooltip.css)"
+            <el-button @click="openAttrDialog('editCss')"
               >编辑表单样式
-              <el-tooltip :content="state.tooltip.css" placement="top">
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
             </el-button>
-            <el-button @click="editFormDict(state.tooltip.dict)"
+            <el-button @click="openAttrDialog('editDict')"
               >设置数据字典
-              <el-tooltip :content="state.tooltip.dict" placement="top">
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
             </el-button>
           </el-form-item>
           <template v-if="!state.isSearch">
@@ -381,44 +343,19 @@
               />
             </el-form-item>
             <el-form-item class="event-btn">
-              <el-button
-                @click="
-                  eventClick(
-                    'beforeRequest',
-                    '获取表单初始数据前事件，可修改请求参数'
-                  )
-                "
-                >beforeRequest
+              <el-button @click="openAttrDialog('beforeFetch')"
+                >beforeFetch
               </el-button>
-              <el-button
-                @click="
-                  eventClick(
-                    'afterResponse',
-                    '获取表单初始数据后事件，可对请求返回数据进行处理；也可为字符串，如opt=formatTest'
-                  )
-                "
-                >afterResponse
+              <el-button @click="openAttrDialog('afterFetch')"
+                >afterFetch
               </el-button>
-              <el-button
-                @click="
-                  eventClick(
-                    'beforeSubmit',
-                    '表单数据提交前事件，可对提交数据进行处理；也可为字符串，如opt=formatTest'
-                  )
-                "
+              <el-button @click="openAttrDialog('beforeSubmit')"
                 >beforeSubmit
               </el-button>
-              <el-button
-                @click="eventClick('afterSubmit', '表单数据提交成功事件')"
+              <el-button @click="openAttrDialog('afterSubmit')"
                 >afterSubmit
               </el-button>
-              <el-button
-                @click="
-                  eventClick(
-                    'change',
-                    '表单组件值改变事件。当表单某值改变时，可修改其他组件的值；也可为字符串，如opt=formChange,字符串即为/utils/formChangeValue(name,model,key)中的key值'
-                  )
-                "
+              <el-button @click="openAttrDialog('change')"
                 >表单组件改变事件change
               </el-button>
             </el-form-item>
@@ -548,7 +485,7 @@
         config = {},
         formItem = {},
         attr = {}
-      }: { control: any; config: any } = controlData.value
+      }: any = controlData.value
       let columnIndex = false // 是否显示序号列
       if (type === 'table') {
         // 表格时处理
@@ -567,10 +504,9 @@
         {
           label: '字段标识',
           value: name,
-          type:
-            Object.keys(state.dataSourceList).length > 0 ? 'select' : 'text',
+          type: state.dataSourceFiledList?.length ? 'select' : 'text',
           placeholder: '字段唯一标识，对应数据库',
-          dict: state.dataSourceList,
+          dict: state.dataSourceFiledList,
           path: 'name',
           vHide: [
             'grid',
@@ -657,8 +593,8 @@
         },
         {
           label: '隐藏label',
-          value: formItem.showLabel,
-          path: 'formItem.showLabel',
+          value: formItem.hideLabel,
+          path: 'formItem.hideLabel',
           type: 'switch',
           vHide: [
             'table',
@@ -1061,6 +997,13 @@
           placeholder: '显示在输入框中的格式'
         },
         {
+          label: 'value-format',
+          value: control.valueFormat,
+          path: 'control.valueFormat',
+          vShow: ['datePicker', 'timePicker'],
+          placeholder: '绑定的值'
+        },
+        {
           label: 'color-format',
           value: control.colorFormat,
           path: 'control.colorFormat',
@@ -1151,7 +1094,7 @@
   })
   const designType = inject('formDesignType')
   const state = reactive({
-    dataSourceList: {},
+    dataSourceFiledList: [],
     customRulesList: [
       ...validate,
       {
@@ -1164,13 +1107,6 @@
       }
     ], // 自定义校验规则
     isSearch: designType === 'search',
-    tooltip: {
-      css: '当前表单应用页的样式，类似于.vue文件中的style scoped中的样式',
-      dict: '数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。json格式："sex":{"0":"男","1":"女"}',
-      rules:
-        "可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>",
-      props: '可添加当前组件所有prop属性及事件方法'
-    },
     tabsName: 'second'
   })
   watch(
@@ -1205,7 +1141,7 @@
         // 选择字段标识时，同时修改显示标题
         // 根据value找key
         if (obj.type === 'select') {
-          state.dataSourceList.forEach((item: any) => {
+          state.dataSourceFiledList.forEach((item: any) => {
             if (item.name === val) {
               if (controlData.value.formItem) {
                 controlData.value.formItem.label = item.label
@@ -1279,7 +1215,7 @@
       // 级联时打开弹窗口
       openAttrDialog('cascader')
     } else if (cType === 'treeSelect') {
-      openAttrDialog('treeSelect', '编辑组件下拉选项数据')
+      openAttrDialog('treeSelect')
     } else {
       if (type === 'tabs') {
         controlData.value.columns.push({
@@ -1294,16 +1230,29 @@
       }
     }
   }
-  // 更多属性弹窗
-  const openAttrDialog = (type?: string, tooltip?: string) => {
+  /**
+   * 打开编辑器事件
+   * @param type
+   */
+  const openAttrDialog = (type?: string) => {
     let editData = controlData.value.control
     const { type: cType, config, options, control } = controlData.value
+    let codeType: string = ''
     if (cType === 'button') {
       // 按钮组件编辑属性
       editData = config
       type = 'button'
     }
     switch (type) {
+      case 'editCss':
+        codeType = 'css'
+        break
+      case 'editDict':
+        codeType = 'json'
+        break
+      case 'editRules':
+        editData = controlData.value.formItem?.rules || []
+        break
       case 'treeSelect':
         editData = control.data
         break
@@ -1311,20 +1260,28 @@
         editData = options
         break
       case 'optionsParams': // 选项请求附加参数
-        editData = config.beforeRequest
-        // params.codeType = 'json'
+        editData = config.beforeFetch
         break
       case 'optionsResult':
-        editData = config.afterResponse
+        editData = config.afterFetch
         break
     }
     const emitsParams = {
       content: editData,
-      title: tooltip,
+      codeType: codeType,
       type: type,
-      direction: 'ltr',
       callback: (result: any) => {
         switch (type) {
+          case 'editRules':
+            if (!controlData.value.formItem) {
+              controlData.value.formItem = {}
+            }
+            controlData.value.formItem.rules = result
+            break
+          case 'editProps':
+            controlData.value.control = {}
+            Object.assign(controlData.value.control, result)
+            break
           case 'treeSelect':
             controlData.value.control.data = result
             break
@@ -1332,17 +1289,14 @@
             controlData.value.options = result
             break
           case 'optionsParams':
-            controlData.value.config.beforeRequest = result
+            controlData.value.config.beforeFetch = result
             break
           case 'optionsResult':
-            controlData.value.config.afterResponse = result
+            controlData.value.config.afterFetch = result
             break
           case 'button':
             controlData.value.config = result
             break
-          default:
-            controlData.value.control = {}
-            Object.assign(controlData.value.control, result)
         }
       }
     }
@@ -1362,22 +1316,6 @@
     } else {
       controlData.value.formItem.rules.splice(0, 1)
     }
-  }
-  // 添加校验规则
-  const addRules = (tooltip: string) => {
-    const rules = controlData.value.formItem?.rules
-    if (!rules) {
-      controlData.value.formItem.rules = []
-    }
-    const params = {
-      content: rules || [],
-      title: tooltip,
-      direction: 'ltr',
-      callback: (result: any) => {
-        Object.assign(rules || [], result)
-      }
-    }
-    emits('openDialog', params)
   }
   // 根据不同类型判断是否显示当前属性
   const showHide = (type: string[], show?: boolean) => {
@@ -1428,23 +1366,7 @@
   const delAddRules = (index: number) => {
     controlData.value.customRules?.splice(index, 1)
   }
-  // 编辑表单样式
-  const editFormStyle = (tooltip: string) => {
-    emits('openDialog', {
-      codeType: 'css',
-      direction: 'ltr',
-      type: 'css',
-      title: tooltip
-    })
-  }
-  const editFormDict = (tooltip: string) => {
-    emits('openDialog', {
-      type: 'dict',
-      direction: 'ltr',
-      codeType: 'json',
-      title: tooltip
-    })
-  }
+
   // 根据选定数据源获取表单字段
   const getFormFieldBySource = (
     id?: string,
@@ -1457,17 +1379,17 @@
     const source = id
     if (source) {
       getRequest('sourceById', { id: source })
-        .then(res => {
+        .then((res: { data: any }) => {
           // console.log(res)
-          const tableData = res.data.result?.tableData
-          if (tableData && tableData.length) {
-            state.dataSourceList = tableData.filter(
-              (item: any) => item.enterable
-            )
+          const tableData = res.data?.tableData
+          try {
+            state.dataSourceFiledList = JSON.parse(tableData)
+          } catch (e) {
+            state.dataSourceFiledList = []
           }
-          callback && callback(state.dataSourceList)
+          callback && callback(state.dataSourceFiledList)
         })
-        .catch(res => {
+        .catch((res: any) => {
           console.log(res)
         })
     }
@@ -1517,13 +1439,6 @@
     if (filter && filter.length) {
       item.message = filter[0].message
     }
-  }
-  // options动态选项数据源请求时
-  const optionsEvent = (type: string, tooltip?: string) => {
-    openAttrDialog(type, tooltip)
-  }
-  const eventClick = (type: string, tooltip?: string) => {
-    emits('openDialog', { type: type, title: tooltip, direction: 'ltr' })
   }
   getDataSource()
   defineExpose({ getFormFieldBySource })

@@ -10,6 +10,7 @@
       submit-url="saveFormContent"
       edit-url="editFormContent"
       :before-submit="beforeSubmit"
+      :params="{ formId: formId.value }"
       :after-submit="afterSubmit"
     />
   </div>
@@ -63,7 +64,10 @@
       .then((res: any) => {
         const result = res.data
         if (result && Object.keys(result).length) {
-          state.formData = stringToObj(result.data)
+          const resultData = stringToObj(result.data)
+          if (resultData && Object.keys(resultData).length) {
+            state.formData = stringToObj(result.data)
+          }
           state.dict = string2json(result.dict)
           // 编辑时加载表单初始数据。或设置了添加时获取请求
           if (id.value || state.formData.config?.addLoad) {

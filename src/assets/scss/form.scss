@@ -488,7 +488,6 @@ $mainColor: #66b1ff;
   }
   .name {flex: 2;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;margin: 0 5px;}
   .size, .progress {margin: 0 10px}
-  .progress{width: 60px}
   img, i, span {position: relative;z-index: 2}
   .progress-bar {position: absolute;left: 0;height: 40px;display: block;background: linear-gradient(to right, #edeffe 30%, #6eb476 80%, #47af53 100%);z-index: 1;
     &:after {content: '';height: 40px;width: 100%;background: linear-gradient(to right, #edeffe 30%, #6eb476 80%, #47af53 100%);position: absolute;left: -100%;top:0; animation: colorChange 5s infinite; display: none}

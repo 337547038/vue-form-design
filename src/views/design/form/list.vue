@@ -6,7 +6,7 @@
       delete-url="designDelete"
       :search-data="searchData"
       :data="tableData"
-      :before-request="beforeRequest"
+      :query="{ type: 1 }"
     >
       <template #sourceName="{ row }">
         <router-link
@@ -26,7 +26,7 @@
         ref="formEl"
         :data="dialogFormData"
         :type="2"
-        edit-url="designChange"
+        edit-url="designEdit"
         :after-submit="afterSubmit"
         :btn-click="btnClick"
       />
@@ -49,7 +49,12 @@
       { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '表单名称', width: '150px' },
       /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
-      { prop: 'sourceName', label: '数据源名称', width: '150px' },
+      {
+        prop: 'source',
+        label: '数据源名称',
+        width: '150px',
+        config: { dictKey: 'source' }
+      },
       { prop: 'category', label: '分类', config: { dictKey: 'sys-form' } },
       {
         prop: 'status',
@@ -62,20 +67,17 @@
           }
         }
       },
-      { prop: 'creatName', label: '创建人' },
       {
-        prop: 'creatDate',
-        label: '创建时间',
+        prop: 'creatUserId',
+        label: '创建人',
+        config: { dictKey: 'creatUser' }
+      },
+      {
+        prop: 'updateDate',
+        label: '更新时间',
         width: 200,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
-      // {
-      //   prop: 'updateDate',
-      //   label: '修改时间',
-      //   width: 200,
-      //   config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
-      // },
-      // { prop: 'editName', label: '最后修改' },
       { label: '操作', prop: '__control', width: '250px', fixed: 'right' }
     ],
     controlBtn: [
@@ -106,12 +108,6 @@
         }
       },
       {
-        label: '一键创建列表',
-        click: (row: any) => {
-          router.push({ path: '/design/list', query: { form: row.id } })
-        }
-      },
-      {
         label: '编辑',
         click: (row: any) => {
           // 跳转到表单设计编辑页
@@ -121,6 +117,12 @@
       {
         label: '删除',
         key: 'del'
+      },
+      {
+        label: '一键创建列表',
+        click: (row: any) => {
+          router.push({ path: '/design/list', query: { form: row.id } })
+        }
       }
     ],
     config: {
@@ -249,17 +251,9 @@
       tableListEl.value.getListData() // 重新拉数据
     }
   }
-  /*const beforeSubmit = (params: any) => {
-    params.id = dialog.row.id
-    return params
-  }*/
   const btnClick = (type: string) => {
     if (type === 'reset') {
       dialog.visible = false
     }
-  }
-  const beforeRequest = (params: any) => {
-    params.type = 1 // 表单类型为1
-    return params
   }
 </script>

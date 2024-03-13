@@ -151,8 +151,8 @@ import{ac as se,ad as le,d as Y,l as K,r as I,o as N,b as W,w as T,g as B,i as z
 <\/script>`;U(()=>{k.value=F(A,"editJsonCopy","html")})},e=t=>{b.value=!0;let s="",d="",m="";const i=t.config.style;i&&(s=`<style>${i}
 </style>`),t.config.requestUrl&&(m="import { getGlobalData } from '@/views/design/screen/getData'",d=`const globalScreen = ref({})
   provide('globalScreen', globalScreen)
-  const {requestUrl, afterResponse, beforeRequest, method} = screenData.value.config
-  getGlobalData({requestUrl, afterResponse, beforeRequest, method})
+  const {requestUrl, afterResponse, beforeFetch, method} = screenData.value.config
+  getGlobalData({requestUrl, afterResponse, beforeFetch, method})
   .then((res: any) => {
        globalScreen.value = res
    })`);const v=`<template>

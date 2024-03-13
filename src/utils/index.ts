@@ -115,17 +115,24 @@ export function getRandom(min: number, max: number) {
   // +1包括最大值
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
-/** 设置 localStorage 添加对时间的控制，hour单位为小时
- * hour空时使用原始sessionStorage(key,value)，即关闭浏览器过期
+
+/**
+ * 设置 localStorage 添加对时间的控制，hour单位为小时
+ * @param key 保存在storage的key
+ * @param data 需存储的数据
+ * @param hour null时存sessionStorage(key,value)，即关闭浏览器过期
  * hour=0时，使用localStorage，即永不过期
  * hour>0时localStorage添加时间控制
- * */
+ */
 
 export function setStorage(key: string, data: any, hour?: number | null): void {
   let newData = data
   if (typeof data === 'object') {
     newData = JSON.stringify(data)
   }
+  /*if (!data) {
+    return
+  }*/
   if (hour === 0) {
     window.localStorage.setItem(key, newData)
   } else if (hour && hour > 0) {
@@ -144,26 +151,30 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
  * 获取storage
  * @param key 保存时的key
  * @param hour 如果保存时使用了时间，则需要传true
- * @param expired 指定已过期时返回的值，过期默认返回undefined
+ * @return 返回保存的值，过期后返回false,其他异常或不存在返回undefined
  */
-export const getStorage = (key: string, hour?: boolean, expired?: string) => {
+export const getStorage = (key: string, hour?: boolean) => {
   let data: any
   if (hour) {
     data = window.localStorage.getItem(key)
     try {
       data = JSON.parse(data)
-      if (typeof data === 'object' && data.__value && data.__time) {
+      if (typeof data === 'object' && data.__time) {
+        if (!data.__value) {
+          data = undefined
+        }
         // 使用了时间的
         // 在当前时间后，表示没过期
         if (new Date().getTime() < data.__time) {
           data = data.__value
         } else {
           // 过期了
-          data = expired || undefined
+          data = false
         }
       }
     } catch (e) {
       /* empty */
+      data = undefined
     }
   } else {
     //保存时没传时间的，存在session里

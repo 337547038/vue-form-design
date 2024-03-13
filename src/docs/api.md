@@ -1,5 +1,5 @@
 # API 接口
-
+ [详见swagger文档](/api/swagger-ui/index.html)
 ## 数据源设计
 
 ## 表单设计

@@ -38,7 +38,7 @@
 
   const route = useRoute()
   const tableListEl = ref()
-  const afterResponse = result => {
+  const afterFetch = (type, result) => {
     return flatToTree(result.list || result)
   }
   const searchData = ref({
@@ -175,7 +175,7 @@
       name: 'department',
       method: 'post',
       requestUrl: 'deptList',
-      afterResponse: afterResponse
+      afterFetch: afterFetch
     }
   })
   const formEl = ref()
@@ -298,7 +298,7 @@
           optionsType: 1,
           optionsFun: 'deptList',
           method: 'post',
-          afterResponse: afterResponse
+          afterFetch: afterFetch
         },
         name: 'department',
         formItem: {

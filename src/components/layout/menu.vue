@@ -5,9 +5,8 @@
     background-color="rgb(48 65 86)"
     text-color="#fff"
     @select="select"
-    router
   >
-    <menu-item :data="navList" />
+    <menu-item :data="navList as any" />
   </el-menu>
 </template>
 

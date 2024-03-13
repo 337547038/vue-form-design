@@ -78,7 +78,7 @@
     .el-slider__marks-stop {background: red}
     .no-date {color: #ccc;position: absolute;left: 50%;top: 30%;transform: translateX(-50%);font-size: 20px}
   }
-  .main-right {width: 220px;transition: all .3s;position: relative;
+  .main-right {width: 220px;transition: all .3s;position: relative;height: calc(100vh - 60px);overflow-y: auto;
     form {padding: 0 10px}
     .el-form-item {margin-bottom: 8px}
     .color-picker {
@@ -107,4 +107,10 @@
     position: absolute;
   }
   .default-img, .default-bg {display: block;width: 100%;height: 100%}
+  .screen-table{
+    .el-table{background: none}
+    .el-table tr{background: none;
+      th{background: none}
+    }
+  }
 }

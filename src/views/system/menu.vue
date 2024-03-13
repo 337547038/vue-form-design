@@ -5,9 +5,8 @@
       ref="tableListEl"
       request-url="menuList"
       delete-url="menuDelete"
-      :search-data="searchData"
       :data="tableData"
-      :after-response="afterResponse"
+      :after-fetch="afterFetch"
       :dict="dict"
     >
       <template #name="{ row }">
@@ -39,48 +38,49 @@
 <script setup lang="ts">
   import { nextTick, reactive, ref } from 'vue'
   import { flatToTree } from '@/utils/flatTree'
+
   const tableListEl = ref()
   const formNameEl = ref()
   const dict = {
     menuType: { 1: '菜单', 2: '按钮', 3: '设计内容' }
   }
   const refreshTable = ref(true)
-  const searchData = ref({
-    list: [
-      {
-        type: 'input',
-        control: {
-          modelValue: '',
-          placeholder: '请输入菜单名称'
-        },
-        name: 'name',
-        formItem: {
-          label: '菜单名称'
-        }
+  /*const searchData = ref({
+  list: [
+    {
+      type: 'input',
+      control: {
+        modelValue: '',
+        placeholder: '请输入菜单名称'
       },
-      {
-        type: 'select',
-        control: {
-          modelValue: ''
-        },
-        options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-        },
-        name: 'status',
-        formItem: {
-          label: '状态'
-        }
+      name: 'name',
+      formItem: {
+        label: '菜单名称'
       }
-    ],
-    config: {
-      submitCancel: true
     },
-    form: {
-      size: 'default'
+    {
+      type: 'select',
+      control: {
+        modelValue: ''
+      },
+      options: [],
+      config: {
+        optionsType: 2,
+        optionsFun: 'sys-status'
+      },
+      name: 'status',
+      formItem: {
+        label: '状态'
+      }
     }
-  })
+  ],
+  config: {
+    submitCancel: true
+  },
+  form: {
+    size: 'default'
+  }
+})*/
   const tableData = ref({
     tableProps: {
       rowKey: 'id',
@@ -169,7 +169,8 @@
       }
     ],
     config: {
-      pageSize: 100,
+      pageSize: '100',
+      sort: 'sort asc',
       fixedBottomScroll: false
     }
   })
@@ -213,8 +214,14 @@
           method: 'post',
           label: 'name',
           value: 'id',
-          query: { type: 2 },
-          hidden: '$.type!==3'
+          hidden: '$.type!==3',
+          debug: true,
+          beforeFetch: data => {
+            data.query = {
+              type: 2
+            }
+            return data
+          }
         },
         name: 'contentList',
         formItem: { label: '内容列表' }
@@ -271,6 +278,25 @@
         formItem: { label: '状态' }
       },
       {
+        type: 'radio',
+        control: { modelValue: 1 },
+        options: [
+          {
+            label: '显示',
+            value: '1'
+          },
+          {
+            label: '隐藏',
+            value: '0'
+          }
+        ],
+        config: {
+          optionsType: 0
+        },
+        name: 'navShow',
+        formItem: { label: '导航显示' }
+      },
+      {
         type: 'textarea',
         control: {
           modelValue: ''
@@ -316,7 +342,7 @@
     }
   }
 
-  const afterResponse = (result: any) => {
+  const afterFetch = (type: string, result: any) => {
     result.list = flatToTree(result.list)
     return result
   }

@@ -13,7 +13,7 @@ export interface FormItem {
   showMessage?: boolean
   inlineMessage?: boolean
   size?: string
-  showLabel?: boolean
+  hideLabel?: boolean
 }
 
 export interface FormList {
@@ -43,10 +43,10 @@ export interface FormData {
     submitCancel?: boolean | string[]
   }
   events?: {
-    beforeRequest?: Function
-    afterResponse?: Function | string
-    beforeSubmit?: Function
-    afterSubmit?: Function
-    change?: Function
+    beforeFetch?: Function | string
+    afterFetch?: Function | string
+    beforeSubmit?: Function | string
+    afterSubmit?: Function | string
+    change?: Function | string
   }
 }

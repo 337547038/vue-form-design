@@ -3,9 +3,11 @@
     <div class="main">
       <h3>后台管理系统</h3>
       <ak-form
+        ref="formEl"
         :after-submit="afterSubmit"
         :data="formData"
-        submit-url="system/user/login"
+        submit-url="loginSubmit"
+        :before-submit="beforeSubmit"
       />
     </div>
   </div>
@@ -23,9 +25,12 @@
   import { getRequest } from '@/api'
   import { flatToTree } from '@/utils/flatTree.ts'
 
+  const formEl = ref()
   const useStore = useLayoutStore()
   const router = useRouter()
   const route = useRoute()
+  const codeId = ref()
+  const refreshKey = ref()
   const formData = ref({
     list: [
       {
@@ -37,7 +42,7 @@
         },
         config: {},
         name: 'userName',
-        formItem: { label: '用户名', showLabel: true },
+        formItem: { label: '用户名', hideLabel: true },
         customRules: [
           { type: 'required', message: '请输入登录账号', trigger: 'blur' }
         ]
@@ -51,33 +56,44 @@
         },
         config: {},
         name: 'password',
-        formItem: { label: '密码', showLabel: true },
+        formItem: { label: '密码', hideLabel: true },
         customRules: [
           { type: 'required', message: '请输入密码', trigger: 'blur' }
         ]
       },
       {
         type: 'component',
-        control: { modelValue: '1463', placeholder: '请输入验证码' },
+        control: {
+          modelValue: '',
+          placeholder: '请输入验证码',
+          onFocus: (val: string, refreshFn: any) => {
+            codeId.value = val
+            refreshKey.value = refreshFn
+          }
+        },
         config: { componentName: markRaw(CodeCom) },
         name: 'code',
-        formItem: { label: '验证码', showLabel: true },
+        formItem: { label: '验证码', hideLabel: true },
         customRules: [
           { type: 'required', message: '请输入验证码', trigger: 'blur' }
         ]
       },
       {
         type: 'button',
-        control: { label: '保存', type: 'primary', key: 'submit' }
+        control: { label: '登录', type: 'primary', key: 'submit' }
       }
     ],
     form: { size: 'default' },
     config: {}
   })
-  const afterSubmit = (type: string, res: any) => {
+  const beforeSubmit = (params: any) => {
+    params.codeId = codeId.value //添加验证码加密id
+    return params
+  }
+  const afterSubmit = (type: string, data: any) => {
     if (type === 'success') {
       // 统一方法保存token
-      useStore.setLoginInfo(res.data)
+      useStore.setLoginInfo(data, true)
       // 获取权限菜单信息
       getNavList().then(() => {
         // 登录成功跳转
@@ -86,12 +102,18 @@
           router.push({ path: path })
         })
       })
+    } else {
+      //刷新验证码，执行获取焦点时提供的方法用于刷新验证码
+      refreshKey.value && refreshKey.value()
     }
   }
   const getNavList = () => {
     return new Promise(resolve => {
-      getRequest('userMenuList', { status: 1 }).then((res: any) => {
-        const list = res.data.list || []
+      getRequest('userMenuList', {
+        query: { status: 1, navShow: 1 },
+        extend: { sort: 'sort asc' }
+      }).then((res: any) => {
+        const list = res.data?.list || []
         const resources: any[] = [] // 提取所有path作为权限判断依据
         const menuList: any[] = [] // 过滤掉btn类型的菜单
         list.forEach((item: { [key: string]: any }) => {
@@ -114,7 +136,8 @@
 
 <style lang="scss" scoped>
   .login {
-    background-color: #72767b;
+    background: url(../../assets/img/login-bg.png) no-repeat center center /
+      100% 100%;
     width: 100vw;
     height: 100vh;
     display: flex;

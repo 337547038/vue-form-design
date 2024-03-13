@@ -121,11 +121,10 @@
       title: '使用手册',
       to: '/docs/use',
       children: [
-        { title: '快速开始', to: '/docs/use-start' },
-        { title: '数据源', to: '/docs/use-datasource' },
+        { title: '快速开始', to: '/docs/start' },
         { title: 'ak-form配置项手册', to: '/docs/form-option' },
         { title: 'ak-list配置项手册', to: '/docs/list-option' },
-        { title: '可视化数据大屏', to: '/docs/use-screen' }
+        { title: '可视化数据大屏', to: '/docs/screen' }
       ]
     }
   ])

@@ -133,7 +133,7 @@
   import FlexBox from './flexBox.vue'
   import Tooltips from '../tooltip/index.vue'
   import FormItem from './formItem.vue'
-  import ChildTable from './childTable.vue'
+  import ChildTable from '../code.vue'
   import { FormList } from '@/types/form'
   import { inject } from 'vue'
   import {

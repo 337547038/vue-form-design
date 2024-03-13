@@ -10,8 +10,9 @@
     <el-dialog
       v-model="dialog.visible"
       :title="dialog.title"
-      width="800px"
+      width="1000px"
       destroy-on-close
+      :before-close="beforeClose"
     >
       <ak-form
         ref="formEl"
@@ -20,10 +21,17 @@
         submit-url="sourceCreat"
         edit-url="sourceEdit"
         request-url="sourceById"
-        :before-ubmit="beforeSubmit"
+        :before-submit="beforeSubmit"
         :after-submit="afterSubmit"
+        :after-fetch="afterFetch"
+        :params="{ id: dialog.id }"
         @btn-click="cancelClick"
-      />
+      >
+        <child-table v-model="childTableData" :type="dialog.type" />
+      </ak-form>
+      <div class="tips">
+        提示：默认会添加id自增主键；其中标题作为表单的label值，组件类型仅用于一健创建表单；模糊搜索用于条件查询时
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -32,10 +40,13 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ref, reactive, nextTick, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
+  import childTable from './components/table.vue'
+
   const route = useRoute()
   const router = useRouter()
   const tableListEl = ref()
   const formEl = ref()
+  const childTableData = ref([])
   const dialog = reactive({
     visible: false,
     title: '',
@@ -78,7 +89,7 @@
           dictKey: 'sys-status'
         }
       },
-      { prop: 'creatName', label: '创建人' },
+      { prop: 'creatUser', label: '创建人' },
       {
         prop: 'updateDate',
         label: '修改时间',
@@ -244,175 +255,6 @@
           span: 24
         },
         name: 'title'
-      },
-      {
-        type: 'table',
-        list: [
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small',
-              placeholder: '中文标题名称'
-            },
-            config: {},
-            name: 'label',
-            formItem: {
-              label: '标题'
-            }
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small'
-            },
-            config: {},
-            name: 'name',
-            formItem: {
-              label: '表名字'
-            },
-            customRules: [
-              {
-                type: 'required',
-                message: '名字不能为空',
-                trigger: 'blur'
-              },
-              {
-                type: 'numberLetter',
-                message: '只能为字母数字',
-                trigger: 'blur'
-              }
-            ]
-          },
-          {
-            type: 'select',
-            control: {
-              modelValue: '',
-              appendToBody: true,
-              size: 'small'
-            },
-            options: [
-              {
-                label: 'INT',
-                value: 'INT'
-              },
-              {
-                label: 'VARCHAR',
-                value: 'VARCHAR'
-              },
-              {
-                label: 'TEXT',
-                value: 'TEXT'
-              },
-              {
-                label: 'DATETIME',
-                value: 'DATETIME'
-              },
-              {
-                label: 'FLOAT',
-                value: 'FLOAT'
-              },
-              {
-                label: 'BOOLEAN',
-                value: 'BOOLEAN'
-              }
-            ],
-            config: {
-              optionsType: 0
-            },
-            name: 'type',
-            formItem: {
-              label: '类型'
-            },
-            customRules: [
-              {
-                type: 'required',
-                message: '类型不能为空',
-                trigger: 'change'
-              }
-            ]
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small'
-            },
-            config: {},
-            name: 'length',
-            formItem: {
-              label: '长度/值'
-            }
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small'
-            },
-            config: {},
-            name: 'default',
-            formItem: {
-              label: '默认'
-            }
-          },
-          {
-            type: 'switch',
-            control: {
-              modelValue: false,
-              size: 'small'
-            },
-            config: {},
-            name: 'empty',
-            formItem: {
-              label: '空'
-            }
-          },
-          {
-            type: 'input',
-            control: {
-              modelValue: '',
-              size: 'small'
-            },
-            config: {},
-            name: 'remark',
-            formItem: {
-              label: '注释'
-            }
-          },
-          {
-            type: 'switch',
-            control: {
-              modelValue: true,
-              size: 'small'
-            },
-            config: {},
-            name: 'enterable',
-            formItem: {
-              label: '可录入'
-            }
-          }
-        ],
-        tableData: [],
-        control: {
-          border: true
-        },
-        config: {
-          disabledEdit: true,
-          addBtnText: '添加一行',
-          delBtnText: '删除',
-          span: 24
-        },
-        name: 'tableData'
-      },
-      {
-        type: 'txt',
-        control: {
-          modelValue:
-            '提示：默认会添加id自增主键；可录入表示要在表单里作入录入字段，如更新时间这类字段一般为不可录入，其他字段对应数据库字段'
-        },
-        config: { span: 24 }
       }
     ],
     form: {
@@ -428,28 +270,26 @@
       requestUrl: 'sourceById'
     }
   })
+  const afterFetch = (type: string, params: any) => {
+    const tableData = JSON.parse(params.tableData)
+    //如果有isNew标识则删除
+    tableData.forEach((item: any) => {
+      if (item.isNew) {
+        delete item.isNew
+      }
+    })
+    childTableData.value = tableData
+    return params
+  }
   // 提交表单前校验
   const beforeSubmit = (params: any) => {
     if (dialog.type === 1) {
-      if (!params.tableData.length) {
+      if (!childTableData.value.length) {
         ElMessage.error('数据库表字段内容不能为空')
         return false
       }
-      const errorTip: string[] = []
-      params.tableData.forEach((item: any) => {
-        if (['INT', 'VARCHAR'].includes(item.type) && !item.length) {
-          errorTip.push(`名字列${item.name}的长度值不能为空`)
-        }
-      })
-      if (errorTip.length) {
-        ElMessage.error(errorTip.join(','))
-        return false
-      }
     }
-    if (dialog.type === 2) {
-      // 添加编辑提交参数
-      params.id = dialog.id
-    }
+    params.tableData = JSON.stringify(childTableData.value)
     return params
   }
   // 提交完成事件
@@ -457,15 +297,21 @@
     if (type === 'success') {
       dialog.visible = false
       tableListEl.value.getListData()
+      beforeClose()
     }
   }
   // 添加编辑窗口取消
   const cancelClick = (type?: string) => {
     if (type === 'reset') {
       dialog.visible = false
+      beforeClose()
     }
   }
-
+  //关闭时清空
+  const beforeClose = (done?: any) => {
+    childTableData.value = []
+    done && done()
+  }
   onMounted(() => {
     if (route.query.source) {
       openEdit(route.query.source)

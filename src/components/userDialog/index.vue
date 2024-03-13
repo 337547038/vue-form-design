@@ -129,12 +129,14 @@
   }
   const getUserList = () => {
     const params = {
-      pageInfo: {
-        pageIndex: page.current,
+      extend: {
+        pageNum: page.current,
         pageSize: page.pageSize
       },
-      name: userName.value,
-      department: department.value
+      query: {
+        name: userName.value,
+        department: department.value
+      }
     }
     if (tableData.value.length === 0) {
       getRequest('userList', params).then((res: any) => {

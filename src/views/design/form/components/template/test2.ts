@@ -66,7 +66,7 @@ export const formData = {
       name: 'checkbox1667180107698',
       formItem: {
         label: '多选框组',
-        showLabel: false
+        hideLabel: false
       }
     },
     {

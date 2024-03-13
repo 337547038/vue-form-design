@@ -47,7 +47,7 @@
 
   const store = useLayoutStore()
   //const isCollapse = ref(getStorage('collapseMenu') === 'true')
-  const isCollapse = computed(() => {
+  const isCollapse: Boolean = computed(() => {
     return store.collapseMenu
   })
   const fullScreen = ref(false)
@@ -87,9 +87,9 @@
    * 获取字典作供全局使用。刷新页时没有即请求加载
    */
   const dictList = () => {
-    const storageDict = getStorage('akAllDict')
+    const storageDict = getStorage('akAllDict', true)
     if (!storageDict) {
-      getRequest('dictList', { status: 1 }).then((res: any) => {
+      getRequest('dictList', { query: { status: 1 } }).then((res: any) => {
         const result = res.data?.list
         const temp: any = {}
         if (result?.length) {
@@ -104,7 +104,7 @@
               temp[item.type] = list
             }
           })
-          setStorage('akAllDict', temp)
+          setStorage('akAllDict', temp, 0)
         }
       })
     }

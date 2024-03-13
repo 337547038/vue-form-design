@@ -36,38 +36,42 @@ export const getRequest = (
     method = url.split('|')[0]
     url = url.replace(/.*\|/, '')
   }
+  //不是以/和http开头的，添加全局前缀
+  if (!(url.startsWith('/') || url.startsWith('http'))) {
+    url = 'api/' + url
+  }
   let obj: any = Object.assign(
     {
-      url: '/api/' + url, // 添加个前缀
-      //url: url, // 添加个前缀
+      url: url, // 添加个前缀
       method: method,
       data
     },
     options
   )
-  // localhost和github演示时使用下面地址
-  // 使用node接口时可使用本地ip地址访问或注释下面代码
+  // localhost演示时使用下面地址
+  // 使用接口时可使用本地ip地址访问或注释下面代码
   const host: string = window.location.host
-  if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
-    const { type = '', id = '', formId = '' } = data
-    let params: string = type + id + formId
+  if (host.indexOf('localhost') !== -1) {
+    const { query = {}, id = '', extend = {} } = data
+    let params: string = (query.type || '') + id + (extend.formId || '')
     if (
-      url.includes('/save') ||
-      url.includes('/edit') ||
-      url.includes('/delete') ||
-      url.includes('/creat') ||
-      url.includes('/change') ||
-      url.includes('/single')
+      url.includes('/get') ||
+      url.includes('/list') ||
+      url.includes('/login') ||
+      url.includes('/flow/form')
     ) {
-      url = 'ok'
+      /* empty */
+    } else {
+      url = 'mock/ok'
       params = ''
     }
     if (options.method) {
       delete options.method
     }
+    url = url.replace('api/', 'mock/')
     obj = Object.assign(
       {
-        url: `./mock/${url}${params}.json`,
+        url: `${url}${params}.json`,
         method: 'GET'
         //params: data
       },

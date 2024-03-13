@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 // @ts-ignore
 import routesPage from '~pages'
 import { useLayoutStore } from '@/store/layout'
@@ -43,7 +43,7 @@ const filterRoutePage = (type?: string) => {
 }
 const hiddenLayout = filterRoutePage('hidden')
 
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: '/layout',
     redirect: '/',
@@ -59,7 +59,7 @@ const routes: Array<RouteRecordRaw> = [
     children: filterRoutePage('docs')
   }
 ]
-const routesList: Array<RouteRecordRaw> = [...routes, ...hiddenLayout]
+const routesList = [...routes, ...hiddenLayout]
 console.log('routesList', routesList)
 // 配置路由
 const router = createRouter({
@@ -77,9 +77,9 @@ const includesWhite = (str: string): boolean => {
   })
 }
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to: any, _from: any, next: any) => {
   NProgress.start()
-  let permissions: string | string[] = to.meta?.permissions
+  let permissions: any = to.meta?.permissions
   const hasRoute = router.hasRoute('catchAll')
   if (!hasRoute) {
     router.addRoute({
@@ -93,15 +93,18 @@ router.beforeEach(async (to, from, next) => {
     next()
   } else {
     // 除白名单其他页面需要登录，判断登录
-    // 如没有token过期刷新的需求，这里获取token为空或过期时，直接跳转即可。存在刷新token操作时，过期也不能跳到登录页，否则直接跳转没办法换
-    const token: string = getStorage('token', true, 'expired')
+    // 如没有token过期刷新的需求，这里获取token为空或过期时，直接跳转即可。
+    // 存在刷新refreshToken操作时，token过期也不能跳到登录页，否则直接跳转没办法换
+    //const token: any = getStorage('token', true)
+    const refreshToken: any = getStorage('refreshToken', true)
     // menuList为接口返回的当前用户可用路由或按钮
     const menuList: string[] = getStorage('resources', true) || []
     let nextQuery: any = {
       path: '/login',
       query: { redirect: encodeURI(to.fullPath) }
     }
-    if (token) {
+    //判断refreshToken即可，当token过期还能继续执行刷新token操作
+    if (refreshToken) {
       // 根据菜单权限接口判断有没对应页面的权限
       if (permissions !== 'none') {
         // 需要有指定的权限
@@ -122,6 +125,10 @@ router.beforeEach(async (to, from, next) => {
               message: '没有权限查看该页面',
               type: 'error'
             })
+            //返回来源页
+            nextQuery = {
+              path: _from.fullPath
+            }
           } else {
             nextQuery = ''
           }

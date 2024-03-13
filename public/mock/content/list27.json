@@ -1,1 +1,1 @@
-{"code":1,"data":{"list":[{"id":1,"name":"客户名称","phone":"13800138000","weixin":"337547038","creatTime":"0000-00-00 00:00:00","company":"","status":1,"remark":"","intention":1}],"pageInfo":{"total":1}},"message":"成功"}
+{"code":1,"data":{"total":1,"list":[{"weixin":"13800138000","phone":"13800138000","name":"客户名称","company":"公司名称","remark":"无","id":4,"status":1,"intention":1}]}}

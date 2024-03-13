@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
   import { ref, reactive, nextTick } from 'vue'
+
   const tableListEl = ref()
   const formEl = ref()
   const formEl2 = ref()
@@ -319,8 +320,10 @@
             value: '0'
           }
         ],
+        name: 'status',
         config: {
-          optionsType: 0
+          optionsType: 0,
+          transformData: 'string'
         },
         formItem: {
           label: '状态'
@@ -352,5 +355,6 @@
       dialog.visible = false
       dialog2.visible = false
     }
+    console.log('btn click')
   }
 </script>

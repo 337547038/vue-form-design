@@ -224,28 +224,6 @@ export const jsonParseStringify = (val: any) => {
     return val
   }
 }
-/**
- * 定义两个空方法，用于在编辑事件时作为默认值
- */
-export const beforeRequest: string =
-  'opt=(data, route) => {\n' +
-  '  // data经过处理后返回\n' +
-  "  console.log('beforeRequest',data)\n" +
-  '  return data\n' +
-  '}'
-export const afterResponse: string =
-  'opt=(res) => {\n' +
-  '  // res返回数据\n' +
-  "  console.log('afterResponse',res)\n" +
-  '  return res\n' +
-  '}'
-
-export const onChange: string =
-  'opt=(key,model) => {\n' +
-  '  // name当前改变组件的值,model表单的值\n' +
-  "  console.log('onChange',key)\n" +
-  '  return model\n' +
-  '}'
 
 // provide 方法定义的key
 const prefix: string = 'AK'

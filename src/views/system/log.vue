@@ -2,10 +2,15 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url=""
-      delete-url=""
+      request-url="loginLogList"
+      delete-url="loginLogDelete"
       :search-data="searchData"
       :data="tableData"
+      :dict="dict"
+      :beforeDelete="beforeDelete"
+      :afterDelete="afterDelete"
+      :beforeFetch="beforeFetch"
+      :afterFetch="afterFetch"
     />
   </div>
 </template>
@@ -13,6 +18,7 @@
 <script setup>
   import { ref } from 'vue'
   const tableListEl = ref()
+  const dict = ref({ status: { 1: '成功', 0: '失败' } })
   const searchData = ref({
     list: [
       {
@@ -44,6 +50,7 @@
         control: {
           modelValue: '',
           type: 'date',
+          valueFormat: 'YYYY-MM-DD',
           placeholder: '请输入登录时间'
         },
         config: {},
@@ -62,27 +69,47 @@
   })
   const tableData = ref({
     columns: [
-      { label: '多选', type: 'selection' },
-      { label: '序号', type: 'index', width: '70px' },
+      { label: '多选', type: 'selection', prop: 'selection' },
+      { label: '序号', type: 'index', width: '70px', prop: 'index' },
       { label: '用户名称', prop: 'userName' },
-      { label: '登录地址', prop: 'ip' },
+      { label: '登录地址', prop: 'loginIp' },
       {
         label: '登录状态',
         prop: 'status',
         config: {
-          dictKey: 'sys-status',
-          tagList: { 1: 'success', 2: 'warning' }
+          dictKey: 'status',
+          tagList: { 1: 'success', 0: 'warning' }
         }
+      },
+      {
+        label: '登录时间',
+        prop: 'dateTime',
+        width: '170px',
+        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
       { label: '操作信息', prop: 'remark' },
       {
-        label: '登录时间',
-        prop: 'time',
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        label: '操作',
+        prop: '__control'
       }
     ],
     config: {
       // columnsSetting: false
-    }
+    },
+    operateBtn: [
+      {
+        label: '删除',
+        key: 'del'
+      }
+    ],
+    controlBtn: [
+      {
+        label: '批量删除',
+        key: 'del',
+        type: 'danger',
+        size: 'small',
+        icon: 'delete'
+      }
+    ]
   })
 </script>

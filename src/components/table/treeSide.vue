@@ -22,9 +22,8 @@
 
 <script setup lang="ts">
   import { ref, reactive, onMounted } from 'vue'
-  import { getRequest } from '@/api'
   import { useRoute } from 'vue-router'
-  import formatResult from '@/utils/formatResult'
+  import { requestResponse } from '@/utils/requestResponse.ts'
 
   interface Tree {
     id: number
@@ -66,37 +65,21 @@
     emits('nodeClick', data.id || data.label)
   }
   const init = (name?: string) => {
-    const {
-      requestUrl,
-      method = 'post',
-      beforeRequest,
-      afterResponse
-    } = props.data
+    const { requestUrl, method = 'post', beforeFetch, afterFetch } = props.data
     if (requestUrl && method) {
       // 处理请求前的数据
       const params = name ? { [name]: filterText.value } : {}
-      //console.log('params', params)
-      let formatData: any = params
-      if (typeof beforeRequest === 'function') {
-        formatData = beforeRequest(params, route)
-      }
-      if (formatData === false) {
-        return
-      }
-      if (method === 'get') {
-        formatData = { params: formatData }
-      }
       const options = { method: method }
-      getRequest(requestUrl, formatData, options)
+      requestResponse({
+        requestUrl: requestUrl,
+        params: params,
+        beforeFetch: beforeFetch,
+        afterFetch: afterFetch,
+        options: options,
+        route: route
+      })
         .then((res: any) => {
-          let result = res.data
-          // 这里做数据转换，很多时候后端并不能提供完全符合当前组件的数据
-          if (afterResponse && typeof afterResponse === 'string') {
-            result = formatResult(result, afterResponse)
-          } else if (typeof afterResponse === 'function') {
-            result = afterResponse(result)
-          }
-          state.treeData = result
+          state.treeData = res.data
           loading.value = false
         })
         .catch(() => {
