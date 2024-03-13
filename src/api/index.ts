@@ -62,15 +62,16 @@ export const getRequest = (
     ) {
       /* empty */
     } else {
-      url = 'ok'
+      url = 'mock/ok'
       params = ''
     }
     if (options.method) {
       delete options.method
     }
+    url = url.replace('api/', 'mock/')
     obj = Object.assign(
       {
-        url: `mock/${url}${params}.json`,
+        url: `${url}${params}.json`,
         method: 'GET'
         //params: data
       },
