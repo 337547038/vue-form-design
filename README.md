@@ -122,7 +122,7 @@ pnpm install
 # 运行项目
 pnpm dev
 
-# 使用json模拟数据（建议使用node模拟接口，方法见启动node模拟接口）
+# 使用json模拟数据
 
 默认下github示例和localhost访问时使用json模拟数据
  
