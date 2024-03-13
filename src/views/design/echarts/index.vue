@@ -117,11 +117,10 @@
   import VueFile from '../components/vueFile.vue'
   import {
     aceEdit,
-    afterFetch,
-    beforeFetch,
     objToStringify,
     stringToObj
   } from '@/utils/design'
+  import {getDrawerContent} from '../components/aceTooptip'
   import { ElMessage } from 'element-plus'
   import Draggable from 'vuedraggable-es'
 
@@ -247,14 +246,14 @@
         if (obj.config?.beforeFetch) {
           editData = objToStringify(obj.config.beforeFetch, true)
         } else {
-          editData = beforeFetch
+          editData = getDrawerContent('beforeFetch')
         }
         break
       case 'afterFetch':
         if (obj.config?.afterFetch) {
           editData = objToStringify(obj.config.afterFetch, true)
         } else {
-          editData = afterFetch
+          editData = getDrawerContent('afterFetch')
         }
         break
     }

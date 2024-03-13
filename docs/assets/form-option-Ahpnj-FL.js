@@ -1,0 +1,128 @@
+/* empty css                                                            */import{o as s,c as a,af as n}from"./index-PaNBskVU.js";const p={class:"marked-body"},e=n(`<h1 id="ak-form-配置手册">ak-form 配置手册</h1><p>配置数据由表单设计器通过拖拽添加相应组件及填写对应字段配置自动生成。脱离表单设计器时可按此数据格式要求，直接使用<code>ak-form</code>表单，即<code>ak-form</code>表单组件可不依懒于表单设计器工作。</p><h2 id="list">list</h2><p>设计生成的组件列表数据</p><h3 id="type">type</h3><p>string</p><p>支持的组件类型<code>input、textarea、radio、checkbox、select、inputSlot、datePicker、timePicker、colorPicker、switch、inputNumber、cascader、rate、slider、treeSelect、txt、title、tabs、flex、card、divider、button、table、component、upload、tinymce、grid、div……</code></p><h3 id="control">control</h3><p>当前组件所有支持的<code>props</code>，详见对应ui的<code>props</code></p><h4 id="modelvalue">modelValue</h4><h4 id="placeholder">placeholder</h4><h4 id="disabled">disabled</h4><h4 id="rows">rows</h4><p>number</p><p><code>textarea</code>输入框行数</p><h3 id="options">options</h3><p>组件<code>radio、select、checkbox、cascader、treeSelect</code>的固定选项值</p><h3 id="config">config</h3><h4 id="addall">addAll</h4><p>string</p><p><code>select</code>控件时，添加添加全部项文案，此时<code>value</code>值为空</p><h4 id="classname">className</h4><p>string</p><p>当前控件添加的样式类名</p><h4 id="help">help</h4><p>string</p><p>帮助提示信息，标签后面显示问号icon，鼠标滑过时显示的提示语</p><h4 id="span">span</h4><p>number</p><p>表单区域栅格宽，0为自动宽。值区间0-24</p><h4 id="prepend">prepend</h4><p>string</p><p><code>input</code>输入框前缀，见ui</p><h4 id="append">append</h4><p>string</p><p><code>input</code>输入框后缀，见ui</p><h4 id="disablededit">disabledEdit</h4><p>boolean</p><p>是否禁用编辑</p><h4 id="displayadd">displayAdd</h4><p>boolean</p><p>新增添加页是否可见</p><h4 id="displayedit">displayEdit</h4><p>boolean</p><p>编辑页是否可见</p><h4 id="displaydetail">displayDetail</h4><p>boolean</p><p>详情页是否可见</p><h4 id="hidden">hidden</h4><h4 id="disabled-1">disabled</h4><p>string</p><p>联动显示的条件表达式，支持运算符。其中$表示当前表单的值，如：</p><p><code>$.sex===1&amp;&amp;age&gt;18</code></p><p>表示当前表单中<code>name</code>值为<code>sex</code>的值为1和<code>age</code>的值大于18时，显示/禁用该字段</p><h4 id="queryname">queryName</h4><p>string</p><p>仅作用于<code>select</code>选项从服务器远程加载时，发送接口的关键词标识，默认<code>name</code></p><h4 id="optionstype">optionsType</h4><p>number</p><p><code>radio、select、checkbox、cascader、treeSelect</code>组件option选项数据源来源方式。</p><p>可选值：0:固定选项；1:数据源；2:接口字典</p><p>当使用数据源时还可使用<code>query</code>配置一些固定的请求参数</p><p>当复杂表单中存在大量需要配置选项的组件时，每个组件都从指定URL数据源获取，这是不太现实的。对此可以设计表单时预设一些固定的选项值或者在接口里返回</p><h4 id="optionsfun">optionsFun</h4><p>string</p><p>当<code>optionsType=1</code>时，此时值为请求的数据url；同时可带一个动态参数，如<code>/api?id=\${key}</code>，<code>key</code>可以是当前表单任意<code>name=key</code> 的组件，并且当该组件值发生改变时会重新请求；可实现联动功能。</p><p>当<code>optionsType=2</code>时，此时值为字典的key；</p><pre class="language-javascript"><code class="hljs"><span class="hljs-comment">//optionsType=2</span>
+<span class="hljs-keyword">const</span> dict = {<span class="hljs-attr">sex</span>: {<span class="hljs-number">0</span>: <span class="hljs-string">&#39;男&#39;</span>, <span class="hljs-number">1</span>: <span class="hljs-string">&#39;女&#39;</span>}, ...}
+<span class="hljs-comment">// 设置optionsFun=sex，即可从字典中获取sex</span></code></pre><h4 id="query">query</h4><p>object</p><p>在<code>optionsType=1</code>使用数据源时，可对当前请求附加一些固定的请求参数</p><h4 id="method">method</h4><p>string</p><p>数据请求方法，get/post两种</p><h4 id="label">label</h4><p>string</p><h4 id="value">value</h4><p>string</p><p>当<code>optionsType=1</code>时，如果接口返回的数据列表中并不是<code>label</code>和<code>value</code>字段，此时需要指定<code>label</code>和<code>value</code>取列表数据的哪个字段</p><pre class="language-javascript"><code class="hljs"><span class="hljs-keyword">const</span> list = [{<span class="hljs-attr">name</span>: <span class="hljs-string">&#39;&#39;</span>, <span class="hljs-attr">val</span>: <span class="hljs-string">&#39;&#39;</span>}]
+<span class="hljs-comment">// 可设置为label:&#39;name&#39;,value:&#39;val&#39;</span></code></pre><h4 id="transformdata">transformData</h4><p>string</p><p>尝试转换<code>value</code>值。因为option遍历时可能会将数字类型的的数字转为字符类型，导致选不中</p><p>none:不转换；number：转换为数字；string：转换为字符串</p><h3 id="name">name</h3><p>string</p><p>当前组件的<code>name</code>值，用于提交数据</p><h3 id="formitem">formItem</h3><p>详见<code>formItem</code>组件，支持的组件所有<code>props</code></p><h4 id="label-1">label</h4><p>标签名</p><h4 id="showlabel">showLabel</h4><p>boolean</p><p>是否显示标签名</p><h4 id="rules">rules</h4><p>校验规则，见ui的<code>formItem.rules</code></p><pre class="language-javascript"><code class="hljs">[
+  {<span class="hljs-attr">required</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">message</span>: <span class="hljs-string">&#39;age is required&#39;</span>},
+  {<span class="hljs-attr">type</span>: <span class="hljs-string">&#39;number&#39;</span>, <span class="hljs-attr">message</span>: <span class="hljs-string">&#39;age must be a number&#39;</span>}
+]</code></pre><h3 id="customrules">customRules</h3><p>object</p><p>自定义检验规则,这个规则经处理后合并进<code>formItem.rules</code></p><pre class="language-javascript"><code class="hljs">[{
+  <span class="hljs-attr">type</span>: <span class="hljs-string">&#39;required&#39;</span>, <span class="hljs-comment">// 支持类型见下方type</span>
+  <span class="hljs-attr">message</span>: <span class="hljs-string">&#39;必填项&#39;</span>,
+  <span class="hljs-attr">trigger</span>: <span class="hljs-string">&#39;blur&#39;</span>
+}]</code></pre><h4 id="type-1">type</h4><p>string</p><p>支持的自定义检验规则类型<code>required、mobile、tel、phone、email、int(整数)、number(数字)、money(金额)、card(身份证号)、cn(中文)、numberLetter(数字英文)、url、longitude、latitude、rules(正则)、methods(方法)</code>。</p><p>除系统内置的校验规则，还可通过可<code>@/components/form/validate.ts</code>扩展，添加常用校验规则</p><p>其中类型<code>methods</code>仅支持导出<code>vue</code>文件方式，需要根据定义好的方法名，在当前页面使用<code>provide</code>的形式将方法传递给表单组件，如：</p><pre class="language-javascript"><code class="hljs"><span class="hljs-title function_">provide</span>(<span class="hljs-string">&quot;myMethods&quot;</span>, <span class="hljs-function">(<span class="hljs-params">rule, value, callback</span>) =&gt;</span> {
+  <span class="hljs-keyword">if</span> (value === <span class="hljs-string">&#39;&#39;</span>) {
+    <span class="hljs-title function_">callback</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#39;Please input the password again&#39;</span>))
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value !== <span class="hljs-string">&#39;abc&#39;</span>) {
+    <span class="hljs-title function_">callback</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&quot;Two inputs don&#39;t match!&quot;</span>))
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-title function_">callback</span>()
+  }
+})</code></pre><h4 id="message">message</h4><p>string</p><p>自定义校验提示语</p><h4 id="trigger">trigger</h4><p>string</p><p>校验触发类型,<code>change</code>和<code>blur</code>，见<code>formItem</code>的校验触发类型</p><h3 id="listtype">list.type</h3><h4 id="inputslot">inputSlot</h4><p><code>select</code>的一种扩展类型，可作为<code>input</code>的前后插槽使用。通过在<code>input</code>的前后缀填入<code>key:inputSlotName</code> 的形式引用，其中<code>inputSlotName</code>为当前组件的<code>name</code>值。如：</p><pre class="language-javascript"><code class="hljs">[
+  {
+    <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;inputSlot&quot;</span>,
+    <span class="hljs-attr">control</span>:
+      {
+        <span class="hljs-attr">modelValue</span>: <span class="hljs-string">&quot;&quot;</span>,
+        <span class="hljs-attr">appendToBody</span>: <span class="hljs-literal">true</span>
+      },
+    <span class="hljs-attr">options</span>: [
+      {
+        <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;标签1&quot;</span>,
+        <span class="hljs-attr">value</span>: <span class="hljs-string">&quot;1&quot;</span>
+      }],
+    <span class="hljs-attr">config</span>:
+      {
+        <span class="hljs-comment">// 一些配置信息</span>
+      },
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;slotName&quot;</span>,　<span class="hljs-comment">//　重点：设置好inputSlot的name值</span>
+    <span class="hljs-attr">formItem</span>:
+      {
+        <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;下拉选择框&quot;</span>
+      }
+  },
+  {
+    <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;input&quot;</span>,
+    <span class="hljs-attr">control</span>:
+      {
+        <span class="hljs-attr">modelValue</span>: <span class="hljs-string">&quot;&quot;</span>
+      },
+    <span class="hljs-attr">config</span>:
+      {
+        <span class="hljs-attr">append</span>: <span class="hljs-string">&quot;key:slotName&quot;</span>　<span class="hljs-comment">// 重点：使用key:加前面设置好的name值，即key:slotName</span>
+      },
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;input&quot;</span>,
+    <span class="hljs-attr">formItem</span>:
+      {
+        <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;单行文本&quot;</span>
+      }
+  }]</code></pre><h4 id="button">button</h4><p><code>control.key</code>预设约定key事件</p><h4 id="component">component</h4><p>自定义组件需全局注册，导出vue文件使用可使用当前页面导入的。组件需要<code>v-model</code>才级实现更新</p><p>引入当前页面组件时建议使用<code>markRaw</code>，如：</p><pre class="language-javascript"><code class="hljs"><span class="hljs-keyword">import</span> component <span class="hljs-keyword">from</span> <span class="hljs-string">&#39;xxx.vue&#39;</span>
+
+<span class="hljs-attr">config</span>: {
+  <span class="hljs-attr">componentName</span>: <span class="hljs-title function_">markRaw</span>(component)
+}</code></pre><p>submit: 提交表单</p><p>reset: 重置表单</p><p>cancel: 取消返回 即router.go(-1) 这个刷新后可能会失败</p><p>none: 无动作(自定义)</p><p>点击会触发<code>btnClick</code>事件，仅在导出vue文件时</p><h2 id="form">form</h2><h3 id="size">size</h3><p>string</p><p>表单组件尺寸大小，见ui的size类型</p><h3 id="name-1">name</h3><p>string</p><p>表单标识名称</p><h3 id="labelwidth">labelWidth</h3><p>string</p><p>标签的长度，见ui的<code>label-width</code></p><h3 id="class">class</h3><p>string</p><p>表单样式名称，可选择预设的样式或自定义样式</p><h3 id="showcolon">showColon</h3><p>boolean</p><p>表单字段名后是否添加冒号</p><h2 id="config-1">config</h2><h3 id="addload">addLoad</h3><p>boolean</p><p>很多时候在新增数据时，需要先从接口获取一些初始值。设置为<code>true</code>可在进行新增数据时请求对应的url</p><h3 id="style">style</h3><p>string</p><p>编写有样式时会在当前页面head中插入style脚本，作用范围为当前页面。类似于.vue文件中的style scoped中的样式。</p><h3 id="submiturl">submitUrl</h3><p>string</p><p>表单数据提交url</p><h3 id="editurl">editUrl</h3><p>string</p><p>修改表单数据时提交的url</p><h3 id="requesturl">requestUrl</h3><p>string</p><p>修改或新增时获取表单数据url</p><h3 id="submitcancel">submitCancel</h3><p>boolean|string[]</p><p>为表单快速添加确定取消按钮。也可通过拖拽按钮组件来添加。支持使用数组形式传入按钮文本，如<code>[&#39;提交&#39;,&#39;取消&#39;]</code>将覆盖默认值</p><h2 id="events">events</h2><h3 id="beforefetch">beforeFetch</h3><p>function(params, route)</p><p>获取数据发送接口请求前方法，可用于对请求的数据进行处理转换等操作，以提交符合接口的数据要求</p><pre class="language-javascript"><code class="hljs"><span class="hljs-keyword">const</span> <span class="hljs-title function_">beforeFetch</span> = (<span class="hljs-params">params, route</span>) =&gt; {
+  <span class="hljs-comment">// 此处可对请求参数params进行修改处理后返回，route为当前路由信息</span>
+  <span class="hljs-comment">// 如当路由参数name为true时，添加id参数</span>
+  <span class="hljs-keyword">if</span> (route.<span class="hljs-property">query</span>.<span class="hljs-property">name</span>) {
+    params.<span class="hljs-property">id</span> = route.<span class="hljs-property">query</span>.<span class="hljs-property">name</span>
+  }
+  <span class="hljs-keyword">return</span> params　<span class="hljs-comment">//　return false时将发不请求</span>
+}</code></pre><h3 id="afterfetch">afterFetch</h3><p>function(result)|string</p><p>获取数据接口请求数据返回后方法，可用于对请求回来的数据进行处理转换等操作，以满足使用。</p><p>如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串。同<code>beforeSubmit</code>的<code>formatResult</code>方法</p><pre class="language-javascript"><code class="hljs"><span class="hljs-keyword">const</span> <span class="hljs-title function_">afterFetch</span> = (<span class="hljs-params">result</span>) =&gt; {
+  <span class="hljs-comment">//　这里是处理逻辑</span>
+  <span class="hljs-keyword">return</span> result <span class="hljs-comment">// return false时不处理请求结果</span>
+}</code></pre><h3 id="beforesubmit">beforeSubmit</h3><p>function(params, route)|string</p><p>表单提交前数据处理，可对提交数据处理。<code>params</code>所提交的参数,<code>route</code>当前页面路由信息</p><pre class="language-javascript"><code class="hljs"><span class="hljs-keyword">const</span> <span class="hljs-title function_">beforeSubmit</span> = (<span class="hljs-params">params, route</span>) =&gt; {
+  <span class="hljs-comment">// 此处可对请求参数params进行修改处理后返回，route为当前路由信息</span>
+  <span class="hljs-comment">// 如当路由参数name为true时，添加id参数</span>
+  <span class="hljs-keyword">if</span> (route.<span class="hljs-property">query</span>.<span class="hljs-property">name</span>) {
+    params.<span class="hljs-property">id</span> = route.<span class="hljs-property">query</span>.<span class="hljs-property">name</span>
+  }
+  <span class="hljs-keyword">return</span> params　<span class="hljs-comment">//　return false时将发不请求</span>
+}</code></pre><p>如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串形式，如<code>beforeSubmit=&quot;beforeSubmit&quot;</code> 。此时可在<code>@/utils/requestResponse.ts</code>中进行自定义处理。</p><pre class="language-javascript"><code class="hljs"><span class="hljs-comment">/**
+ * <span class="hljs-doctag">@param</span> res 请求参数或返回结果
+ * <span class="hljs-doctag">@param</span> key // 即设置的字符串
+ * <span class="hljs-doctag">@param</span> route // 路由信息
+ * <span class="hljs-doctag">@returns</span> {<span class="hljs-type">*</span>}
+ */</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">formatResult</span> = (<span class="hljs-params">res, key, route</span>) =&gt; {
+    <span class="hljs-keyword">switch</span> (key) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#39;beforeSubmit&#39;</span>:
+        <span class="hljs-comment">// 这里是一些处理逻辑，最后将数据返回</span>
+        <span class="hljs-keyword">return</span> res
+    }
+    <span class="hljs-keyword">return</span> res
+  }</code></pre><p>如果为导出<code>vue</code>文件的方式使用表单，还可通过<code>props</code>参数传参</p><pre class="language-html"><code class="hljs">
+<span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ak-form</span> <span class="hljs-attr">:before-submit</span>=<span class="hljs-string">&quot;beforeSubmit&quot;</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">setup</span>&gt;</span><span class="language-javascript">
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">beforeSubmit</span> = (<span class="hljs-params"></span>) =&gt; {
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><h3 id="aftersubmit">afterSubmit</h3><p>function(type, result)</p><p>表单结果处理方法，<code>type</code>结果类型包括1.<code>success</code>提交成功；<code>fail</code>提交失败；<code>validate</code>没通过校验。当<code>success</code>或<code>fail</code> 时默认提示返回信息，可通过<code>return false</code>阻止提示。<code>result</code>返回的结果信息。</p><pre class="language-javascript"><code class="hljs"><span class="hljs-keyword">const</span> <span class="hljs-title function_">afterSubmit</span> = (<span class="hljs-params">type, result</span>) =&gt; {
+  <span class="hljs-comment">//　这里是处理逻辑</span>
+  <span class="hljs-keyword">return</span> result <span class="hljs-comment">// return false时不处理请求结果</span>
+}</code></pre><p>如果为导出<code>vue</code>文件的方式使用表单，还可通过<code>props</code>参数传参</p><pre class="language-html"><code class="hljs">
+<span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ak-form</span> <span class="hljs-attr">:after-submit</span>=<span class="hljs-string">&quot;afterSubmit&quot;</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">setup</span>&gt;</span><span class="language-javascript">
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">afterSubmit</span> = (<span class="hljs-params"></span>) =&gt; {
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><h3 id="change">change</h3><p>function(name, model)|string</p><p>表单控件值改变事件方法，当表单内组件值改变时触发该事件方法。</p><pre class="language-javascript"><code class="hljs"><span class="hljs-comment">/**
+ * <span class="hljs-doctag">@param</span> name 组件的name值
+ * <span class="hljs-doctag">@param</span> model 当前表单的值
+ * <span class="hljs-doctag">@returns</span> {<span class="hljs-type">*</span>} 需将修改后的值返回
+ */</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">change</span> = (<span class="hljs-params">name, model</span>) =&gt; {
+    <span class="hljs-comment">//一些处理逻辑。这里可根据指定的name值改变时去修改model其他控件的值</span>
+    <span class="hljs-keyword">return</span> model
+  }</code></pre><p>如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串形式，如<code>change=&quot;change&quot;</code> 。此时可在<code>@/utils/formChangeValue.ts</code>中的<code>formChangeValue</code>方法进行处理。</p><pre class="language-javascript"><code class="hljs"><span class="hljs-comment">/**
+ <span class="hljs-doctag">@params</span> name 当前改变的组件name值
+ <span class="hljs-doctag">@params</span> model当前表单的值
+ <span class="hljs-doctag">@params</span> key 当前设置的方法标识
+ */</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">formChangeValue</span> = (<span class="hljs-params">name, model, key</span>) =&gt; {
+    <span class="hljs-keyword">switch</span> (name) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#39;change&#39;</span>:
+        <span class="hljs-comment">// 这里是一些处理逻辑，最后将数据返回</span>
+        <span class="hljs-keyword">return</span> model
+    }
+    <span class="hljs-keyword">return</span> model
+  }</code></pre><h2 id="getformnamecontrolbyname">get[formName]ControlByName</h2><p>function(name)</p><p>表单页全局方法，用于根据组件<code>name</code>值获取当前的数据项。</p><p>注意：<code>formName</code>值为表单唯一标识</p><pre class="language-javascript"><code class="hljs"><span class="hljs-keyword">const</span> control = <span class="hljs-title function_">getformNameControlByName</span>(<span class="hljs-string">&#39;name&#39;</span>)</code></pre><h2 id="getformnamevaluebyname">get[formName]ValueByName</h2><p>function(name)</p><p>同get[formName]ControlByName。返回值不一样</p>`,201),l=[e],h={__name:"form-option",setup(t){return(c,o)=>(s(),a("div",p,l))}};export{h as default};
