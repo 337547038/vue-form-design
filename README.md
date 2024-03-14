@@ -126,6 +126,10 @@ pnpm dev
 # 使用json模拟数据
 
 默认下github示例和localhost访问时使用json模拟数据
+
+# 使用后端接口数据
+
+可访问后端库https://github.com/337547038/ak-design-manage
  
 # 打包项目
 pnpm build
