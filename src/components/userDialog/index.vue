@@ -101,6 +101,7 @@
   const department = ref()
   const handleNodeClick = (data: any) => {
     department.value = data.id
+    getUserList()
   }
   const getTreeData = () => {
     if (treeData.value.length === 0) {
@@ -138,11 +139,9 @@
         department: department.value
       }
     }
-    if (tableData.value.length === 0) {
-      getRequest('userList', params).then((res: any) => {
-        tableData.value = res.data.list
-      })
-    }
+    getRequest('userList', params).then((res: any) => {
+      tableData.value = res.data.list
+    })
   }
   const currentChange = (current: number) => {
     page.current = current
