@@ -61,6 +61,8 @@ export const getRequest = (
       url.includes('/flow/form')
     ) {
       /* empty */
+    } else if (url.includes('/static/')) {
+      url = url.replace('.json', '')
     } else {
       url = 'mock/ok'
       params = ''
