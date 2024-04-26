@@ -131,8 +131,8 @@
         :disabled="disabledEdit"
         v-model="value"
       />
-      <template v-if="data.type === 'tinymce'">
-        <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
+<!--      <template v-if="data.type === 'tinymce'">
+        &lt;!&ndash;  设计模式时拖动会出现异常，设计模式暂用图片代替&ndash;&gt;
         <tinymce-edit
           v-bind="control"
           :config="config"
@@ -146,7 +146,7 @@
           v-if="type === 5"
           style="max-width: 100%"
         />
-      </template>
+      </template>-->
     </template>
   </el-form-item>
 </template>
