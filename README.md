@@ -35,6 +35,10 @@ https://github.com/337547038/ak-design-manage
 
 <img src="https://gitee.com/q337547038/vue-form-design/raw/main/qrcode.jpg" width ="200" alt=""/>
 
+### 福利：使用支付宝扫码领取红包
+
+<img src="https://gitee.com/q337547038/vue-form-design/raw/main/alipay.jpg" width ="300" alt=""/>
+
 ## 表单设计
 
 一种可视化拖拽式表单设计编辑器，能够以图形化方式生成表单。通过它，可以以无需编写代码的方式来构建表单，并且可以为表单添加各种校验规则。
