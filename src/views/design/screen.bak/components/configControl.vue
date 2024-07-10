@@ -284,28 +284,24 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, inject, reactive, ref, watch } from 'vue'
+  import { reactive, ref, computed, watch } from 'vue'
   import { onBeforeRouteLeave } from 'vue-router'
-  import type { OpenDrawer } from '../types'
+  import type { Config, OpenDrawer } from '../types'
   import UploadImage from './upload.vue'
   import { useDesignStore } from '@/store/design'
 
-  /*  const props = withDefaults(
+  const props = withDefaults(
     defineProps<{
       config: Config
     }>(),
     {}
-  )*/
+  )
   const emits = defineEmits<{
-    // (e: 'update:config', val: Config): void
+    (e: 'update:config', val: Config): void
     (e: 'openDrawer', val: OpenDrawer): void
     (e: 'update'): void
   }>()
 
-  const screenData = inject('screenData')
-  const config = computed(() => {
-    return screenData.value.config || {}
-  })
   const designStore = useDesignStore()
   const current = computed(() => {
     return designStore.screenControlAttr
@@ -318,6 +314,9 @@
     return current.value.type
   })
   // ---------------------大屏配置开始---------------------
+  const updateConfig = (val: any) => {
+    emits('update:config', Object.assign({}, props.config, val))
+  }
   const state = reactive({
     bgColor: '',
     bgLinear: '',
@@ -326,7 +325,7 @@
     bgSelect: ''
   })
   const unWatch = watch(
-    () => config.value,
+    () => props.config,
     (val: any) => {
       if (!Object.keys(current.value).length) {
         // 大屏配置
@@ -375,8 +374,7 @@
     configChange('background', bg)
   }
   const configChange = (key: string, val: any) => {
-    //这里回调一个方法去修改config更规范些
-    screenData.value.config = Object.assign({}, config.value, { [key]: val })
+    updateConfig({ [key]: val })
   }
   // ---------------------大屏配置结束---------------------
   const positionProperty = computed(() => {
@@ -628,13 +626,13 @@
         break
     }
   }
-
   // ace编辑器相关
+
   const openDrawer = (type: string, isGlobal?: boolean) => {
     let codeType: string = ''
     let editData
-    const title: string = ''
-    const tips = ''
+    let title: string = ''
+    let tips = ''
     let eventType = type
     if (type === 'afterFetchScreen') {
       eventType = 'afterFetch'
@@ -645,7 +643,7 @@
         break
       case 'beforeFetch':
       case 'afterFetch':
-      /*case 'afterFetchScreen':
+      case 'afterFetchScreen':
         if (isGlobal) {
           if (type === 'afterFetch') {
             tips = '这里返回的数据在当前页面可使用getScreenGlobal()方法获取'
@@ -682,7 +680,7 @@
         if (typeVal === 'table') {
           title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
         }
-        break*/
+        break
     }
     const emitsParams = {
       content: editData,
@@ -696,7 +694,7 @@
           case 'afterFetch':
           case 'afterFetchScreen':
             if (isGlobal) {
-              ;(config.value as any)[eventType] = result
+              ;(props.config as any)[eventType] = result
             } else {
               if (!current.value.events) {
                 current.value.events = {}
@@ -704,7 +702,7 @@
               current.value.events[eventType] = result
             }
             break
-          /*case 'style':
+          case 'style':
             current.value.config.style = result
             break
           case 'echartsEdit':
@@ -720,7 +718,7 @@
             } else {
               current.value.option = result
             }
-            break*/
+            break
         }
       }
     }

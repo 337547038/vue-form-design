@@ -23,7 +23,9 @@
     </div>
     <config-control
       ref="configEl"
+      v-model:config="screenData.config"
       :style="{ width: toolVisible('right') ? '' : '0px' }"
+      @update="setLayerList"
       @open-drawer="openDrawer"
     />
     <ace-drawer
@@ -43,7 +45,7 @@
 {meta:{permissions:'none'}}
 </route>
 <script lang="ts" setup>
-  import { ref, reactive, onMounted, onBeforeUnmount, provide } from 'vue'
+  import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import {
     json2string,
@@ -105,11 +107,10 @@
       height: '1080px',
       background: '#000',
       style: '',
-      primary: '#409eff',
-      method: 'get'
+      primary: '#409eff'
     }
   })
-  provide('screenData', screenData)
+
   /**
    * 设计左侧图层信息
    */
@@ -143,7 +144,7 @@
     }
   }
   // 顶部事件弹窗相关
-  const drawer = reactive<any>({
+  const drawer = reactive({
     visible: false,
     title: '',
     direction: 'ltr',
@@ -173,7 +174,7 @@
       switch (drawer.type) {
         case 'editCss':
           // 表单属性－编辑表单样式
-          screenData.value.config!.style = editVal
+          screenData.value.config.style = editVal
           appendOrRemoveStyle('screenStyle', editVal, true)
           break
         case 'json':

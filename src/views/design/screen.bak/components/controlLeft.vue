@@ -273,7 +273,12 @@
               border: '1px solid #fff'
             }
           }
-        },
+        }
+      ]
+    },
+    {
+      label: '其他',
+      children: [
         {
           type: 'clock',
           label: dict.clock[0],
@@ -282,17 +287,6 @@
             width: 150,
             height: 30
           }
-        }
-      ]
-    },
-    {
-      label: '布局',
-      children: [
-        {
-          type: 'div',
-          label: 'div布局',
-          icon: 'div',
-          position: {}
         }
       ]
     },
