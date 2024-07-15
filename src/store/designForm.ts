@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useDesignFormStore = defineStore('designForm', {
+export const useFormStore = defineStore('designForm', {
   state: () => {
     return {
       controlAttr: {},
