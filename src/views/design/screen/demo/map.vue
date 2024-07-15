@@ -418,7 +418,7 @@
   })
   const getMapJson = () => {
     const path = props.mapType === 'gd' ? 'guangdong' : 'china'
-    getRequest(`/static/demo1/${path}.json`)
+    getRequest(`./static/demo1/${path}.json`)
       .then(res => {})
       .catch(res => {
         echarts.registerMap(path, res)
