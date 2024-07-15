@@ -72,6 +72,9 @@ export const getRequest = (
       delete options.method
     }
     url = url.replace('api/', 'mock/')
+    if (url.indexOf('mock/static/') !== -1) {
+      url = url.replace('mock/static/', 'static/')
+    }
     obj = Object.assign(
       {
         url: `${url}${params}.json`,
