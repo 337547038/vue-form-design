@@ -58,7 +58,8 @@ export const getRequest = (
       url.includes('/get') ||
       url.includes('/list') ||
       url.includes('/login') ||
-      url.includes('/flow/form')
+      url.includes('/flow/form') ||
+      url.includes('/demo')
     ) {
       /* empty */
     } else if (url.includes('/static/')) {

@@ -114,6 +114,20 @@
         [class*="group-"]{ border: 0}
         .group-div{padding: 0}
       }
+      .group {
+        position: absolute;
+      }
+
+      .default-img, .default-bg {display: block;width: 100%;height: 100%}
+
+      .screen-table {
+        .el-table {background: none}
+
+        .el-table tr {background: none;
+
+          th {background: none}
+        }
+      }
     }
 
     .group-div {padding: 10px;
