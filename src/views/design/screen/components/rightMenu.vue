@@ -20,7 +20,7 @@
   import { jsonParseStringify } from '@/utils/design.ts'
   import { ElMessage } from 'element-plus'
   import { useScreenStore } from '@/store/screen'
-  import { removeUnit } from '@/views/design/screen.bak/utils.ts'
+  import { removeUnit } from '../utils.ts'
 
   const screenData = inject('screenData')
   const screenStore = useScreenStore()
