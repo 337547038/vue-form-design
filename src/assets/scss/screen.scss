@@ -61,6 +61,20 @@
         transform: scale(1) translate(0px, 0px) !important;transition: all .3s;
         .resize-box {display: none}
       }
+      .group {
+        position: absolute;
+      }
+
+      .default-img, .default-bg {display: block;width: 100%;height: 100%}
+
+      .screen-table {
+        .el-table {background: none}
+
+        .el-table tr {background: none;
+
+          th {background: none}
+        }
+      }
     }
     .design-footer {background: rgb(48, 65, 86);display: flex;justify-content: space-between;padding: 0 5px;align-items: center;
       .center {display: flex;justify-content: center;margin: 0 50px}
