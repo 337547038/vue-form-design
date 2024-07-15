@@ -81,12 +81,12 @@ export const cannotDragResize = (rect: any, tips?: boolean): boolean => {
  * @return true 可以选中
  */
 export const canRectSelect = (obj: any) => {
-  const { type, groupId, config = {}, position = {} } = obj
+  const { type, config = {}, position = {} } = obj
   //符合任一条件都不能选中
   return !(
+    type === 'div' ||
     type === 'group' ||
     type === 'tempRect' ||
-    groupId ||
     config.lock ||
     position.display
   )

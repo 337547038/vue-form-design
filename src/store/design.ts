@@ -7,13 +7,16 @@ export const useDesignStore = defineStore('design', {
       controlAttr: {}, // 表单设计时，选中的项
       activeKey: '', // 表单设计时，选中项的标识，用于展示当前状态
       screenControlAttr: {}, // 大屏设计时，选中的项
-      activeIndex: [], // 大屏设计时，当前选中的index
       columnsCheck: getStorage('tableColumns', true) || [], // 表格勾选的列
       formAjaxCache: {}, // 表单内组件选项数据请求缓存
-      dataScreen: getStorage('dataScreen', true) || {} // 大屏设计相关
+      dataScreen: getStorage('dataScreen', true) || {}, // 大屏设计相关
+      controlTip: '' //设计左右角提示文案
     }
   },
   actions: {
+    setControlTip(text: string) {
+      this.controlTip = text
+    },
     setControlAttr(data: any) {
       this.controlAttr = data
     },
@@ -42,9 +45,6 @@ export const useDesignStore = defineStore('design', {
     },
     getDataScreen(key: string) {
       return this.dataScreen[key]
-    },
-    setActiveIndex(data: number[]) {
-      this.activeIndex = data
     }
   }
 })

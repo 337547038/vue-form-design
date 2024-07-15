@@ -120,10 +120,10 @@
           </el-form-item>
           <el-form-item label="数据类型">
             <el-radio-group v-model="current.config.optionsType">
-              <el-radio :label="0" style="margin-right: 4px"
+              <el-radio :value="0" style="margin-right: 4px"
                 >静态/全局</el-radio
               >
-              <el-radio :label="1">动态</el-radio>
+              <el-radio :value="1">动态</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="current.config.optionsType !== 1">
@@ -194,34 +194,17 @@
           <el-form-item label="背景">
             <el-select v-model="state.bgSelect" @change="stateChange">
               <el-option :value="1" label="背景色" />
-              <el-option :value="2" label="渐变色" />
-              <el-option :value="3" label="背景图" />
+              <el-option :value="2" label="背景图" />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="state.bgSelect !== 3" class="color-picker">
+          <el-form-item v-if="state.bgSelect === 1" class="color-picker">
             <el-color-picker
               show-alpha
               v-model="state.bgColor"
               @change="stateChange"
             />
           </el-form-item>
-          <template v-if="state.bgSelect === 2">
-            <el-form-item class="color-picker">
-              <el-color-picker
-                show-alpha
-                v-model="state.bgLinear"
-                @change="stateChange"
-              />
-            </el-form-item>
-            <el-form-item label="渐变角度">
-              <el-slider
-                v-model="state.bgAngle"
-                :max="360"
-                @change="stateChange"
-              />
-            </el-form-item>
-          </template>
-          <el-form-item v-if="state.bgSelect === 3" class="upload-image">
+          <el-form-item v-if="state.bgSelect === 2" class="upload-image">
             <el-input
               placeholder="请输入图片地址"
               v-model="state.bgUpload"
@@ -286,29 +269,20 @@
 <script setup lang="ts">
   import { computed, inject, reactive, ref, watch } from 'vue'
   import { onBeforeRouteLeave } from 'vue-router'
-  import type { OpenDrawer } from '../types'
+  import type { OpenDrawer, Config } from '../types'
   import UploadImage from './upload.vue'
-  import { useDesignStore } from '@/store/design'
-
-  /*  const props = withDefaults(
-    defineProps<{
-      config: Config
-    }>(),
-    {}
-  )*/
+  import { useScreenStore } from '@/store/screen'
   const emits = defineEmits<{
-    // (e: 'update:config', val: Config): void
     (e: 'openDrawer', val: OpenDrawer): void
-    (e: 'update'): void
   }>()
 
   const screenData = inject('screenData')
-  const config = computed(() => {
+  const config = computed<Config>(() => {
     return screenData.value.config || {}
   })
-  const designStore = useDesignStore()
+  const screenStore = useScreenStore()
   const current = computed(() => {
-    return designStore.screenControlAttr
+    return screenStore.controlAttr
   })
   const isLockDisplay = computed(() => {
     return current.value?.config?.lock || current.value?.position?.display
@@ -320,8 +294,6 @@
   // ---------------------大屏配置开始---------------------
   const state = reactive({
     bgColor: '',
-    bgLinear: '',
-    bgAngle: 0,
     bgUpload: '',
     bgSelect: ''
   })
@@ -336,17 +308,6 @@
           const img = bg.match(iReg)
           Object.assign(state, {
             bgUpload: img,
-            bgSelect: 3
-          })
-        } else if (bg.indexOf('linear') !== -1) {
-          const str = bg.substring(bg.indexOf('(') + 1, bg.lastIndexOf(')'))
-          const split = str.split(
-            /,(?![^(]*\))(?![^"']*["'](?:[^"']*["'][^"']*["'])*[^"']*$)/
-          )
-          Object.assign(state, {
-            bgColor: split[1].trim(),
-            bgLinear: split[2].trim(),
-            bgAngle: Number(split[0].replace('deg', '')),
             bgSelect: 2
           })
         } else {
@@ -366,9 +327,6 @@
         bg = state.bgColor
         break
       case 2:
-        bg = `linear-gradient(${state.bgAngle}deg, ${state.bgColor}, ${state.bgLinear})`
-        break
-      case 3:
         bg = `url(${state.bgUpload})`
         break
     }
@@ -604,10 +562,6 @@
     } else {
       current.value.config[obj.key] = value
     }
-    if (['zIndex', 'display', 'lock'].includes(obj.key)) {
-      // 这三个更新，需要重设左侧图层
-      emits('update')
-    }
   }
   /***
    * 选择上传图片
@@ -633,8 +587,8 @@
   const openDrawer = (type: string, isGlobal?: boolean) => {
     let codeType: string = ''
     let editData
-    const title: string = ''
-    const tips = ''
+    let title: string = ''
+    let tips = ''
     let eventType = type
     if (type === 'afterFetchScreen') {
       eventType = 'afterFetch'
@@ -645,12 +599,12 @@
         break
       case 'beforeFetch':
       case 'afterFetch':
-      /*case 'afterFetchScreen':
+      case 'afterFetchScreen':
         if (isGlobal) {
           if (type === 'afterFetch') {
-            tips = '这里返回的数据在当前页面可使用getScreenGlobal()方法获取'
+            tips = '这里返回的数据在当前页面可使用getScreenGlobal方法获取'
           }
-          editData = props.config && (props.config as any)[eventType]
+          editData = config.value && (config.value as any)[eventType]
         } else {
           editData = current.value.events && current.value.events[eventType]
         }
@@ -682,7 +636,7 @@
         if (typeVal === 'table') {
           title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
         }
-        break*/
+        break
     }
     const emitsParams = {
       content: editData,
@@ -704,7 +658,7 @@
               current.value.events[eventType] = result
             }
             break
-          /*case 'style':
+          case 'style':
             current.value.config.style = result
             break
           case 'echartsEdit':
@@ -720,7 +674,7 @@
             } else {
               current.value.option = result
             }
-            break*/
+            break
         }
       }
     }

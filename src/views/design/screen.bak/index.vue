@@ -520,8 +520,8 @@
             max = removeUnit(obj.position[widthHeight])
           }
         }
-        currentData.position[widthHeight] = max + 'px'
-        currentData.position[leftTop] = center - max / 2
+        obj.position[widthHeight] = max + 'px'
+        obj.position[leftTop] = center - max / 2
         break
     }
   }

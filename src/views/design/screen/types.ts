@@ -25,8 +25,9 @@ export interface ScreenData {
   option?: any
   config?: any
   events?: any
-  groupId?: string
+  list?: ScreenData[]
   id?: string
+  layerName?: string
 }
 export interface OpenDrawer {
   //visible: boolean
@@ -48,15 +49,4 @@ export interface UpdatePosition {
   moveX?: number //移动的距离
   moveY?: number
   eventKey?: string
-}
-
-export interface Contextmenu {
-  type: string
-  x: number
-  y: number
-}
-export interface Contextmenu2 extends Contextmenu {
-  activeIndex: number
-  tempRectIndex: number[]
-  callback: (type: string, data?: any) => void
 }

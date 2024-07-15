@@ -1,10 +1,10 @@
 <!-- Created by weiXin:337547038 -->
 <template>
-  <div :style="screenStyle" class="design-canvas">
+  <div :style="screenStyle" class="design-screen">
     <a-screen
       v-for="(element, index) in screenData.list"
       :key="index"
-      :data="getReplaceGlobal(element)"
+      :data="element"
     />
   </div>
 </template>
@@ -15,7 +15,7 @@
   import { ref, onMounted, computed } from 'vue'
   import { useRoute } from 'vue-router'
   import AScreen from '../components/screen.vue'
-  import { getInitData, getReplaceGlobal } from '../getData'
+  import { getInitData } from '../getData'
 
   const route = useRoute()
   const loading = ref(true)

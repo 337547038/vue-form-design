@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, nextTick, watch, computed } from 'vue'
+  import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue'
   import { debounce } from '@/utils'
   import { onBeforeRouteLeave } from 'vue-router'
   const props = withDefaults(

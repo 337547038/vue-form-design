@@ -14,7 +14,7 @@ const baseUrl: any = {
 
 const service = axios.create({
   baseURL: baseUrl[mode],
-  timeout: 3000, // request timeout
+  //timeout: 30000, // request timeout
   headers: {}
 })
 

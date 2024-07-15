@@ -11,24 +11,25 @@
   >
     <div
       v-if="type === 0 && !data.config?.lock"
-      v-show="current"
       class="resize-box"
       @contextmenu="contextmenu"
       @mousedown.left.stop="moveMousedown"
     >
       <span
-        v-show="data.type !== 'tempRect'"
+        v-show="activeId === data.id && data.type !== 'tempRect'"
         v-for="item in 8"
         :key="item"
         :class="`rs${item}`"
         @mousedown.stop="resizeDotMouseDown($event, item)"
       ></span>
-      <div class="position">{{ JSON.stringify(props.data.position) }}</div>
+      <div class="position" v-show="activeId === data.id">
+        {{ JSON.stringify(data.position) }}
+      </div>
     </div>
     <div
       v-if="['text', 'border'].includes(data.type)"
       :style="getConfigStyle"
-      v-html="newValue || config.text"
+      v-html="getReplaceGlobal(newValue || config.text)"
     ></div>
     <div v-if="data.type === 'sText'" :style="getConfigStyle">
       <my-marquee
@@ -38,7 +39,7 @@
         :step="config.step"
         :width="`${data.position.width}px`"
       >
-        {{ newValue || config.text }}
+        {{ getReplaceGlobal(newValue || config.text) }}
       </my-marquee>
     </div>
     <img
@@ -83,9 +84,15 @@
     />
     <echarts-init
       v-if="['line', 'bar', 'pie', 'echarts'].includes(data.type)"
-      :height="data.position.height"
-      :option="(newValue || data.option) as any"
-      :width="data.position.width || '100%'"
+      :height="getWidthHeight(data.position.height)"
+      :option="getReplaceGlobal(newValue || data.option)"
+      :width="getWidthHeight(data.position.width) || '100%'"
+    />
+    <screen-group
+      v-if="['div', 'group'].includes(data.type)"
+      v-model="data.list"
+      data-type="div"
+      :pId="data.id"
     />
   </div>
 </template>
@@ -98,33 +105,43 @@
     nextTick,
     watch,
     reactive,
+    inject,
     onBeforeUnmount
   } from 'vue'
   import { onBeforeRouteLeave } from 'vue-router'
   import NowTime from './nowTime.vue'
   import MyMarquee from './marquee.vue'
   import EchartsInit from '../../components/echartsInt.vue'
-  import type { ScreenData, UpdatePosition, Contextmenu } from '../types'
+  import type { ScreenData, UpdatePosition } from '../types'
   import formatScreen from '@/utils/formatScreen'
   import { cannotDragResize, addUnit, removeUnit } from '../utils'
   import { requestResponse } from '@/utils/requestResponse.ts'
+  import ScreenGroup from './screenGroup.vue'
+  import { useScreenStore } from '@/store/screen'
+  import { objToStringify, stringToObj } from '@/utils/design.ts'
 
   const props = withDefaults(
     defineProps<{
       data: ScreenData
       type?: number
-      current?: boolean // 当前激活的项index
       scale?: number
     }>(),
     {
       type: 1,
-      scale: 100
+      scale: 100,
+      data: () => {
+        return {}
+      }
     }
   )
   const emits = defineEmits<{
-    (e: 'contextmenu', data: Contextmenu): void
     (e: 'changeEvent', data: UpdatePosition): void
   }>()
+
+  const screenStore = useScreenStore()
+  const activeId = computed(() => {
+    return screenStore.activeId
+  })
   const state = reactive({
     left: 0, //移动时实时位置，移动结束才更新
     top: 0,
@@ -171,6 +188,14 @@
       display: display ? 'none' : ''
     }
   })
+
+  const getWidthHeight = (wh: string | number) => {
+    if (wh.toString().indexOf('%') !== -1) {
+      return '100%' //如果是%单位时，这里是外层的单位，不用直接用
+    } else {
+      return wh
+    }
+  }
   const stopPropagation = (evt: MouseEvent) => {
     // 当前图层锁定时允许，要不没办法拖动主设计区域
     if (!config.value.lock) {
@@ -178,7 +203,9 @@
       evt.stopPropagation()
     }
   }
+  //缩放
   const resizeDotMouseDown = (evt: MouseEvent, index: number) => {
+    //对组进行缩放，暂不处理了。都要转换成百分比才好处理
     if (props.data.type === 'group') {
       return
     }
@@ -266,10 +293,6 @@
   }
   // 移动
   const moveMousedown = (evt: MouseEvent) => {
-    // 暂不处理组标签移动
-    if (props.data.type === 'group') {
-      return
-    }
     // 设置了right或bottom时不能拖动
     const { left, top } = props.data.position
     state.moveFlag = true
@@ -426,9 +449,38 @@
     }
   }
   // 获取动态数据相关结束
+  const getReplaceGlobal = (data: any) => {
+    //转为字符串好替换预定的数据标识
+    //即将1. data:"{{getScreenGlobal.line.xAxis}}"转为data:getScreenGlobal.line.xAxis
+    //2. text:"标题{{getScreenGlobal.title}}"转为 text:"标题xxx"
+    if (!data) {
+      return data
+    }
+    const newData = typeof data === 'object' ? objToStringify(data) : data
+    if (newData.indexOf('{{') !== -1 && newData.indexOf('}}') !== -1) {
+      const newStr = newData
+        .replace(/"{{.*?}}"/g, function (match) {
+          return match.slice(3, -3)
+        })
+        .replace(/{{.*?}}/g, function (match) {
+          //2,-2即减去{{和}}，得到括号内的文本，作为函数执行
+          return new Function('return ' + match.slice(2, -2))()
+        })
+      return stringToObj(newStr)
+    }
+    return data
+  }
   // 鼠标右键事件
+  const openRightMenu = inject('openRightMenu', null)
   const contextmenu = (evt: MouseEvent) => {
-    emits('contextmenu', { x: evt.pageX, y: evt.pageY, type: props.data.type })
+    if (typeof openRightMenu === 'function') {
+      openRightMenu({
+        x: evt.pageX,
+        y: evt.pageY,
+        type: props.data.type,
+        id: props.data.id
+      })
+    }
     evt.preventDefault()
   }
   onBeforeRouteLeave(() => {

@@ -10,14 +10,14 @@
               itemKey="label"
               tag="ul"
               v-model="item.children"
-              :group="{ name: 'form', pull: 'clone', put: false }"
+              :group="{ name: 'screen', pull: 'clone', put: false }"
               ghost-class="ghost"
               :sort="false"
               :clone="clone"
             >
               <template #item="{ element }">
                 <li :class="[element.type]">
-                  <i :class="`icon-${element.icon}`"></i>
+                  <i :class="`icon-${iconList[element.type]}`"></i>
                   <span :title="element.label">{{ element.label }}</span>
                 </li>
               </template>
@@ -32,34 +32,46 @@
               v-for="(element, index) in layerList"
               :key="index"
               :class="{
-                active: active.includes(element.index),
-                lock: element.lock,
-                display: element.display,
-                isGroup: element.groupId && !element.type
+                active: screenStore.activeId === element.id,
+                lock: element.config?.lock,
+                display: element.position?.display,
+                'text-indent': element.pid
               }"
             >
-              <span @click="showLockClick(element, 'active')"
-                ><i :class="`icon-${element.icon}`"></i>
-                {{ element.label }}</span
-              >
-              <i
-                @click="showLockClick(element, 'display')"
-                class="icon"
-                :class="[element.display ? 'icon-eye-close' : 'icon-eye']"
-              ></i>
-              <i
-                @click="showLockClick(element, 'lock')"
-                class="icon"
-                :class="[element.lock ? 'icon-lock' : 'icon-lock-open']"
-              ></i>
-              <el-popconfirm
-                title="确认删除"
-                @confirm="showLockClick({ index: element.index }, 'del')"
-              >
-                <template #reference>
-                  <i class="icon-del"></i>
-                </template>
-              </el-popconfirm>
+              <div class="name" @click="showLockClick(element, 'active')">
+                <i :class="getIcon(element)"></i>
+                <input
+                  v-model="element.layerName"
+                  v-if="screenStore.activeId === element.id"
+                />
+                <span :title="element.layerName || element.id" v-else>{{
+                  element.layerName || element.id
+                }}</span>
+              </div>
+              <div class="icon-group">
+                <i
+                  @click="showLockClick(element, 'display')"
+                  class="icon"
+                  :class="[
+                    element.position?.display ? 'icon-eye-close' : 'icon-eye'
+                  ]"
+                ></i>
+                <i
+                  @click="showLockClick(element, 'lock')"
+                  class="icon"
+                  :class="[
+                    element.config?.lock ? 'icon-lock' : 'icon-lock-open'
+                  ]"
+                ></i>
+                <el-popconfirm
+                  title="确认删除"
+                  @confirm="showLockClick(element, 'del')"
+                >
+                  <template #reference>
+                    <i class="icon-del"></i>
+                  </template>
+                </el-popconfirm>
+              </div>
             </li>
           </ul>
         </div>
@@ -69,43 +81,95 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, inject, computed } from 'vue'
   import Draggable from 'vuedraggable-es'
   import { jsonParseStringify } from '@/utils/design'
-  import type { ScreenData } from '../types'
-  import { useDesignStore } from '@/store/design'
+  import { useScreenStore } from '@/store/screen'
+  import { ScreenData } from '../types.ts'
 
-  const emits = defineEmits<{
-    (e: 'update', key: string, index: number, value: number | boolean): void
-    (e: 'update:active', index: number[]): void
-  }>()
-  const dict: any = {
-    line: ['折线图', 'line'],
-    bar: ['柱状图', 'bar'],
-    pie: ['饼图', 'pie'],
-    echarts: ['通用图表', ''],
-    table: ['表格', 'table'],
-    text: ['文本', 'text2'],
-    sText: ['滚动文本', 'stext'],
-    image: ['图片', 'image'],
-    background: ['背景', 'image'],
-    border: ['边框', 'border'],
-    clock: ['当前时间', 'time'],
-    component: ['自定义', 'component']
-  }
-  const designStore = useDesignStore()
-  const active = computed(() => {
-    return designStore.activeIndex
+  const screenStore = useScreenStore()
+
+  const screenData = inject('screenData') || {}
+  const layerList = computed(() => {
+    let temp = []
+    screenData.value.list.forEach((item: ScreenData) => {
+      if (item.id !== 'rect') {
+        temp.push(item)
+        if (['div', 'group'].includes(item.type) && item.list?.length) {
+          item.list.forEach((li: ScreenData) => {
+            li.pid = item.id //添加一个父id作为关系，在图层用于低格样式控制
+          })
+          temp = [...temp, ...item.list]
+        }
+      }
+    })
+    return temp
   })
-  const layerList = ref([])
+  const iconList = {
+    line: 'line',
+    bar: 'bar',
+    pie: 'pie',
+    echarts: '',
+    table: 'table',
+    text: 'text2',
+    sText: 'sText',
+    image: 'image',
+    background: 'image',
+    border: 'border',
+    clock: 'time',
+    div: 'div',
+    group: 'div',
+    component: 'component'
+  }
+  const getIcon = (data: ScreenData) => {
+    return `icon-${iconList[data.type]}`
+  }
+
+  const showLockClick = (obj: ScreenData, key: string) => {
+    switch (key) {
+      case 'display':
+        obj.position.display = !obj.position.display
+        break
+      case 'lock':
+        obj.config.lock = !obj.config.lock
+        if (obj.type === 'div') {
+          //将子级全锁定
+          obj.list?.forEach((item: ScreenData) => {
+            item.config.lock = !obj.config.lock
+          })
+        }
+        break
+      case 'active': // 点击时选中对应的层
+        screenStore.setActiveId(obj.id)
+        screenStore.setControlAttr(obj)
+        break
+      case 'del':
+        //根据id删除
+        screenData.value.list.forEach((item: ScreenData, index: number) => {
+          if (item.id === obj.id) {
+            screenData.value.list.splice(index, 1)
+          } else if (
+            ['div', 'group'].includes(item.type) &&
+            item.list?.length
+          ) {
+            item.list.forEach((li: ScreenData, liIndex: number) => {
+              if (li.id === obj.id) {
+                item.list.splice(liIndex, 1)
+              }
+            })
+          }
+        })
+        break
+    }
+  }
+
   const controlList = ref([
     {
       label: '图表',
       children: [
         {
           type: 'line',
-          label: dict.line[0],
-          icon: dict.line[1],
+          label: '折线图',
           position: {
             width: 400,
             height: 300
@@ -129,8 +193,7 @@
         },
         {
           type: 'bar',
-          label: dict.bar[0],
-          icon: dict.bar[1],
+          label: '柱状图',
           position: {
             width: 400,
             height: 300
@@ -154,8 +217,7 @@
         },
         {
           type: 'pie',
-          label: dict.pie[0],
-          icon: dict.pie[1],
+          label: '饼图',
           position: {
             width: 300,
             height: 300
@@ -179,8 +241,7 @@
         },
         {
           type: 'echarts',
-          label: dict.echarts[0],
-          icon: dict.echarts[1],
+          label: '通用图表',
           position: {
             width: 400,
             height: 300
@@ -196,8 +257,7 @@
       children: [
         {
           type: 'table',
-          label: dict.table[0],
-          icon: dict.table[1],
+          label: '表格',
           position: {
             width: 500,
             height: 300
@@ -214,8 +274,7 @@
       children: [
         {
           type: 'text',
-          label: dict.text[0],
-          icon: dict.text[1],
+          label: '文本',
           position: {
             width: 100,
             height: 30
@@ -226,8 +285,7 @@
         },
         {
           type: 'sText',
-          label: dict.sText[0],
-          icon: dict.sText[1],
+          label: '滚动文本',
           position: {
             width: 100,
             height: 30
@@ -238,8 +296,7 @@
         },
         {
           type: 'image',
-          label: dict.image[0],
-          icon: dict.image[1],
+          label: '图片',
           position: {
             width: 100,
             height: 50
@@ -250,8 +307,7 @@
         },
         {
           type: 'background',
-          label: dict.background[0],
-          icon: dict.background[1],
+          label: '背景',
           position: {
             width: 100,
             height: 50
@@ -262,8 +318,7 @@
         },
         {
           type: 'border',
-          label: dict.border[0],
-          icon: dict.border[1],
+          label: '边框',
           position: {
             width: 100,
             height: 100
@@ -276,8 +331,7 @@
         },
         {
           type: 'clock',
-          label: dict.clock[0],
-          icon: dict.clock[1],
+          label: '当前时间',
           position: {
             width: 150,
             height: 30
@@ -291,8 +345,10 @@
         {
           type: 'div',
           label: 'div布局',
-          icon: 'div',
-          position: {}
+          position: {
+            height: 100
+          },
+          list: []
         }
       ]
     },
@@ -301,8 +357,7 @@
       children: [
         {
           type: 'component',
-          label: dict.component[0],
-          icon: dict.component[1],
+          label: '自定义',
           position: {
             width: 200,
             height: 200
@@ -315,66 +370,4 @@
   const clone = (origin: any) => {
     return jsonParseStringify(origin)
   }
-  // 隐藏或锁定
-  const showLockClick = (obj: any, key: string) => {
-    let newVal = false
-    switch (key) {
-      case 'display':
-        newVal = !obj.display
-        obj.display = newVal
-        break
-      case 'lock':
-        newVal = !obj.lock
-        obj.lock = newVal
-        break
-      case 'active': // 点击时选中对应的层
-        designStore.setActiveIndex([obj.index])
-        break
-    }
-    // 通知外层处理
-    emits('update', key, obj.index, newVal)
-  }
-  // 添加或删除图层时
-  const setLayer = (data: ScreenData[]) => {
-    const temp: any = []
-    data.forEach((item: ScreenData, index: number) => {
-      if (item.type === 'group') {
-        temp.push({
-          label: '合并组',
-          zIndex: item.position.zIndex || 0,
-          display: item.position.display,
-          lock: item.config.lock,
-          index: index,
-          icon: '',
-          groupId: item.id,
-          type: 'group'
-        })
-      } else if (item.type !== 'tempRect') {
-        temp.push({
-          label: dict[item.type][0],
-          icon: dict[item.type][1],
-          zIndex: item.position.zIndex || 0,
-          display: item.position.display,
-          lock: item.config.lock,
-          index: index,
-          groupId: item.groupId
-        })
-      }
-    })
-    //先按组排序
-    layerList.value = temp.sort(function (
-      a: { groupId: number; icon: string },
-      b: { groupId: number; icon: any }
-    ) {
-      if (a.groupId < b.groupId) {
-        return -1
-      } else if (a.groupId > b.groupId) {
-        return 1
-      } else {
-        // 组id相同，
-        return a.icon.localeCompare(b.icon)
-      }
-    })
-  }
-  defineExpose({ setLayer })
 </script>

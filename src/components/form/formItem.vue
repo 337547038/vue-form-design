@@ -75,7 +75,7 @@
         <el-checkbox
           v-for="(item, index) in options"
           :key="index"
-          :label="transformOption(item.value)"
+          :value="transformOption(item.value)"
           >{{ item.label }}
         </el-checkbox>
       </el-checkbox-group>

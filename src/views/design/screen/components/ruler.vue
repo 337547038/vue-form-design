@@ -7,7 +7,12 @@
     v-show="showRuler"
   >
     <div class="ruler-box">
-      <span v-for="item in rulerLen" :key="item">{{ getScaleText(item) }}</span>
+      <span
+        v-for="item in rulerLen"
+        :key="item"
+        :style="{ width: `${scale}px` }"
+        >{{ item }}</span
+      >
     </div>
   </div>
 </template>
@@ -21,34 +26,25 @@
       scale: number
       showRuler: boolean
       size: string
-      scroll: number[]
     }>(),
     {
       direction: 'h'
     }
   )
   const rulerStyle = computed(() => {
-    let left = {}
-    if (props.direction === 'v' && props.scroll[0] > 0) {
-      // 垂直方向
-      left = { left: props.scroll[0] + 20 + 'px' }
-    }
     return {
-      width: props.size,
-      ...left
+      width: (parseInt(props.size) * props.scale) / 100 + 'px'
     }
   })
   const rulerLen = computed(() => {
-    const len = props.direction === 'h' ? 1920 : 1080
+    //const len = props.direction === 'h' ? 1920 : 1080
+    const len = parseInt(props.size) + 100
     const temp = []
     for (let i = 0; i < len; i = i + 100) {
       temp.push(i)
     }
     return temp
   })
-  const getScaleText = (text: number) => {
-    return parseInt(`${(text / props.scale) * 100}`)
-  }
 </script>
 <style lang="scss">
   .screen-ruler {
@@ -71,6 +67,7 @@
         transform-origin: left top;
         padding-left: 3px;
         user-select: none;
+        flex-shrink: 0;
       }
     }
     &.ruler-v {

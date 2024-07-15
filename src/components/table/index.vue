@@ -60,7 +60,7 @@
                 <el-checkbox
                   v-for="item in data.columns"
                   :key="item.prop || item.type"
-                  :label="item.prop || item.type"
+                  :value="item.prop || item.type"
                   >{{ item.label }}
                 </el-checkbox>
               </el-checkbox-group>

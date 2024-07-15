@@ -9,7 +9,7 @@
               v-if="limit > 1"
               :disabled="checkboxDisabled(scope.row.fileUrl)"
               :model-value="checkedListCheckbox.includes(scope.row.fileUrl)"
-              :label="scope.row.fileUrl"
+              :value="scope.row.fileUrl"
               @change="checkboxChange(scope.row)"
               >{{ scope.row.fileName }}</el-checkbox
             >
