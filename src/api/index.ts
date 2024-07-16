@@ -72,7 +72,6 @@ export const getRequest = (
       delete options.method
     }
     url = url.replace('api/', 'mock/')
-    console.log(url)
     obj = Object.assign(
       {
         url: `${url}${params}.json`,
