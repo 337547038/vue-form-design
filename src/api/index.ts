@@ -59,10 +59,10 @@ export const getRequest = (
       url.includes('/list') ||
       url.includes('/login') ||
       url.includes('/flow/form') ||
-      url.includes('/demo')
+      url.includes('/demo/')
     ) {
       /* empty */
-    } else if (url.includes('/static/')) {
+    } else if (url.includes('static/')) {
       url = url.replace('.json', '')
     } else {
       url = 'mock/ok'
@@ -72,9 +72,7 @@ export const getRequest = (
       delete options.method
     }
     url = url.replace('api/', 'mock/')
-    if (url.indexOf('mock/static/') !== -1) {
-      url = url.replace('mock/static/', 'static/')
-    }
+    console.log(url)
     obj = Object.assign(
       {
         url: `${url}${params}.json`,
