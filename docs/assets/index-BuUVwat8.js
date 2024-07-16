@@ -1,4 +1,4 @@
-/* empty css                                                            */import{o as n,c as e,ad as s}from"./index-DW6ahk2i.js";const o={class:"marked-body"},t=s(`<h1 id="开发指南">开发指南</h1><p>欢迎有兴趣的同学参与完善文档</p><h2 id="目录结构">目录结构</h2><pre class="language-text"><code class="hljs">nodejs 模拟后端接口
+/* empty css                                                            */import{o as n,c as e,A as s}from"./index-4Q00i4b2.js";const o={class:"marked-body"},t=s(`<h1 id="开发指南">开发指南</h1><p>欢迎有兴趣的同学参与完善文档</p><h2 id="目录结构">目录结构</h2><pre class="language-text"><code class="hljs">nodejs 模拟后端接口
 public
  ├─mock json模拟数据
  ├─static 静态资源
