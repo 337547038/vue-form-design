@@ -54,7 +54,7 @@ const routes = [
   {
     path: '/docs',
     redirect: '/docs',
-    name: 'docs',
+    name: 'docsLayout',
     component: () => import('../docs/components/layout.vue'),
     children: filterRoutePage('docs')
   }
