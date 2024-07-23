@@ -19,7 +19,9 @@ export const download = (url, data, config = {}) => {
             headers['content-disposition'].split(';')[1].split('=')[1]
           ) ||
           `${url.substr(1).replace(/\//g, '_')}_${new Date().getTime()}.xls`
-        const downloadUrl: string = window.URL.createObjectURL(new Blob([data]))
+        const downloadUrl: string = window.URL.createObjectURL(
+          new Blob([data], { type: data.type })
+        )
         const link = document.createElement('a')
         link.style.display = 'none'
         link.href = downloadUrl

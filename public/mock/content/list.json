@@ -1,1 +1,19 @@
-{"code":1,"data":{"total":0,"list":[]}}
+{
+  "code": 1,
+  "data": {
+    "total": 0,
+    "list": [
+      {
+        "id": 1222,
+        "name": "name",
+        "slotName": "123",
+        "switch": "0",
+        "tag":0,
+        "link": "http://www.baidu.com",
+        "datetime": 1721306041787,
+        "date": 1721306041787,
+        "image": "/static/screen/bg/bg.jpg"
+      }
+    ]
+  }
+}

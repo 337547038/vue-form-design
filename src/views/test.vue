@@ -1,12 +1,8 @@
 <template>
   <div>
-    <el-button @click="buttonClick">queryByPage</el-button>
-    <el-button @click="buttonClickInsert">insert</el-button>
-    <el-button @click="buttonClickEdit">edit</el-button>
-    <el-button @click="buttonClickDel">del</el-button>
-    <el-button @click="buttonClickLogin">login</el-button>
-    <el-button @click="buttonClickById">ById</el-button>
-    <el-button @click="buttonClickTest">test</el-button>
+    <TableList :data="data" :api-key="{ edit: '/edit' }" pk="id">
+      <template #slotName="scope"> slot:{{ scope.value }} </template>
+    </TableList>
   </div>
 </template>
 <route>
@@ -15,120 +11,86 @@ layout:'hidden'}}
 </route>
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
-  import { useLayoutStore } from '@/store/layout'
-  import { getRequest } from '@/api'
-  import type { ScreenData } from '@/views/design/screen/types.ts'
-  import { objToStringify, stringToObj } from '@/utils/design.ts'
-
-  defineOptions({ name: 'test001' })
-  const val = ref(0.25)
-  const buttonClick = () => {
-    const params = {
-      query: {
-        type: 1
+  import TableList from '@/components/table/index.vue'
+  const data = ref({
+    columns: [
+      { label: '勾选', type: 'selection' },
+      { prop: 'id', label: 'ID', width: '60px' },
+      { prop: 'name', label: '名称', width: '150px' },
+      { prop: 'slotName', label: '自定义插槽', width: 150 },
+      {
+        prop: 'switch',
+        label: 'switch',
+        render: 'switch',
+        config: {
+          activeText: '启用',
+          inactiveText: '禁用',
+          activeValue: '1',
+          inactiveValue: '0',
+          inlinePrompt: true
+        }
       },
-      extend: {
-        // formId: 27,
-        pageSize: 20,
-        pageNum: 1
+      { prop: 'image', label: 'image', render: 'image' },
+      {
+        prop: 'tag',
+        label: 'tag',
+        render: 'tag',
+        config: { replaceValue: { 0: '男' }, custom: { 0: 'danger' } }
+      },
+      { prop: 'link', label: 'link', render: 'link' },
+      {
+        prop: 'datetime',
+        label: 'datetime',
+        render: 'datetime'
+      },
+      {
+        prop: 'date',
+        label: 'date',
+        render: 'date'
+        //config: { timeFormat: '{y}-{m}-{d} {h}:{i}:{s}' }
+      },
+      {
+        prop: 'operate',
+        label: 'operate',
+        render: 'buttons',
+        config: {
+          dropdown: 5,
+          buttons: [
+            { key: 'edit' },
+            { key: 'del' },
+            { label: '查看', type: 'primary' }
+          ]
+        }
       }
-    }
-    getRequest('design/list', params)
-      .then(res => {
-        console.log(res)
-      })
-      .catch(res => {
-        console.log('get')
-        console.log(res)
-      })
-  }
-  const buttonClickInsert = () => {
-    const params = {
-      name: '1',
-      phone: '',
-      weixin: '',
-      company: '',
-      status: 1,
-      intention: 1,
-      remark: '',
-      formId: 27
-    }
-
-    getRequest('content/save', params)
-  }
-  const buttonClickEdit = () => {
-    const params = {
-      name: '调试demo',
-      tableName: 'demo_test',
-      category: 0,
-      remark: '调试demo_test',
-      status: 1,
-      id: 24,
-      creatDate: '2024-01-02T09:54:40.000+00:00',
-      updateDate: '2024-01-02T09:54:40.000+00:00',
-      creatUserId: 1,
-      updateUserId: 'null',
-      tableData:
-        '[{"name":"name","type":"VARCHAR","length":"50","label":"标题","filedType":"text"}]'
-    }
-    getRequest('datasource/edit', params)
-  }
-  const buttonClickDel = () => {
-    const params = {
-      id: '12',
-      formId: 55
-    }
-    getRequest('content/delete', params)
-  }
-  const buttonClickLogin = () => {
-    const params = {
-      userName: 'user',
-      password: '123456',
-      codeId: '8eef4b07c0272a091c39f6b3f3d313ac',
-      code: '3pq6',
-      refreshToken:
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNzAxMTYxOTgyfQ.ikJzCNORJFNYeOlLF1_eGiknGYcwTSQjxALFdVy6t-A'
-    }
-    getRequest('system/user/login', params)
-  }
-  const buttonClickById = () => {
-    const params = {
-      formId: '25',
-      id: '1'
-    }
-    getRequest('content/get', params)
-  }
-  const buttonClickTest = () => {
-    //getRequest('demo/select', {})
-    //getRequest('demo/dict', {})
-    //getRequest('demo/echarts', {})
-    getRequest('test/t', {})
-  }
-
-  window.obj = {
-    data: [1, 2],
-    text: { a: 12 },
-    title: '标题'
-  }
-  const str = {
-    data: '{{obj.data}}',
-    text: '{{obj.text}}',
-    title: '标题{{obj.title}}'
-  }
-  const getReplaceGlobal = data => {
-    //转为字符串好替换预定的数据标识
-    //即将1. data:"{{getScreenGlobal.line.xAxis}}"转为data:getScreenGlobal.line.xAxis
-    //3. text:"标题{{getScreenGlobal.title}}"转为 text:"标题xxx"
-    const newStr = objToStringify(data)
-      .replace(/"{{.*?}}"/g, function (match) {
-        console.log(match)
-        return match.slice(3, -3)
-      })
-      .replace(/{{.*?}}/g, function (match) {
-        //2,-2即减去{{和}}，得到括号内的文本，作为函数执行
-        return new Function('return ' + match.slice(2, -2))()
-      })
-    return stringToObj(newStr)
-  }
-  console.log(getReplaceGlobal(str))
+    ],
+    config: {},
+    apiKey: {
+      edit: '/mock/content/edit',
+      list: '/mock/content/list',
+      del: '/mock/content/del',
+      export: '/mock/content/export'
+    },
+    events: {
+      //事件开始前，这里可根据不同的type对请求的参数进行修改，return false阻止事件
+      // type=switchChange列表switch切换 | getData获取列表数据 | del删除 | search条件筛选
+      before: ({ type, params }) => {
+        console.log(type)
+        console.log(params)
+        return params //可将修改后的值返回去
+      },
+      after: (type: string, result: any, isSuccess: boolean) => {
+        console.log('after', type)
+        // type事件类型，同before。result请求返回结果,isSuccess成功或失败
+        // 这里可对result的值修改后返回
+        return result
+      }
+    },
+    controlBtn: [
+      { key: 'add' },
+      { key: 'edit' },
+      { key: 'del' },
+      { key: 'export' },
+      { name: 'import', label: '导入', type: 'primary' }
+    ]
+  })
 </script>

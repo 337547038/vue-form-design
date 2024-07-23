@@ -9,23 +9,48 @@
 
 ### Props
 
-| 参数                | 类型                            | 说明                            |
-|-------------------|-------------------------------|-------------------------------|
-| data              | object                        | 通过设计器拖拽生成的表格配置数据，见使用配置手册      |
-| searchData        | object                        | 列表页条件筛选表单数据，同表单的`formData`    |
-| beforeFetch       | function(params,route)/string | 请求列表前参数处理方法，可对请求参数处理          |
-| afterFetch        | function(params,route)/string | 请求完成后列表数据处理方法                 |
-| beforeDelete      | function(params,route)/string | 删除请求前事件                       |
-| afterDelete       | function(type,res)            | 删除顺应事件                        |
-| showPage          | boolean                       | 是否显示分页信息，默认为true              |
-| requestUrl        | string                        | 请求的api接口方法                    |
-| deleteUrl         | string                        | 删除的api接口方法                    |
-| dict              | object                        | 用于匹配的字典数据，一般不设置，从接口获取         |
-| fixedBottomScroll | boolean                       | 横向滚动条固定在浏览器底部 ，默认为true        |
-| autoLoad          | boolean                       | 初始时是否自动请求加载数据，默认为true         |
-| treeData          | object                        | 列表左侧栏树数据                      |
-| delKey            | string                        | 删除标识,默认id                     |
-| query             | object                        | 一些附加的请求参数。也可在`beforeFetch`处处理 |
+| 参数                | 类型                                | 说明                                |
+|-------------------|-----------------------------------|-----------------------------------|
+| data              | object                            | 通过设计器拖拽生成的表格配置数据                  |
+| data.columns      | array                             | 用于渲染el-columns-table列，所有参数绑定于当前组件 |
+| data.tableProps   | object                            | el-table所有props                   |
+| data.apiKey       | object                            | 同props.apiKey，此处优先级更高             |
+| data.events       | object                            | 事件                                |
+| data.controlBtn   | array                             | 表格上方按钮组设置，见如何设置一个btn              |
+| searchData        | object                            | 列表页条件筛选表单数据，同表单的`formData`        |
+| apiKey            | object                            | 数据请求交互api                         |
+| before            | function(obj)/string              | 请求列表前参数处理方法，可对请求参数处理              |
+| after             | function(type,res,success)/string | 请求完成后列表数据处理方法                     |
+| dict              | object                            | 用于匹配的字典数据，一般不设置，从接口获取             |
+| fixedBottomScroll | boolean                           | 横向滚动条固定在浏览器底部 ，默认为true            |
+| autoLoad          | boolean                           | 初始时是否自动请求加载数据，默认为true             |
+| treeData          | object                            | 列表左侧栏树数据                          |
+| pk                | string                            | 主键                                |
+| query             | object                            | 一些附加的请求参数。也可在`before`处处理          |
+
+### props.data.columns
+
+| 参数           | 类型             | 说明                                                                        |
+|--------------|----------------|---------------------------------------------------------------------------|
+| help         | string         | 表头tooltip提示信息                                                             |
+| render       | string         | 渲染类型，可选`switch、image、tag、link、datetime、date、buttons、string、text`，默认string |
+| config       | object         | 当前render类型的附加属性，详见当前组件的props。                                             |
+| replaceValue | object         | 仅当`render=tag/text`时,{ '1': '启用', '0': '禁用' }                             |
+| custom       | object         | 仅当`render=tag/text`时,{ '1': 'success', '0': 'danger' }                    |
+| timeFormat   | string         | 仅当`render=datetime、date`时，对日期格式化，如YYYY年MM月dd日                             |
+| buttons      | array          | 仅当`render=buttons`时，表格行右侧边按钮，详情见`自定义表格行右侧边按钮 `                            |
+| －            | －              | 所有`el-table-column`属性                                                     |
+
+
+### props.apiKey
+
+
+| 方法     | 说明                 |
+|--------|--------------------|
+| list   | 列表数据接口             |
+| edit   | 列表使用了switch时用于修改状态 |
+| del    | 删除接口               |
+| export | 导出接口               |
 
 ### Methods
 
@@ -46,18 +71,6 @@
 | searchForm | 位于条件筛选表单内部                       |
 | -          | columns对应的props                  |
 
-### data
-
-| 参数                  | 类型              | 说明                             |
-|---------------------|-----------------|--------------------------------|
-| tableProps          | Object          | 表格配置                           |
-| columns             | Array           | 表格列配置                          |
-| controlBtn          | Array           | 列表上方按钮，如新增/删除                  |
-| operateBtn          | Array           | 操作栏按钮设置，仅对约定props='__control'列 |
-| events.beforeFetch  | Function        | 同`props.beforeFetch`           |
-| events.afterFetch   | Function/string | 同`props.beforeFetch`           |
-| events.beforeDelete | Function 　      | 同`props.beforeFetch`           |
-| events.afterDelete  | Function 　      | 同`props.beforeFetch`           |
 
 ### tree
 
