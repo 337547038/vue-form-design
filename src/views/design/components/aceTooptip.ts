@@ -3,10 +3,9 @@ export const getDrawerTitle = {
     '表单组件值改变事件。这里可修改其他组件的值。返回字符串形式可在@/utils/formChangeValue中处理',
   afterSubmit: '表单提交响应事件；支持返回字符串形式',
   beforeSubmit: '表单数据提交前事件，可对提交数据进行处理；支持返回字符串形式',
-  afterFetch:
-    '获取表单初始数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式',
-  beforeFetch:
-    '获取表单初始数据请求发送之前事件，可对请求参数进行处理；支持返回字符串形式',
+  after:
+    '获取数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式',
+  before: '获取数据请求发送之前事件，可对请求参数进行处理；支持返回字符串形式',
   optionsParams: '请求发送之前事件，可对请求参数进行处理；支持返回字符串形式',
   optionsResult: '请求响应事件处理；支持返回字符串形式',
   editCss: '当前表单应用页的样式，类似于.vue文件中的style scoped中的样式',
@@ -22,7 +21,7 @@ export const getDrawerTitle = {
 }
 export const getDrawerContent = (key: string, tips?: string) => {
   switch (key) {
-    case 'beforeFetch':
+    case 'before':
     case 'optionsParams':
       return (
         'opt=(data, route) => {\n' +
@@ -31,7 +30,7 @@ export const getDrawerContent = (key: string, tips?: string) => {
         '  return data\n' +
         '}'
       )
-    case 'afterFetch':
+    case 'after':
     case 'optionsResult':
       return (
         'opt=(type, res) => {\n' +

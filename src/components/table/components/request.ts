@@ -18,7 +18,7 @@ const getData = ({ props, state, page, searchFormValue, route }) => {
     const formValue = searchFormValue || {}
     const params = {
       extend: {
-        sort: props.data.config?.sort,
+        sort: props.data.config?.orderSort,
         pageSize: state.pageSize,
         pageNum: state.currentPage
       },

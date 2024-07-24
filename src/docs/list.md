@@ -1,7 +1,6 @@
 # AKList 内容列表
 
 ```html
-
 <ak-list :data="tableData"></ak-list>
 ```
 
@@ -9,24 +8,24 @@
 
 ### Props
 
-| 参数                | 类型                                | 说明                                |
-|-------------------|-----------------------------------|-----------------------------------|
-| data              | object                            | 通过设计器拖拽生成的表格配置数据                  |
-| data.columns      | array                             | 用于渲染el-columns-table列，所有参数绑定于当前组件 |
-| data.tableProps   | object                            | el-table所有props                   |
-| data.apiKey       | object                            | 同props.apiKey，此处优先级更高             |
-| data.events       | object                            | 事件                                |
-| data.controlBtn   | array                             | 表格上方按钮组设置，见如何设置一个btn              |
-| searchData        | object                            | 列表页条件筛选表单数据，同表单的`formData`        |
-| apiKey            | object                            | 数据请求交互api                         |
-| before            | function(obj)/string              | 请求列表前参数处理方法，可对请求参数处理              |
-| after             | function(type,res,success)/string | 请求完成后列表数据处理方法                     |
-| dict              | object                            | 用于匹配的字典数据，一般不设置，从接口获取             |
-| fixedBottomScroll | boolean                           | 横向滚动条固定在浏览器底部 ，默认为true            |
-| autoLoad          | boolean                           | 初始时是否自动请求加载数据，默认为true             |
-| treeData          | object                            | 列表左侧栏树数据                          |
-| pk                | string                            | 主键                                |
-| query             | object                            | 一些附加的请求参数。也可在`before`处处理          |
+| 参数                | 类型                          | 说明                                |
+|-------------------|-----------------------------|-----------------------------------|
+| data              | object                      | 通过设计器拖拽生成的表格配置数据                  |
+| data.columns      | array                       | 用于渲染el-columns-table列，所有参数绑定于当前组件 |
+| data.tableProps   | object                      | el-table所有props                   |
+| data.apiKey       | object                      | 同props.apiKey，此处优先级更高             |
+| data.events       | object                      | 事件                                |
+| data.controlBtn   | array                       | 表格上方按钮组设置，见如何设置一个btn              |
+| searchData        | object                      | 列表页条件筛选表单数据，同表单的`formData`        |
+| apiKey            | object                      | 数据请求交互api                         |
+| before            | function(params,obj)/string | 请求列表前参数处理方法，可对请求参数处理              |
+| after             | function(res,obj)/string    | 请求完成后列表数据处理方法                     |
+| dict              | object                      | 用于匹配的字典数据，一般不设置，从接口获取             |
+| fixedBottomScroll | boolean                     | 横向滚动条固定在浏览器底部 ，默认为true            |
+| autoLoad          | boolean                     | 初始时是否自动请求加载数据，默认为true             |
+| treeData          | object                      | 列表左侧栏树数据                          |
+| pk                | string                      | 主键                                |
+| query             | object                      | 一些附加的请求参数。也可在`before`处处理          |
 
 ### props.data.columns
 
@@ -74,12 +73,70 @@
 
 ### tree
 
-| 参数          | 类型                   | 说明                      |
-|-------------|----------------------|-------------------------|
-| show        | boolean              | 是否显示                    |
-| name        | string               | 唯一标识，查询条件参数值            |
-| method      | string               | 数据接口请求方式，get/post默认post |
-| requestUrl  | string               | 数据接口请求地址，必填             |
-| beforeFetch | Function(data,route) | 接口请求前数据参数处理方式           |
-| afterFetch  | Function/string      | 接口请求后数据参数处理方式           |
-| treeProps   | object               | 组件tree对应props           |
+| 参数         | 类型                     | 说明                      |
+|------------|------------------------|-------------------------|
+| show       | boolean                | 是否显示                    |
+| name       | string                 | 唯一标识，查询条件参数值            |
+| method     | string                 | 数据接口请求方式，get/post默认post |
+| requestUrl | string                 | 数据接口请求地址，必填             |
+| before     | Function(params,route) | 接口请求前数据参数处理方式           |
+| after      | Function(res)/string   | 接口请求后数据参数处理方式           |
+| treeProps  | object                 | 组件tree对应props           |
+
+### 自定义表格行右侧边及列表上方按钮
+
+我们内置了常见的增加、编辑、查看、删除、导出按钮，只需按约定的key值设置即可快速设置
+```js
+const btn={
+   render: "buttons",
+   buttons: [
+       {
+           key:"edit"
+           //其他值属性可继续设置
+       },
+       {
+           key:"detail"
+       },
+       {
+           key:"del"
+       },
+       {
+           key:"export"
+      }
+   ]
+};
+//自定义一个新的按钮
+const newBtn={
+    render:"buttons",
+    buttos:[
+        {
+            key:"edit"
+        },
+        {
+            // 渲染方式:tooltip=带tip的按钮,confirm=带确认框的按钮，空为正常的按钮
+            render: "tooltip",
+            name: "", // 按钮名称
+            title: "", // 鼠标放置时的 title 提示
+            label: "", // 直接在按钮内显示的文字，title 有值时可为空
+            class: "",
+            type: "primary", // 按钮类型，请参考 element plus 的按钮类型
+            icon: "", // 按钮 icon
+            popConfirm: {}, //自定popConfirm属性，当render=confirm
+            // 自定义点击事件
+            click: (row: { [key: string]: any }) => {
+                
+            },
+            // 按钮是否显示，true显示
+            display: (row: { [key: string]: any }) =>{
+                return true;
+            },
+            // 按钮是否禁用，true禁用
+            disabled: (row: { [key: string]: any }) => {
+                return false;
+            },
+            // 自定义el-button属性
+            attr: {}
+        }
+    ]
+};
+```

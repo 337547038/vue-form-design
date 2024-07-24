@@ -7,10 +7,17 @@ interface RequestParams {
   options?: { [key: string]: any } //请求其他附加参数
   route?: { [key: string]: any } //路由参数
   formModel?: { [key: string]: any } // 当前表单所有值
-  before?: (type: EventType, params: any, rout: any) => boolean
-  after?: (type: EventType, res: any, isSuccess?: boolean) => any
+  before?: (
+    params: any,
+    { type, route, model }: { type: EventType; route?: any; model?: any }
+  ) => boolean
+  after?: (
+    res: any,
+    { type, success }: { type: EventType; success?: boolean }
+  ) => any
   type: string
 }
+
 /**
  * 统一处理beforeFetch和afterFetch提交数据接口请求
  * @param apiKey 请求url或apiKey
@@ -40,9 +47,8 @@ export const beforeAfter = ({
     if (typeof before === 'function') {
       //要求beforeFetch一定要有return，否则不起作用。
       // 这里修改下不让直接修改params的值也能生效，防止如表单拦截修改时页面会显示被修改后的值
-      beforeResult = before({
+      beforeResult = before(jsonParseStringify(params), {
         type: type,
-        params: jsonParseStringify(params),
         route: route,
         model: jsonParseStringify(formModel)
       })
@@ -63,7 +69,7 @@ export const beforeAfter = ({
         const isBolb = res.request?.responseType === 'blob'
         let result: any = isBolb ? res : res.data
         if (typeof after === 'function') {
-          result = after(type, result, true) || result
+          result = after(result, { type: type, success: true }) || result
         } else if (typeof after === 'string' && after) {
           console.log('返回字符串处理：' + result)
           //返回字符串时，这里可根据返回的自定义字符串标识处理各种复杂的情况
@@ -81,7 +87,7 @@ export const beforeAfter = ({
       })
       .catch((res: any) => {
         if (typeof after === 'function') {
-          after(type, res)
+          after(res, { type: type })
         }
         reject(res)
       })

@@ -254,11 +254,11 @@
                 <el-button @click="editOpenDrawer('tree')"
                   >编辑侧栏树属性
                 </el-button>
-                <el-button @click="editOpenDrawer('treeBeforeFetch')"
-                  >beforeFetch
+                <el-button @click="editOpenDrawer('treeBefore')"
+                  >before事件
                 </el-button>
-                <el-button @click="editOpenDrawer('treeAfterFetch')"
-                  >afterFetch
+                <el-button @click="editOpenDrawer('treeAfter')"
+                  >after事件
                 </el-button>
               </el-form-item>
               <el-form-item class="event-btn">
@@ -273,30 +273,36 @@
               <el-form-item label="列表数据请求URL">
                 <el-input
                   placeholder="一般不需要填写，使用默认值"
-                  v-model="state.tableData.config.requestUrl"
+                  v-model="state.tableData.apiKey!.list"
                 />
               </el-form-item>
               <el-form-item label="删除列表数据URL">
                 <el-input
                   placeholder="一般不需要填写，使用默认值"
-                  v-model="state.tableData.config.deleteUrl"
+                  v-model="state.tableData.apiKey.del"
                 />
               </el-form-item>
-              <el-form-item label="删除的标识">
+              <el-form-item label="编辑保存状态URL">
                 <el-input
-                  placeholder="数据删除标识，默认为id"
-                  v-model="state.tableData.config.delKey"
+                  placeholder="一般不需要填写，使用默认值"
+                  v-model="state.tableData.apiKey.edit"
                 />
+              </el-form-item>
+              <el-form-item label="导出列表URL">
+                <el-input
+                  placeholder="一般不需要填写，使用默认值"
+                  v-model="state.tableData.apiKey.export"
+                />
+              </el-form-item>
+              <el-form-item label="主键">
+                <el-input placeholder="列表主键" v-model="state.tableData.pk" />
               </el-form-item>
               <el-form-item class="event-btn">
-                <el-button @click="editOpenDrawer('beforeFetch')"
-                  >beforeFetch
+                <el-button @click="editOpenDrawer('before')"
+                  >before事件
                 </el-button>
-                <el-button @click="editOpenDrawer('afterFetch')"
-                  >afterFetch
-                </el-button>
-                <el-button @click="editOpenDrawer('beforeDelete')"
-                  >beforeDelete
+                <el-button @click="editOpenDrawer('after')"
+                  >after事件
                 </el-button>
               </el-form-item>
             </el-tab-pane>
@@ -356,7 +362,8 @@
     tableData: {
       // tableProps: {}, //表格所有参数
       columns: [],
-      config: {}
+      config: {},
+      apiKey: {}
     },
     searchData: {},
     loading: false,
@@ -523,8 +530,8 @@
       },
       {
         label: '查询排序',
-        value: state.tableData.config?.sort,
-        key: 'sort',
+        value: state.tableData.config?.orderSort,
+        key: 'orderSort',
         type: 'input',
         path: 'config',
         placeholder: '查询排序，id desc'
@@ -685,9 +692,8 @@
         title = 'el-table的相关属性'
         editData = state.tableData.tableProps || {}
         break
-      case 'beforeFetch':
-      case 'afterFetch':
-      case 'beforeDelete':
+      case 'before':
+      case 'after':
         // eslint-disable-next-line no-case-declarations
         const newData: any = state.tableData.events || {}
         editData = newData[type]
@@ -706,12 +712,12 @@
         }
         title = '更多参数详见ak-list组件'
         break
-      case 'treeBeforeFetch':
-        editData = state.tableData.treeData?.beforeFetch
+      case 'treeBefore':
+        editData = state.tableData.treeData?.before
         title = '侧栏树请求前处理事件，可对参数作处理'
         break
-      case 'treeAfterFetch':
-        editData = state.tableData.treeData?.afterFetch
+      case 'treeAfter':
+        editData = state.tableData.treeData?.after
         title = '侧栏树请求返回事件，可对返回数据处理；支持返回字符串'
         break
       case 'operateBtn':
@@ -747,17 +753,16 @@
         editData = objToStringify(obj, true)
     }
     switch (params.type) {
-      case 'beforeFetch':
-      case 'beforeDelete':
-      case 'treeBeforeFetch':
+      case 'before':
+      case 'treeBefore':
         if (!obj) {
-          editData = getDrawerContent('beforeFetch')
+          editData = getDrawerContent('before')
         }
         break
-      case 'afterFetch':
-      case 'treeAfterFetch':
+      case 'after':
+      case 'treeAfter':
         if (!obj) {
-          editData = getDrawerContent('afterFetch')
+          editData = getDrawerContent('after')
         }
         break
     }
@@ -781,9 +786,8 @@
       case 'editDict':
         state.dict = string2json(content)
         break
-      case 'beforeFetch':
-      case 'afterFetch':
-      case 'beforeDelete':
+      case 'before':
+      case 'after':
         if (!state.tableData.events) {
           state.tableData.events = {}
         }
@@ -792,11 +796,11 @@
       case 'tableConfig':
         state.tableData.tableProps = val
         break
-      case 'treeBeforeFetch':
-        state.tableData.treeData.beforeFetch = val
+      case 'treeBefore':
+        state.tableData.treeData.before = val
         break
-      case 'treeAfterFetch':
-        state.tableData.treeData.afterFetch = val
+      case 'treeAfter':
+        state.tableData.treeData.after = val
         break
     }
     drawerBeforeClose()

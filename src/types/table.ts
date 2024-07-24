@@ -30,8 +30,8 @@ export interface TableData {
   }
   treeData?: {
     show: boolean
-    beforeFetch?: Function | string
-    afterFetch?: Function | string
+    before?: Function | string
+    after?: Function | string
     method: string
     requestUrl: string
     name: string
