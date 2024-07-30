@@ -453,8 +453,6 @@
       tableData.treeData.show = val
       return
     }
-    if (obj.key === 'controlBtn') {
-    }
     if (obj.key === 'formId') {
       // 列表数据源选择时，需查当前表单所有字段
       if (!obj.value && tableData.config?.openType === 'dialog') {
