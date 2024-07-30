@@ -104,7 +104,7 @@
         :disabled="disabledEdit"
         :config="config as any"
       />
-      <DiyCode v-if="['tinymce','component'].includes(data.type)"/>
+      <DiyCode v-if="['tinymce'].includes(data.type)" />
       <component
         v-if="['cascader', 'treeSelect'].includes(data.type)"
         :is="currentComponent"
@@ -123,7 +123,8 @@
             'colorPicker',
             'timePicker',
             'datePicker',
-            'expand-user'
+            'expand-user',
+            'component'
           ].includes(data.type)
         "
         :is="currentComponent"
@@ -131,7 +132,7 @@
         :disabled="disabledEdit"
         v-model="value"
       />
-<!--      <template v-if="data.type === 'tinymce'">
+      <!--      <template v-if="data.type === 'tinymce'">
         &lt;!&ndash;  设计模式时拖动会出现异常，设计模式暂用图片代替&ndash;&gt;
         <tinymce-edit
           v-bind="control"

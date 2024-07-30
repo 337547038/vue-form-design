@@ -61,7 +61,7 @@
           { type: 'required', message: '请输入密码', trigger: 'blur' }
         ]
       },
-      /*{
+      {
         type: 'component',
         control: {
           modelValue: '',
@@ -77,7 +77,7 @@
         customRules: [
           { type: 'required', message: '请输入验证码', trigger: 'blur' }
         ]
-      },*/
+      },
       {
         type: 'button',
         control: { label: '登录', type: 'primary', key: 'submit' }
