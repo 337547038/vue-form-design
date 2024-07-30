@@ -68,10 +68,12 @@
               </div>
               <el-button
                 v-for="item in state.tableData?.controlBtn"
+                :type="item.key === 'del' ? 'danger' : 'primary'"
                 v-bind="item"
-                :key="item.label"
+                :key="item.key || item.label"
               >
-                {{ item.label }}
+                <Icon :name="item.icon" />
+                {{ item.label || labelArray[item.key] }}
               </el-button>
             </div>
             <div class="control-other">
@@ -130,185 +132,10 @@
           </div>
         </div>
       </div>
-      <div class="sidebar-tools">
-        <el-form size="small" class="form">
-          <el-tabs v-model="state.tabsName">
-            <el-tab-pane label="字段属性" name="first">
-              <div v-show="Object.keys(state.attrObj).length">
-                <div class="h3">
-                  <h3>{{ state.attrObj?.label }}</h3>
-                  个性化设置
-                </div>
-                <template v-if="state.attrObj.prop === '__control'">
-                  <el-form-item>
-                    <el-button @click="editOpenDrawer('operateBtn')"
-                      >操作按钮设置
-                    </el-button>
-                  </el-form-item>
-                </template>
-                <template v-else>
-                  <el-form-item label="时间格式化">
-                    <el-select
-                      v-model="state.config.formatter"
-                      @change="objectMerge"
-                    >
-                      <el-option
-                        label="{y}-{m}-{d} {h}:{i}:{s}"
-                        value="{y}-{m}-{d} {h}:{i}:{s}"
-                      />
-                      <el-option label="{y}-{m}-{d}" value="{y}-{m}-{d}" />
-                      <el-option label="{h}:{i}:{s}" value="{h}:{i}:{s}" />
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="值匹配字典">
-                    <el-input
-                      placeholder="字典对应的key"
-                      v-model="state.config.dictKey"
-                      @change="objectMerge"
-                    />
-                  </el-form-item>
-                  <el-form-item label="展示图片形式">
-                    <el-input
-                      placeholder="请输入图片宽度"
-                      v-model="state.config.imgWidth"
-                      @change="objectMerge"
-                    />
-                  </el-form-item>
-                  <el-form-item
-                    v-for="(tag, index) in state.tagList"
-                    :key="index"
-                    class="table-tag"
-                  >
-                    <el-input
-                      placeholder="值对应的类型"
-                      v-model="tag.value"
-                      @change="configChange"
-                    >
-                      <template #append>
-                        <el-select
-                          style="width: 80px"
-                          v-model="tag.type"
-                          @change="configChange"
-                        >
-                          <el-option label="success" value="success" />
-                          <el-option label="info" value="info" />
-                          <el-option label="warning" value="warning" />
-                          <el-option label="danger" value="danger" />
-                        </el-select>
-                      </template>
-                    </el-input>
-                    <i
-                      class="icon-del"
-                      @click="delTagOption(index as number)"
-                    ></i>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button @click="tagAdd">新增Tag标签显示</el-button>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button @click="editAttr"
-                      >编辑{{ state.attrObj?.label }}属性
-                    </el-button>
-                  </el-form-item>
-                </template>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="数据列表配置" name="second">
-              <el-form-item
-                v-for="(item, index) in tableListAttr.filter(
-                  item => !item.hide
-                )"
-                :label="item.label"
-                :key="index"
-              >
-                <el-select
-                  v-if="item.type === 'select'"
-                  v-model="item.value"
-                  :placeholder="item.placeholder"
-                  :clearable="true"
-                  @change="tableListAttrChange(item)"
-                >
-                  <el-option
-                    :label="opt.label || opt.name"
-                    v-for="opt in item.options"
-                    :key="opt.label || opt.name"
-                    :value="formatNumber(opt.value ?? opt.id)"
-                  />
-                </el-select>
-                <el-switch
-                  v-else-if="item.type === 'switch'"
-                  v-model="item.value"
-                  @input="tableListAttrChange(item, $event)"
-                />
-                <el-input
-                  v-else
-                  v-model="item.value"
-                  :placeholder="item.placeholder"
-                  @input="tableListAttrChange(item)"
-                />
-              </el-form-item>
-              <el-form-item
-                v-show="state.tableData.treeData?.show"
-                class="event-btn"
-              >
-                <el-button @click="editOpenDrawer('tree')"
-                  >编辑侧栏树属性
-                </el-button>
-                <el-button @click="editOpenDrawer('treeBefore')"
-                  >before事件
-                </el-button>
-                <el-button @click="editOpenDrawer('treeAfter')"
-                  >after事件
-                </el-button>
-              </el-form-item>
-              <el-form-item class="event-btn">
-                <el-button @click="editOpenDrawer('tableConfig')"
-                  >编辑表格属性
-                </el-button>
-                <el-button @click="editOpenDrawer('editDict')"
-                  >设置数据字典
-                </el-button>
-              </el-form-item>
-              <div class="h3"><h3>接口数据事件</h3></div>
-              <el-form-item label="列表数据请求URL">
-                <el-input
-                  placeholder="一般不需要填写，使用默认值"
-                  v-model="state.tableData.apiKey!.list"
-                />
-              </el-form-item>
-              <el-form-item label="删除列表数据URL">
-                <el-input
-                  placeholder="一般不需要填写，使用默认值"
-                  v-model="state.tableData.apiKey.del"
-                />
-              </el-form-item>
-              <el-form-item label="编辑保存状态URL">
-                <el-input
-                  placeholder="一般不需要填写，使用默认值"
-                  v-model="state.tableData.apiKey.edit"
-                />
-              </el-form-item>
-              <el-form-item label="导出列表URL">
-                <el-input
-                  placeholder="一般不需要填写，使用默认值"
-                  v-model="state.tableData.apiKey.export"
-                />
-              </el-form-item>
-              <el-form-item label="主键">
-                <el-input placeholder="列表主键" v-model="state.tableData.pk" />
-              </el-form-item>
-              <el-form-item class="event-btn">
-                <el-button @click="editOpenDrawer('before')"
-                  >before事件
-                </el-button>
-                <el-button @click="editOpenDrawer('after')"
-                  >after事件
-                </el-button>
-              </el-form-item>
-            </el-tab-pane>
-          </el-tabs>
-        </el-form>
-      </div>
+      <control-attr
+        @changeEvent="controlAttrChangeEvent"
+        v-model:tabsName="state.tabsName"
+      />
     </div>
     <ace-drawer
       v-model="drawer.visible"
@@ -333,7 +160,7 @@
 {meta:{permissions:'none'}}
 </route>
 <script setup lang="ts">
-  import { reactive, ref, nextTick, onMounted, computed } from 'vue'
+  import { reactive, ref, nextTick, onMounted, computed, provide } from 'vue'
   import HeadTools from '../components/headTools.vue'
   import VueFile from '../components/vueFile.vue'
   import AceDrawer from '../components/aceDrawer.vue'
@@ -351,6 +178,9 @@
   import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
   import { getDrawerContent, getDrawerTitle } from '../components/aceTooptip'
+  import ControlAttr from './components/controlAttr.vue'
+  import { getFormColumns, getInitData } from './components/request'
+  import Icon from '@/components/icon/index.vue'
 
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '列表页设计' }])
@@ -360,26 +190,25 @@
   const router = useRouter()
   const state = reactive({
     tableData: {
-      // tableProps: {}, //表格所有参数
+      tableProps: {}, //表格所有参数
       columns: [],
       config: {},
-      apiKey: {}
+      apiKey: {},
+      controlBtn: []
     },
     searchData: {},
     loading: false,
     attrObj: {},
     config: {},
-    tagList: {},
-    formId: routeQuery.form || '',
-    formList: [], // 所有可选表单数据源
-    name: '',
-    treeData: {}, // 左侧树相关
     previewVisible: false,
     tabsName: 'second',
     formFieldList: [], // 表单数据源所有可选字段
     dict: {},
     refreshTable: true
   })
+  provide('tableData', state.tableData)
+  const currentObj = ref({ label: '12' })
+  provide('currentObj', currentObj)
   const drawer = reactive({
     visible: false,
     title: '',
@@ -387,163 +216,38 @@
     content: '',
     codeType: ''
   })
-  const controlBtnList = [
-    {
-      label: '新增',
-      key: 'add',
-      type: 'primary',
-      size: 'small',
-      icon: 'plus'
-    },
-    {
-      label: '导出',
-      key: 'import',
-      type: 'primary',
-      size: 'small',
-      icon: 'plus'
-    },
-    {
-      label: '批量删除',
-      key: 'del',
-      type: 'danger',
-      size: 'small',
-      icon: 'delete'
+  const labelArray: any = {
+    add: '新增',
+    edit: '编辑',
+    del: '批量删除',
+    export: '导出'
+  }
+  //右侧边栏事件
+  const controlAttrChangeEvent = ({
+    type,
+    value
+  }: {
+    type: string
+    value: any
+  }) => {
+    if (type === 'formId') {
+      //改变表单数据源时，重新加载可选表头信息
+      getFormColumns(value).then(data => {
+        state.formFieldList = data
+      })
+    } else if (type === 'openDrawer') {
+      //打开编辑drawer
+      editOpenDrawer(value)
     }
-  ]
-  const operateBtnList = [
-    {
-      label: '编辑',
-      key: 'edit'
-    },
-    {
-      label: '删除',
-      key: 'del'
-    }
-  ]
+  }
+
   const drawerBeforeClose = () => {
     drawer.visible = false
     drawer.content = ''
     drawer.codeType = ''
     drawer.title = ''
   }
-  const tableListAttr = computed(() => {
-    return [
-      {
-        label: '所属表单',
-        placeholder: '请选择所属表单',
-        value: parseInt(state.formId) || '',
-        key: 'formId',
-        type: 'select',
-        options: state.formList,
-        clearable: true
-      },
-      {
-        label: '数据列表名称',
-        placeholder: '保存的数据列表名称',
-        value: state.name,
-        key: 'name'
-      },
-      {
-        label: '数据添加编辑打开方式',
-        placeholder: '默认新页面打开',
-        value: state.tableData.config?.openType,
-        type: 'select',
-        options: [
-          { label: '弹窗', value: 'dialog' },
-          { label: '新页面', value: 'page' }
-        ],
-        key: 'openType',
-        path: 'config',
-        clearable: true
-        //hide: !state.formId
-      },
-      {
-        label: '窗口宽度',
-        placeholder: '弹窗宽度',
-        value: state.tableData.config?.dialogWidth,
-        type: 'input',
-        key: 'dialogWidth',
-        path: 'config',
-        hide: state.tableData.config?.openType !== 'dialog'
-      },
-      {
-        label: '横向滚动固定在底部',
-        value: state.tableData.config?.fixedBottomScroll,
-        key: 'fixedBottomScroll',
-        type: 'select',
-        placeholder: '默认开启',
-        path: 'config',
-        options: [
-          {
-            label: '启用',
-            value: true
-          },
-          { label: '禁用', value: false }
-        ],
-        clearable: true
-      },
-      {
-        label: '列显示隐藏设置',
-        value: state.tableData.config?.columnsSetting,
-        key: 'columnsSetting',
-        type: 'select',
-        placeholder: '默认开启',
-        path: 'config',
-        options: [
-          {
-            label: '启用',
-            value: true
-          },
-          { label: '禁用', value: false }
-        ],
-        clearable: true
-      },
-      {
-        label: '可折叠查询表单',
-        value: state.tableData.config?.expand,
-        key: 'expand',
-        type: 'switch',
-        path: 'config'
-      },
-      {
-        label: '查询跳转页面',
-        value: state.tableData.config?.searchJump,
-        key: 'searchJump',
-        type: 'switch',
-        path: 'config'
-      },
-      {
-        label: '操作列按钮下拉',
-        value: state.tableData.config?.operateDropdown,
-        key: 'operateDropdown',
-        type: 'input',
-        path: 'config',
-        placeholder: '大于设定个数的以下拉形式显示'
-      },
-      {
-        label: '分页设置',
-        value: state.tableData.config?.pageSize,
-        key: 'pageSize',
-        type: 'input',
-        path: 'config',
-        placeholder: '每页分多少条'
-      },
-      {
-        label: '查询排序',
-        value: state.tableData.config?.orderSort,
-        key: 'orderSort',
-        type: 'input',
-        path: 'config',
-        placeholder: '查询排序，id desc'
-      },
-      {
-        label: '开启侧栏树',
-        value: state.tableData.treeData?.show,
-        key: 'tree',
-        type: 'switch'
-      }
-    ]
-  })
+
   const fieldOptions = computed(() => {
     const formField = {
       label: '表单字段',
@@ -557,8 +261,7 @@
             label: '多选',
             type: 'selection'
           },
-          { label: '序号', type: 'index', width: '70px' },
-          { label: '操作', prop: '__control' }
+          { label: '序号', type: 'index', width: '70px' }
         ]
       }
     ]
@@ -567,28 +270,7 @@
     }
     return temp
   })
-  const tableListAttrChange = (obj: any, val?: any) => {
-    if (obj.key === 'tree') {
-      if (!state.tableData.treeData) {
-        state.tableData.treeData = {}
-      }
-      state.tableData.treeData.show = val
-      return
-    }
-    if (obj.path === 'config') {
-      state.tableData.config[obj.key] = obj.value
-    } else {
-      state[obj.key] = obj.value
-    }
-    if (obj.key === 'formId') {
-      // 列表数据源选择时，需查当前表单所有字段
-      if (!val && state.tableData.config?.openType === 'dialog') {
-        // 没有选数据源时，将数据添加编辑打开方式改为默认，直接删除属性
-        delete state.tableData.config.openType
-      }
-      getFormField(obj.value)
-    }
-  }
+
   // 删除表头列字段
   const delCol = (row: any) => {
     state.tableData.columns.forEach((item: any, index: number) => {
@@ -698,7 +380,7 @@
         const newData: any = state.tableData.events || {}
         editData = newData[type]
         break
-      case 'tree':
+      case 'treeProp':
         // eslint-disable-next-line no-case-declarations
         editData = state.tableData.treeData || {}
         if (Object.keys(editData).length === 1) {
@@ -706,29 +388,27 @@
             show: true,
             treeProps: {}, // tree props
             name: '唯一标识', // 唯一标识，用于
-            method: 'post',
-            requestUrl: ''
+            method: 'post'
           }
         }
         title = '更多参数详见ak-list组件'
         break
       case 'treeBefore':
         editData = state.tableData.treeData?.before
-        title = '侧栏树请求前处理事件，可对参数作处理'
+        title = getDrawerTitle.before
         break
       case 'treeAfter':
         editData = state.tableData.treeData?.after
-        title = '侧栏树请求返回事件，可对返回数据处理；支持返回字符串'
+        title = getDrawerTitle.after
         break
       case 'operateBtn':
-        editData = state.tableData.operateBtn || operateBtnList
+        editData = state.tableData.operateBtn
         title =
-          '可设置多个操作按钮，其中key=edit/del有内置处理事件，还可根据条件显示与隐藏。可使用permission:"xx"添加权限控制'
+          '可设置多个操作按钮，可使用内置key=add/edit/del/export快速设置按钮'
         break
       case 'controlBtn':
-        editData = state.tableData.controlBtn || controlBtnList
-        title =
-          '可设置多个操作按钮，其中key=add/del有内置处理事件。可使用permission:"xx"添加权限控制'
+        editData = state.tableData.controlBtn
+        title = '操作按钮列表，可使用内置key=add/edit/del/export快速设置按钮'
         break
     }
     const params = {
@@ -774,7 +454,7 @@
       case 'json':
         state.tableData = val
         break
-      case 'tree':
+      case 'treeProp':
         state.tableData.treeData = val
         break
       case 'operateBtn':
@@ -806,18 +486,7 @@
     drawerBeforeClose()
   }
   const rowClick = (column: any) => {
-    state.attrObj = column
-    state.config = column.config || {}
-    const tagList = state.config.tagList
-    state.tagList = []
-    if (tagList) {
-      for (const key in tagList) {
-        state.tagList.push({
-          value: key,
-          type: tagList[key]
-        })
-      }
-    }
+    currentObj.value = column
     // 切换到字段属性
     state.tabsName = 'first'
   }
@@ -858,72 +527,19 @@
     })
   }
   // 数据相关
-  // 获取所有可用的表单数据源
-  const getFormSourceList = () => {
-    const params = {
-      extend: {
-        pageSize: 100
-      },
-      query: {
-        type: 1 // 只获取表单的
-      }
-    }
-    getRequest('designList', params).then((res: { data: { list: any } }) => {
-      //console.log('获取列表数据源', res)
-      state.formList = res.data.list
-    })
-  }
   // 根据所选择的表单获取当前设计的所有字段
-  const getFormField = (id: number, callback?: (list: any) => void) => {
-    state.formFieldList = []
-    getRequest('designById', { id: id }).then(
-      (res: { data: { data: string } }) => {
-        //console.log('获取当前数据下所有字段')
-        const content = stringToObj(res.data.data)
-        //console.log('content', content)
-        filterFiled(content)
-        callback && callback(content.list)
-      }
-    )
-  }
-  const excludeType = [
-    'txt',
-    'title',
-    'table',
-    'component',
-    'upload',
-    'button',
-    'tinymce',
-    'inputSlot',
-    'flex'
-  ]
-  const filterFiled = (obj: any) => {
-    obj?.list.forEach((item: FormList) => {
-      if (item.type === 'grid' || item.type === 'tabs') {
-        item.columns.forEach((col: FormList) => {
-          filterFiled(col)
-        })
-      } else if (['card', 'div'].includes(item.type)) {
-        filterFiled(item)
-      } else if (!excludeType.includes(item.type) && item.name) {
-        state.formFieldList.push({
-          prop: item.name,
-          label: item.formItem?.label,
-          help: item.config.help || ''
-        })
-      }
-    })
-  }
+
   const saveData = () => {
-    const { requestUrl, deleteUrl } = state.tableData.config
-    if (!state.formId && (!requestUrl || !deleteUrl)) {
+    const { formId, name } = state.tableData.config
+    const { list, del } = state.tableData.apiKey
+    if (!formId && (!list || !del)) {
       return ElMessage.error('请选择所属表单或配置接口url')
     }
     const params = {
       listData: objToStringify(state.tableData), // 列表数据
       data: '{}', // 搜索表单数据，搜索设置不在这里修改
-      source: state.formId,
-      name: state.name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
+      source: formId,
+      name: name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 2, // 1表单 2列表
       dict: json2string(state.dict)
     }
@@ -950,59 +566,32 @@
         state.loading = false
       })
   }
-  // 修改时获取初始数据
-  const getInitData = (id: number) => {
-    getRequest('designById', { id: id }).then((res: { data: any }) => {
-      const result = res.data
-      state.tableData = stringToObj(result.listData) // 列表数据
-      state.searchData = stringToObj(result.data) // 搜索表单数据
-      state.name = result.name // 表单名称，用于在显示所有已创建的表单列表里显示
-      state.formId = result.source
-      state.dict = string2json(result.dict)
-      // 如果有表单数据源，则加载，用于显示在 添加表格列字段处
-      if (result.source) {
-        getFormField(result.source)
-      }
-    })
-  }
-  const oneListCreation = (list: any) => {
-    const temp: any = [
-      {
-        label: '多选',
-        type: 'selection'
-      },
-      {
-        label: '序号',
-        type: 'index',
-        width: '70px'
-      }
-    ]
-    list.forEach((item: { name: any; formItem: { label: any } }) => {
-      temp.push({
-        prop: item.name,
-        label: item.formItem?.label
-      })
-    })
-    temp.push({
-      label: '操作',
-      prop: '__control'
-    })
-    state.tableData.columns = temp
-    state.tableData.controlBtn = controlBtnList
-    state.tableData.operateBtn = operateBtnList
-  }
+
   // 数据相关结束
   onMounted(() => {
     nextTick(() => {
       columnDrop()
     })
-    getFormSourceList()
     if (routeQuery.id) {
-      getInitData(routeQuery.id)
+      getInitData(routeQuery.id).then(({ tableData, searchData, dict }) => {
+        state.tableData = tableData // 列表数据
+        state.searchData = searchData // 搜索表单数据
+        state.dict = dict
+        if (tableData.config.formId) {
+          getFormColumns(result.source).then(data => {
+            state.formFieldList = data
+          })
+        }
+      })
     }
     // 从表单列表点创建列表，带有当前表单id
     if (routeQuery.form) {
-      getFormField(routeQuery.form, oneListCreation)
+      state.tableData.config.formId = routeQuery.form
+      getFormColumns(routeQuery.form).then(data => {
+        state.tableData.columns = data
+        //todo 添加上方及右侧按钮
+        //state.tableData.controlBtn = controlBtnList
+      })
     }
   })
 </script>

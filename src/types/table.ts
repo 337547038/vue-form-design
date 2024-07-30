@@ -20,25 +20,6 @@ export interface Columns extends Partial<TableColumnCtx<any>> {
   buttons?: Button[]
   prop?: string
 }
-export interface TableData {
-  tableProps?: any
-  columns: Columns[]
-  controlBtn?: any
-  events?: {
-    before?: string | ((type: EventType, params: any, rout: any) => boolean)
-    after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
-  }
-  treeData?: {
-    show: boolean
-    before?: Function | string
-    after?: Function | string
-    method: string
-    requestUrl: string
-    name: string
-  }
-  config?: any
-  apiKey?: ApiKey
-}
 
 export interface Button {
   // 渲染方式confirm=带确认框的按钮
@@ -59,6 +40,25 @@ export interface Button {
   // 自定义el-button属性
   attr?: ButtonProps
   key?: 'add' | 'edit' | 'del' | 'detail' | 'export' //内容三个特殊值常用的按钮key。其它自定义按钮无需key
+}
+export interface TableData {
+  tableProps?: any
+  columns: Columns[]
+  controlBtn: Button[]
+  events?: {
+    before?: string | ((type: EventType, params: any, rout: any) => boolean)
+    after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
+  }
+  treeData?: {
+    show: boolean
+    before?: Function | string
+    after?: Function | string
+    method: string
+    requestUrl: string
+    name: string
+  }
+  config?: any
+  apiKey?: ApiKey
 }
 
 export type EventType = 'switchChange' | 'getData' | 'del' | 'search' | 'export'
