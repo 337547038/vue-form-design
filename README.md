@@ -125,7 +125,9 @@ git clone https://github.com/337547038/vue-form-design.git
 pnpm install
 
 # 运行项目
-pnpm dev
+pnpm dev //开发环境
+pnpm preview  // 预览模式
+
 
 # 使用json模拟数据
 
