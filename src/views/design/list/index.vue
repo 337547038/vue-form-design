@@ -208,7 +208,7 @@
     refreshTable: true
   })
   provide('tableData', state.tableData)
-  const currentObj = ref({ label: '12' })
+  const currentObj = ref({ label: '12' }) // todo
   provide('currentObj', currentObj)
   const drawer = reactive({
     visible: false,
@@ -317,7 +317,7 @@
         break
       case 'json':
         // 生成脚本
-        dialogOpen(state.tableData, { direction: 'rtl', type: 'json' })
+        editOpenDrawer('json')
         break
       case 'vue':
         // 导出vue文件
@@ -333,7 +333,12 @@
     let codeType = ''
     let editData
     let title = ''
+    let direction = 'ltr'
     switch (type) {
+      case 'json': // 生成脚本
+        editData = state.tableData
+        direction = 'rtl'
+        break
       case 'editDict':
         codeType = 'json'
         editData = state.dict || {}
@@ -344,9 +349,11 @@
         break
       case 'before':
       case 'after':
-        // eslint-disable-next-line no-case-declarations
         const newData: any = state.tableData.events || {}
         editData = newData[type]
+        if (!editData) {
+          editData = getDrawerContent(type)
+        }
         break
       case 'treeProp':
         // eslint-disable-next-line no-case-declarations
@@ -364,58 +371,47 @@
       case 'treeBefore':
         editData = state.tableData.treeData?.before
         title = getDrawerTitle.before
+        if (!editData) {
+          editData = getDrawerContent('before')
+        }
         break
       case 'treeAfter':
         editData = state.tableData.treeData?.after
         title = getDrawerTitle.after
+        if (!editData) {
+          editData = getDrawerContent('after')
+        }
         break
-      case 'operateBtn':
-        editData = state.tableData.operateBtn
-        title =
-          '可设置多个操作按钮，可使用内置key=add/edit/del/export快速设置按钮'
+      case 'buttons':
+        editData = currentObj.value.buttons || []
+        title = '可设置多个操作按钮，可使用内置key=edit/del快速设置按钮'
         break
       case 'controlBtn':
         editData = state.tableData.controlBtn
         title = '操作按钮列表，可使用内置key=add/edit/del/export快速设置按钮'
         break
+      case 'columns':
+        editData = currentObj.value || []
+        title = '支持el-table-column所有属性'
+        break
     }
-    const params = {
-      codeType: codeType,
-      type: type,
-      title: title
-    }
-    dialogOpen(editData, params)
-  }
-  const dialogOpen = (obj: any, params: any = {}) => {
-    drawer.visible = true
-    Object.assign(drawer, { direction: 'ltr' }, params)
     if (!drawer.title) {
-      drawer.title = (getDrawerTitle as any)[params.type]
+      drawer.title = (getDrawerTitle as any)[type]
     }
-    let editData
-    switch (params.codeType) {
+    switch (codeType) {
       case 'json':
-        editData = json2string(obj, true)
+        editData = json2string(editData, true)
         break
       default:
-        editData = objToStringify(obj, true)
+        editData = objToStringify(editData, true)
     }
-    switch (params.type) {
-      case 'before':
-      case 'treeBefore':
-        if (!obj) {
-          editData = getDrawerContent('before')
-        }
-        break
-      case 'after':
-      case 'treeAfter':
-        if (!obj) {
-          editData = getDrawerContent('after')
-        }
-        break
-    }
+    drawer.visible = true
+    drawer.direction = direction
+    drawer.title = title
     drawer.content = editData
+    drawer.codeType = codeType
   }
+
   const dialogConfirm = (content: string) => {
     const val = stringToObj(content)
     switch (drawer.type) {
@@ -425,8 +421,8 @@
       case 'treeProp':
         state.tableData.treeData = val
         break
-      case 'operateBtn':
-        state.tableData.operateBtn = val
+      case 'buttons':
+        currentObj.value.buttons = val
         break
       case 'controlBtn':
         state.tableData.controlBtn = val
@@ -449,6 +445,9 @@
         break
       case 'treeAfter':
         state.tableData.treeData.after = val
+        break
+      case 'columns':
+        currentObj.value = val
         break
     }
     drawerBeforeClose()

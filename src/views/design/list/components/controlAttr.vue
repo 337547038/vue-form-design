@@ -190,9 +190,19 @@
             </template>
             <template v-if="currentObj.render === 'buttons'">
               <el-form-item label="按钮设置">
-                <operate-btn v-model="currentObj.buttons" />
+                <operate-btn v-model="currentObj.buttons" position="right" />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="editOpenDrawer('buttons')"
+                  >添加设置更多按钮</el-button
+                >
               </el-form-item>
             </template>
+            <el-form-item>
+              <el-button type="primary" @click="editOpenDrawer('columns')"
+                >设置表格列</el-button
+              >
+            </el-form-item>
           </div>
         </el-tab-pane>
         <el-tab-pane label="数据列表配置" name="second">
@@ -239,22 +249,22 @@
               />
             </el-form-item>
             <el-form-item class="event-btn">
-              <el-button @click="editOpenDrawer('treeProp')"
+              <el-button type="primary" @click="editOpenDrawer('treeProp')"
                 >编辑侧栏树属性
               </el-button>
-              <el-button @click="editOpenDrawer('treeBefore')"
+              <el-button type="primary" @click="editOpenDrawer('treeBefore')"
                 >树before事件
               </el-button>
-              <el-button @click="editOpenDrawer('treeAfter')"
+              <el-button type="primary" @click="editOpenDrawer('treeAfter')"
                 >树after事件
               </el-button>
             </el-form-item>
           </template>
           <el-form-item class="event-btn">
-            <el-button @click="editOpenDrawer('tableConfig')"
+            <el-button type="primary" @click="editOpenDrawer('tableConfig')"
               >编辑表格属性
             </el-button>
-            <el-button @click="editOpenDrawer('editDict')"
+            <el-button type="primary" @click="editOpenDrawer('editDict')"
               >设置数据字典
             </el-button>
           </el-form-item>
@@ -287,8 +297,12 @@
             <el-input placeholder="列表主键" v-model="tableData.pk" />
           </el-form-item>
           <el-form-item class="event-btn">
-            <el-button @click="editOpenDrawer('before')">before事件 </el-button>
-            <el-button @click="editOpenDrawer('after')">after事件 </el-button>
+            <el-button type="primary" @click="editOpenDrawer('before')"
+              >before事件
+            </el-button>
+            <el-button type="primary" @click="editOpenDrawer('after')"
+              >after事件
+            </el-button>
           </el-form-item>
         </el-tab-pane>
       </el-tabs>
