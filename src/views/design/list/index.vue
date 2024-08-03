@@ -135,6 +135,7 @@
       <control-attr
         @changeEvent="controlAttrChangeEvent"
         v-model:tabsName="state.tabsName"
+        ref="controlAttrEl"
       />
     </div>
     <ace-drawer
@@ -328,39 +329,6 @@
         break
     }
   }
-  const tagAdd = () => {
-    state.tagList.push({
-      value: '',
-      type: 'success'
-    })
-  }
-  const configChange = () => {
-    // 转换tagList格式
-    const temp: any = {}
-    state.tagList.forEach((item: any) => {
-      temp[item.value] = item.type
-    })
-    if (Object.keys(temp).length) {
-      state.config.tagList = temp
-    } else {
-      delete state.config.tagList // 没有时删除字段
-    }
-    objectMerge()
-  }
-  const objectMerge = () => {
-    // 将数据合并
-    Object.assign(state.attrObj, { config: state.config })
-  }
-  const delTagOption = (index: number) => {
-    state.tagList.splice(index, 1)
-    configChange()
-  }
-  const editAttr = () => {
-    dialogOpen(state.attrObj, {
-      type: 'attr',
-      title: '组件el-table-column属性'
-    })
-  }
   const editOpenDrawer = (type: string) => {
     let codeType = ''
     let editData
@@ -485,10 +453,12 @@
     }
     drawerBeforeClose()
   }
+  const controlAttrEl = ref()
   const rowClick = (column: any) => {
     currentObj.value = column
     // 切换到字段属性
     state.tabsName = 'first'
+    controlAttrEl.value.rowChange()
   }
   const searchFormClick = () => {
     if (!routeQuery.id) {

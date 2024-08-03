@@ -62,14 +62,27 @@
               </el-form-item>
             </template>
             <template v-if="['tag', 'text'].includes(currentObj.render)">
-              <el-form-item label="值设置类型">
-                <template v-for="item in tagCustom" :key="item.type">
-                  <el-input v-model="item.value">
+              <el-form-item label="值设置类型" style="margin-bottom: 0">
+                <div
+                  style="
+                    margin-bottom: 10px;
+                    display: flex;
+                    align-items: center;
+                  "
+                  v-for="(item, index) in state.tagCustomList"
+                  :key="index"
+                >
+                  <el-input
+                    v-model="item.value"
+                    placeholder="对应的值"
+                    @change="tagCustomChange"
+                  >
                     <template #append>
                       <el-select
                         v-model="item.type"
                         placeholder="Select"
-                        style="width: 115px"
+                        style="width: 90px"
+                        @change="tagCustomChange"
                       >
                         <el-option
                           v-for="item in uiType"
@@ -80,92 +93,106 @@
                       </el-select>
                     </template>
                   </el-input>
-                </template>
+                  <i
+                    style="margin-left: 10px"
+                    class="icon-del"
+                    @click="delTagCustomList(index as number)"
+                  ></i>
+                </div>
               </el-form-item>
               <el-form-item>
-                <el-button @click="tagCustomAdd">新增值设置类型</el-button>
-              </el-form-item>
-              <el-form-item label="值替换数据" />
-            </template>
-            <template v-if="currentObj.render === 'link'"></template>
-            <template
-              v-if="['datetime', 'date'].includes(currentObj.render)"
-            ></template>
-            <template v-if="currentObj.render === 'buttons'"></template>
-            <!--          <div v-show="Object.keys(state.attrObj).length">
-            <div class="h3">
-              <h3>{{ state.attrObj?.label }}</h3>
-              个性化设置
-            </div>
-            <template v-if="state.attrObj.prop === '__control'">
-              <el-form-item>
-                <el-button @click="editOpenDrawer('operateBtn')"
-                  >操作按钮设置
-                </el-button>
-              </el-form-item>
-            </template>
-            <template v-else>
-              <el-form-item label="时间格式化">
-                <el-select
-                  v-model="state.config.formatter"
-                  @change="objectMerge"
+                <el-button
+                  type="primary"
+                  @click="tagCustomAdd"
+                  v-show="state.tagCustomList.length < uiType.length"
+                  >新增值设置类型</el-button
                 >
-                  <el-option
-                    label="{y}-{m}-{d} {h}:{i}:{s}"
-                    value="{y}-{m}-{d} {h}:{i}:{s}"
-                  />
-                  <el-option label="{y}-{m}-{d}" value="{y}-{m}-{d}" />
-                  <el-option label="{h}:{i}:{s}" value="{h}:{i}:{s}" />
+              </el-form-item>
+              <el-form-item label="值替换数据">
+                <el-select
+                  v-model="state.replaceValueType"
+                  @change="replaceValueTypeChange"
+                >
+                  <el-option label="使用字典" :value="0" />
+                  <el-option label="自定义" :value="1" />
                 </el-select>
               </el-form-item>
-              <el-form-item label="值匹配字典">
-                <el-input
-                  placeholder="字典对应的key"
-                  v-model="state.config.dictKey"
-                  @change="objectMerge"
-                />
-              </el-form-item>
-              <el-form-item label="展示图片形式">
-                <el-input
-                  placeholder="请输入图片宽度"
-                  v-model="state.config.imgWidth"
-                  @change="objectMerge"
-                />
-              </el-form-item>
               <el-form-item
-                v-for="(tag, index) in state.tagList"
-                :key="index"
-                class="table-tag"
+                label="字典类型key"
+                v-if="state.replaceValueType === 0"
               >
                 <el-input
-                  placeholder="值对应的类型"
-                  v-model="tag.value"
-                  @change="configChange"
-                >
-                  <template #append>
-                    <el-select
-                      style="width: 80px"
-                      v-model="tag.type"
-                      @change="configChange"
-                    >
-                      <el-option label="success" value="success" />
-                      <el-option label="info" value="info" />
-                      <el-option label="warning" value="warning" />
-                      <el-option label="danger" value="danger" />
-                    </el-select>
-                  </template>
-                </el-input>
-                <i class="icon-del" @click="delTagOption(index as number)"></i>
+                  placeholder="请输入字典类型key"
+                  v-model="currentObj.config.replaceValue"
+                />
               </el-form-item>
-              <el-form-item>
-                <el-button @click="tagAdd">新增Tag标签显示</el-button>
+              <template v-else>
+                <el-form-item label="值替换数据">
+                  <div
+                    v-for="(item, index) in state.replaceValueList"
+                    :key="item.value"
+                    style="
+                      margin-bottom: 10px;
+                      display: flex;
+                      align-items: center;
+                    "
+                  >
+                    <el-input placeholder="对应的值" v-model="item.value" />
+                    <el-input placeholder="替换的值" v-model="item.label" />
+                    <i
+                      style="margin-left: 10px"
+                      class="icon-del"
+                      @click="delReplaceList(index as number)"
+                    ></i>
+                  </div>
+                </el-form-item>
+                <el-form-item>
+                  <el-button @click="replaceValueAdd" type="primary"
+                    >新增值替换数据</el-button
+                  >
+                </el-form-item>
+              </template>
+            </template>
+            <template v-if="currentObj.render === 'link'">
+              <el-form-item label="显示类型">
+                <el-select v-model="currentObj.config.type">
+                  <el-option
+                    v-for="item in uiType"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
               </el-form-item>
-              <el-form-item>
-                <el-button @click="editAttr"
-                  >编辑{{ state.attrObj?.label }}属性
-                </el-button>
+              <el-form-item label="是否带下划线">
+                <el-switch v-model="currentObj.config.underline" />
               </el-form-item>
-            </template>-->
+              <el-form-item label="打开方式">
+                <el-select v-model="currentObj.config.target">
+                  <el-option value="_blank">_blank</el-option>
+                  <el-option value="_parent">_parent</el-option>
+                  <el-option value="_self">_self</el-option>
+                  <el-option value="_top">_top</el-option>
+                </el-select>
+              </el-form-item>
+            </template>
+            <template v-if="['datetime', 'date'].includes(currentObj.render)">
+              <el-form-item label="显示格式">
+                <el-select v-model="currentObj.config.timeFormat">
+                  <el-option
+                    v-for="(item, index) in timeFormat"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </template>
+            <template v-if="currentObj.render === 'buttons'">
+              <el-form-item label="按钮设置">
+                <operate-btn v-model="currentObj.buttons" />
+              </el-form-item>
+            </template>
           </div>
         </el-tab-pane>
         <el-tab-pane label="数据列表配置" name="second">
@@ -280,7 +307,10 @@
   const currentObj = inject('currentObj')
   const tabsName = defineModel('tabsName')
   const state = reactive({
-    formList: []
+    formSourceList: [],
+    tagCustomList: [], //渲染为tag时
+    replaceValueList: [],
+    replaceValueType: 0 // 默认为字典
   })
   const renderList = [
     'switch',
@@ -293,41 +323,85 @@
     'string',
     'text'
   ]
+  const timeFormat = [
+    { label: '年-月-日', value: '{yyyy}-{mm}-{dd}' },
+    { label: '年-月-日 时:分:秒', value: '{yyyy}-{mm}-{dd} {h}:{i}:{s}' },
+    { label: 'x年x月x日', value: '{yyyy}年{mm}月{dd}日' },
+    { label: 'x年x月x日 时:分:秒', value: '{yyyy}年{mm}月{dd}日 {h}:{i}:{s}' },
+    { label: '时:分:秒', value: '{h}:{i}:{s}' },
+    {
+      label: '年-月-日 时:分:秒 星期',
+      value: '{yyyy}:{mm}:{dd} {h}:{i}:{s} 星期{w}'
+    }
+  ]
   const uiType = ['primary', 'success', 'warning', 'danger', 'info']
-  const renderChange = () => {
+  const renderChange = (val: any) => {
     //if (!currentObj.value.config) {
+    // 切换时清空这些与当前不匹配的设置
     currentObj.value.config = {}
+    currentObj.value.replaceValue = {}
+    currentObj.value.custom = {}
+    currentObj.value.timeFormat = ''
+    currentObj.value.buttons = []
     // }
+    // 添加一条默认的
+    if (['tag', 'text'].includes(val)) {
+      state.tagCustomList = [
+        {
+          type: 'primary',
+          value: ''
+        }
+      ]
+    }
   }
-  const objectToArray = (obj: any) => {
-    if (!obj) {
-      return []
+  const arrayToObject = (array: any) => {
+    if (!array) {
+      return {}
     }
-    const array: any = []
-    for (const key in obj) {
-      array.push({
-        value: key,
-        type: obj[key]
-      })
+    const obj: any = {}
+    for (const item of array) {
+      obj[item.value] = item.label
     }
-    return array
+    return obj
   }
   const tagCustomAdd = () => {
-    if (!currentObj.value.config.custom) {
+    state.tagCustomList.push({
+      type: 'primary',
+      value: ''
+    })
+  }
+  const delTagCustomList = (index: number) => {
+    state.tagCustomList.splice(index, 1)
+  }
+  const tagCustomChange = () => {
+    if (!currentObj.value.config?.custom) {
       currentObj.value.config.custom = {}
     }
-    currentObj.value.config.custom[100] = 'primary'
+    currentObj.value.config.custom = arrayToObject(state.tagCustomList)
   }
-  const tagCustom = computed(() => {
-    return objectToArray(currentObj.value.config.custom)
-  })
-  const tagReplaceValue = computed(() => {
-    return objectToArray(currentObj.config.replaceValue)
-  })
+  const replaceValueAdd = () => {
+    state.replaceValueList.push({
+      label: '',
+      value: ''
+    })
+  }
+  const delReplaceList = (index: number) => {
+    state.replaceValueList.splice(index, 1)
+  }
+  // 切换至自定义时，默认添加一条记录
+  const replaceValueTypeChange = (val: number) => {
+    if (val === 1) {
+      state.replaceValueList = [
+        {
+          label: '',
+          value: ''
+        }
+      ]
+    }
+  }
   const formSourceRemoteMethod = (query: string) => {
     getData({ name: query })
   }
-  //表格上方按钮设置
   const tableListAttr = computed(() => {
     return [
       {
@@ -336,7 +410,7 @@
         value: parseInt(tableData.config.formId) || '',
         key: 'formId',
         type: 'select',
-        options: state.formList,
+        options: state.formSourceList,
         clearable: true,
         filterable: true,
         remote: true,
@@ -470,9 +544,39 @@
   const getData = (params = {}) => {
     //  获取所有可用的表单数据源
     getFormSourceList(params).then(data => {
-      state.formList = data
+      state.formSourceList = data
     })
   }
+
+  const objectToArray = (obj: any) => {
+    if (!obj) {
+      return []
+    }
+    const array: any = []
+    for (const key in obj) {
+      array.push({
+        value: key,
+        type: obj[key]
+      })
+    }
+    return array
+  }
+  // 列表点击设置时，这里使用点击事件主动做一些数据转换，不使用watch深监听currentObj
+  const rowChange = () => {
+    if (['tag', 'text'].includes(currentObj.render)) {
+      //tagCustomList
+      if (Object.keys(currentObj?.custom).length) {
+        state.tagCustomList = objectToArray(currentObj.custom)
+      }
+      if (
+        currentObj.replaceValue &&
+        typeof currentObj.replaceValue === 'object'
+      ) {
+        state.replaceValueList = objectToArray(currentObj.replaceValue)
+      }
+    }
+  }
+  defineExpose({ rowChange })
   onMounted(() => {
     getData()
   })
