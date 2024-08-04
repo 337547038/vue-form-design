@@ -135,6 +135,7 @@ const switchEvent = ({
   const apiKey = props.data.apiKey?.edit || props.apiKey?.edit
   if (!apiKey) {
     console.warn('请先配置apiKey.edit')
+    params[rowProp] = oldVal //回退状态
     return
   }
   switchLoading.value = true
@@ -153,7 +154,7 @@ const switchEvent = ({
     })
     .catch(() => {
       //修改失败，回退状态
-      row[rowProp] = oldVal //回退状态
+      params[rowProp] = oldVal //回退状态
       switchLoading.value = false
       //ElMessage.success(res.message || '操作失败')
     })

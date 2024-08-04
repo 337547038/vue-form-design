@@ -4,6 +4,7 @@ import type {
   ButtonProps,
   TableColumnCtx
 } from 'element-plus'
+import { permission } from '@/directive/permissions.ts'
 export interface ApiKey {
   list?: string
   edit?: string
@@ -40,6 +41,7 @@ export interface Button {
   // 自定义el-button属性
   attr?: ButtonProps
   key?: 'add' | 'edit' | 'del' | 'detail' | 'export' //内容三个特殊值常用的按钮key。其它自定义按钮无需key
+  permission?: string //权限校验标识
 }
 export interface TableData {
   tableProps?: any

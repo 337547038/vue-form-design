@@ -87,27 +87,28 @@
    * 获取字典作供全局使用。刷新页时没有即请求加载
    */
   const dictList = () => {
-    // const storageDict = getStorage('akAllDict', true)
-    //if (!storageDict) {
-    getRequest('dictList', { query: { status: 1 } }).then((res: any) => {
-      const result = res.data?.list
-      const temp: any = {}
-      if (result?.length) {
-        result.forEach((item: any) => {
-          const children = item.children
-          if (children) {
-            const childJson = JSON.parse(children)
-            const list: any = {}
-            childJson.forEach((ch: any) => {
-              list[ch.value] = ch.label
-            })
-            temp[item.type] = list
-          }
-        })
-        setStorage('akAllDict', temp, 0)
-      }
-    })
-    //}
+    // 首次登录加载，开发中途有添加要重新登录，比较麻烦。这里后继再优化todo
+    const storageDict = getStorage('akAllDict', true)
+    if (!storageDict) {
+      getRequest('dictList', { query: { status: 1 } }).then((res: any) => {
+        const result = res.data?.list
+        const temp: any = {}
+        if (result?.length) {
+          result.forEach((item: any) => {
+            const children = item.children
+            if (children) {
+              const childJson = JSON.parse(children)
+              const list: any = {}
+              childJson.forEach((ch: any) => {
+                list[ch.value] = ch.label
+              })
+              temp[item.type] = list
+            }
+          })
+          setStorage('akAllDict', temp, 0)
+        }
+      })
+    }
   }
   onMounted(() => {
     nextTick(() => {

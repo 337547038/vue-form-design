@@ -51,13 +51,13 @@
               <el-form-item label="图片宽度">
                 <el-input
                   v-model="currentObj.config.width"
-                  placeholder="请输入图片宽度"
+                  placeholder="请输入图片宽度，单位px"
                 />
               </el-form-item>
               <el-form-item label="图片高度">
                 <el-input
                   v-model="currentObj.config.height"
-                  placeholder="请输入图片高度"
+                  placeholder="请输入图片高度，单位px"
                 />
               </el-form-item>
             </template>
@@ -79,8 +79,7 @@
                   >
                     <template #append>
                       <el-select
-                        v-model="item.type"
-                        placeholder="Select"
+                        v-model="item.label"
                         style="width: 90px"
                         @change="tagCustomChange"
                       >
@@ -100,7 +99,7 @@
                   ></i>
                 </div>
               </el-form-item>
-              <el-form-item>
+              <el-form-item class="flex-end">
                 <el-button
                   type="primary"
                   @click="tagCustomAdd"
@@ -123,7 +122,7 @@
               >
                 <el-input
                   placeholder="请输入字典类型key"
-                  v-model="currentObj.config.replaceValue"
+                  v-model="currentObj.replaceValue"
                 />
               </el-form-item>
               <template v-else>
@@ -137,8 +136,16 @@
                       align-items: center;
                     "
                   >
-                    <el-input placeholder="对应的值" v-model="item.value" />
-                    <el-input placeholder="替换的值" v-model="item.label" />
+                    <el-input
+                      placeholder="对应的值"
+                      v-model="item.value"
+                      @change="replaceChange"
+                    />
+                    <el-input
+                      placeholder="替换的值"
+                      v-model="item.label"
+                      @change="replaceChange"
+                    />
                     <i
                       style="margin-left: 10px"
                       class="icon-del"
@@ -146,7 +153,7 @@
                     ></i>
                   </div>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item class="flex-end">
                   <el-button @click="replaceValueAdd" type="primary"
                     >新增值替换数据</el-button
                   >
@@ -178,7 +185,7 @@
             </template>
             <template v-if="['datetime', 'date'].includes(currentObj.render)">
               <el-form-item label="显示格式">
-                <el-select v-model="currentObj.config.timeFormat">
+                <el-select v-model="currentObj.timeFormat">
                   <el-option
                     v-for="(item, index) in timeFormat"
                     :key="index"
@@ -192,7 +199,7 @@
               <el-form-item label="按钮设置">
                 <operate-btn v-model="currentObj.buttons" position="right" />
               </el-form-item>
-              <el-form-item>
+              <el-form-item class="flex-end">
                 <el-button type="primary" @click="editOpenDrawer('buttons')"
                   >添加设置更多按钮</el-button
                 >
@@ -242,6 +249,12 @@
             />
           </el-form-item>
           <template v-if="tableData.treeData?.show">
+            <el-form-item label="树标识名称">
+              <el-input
+                v-model="tableData.treeData.name"
+                placeholder="树标识名称"
+              />
+            </el-form-item>
             <el-form-item label="树列表接口URL">
               <el-input
                 v-model="tableData.treeData.requestUrl"
@@ -310,7 +323,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, reactive, computed, inject, onMounted } from 'vue'
+  import { reactive, computed, inject, onMounted } from 'vue'
   import { formatNumber } from '@/utils/design'
   import { getFormSourceList } from './request'
   import OperateBtn from './operateBtn.vue'
@@ -353,19 +366,21 @@
     //if (!currentObj.value.config) {
     // 切换时清空这些与当前不匹配的设置
     currentObj.value.config = {}
-    currentObj.value.replaceValue = {}
-    currentObj.value.custom = {}
-    currentObj.value.timeFormat = ''
-    currentObj.value.buttons = []
+    delete currentObj.value.replaceValue
+    delete currentObj.value.timeFormat
+    delete currentObj.value.buttons
+    delete currentObj.value.custom
     // }
     // 添加一条默认的
     if (['tag', 'text'].includes(val)) {
       state.tagCustomList = [
         {
-          type: 'primary',
+          label: 'primary',
           value: ''
         }
       ]
+    } else if (val === 'buttons') {
+      currentObj.value.buttons = []
     }
   }
   const arrayToObject = (array: any) => {
@@ -380,7 +395,7 @@
   }
   const tagCustomAdd = () => {
     state.tagCustomList.push({
-      type: 'primary',
+      label: 'primary',
       value: ''
     })
   }
@@ -388,10 +403,10 @@
     state.tagCustomList.splice(index, 1)
   }
   const tagCustomChange = () => {
-    if (!currentObj.value.config?.custom) {
-      currentObj.value.config.custom = {}
+    if (!currentObj.value?.custom) {
+      currentObj.value.custom = {}
     }
-    currentObj.value.config.custom = arrayToObject(state.tagCustomList)
+    currentObj.value.custom = arrayToObject(state.tagCustomList)
   }
   const replaceValueAdd = () => {
     state.replaceValueList.push({
@@ -411,17 +426,23 @@
           value: ''
         }
       ]
+      currentObj.value.replaceValue = {}
+    } else {
+      currentObj.value.replaceValue = ''
     }
   }
-  const formSourceRemoteMethod = (query: string) => {
-    getData({ name: query })
+  const replaceChange = () => {
+    currentObj.value.replaceValue = arrayToObject(state.replaceValueList)
+  }
+  const formSourceRemoteMethod = (name: string) => {
+    getData(name)
   }
   const tableListAttr = computed(() => {
     return [
       {
         label: '所属表单',
         placeholder: '请选择所属表单',
-        value: parseInt(tableData.config.formId) || '',
+        value: parseInt(tableData.value.config.formId) || '',
         key: 'formId',
         type: 'select',
         options: state.formSourceList,
@@ -433,13 +454,13 @@
       {
         label: '数据列表名称',
         placeholder: '保存的数据列表名称',
-        value: tableData.config.name,
+        value: tableData.value.config.name,
         key: 'name'
       },
       {
         label: '数据添加编辑打开方式',
         placeholder: '默认新页面打开',
-        value: tableData.config.openType,
+        value: tableData.value.config.openType,
         type: 'select',
         options: [
           { label: '弹窗', value: 'dialog' },
@@ -452,14 +473,14 @@
       {
         label: '窗口宽度',
         placeholder: '弹窗宽度',
-        value: tableData.config.dialogWidth,
+        value: tableData.value.config.dialogWidth,
         type: 'input',
         key: 'dialogWidth',
-        hide: tableData.config.openType !== 'dialog'
+        hide: tableData.value.config.openType !== 'dialog'
       },
       {
         label: '横向滚动固定在底部',
-        value: tableData.config.fixedBottomScroll,
+        value: tableData.value.config.fixedBottomScroll,
         key: 'fixedBottomScroll',
         type: 'select',
         placeholder: '默认开启',
@@ -474,7 +495,7 @@
       },
       {
         label: '列显示隐藏设置',
-        value: tableData.config.columnsSetting,
+        value: tableData.value.config.columnsSetting,
         key: 'columnsSetting',
         type: 'select',
         placeholder: '默认开启',
@@ -493,40 +514,40 @@
       },
       {
         label: '可折叠查询表单',
-        value: tableData.config.expand,
+        value: tableData.value.config.expand,
         key: 'expand',
         type: 'switch'
       },
       {
         label: '查询跳转页面',
-        value: tableData.config.searchJump,
+        value: tableData.value.config.searchJump,
         key: 'searchJump',
         type: 'switch'
       },
       {
         label: '操作列按钮下拉',
-        value: tableData.config.operateDropdown,
+        value: tableData.value.config.operateDropdown,
         key: 'operateDropdown',
         type: 'input',
         placeholder: '大于设定个数的以下拉形式显示'
       },
       {
         label: '分页设置',
-        value: tableData.config.pageSize,
+        value: tableData.value.config.pageSize,
         key: 'pageSize',
         type: 'input',
         placeholder: '每页分多少条'
       },
       {
         label: '查询排序',
-        value: tableData.config.orderSort,
+        value: tableData.value.config.orderSort,
         key: 'orderSort',
         type: 'input',
         placeholder: '查询排序，id desc'
       },
       {
         label: '开启侧栏树',
-        value: tableData.treeData?.show,
+        value: tableData.value.treeData?.show,
         key: 'tree',
         type: 'switch'
       }
@@ -535,29 +556,29 @@
 
   const tableListAttrChange = (obj: any, val?: any) => {
     if (obj.key === 'tree') {
-      if (!tableData.treeData) {
-        tableData.treeData = {}
+      if (!tableData.value.treeData) {
+        tableData.value.treeData = {}
       }
-      tableData.treeData.show = val
+      tableData.value.treeData.show = val
       return
     }
     if (obj.key === 'formId') {
       // 列表数据源选择时，需查当前表单所有字段
-      if (!obj.value && tableData.config?.openType === 'dialog') {
+      if (!obj.value && tableData.value.config?.openType === 'dialog') {
         // 没有选数据源时，将数据添加编辑打开方式改为默认，直接删除属性
-        delete tableData.config.openType
+        delete tableData.value.config.openType
       }
       emits('changeEvent', { type: 'formId', value: obj.value })
     }
-    tableData.config[obj.key] = obj.value
+    tableData.value.config[obj.key] = obj.value
   }
   const editOpenDrawer = (type: string) => {
     emits('changeEvent', { type: 'openDrawer', value: type })
   }
 
-  const getData = (params = {}) => {
+  const getData = (name?: stirng) => {
     //  获取所有可用的表单数据源
-    getFormSourceList(params).then(data => {
+    getFormSourceList(name).then(data => {
       state.formSourceList = data
     })
   }
@@ -570,23 +591,24 @@
     for (const key in obj) {
       array.push({
         value: key,
-        type: obj[key]
+        label: obj[key]
       })
     }
     return array
   }
   // 列表点击设置时，这里使用点击事件主动做一些数据转换，不使用watch深监听currentObj
   const rowChange = () => {
-    if (['tag', 'text'].includes(currentObj.render)) {
-      //tagCustomList
-      if (Object.keys(currentObj?.custom).length) {
-        state.tagCustomList = objectToArray(currentObj.custom)
+    if (['tag', 'text'].includes(currentObj.value.render)) {
+      console.log('currentObj.render')
+      if (Object.keys(currentObj.value.custom).length) {
+        state.tagCustomList = objectToArray(currentObj.value.custom)
       }
       if (
-        currentObj.replaceValue &&
-        typeof currentObj.replaceValue === 'object'
+        currentObj.value.replaceValue &&
+        typeof currentObj.value.replaceValue === 'object'
       ) {
-        state.replaceValueList = objectToArray(currentObj.replaceValue)
+        state.replaceValueList = objectToArray(currentObj.value.replaceValue)
+        state.replaceValueType = 1
       }
     }
   }
@@ -595,4 +617,3 @@
     getData()
   })
 </script>
-<style scoped lang="scss"></style>

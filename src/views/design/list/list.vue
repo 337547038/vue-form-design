@@ -2,8 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="designList"
-      delete-url="designDelete"
+      :apiKey="{ list: 'designList', del: 'designDelete' }"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 2 }"
@@ -50,39 +49,48 @@
       { label: '勾选', type: 'selection' },
       { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '名称', width: '150px' },
-      /*{ prop: 'source', label: '表单ID', width: '110px' },*/
       { prop: 'sourceName', label: '表单名称/ID', width: 150 },
-      { prop: 'category', label: '分类', config: { dictKey: 'sys-list' } },
+      {
+        prop: 'category',
+        label: '分类',
+        render: 'tag',
+        replaceValue: 'sys-list'
+      },
       {
         prop: 'status',
         label: '状态',
+        render: 'switch',
         config: {
-          dictKey: 'sys-status',
-          tagList: {
-            0: 'info',
-            1: 'success'
-          }
+          activeValue: 1,
+          inactiveValue: 0
         }
       },
       {
         prop: 'creatUserId',
         label: '创建人',
-        config: { dictKey: 'creatUser' }
+        render: 'text',
+        replaceValue: 'creatUser'
       },
       {
         prop: 'updateDate',
         label: '更新时间',
         width: 200,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        render: 'datetime'
       },
-      // {
-      //   prop: 'updateDate',
-      //   label: '修改时间',
-      //   width: 200,
-      //   config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
-      // },
-      // { prop: 'editName', label: '最后修改' },
-      { label: '操作', prop: '__control', width: '110px', fixed: 'right' }
+      {
+        label: '操作',
+        render: 'buttons',
+        width: '110px',
+        fixed: 'right',
+        buttons: [
+          {
+            key: 'edit'
+          },
+          {
+            key: 'del'
+          }
+        ]
+      }
     ],
     controlBtn: [
       {

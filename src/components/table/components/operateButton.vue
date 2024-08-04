@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="operate-button">
     <template v-for="(btn, index) in getOperateButton()" :key="index">
       <el-popconfirm
         v-bind="btn.popConfirm"
@@ -124,6 +124,14 @@
   //操作按钮处理结束
 </script>
 <style scoped lang="scss">
+  .operate-button {
+    display: flex;
+    :deep(.el-button),
+    div {
+      margin-right: 10px;
+      margin-left: 0;
+    }
+  }
   .btn-group {
     :deep(button) {
       padding: 4px 5px;

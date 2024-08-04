@@ -30,9 +30,8 @@
           <operate-button
             v-if="data.controlBtn?.length"
             position="top"
-            class="-group"
             :row="state.selectionChecked"
-            :buttons="mergeDefaultBtn(data.controlBtn, 'top')"
+            :buttons="mergeDefaultBtn(data.controlBtn)"
             @click="btnClick"
           />
           <slot name="controlBtn"></slot>
@@ -119,8 +118,8 @@
                   v-if="item.prop && item.render === 'image'"
                   v-bind="item.config"
                   :style="{
-                    width: item.config?.width || '100px',
-                    height: item.config?.height || '100px'
+                    width: (item.config?.width || 100) + 'px',
+                    height: (item.config?.height || 100) + 'px'
                   }"
                   :preview-teleported="true"
                   :z-index="99"
@@ -130,18 +129,14 @@
                 <el-tag
                   v-if="item.prop && item.render === 'tag'"
                   v-bind="item.config"
-                  :type="getTagType(scope.row[item.prop], item.config?.custom)"
-                  >{{
-                    getTagVal(scope.row[item.prop], item.config?.replaceValue)
-                  }}
+                  :type="getTagType(scope.row[item.prop], item.custom)"
+                  >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
                 </el-tag>
                 <el-text
                   v-if="item.prop && item.render === 'text'"
                   v-bind="item.config"
-                  :type="getTagType(scope.row[item.prop], item.config?.custom)"
-                  >{{
-                    getTagVal(scope.row[item.prop], item.config?.replaceValue)
-                  }}
+                  :type="getTagType(scope.row[item.prop], item.custom)"
+                  >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
                 </el-text>
                 <el-link
                   v-if="item.prop && item.render === 'link'"
@@ -158,16 +153,14 @@
                   {{ getDateFormat(item, scope.row[item.prop]) }}
                 </span>
                 <template
-                  v-if="
-                    item.render === 'buttons' && item.config?.buttons?.length
-                  "
+                  v-if="item.render === 'buttons' && item.buttons?.length"
                 >
                   <operate-button
                     class="btn-group"
                     :row="scope.row"
-                    :buttons="mergeDefaultBtn(item.config?.buttons)"
+                    :buttons="mergeDefaultBtn(item.buttons, 'right')"
                     @click="tableBtnClick(scope.row, $event)"
-                    :dropdown="item.config.dropdown"
+                    :dropdown="item.config?.dropdown"
                   />
                 </template>
               </template>
@@ -206,20 +199,19 @@
     onMounted,
     reactive,
     ref,
-    watch,
-    markRaw
+    watch
   } from 'vue'
   import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
   import Tooltip from '@/components/tooltip/index.vue'
-  import { Delete, Edit, Histogram, Plus } from '@element-plus/icons-vue'
   import type { FormData } from '@/types/form'
-  import { TableData, ApiKey, Button } from '@/types/table'
+  import { TableData, ApiKey } from '@/types/table'
   import { dateFormatting, getStorage } from '@/utils'
   import ListTreeSide from './treeSide.vue'
   import { useDesignStore } from '@/store/design'
   import { useEventListener } from '@/utils/useEvent'
   import OperateButton from './components/operateButton.vue'
   import * as request from './components/request'
+  import { mergeDefaultBtn } from './components/defaultBtn'
 
   const props = withDefaults(
     defineProps<{
@@ -431,6 +423,9 @@
   const getTagVal = (val: string | number, replaceValue: any) => {
     if (!replaceValue) {
       return val
+    } else if (typeof replaceValue === 'string') {
+      // 字符串时为字典
+      return listDict.value[replaceValue][val] || val
     } else {
       return replaceValue[val] || val
     }
@@ -455,100 +450,6 @@
   }
   //处理时间结束
 
-  //处理表格行右侧及上方操作按钮
-  const defaultBtn = ref<Button>({
-    add: {
-      type: 'primary',
-      name: 'Add',
-      label: '',
-      tooltip: '添加',
-      icon: markRaw(Plus),
-      class: '',
-      key: 'add'
-    },
-    edit: {
-      type: 'primary',
-      name: 'Edit',
-      label: '',
-      tooltip: '编辑',
-      icon: markRaw(Edit),
-      class: '',
-      key: 'edit'
-    },
-    detail: {
-      type: 'primary',
-      tooltip: '查看',
-      key: 'detail',
-      name: 'Detail',
-      class: '',
-      icon: markRaw(Histogram)
-    },
-    del: {
-      render: 'confirm',
-      type: 'danger',
-      label: '',
-      tooltip: '删除',
-      name: 'Del',
-      icon: markRaw(Delete),
-      key: 'del',
-      popConfirm: {
-        title: '确认删除该记录吗？',
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        confirmButtonType: 'danger'
-      }
-    },
-    export: {
-      type: 'primary',
-      name: 'Export',
-      label: '导出',
-      tooltip: '导出',
-      icon: 'icon-export',
-      class: '',
-      key: 'export'
-    }
-  })
-  /**
-   * 列表右侧按钮
-   * @param btn 自定义的按钮
-   * @param position 位置 top为表格上面位置，不传默认为表格右侧
-   * @return 合并了初始配置的按钮数组
-   */
-  const mergeDefaultBtn = (btn: Button[], position?: string) => {
-    const temp: any = []
-    //表格上方按钮预设有add/edit/del，表格行右侧预设有edit/detail/del
-    const includeBtn =
-      position === 'top'
-        ? ['edit', 'add', 'del', 'export']
-        : ['edit', 'detail', 'del']
-    btn.forEach((item: Button) => {
-      if (item.key && includeBtn.includes(item.key)) {
-        if (item.key === 'del') {
-          item.popConfirm = Object.assign(
-            defaultBtn.value[item.key].popConfirm,
-            item.popConfirm || {}
-          )
-        }
-        //表格上方时默认添加label
-        let defaultLabel: any = {}
-        if (position === 'top' && !item.label) {
-          const labelArray: any = {
-            add: '新增',
-            edit: '编辑',
-            del: '批量删除',
-            export: '导出'
-          }
-          defaultLabel = { label: labelArray[item.key] || item.label }
-        }
-        temp.push(
-          Object.assign({}, defaultBtn.value[item.key], defaultLabel, item)
-        )
-      } else {
-        temp.push(item)
-      }
-    })
-    return temp
-  }
   //列表右侧按钮事件，处理预设key的内置事件
   const tableBtnClick = (row: any, key: string) => {
     if (key === 'del' && pk.value) {

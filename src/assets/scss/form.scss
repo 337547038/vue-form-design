@@ -208,6 +208,9 @@ $mainColor: #66b1ff;
   .event-btn {
     button {margin: 0 12px 5px 0}
   }
+  .flex-end{
+    .el-form-item__content{display: flex;justify-content: flex-end}
+  }
 }
 
 #editJson, #editJsonCopy {width: 100%;height: calc(100vh - 80px)}
@@ -435,10 +438,7 @@ $mainColor: #66b1ff;
   }
 
   .control-btn {margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center;
-
-    .-group {display: flex;
-      .el-button{margin-left: 0;margin-right: 12px}
-    }
+    .control-btn-group{display: flex}
   }
 }
 

@@ -10,7 +10,7 @@ export const getInitData = (id: string) => {
       const tableData = stringToObj(result.listData) // 列表数据
       const searchData = stringToObj(result.data) // 搜索表单数据
       const dict = string2json(result.dict)
-      resolve({ tableData, searchData, dict })
+      resolve({ tableData, searchData, dict, source: result.source })
     })
   })
 }

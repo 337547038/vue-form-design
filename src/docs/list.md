@@ -135,8 +135,195 @@ const newBtn={
                 return false;
             },
             // 自定义el-button属性
-            attr: {}
+            attr: {},
+            permission: 'string' //权限校验标识，也可通过display操作
         }
     ]
 };
+```
+
+### 深度使用表格(完整配置设置)
+```javascript
+const opt = {
+  tableProps: {}, // 支付el-table所有prop设置
+  columns: [ //表头设置
+    {
+      label: "多选",
+      type: "selection"
+    },
+    {
+      label: "序号",
+      type: "index",
+      width: "70px"
+    },
+    {
+    prop: "name",
+    label: "状态",
+    render: "switch", // 渲染类型
+    config: // 对应render类型的配置
+    {
+      inlinePrompt: true,
+      activeText: "1",
+      inactiveText: "2",
+      activeValue: "on",
+      inactiveValue: "off"
+    }
+  },
+  {
+    prop: "sex",
+    label: "性别",
+    render: "tag",
+    config: {},
+    custom: // render=tag/text时，显示的type。表示当前值为1时tag的type=primary
+    {
+      1: "primary",
+      2: "success"
+    },
+    replaceValue: // render=tag/text时，即将接口返回值为1替换成女显示
+    {
+      1: "女"
+    }
+  },
+  {
+    prop: "img",
+    label: "图片",
+    render: "image",
+    config:
+    { // 图片的宽高及其他el-image所有prop
+      width: "100",
+      height: "100"
+    }
+  },
+  {
+    prop: "link",
+    label: "链接",
+    render: "link",
+    config:
+    {
+      type: "primary",
+      underline: true,
+      target: "_blank"
+    }
+  },
+    {
+      prop: "datetime",
+      label: "时间",
+      render: "datetime",
+      config: {},
+      timeFormat: "{yyyy}-{mm}-{dd}" // 时间显示类型
+    },
+  {
+    prop: "other",
+    label: "操作",
+    render: "buttons",
+    config: {},
+    buttons: [ // 操作按钮设置，见如何自定一个按钮
+    {
+      key: "edit"
+    },
+    {
+      key: "del",
+      popConfirm:
+      {
+        title: "确认删除该记录吗？",
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        confirmButtonType: "danger"
+      }
+    }]
+  }],
+  config:
+  {
+    formId: 1, // 当前列表对应的表单id
+    name: "保存名称",
+    openType: "dialog", // 点击编辑和新增时显示方式。dialog/page两个方式
+    dialogWidth: "500", // openType=dialog时窗口宽度
+    fixedBottomScroll: true, // 出现横向滚动条时，是否固定在浏览器底部
+    columnsSetting: true, // 是否表格表头列显示与隐藏设置
+    expand: true,// 可折叠查询表单，即可显示隐藏条件筛选表单
+    searchJump: true,//跳转条件查询时是否跳转页面，即将查询参数写在url上
+    operateDropdown: "5", // 一般为表格右侧操作按钮，当按钮个数大于当前设定时，其余的则以下拉菜单的形式展示
+    pageSize: "20", // 每页显示多少条
+    orderSort: "id desc" // 作为扩展参数传接口
+  },
+  apiKey:
+  {
+    list: "list", // 列表数据请求接口
+    del: "del", // 删除数据请求接口
+    edit: "edit", // 编辑接口
+    export: "export" // 导出接口
+  },
+  controlBtn: [ // 一般显示在表格左上方的操作按钮
+  {
+    key: "add"
+  },
+  {
+    key: "edit"
+  },
+  {
+    key: "del",
+    popConfirm:
+    {
+      title: "确认删除该记录吗？",
+      confirmButtonText: "确认",
+      cancelButtonText: "取消",
+      confirmButtonType: "danger"
+    }
+  },
+  {
+    key: "export"
+  }],
+  treeData://侧栏树相关配置
+  {
+    show: true,
+    before: (params,
+    {
+      type,
+      route,
+      model
+    }) =>
+    {
+      // params请求的参数，可根据type作判断，对params作修改后return回去
+      // 需要将params参数return
+      return params
+    },
+    name: "name",
+    requestUrl: "gettree",
+    after: (res,
+    {
+      type,
+      success
+    }) =>
+    {
+      // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
+      console.log(type, res)
+      return res
+    }
+  },
+  events:// 事件
+  {
+    before: (params,
+    {
+      type, // 事件类型
+      route, // 当前路由信息
+      model // 当前表单信息，根据不同类型。表单相关的事件才会有值
+    }) =>
+    {
+      // params请求的参数，可根据type作判断，对params作修改后return回去
+      // 需要将params参数return
+      return params
+    },
+    after: (res,
+    {
+      type,
+      success
+    }) =>
+    {
+      // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
+      console.log(type, res)
+      return res
+    }
+  },
+  pk: "id" //主键，用于删除或编辑
+}
 ```
