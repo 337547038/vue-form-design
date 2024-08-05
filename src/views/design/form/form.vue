@@ -70,7 +70,7 @@
           }
           state.dict = string2json(result.dict)
           // 编辑时加载表单初始数据。或设置了添加时获取请求
-          if (id.value || state.formData.config?.addLoad) {
+          if (id.value) {
             formEl.value.getData({ formId: formId.value, id: id.value })
           }
           layoutStore.changeBreadcrumb([

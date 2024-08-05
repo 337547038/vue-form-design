@@ -9,17 +9,14 @@
     <div class="main-body">
       <head-tools @click="headToolClick" />
       <div class="main-form" v-loading="state.loading">
-        <div class="empty-tips" v-if="state.formData.list?.length === 0">
+        <div class="empty-tips" v-if="formData.list?.length === 0">
           从左侧拖拽来添加字段
         </div>
-        <ak-form :type="5" :data="state.formData" :dict="state.formDict" />
+        <ak-form :type="5" :data="formData" :dict="state.formDict" />
       </div>
     </div>
     <form-control-attr
       ref="formControlAttrEl"
-      :form-data="state.formData.form"
-      :form-config="state.formData.config"
-      v-model:form-other-data="state.formOtherData"
       @open-dialog="openAceEditDrawer"
     />
     <ace-drawer
@@ -84,14 +81,18 @@
   const store = useDesignStore()
   const router = useRouter()
   const route: any = useRoute().query || {}
-  const state = reactive({
-    formData: {
-      list: [],
-      form: {
-        size: 'default'
-      },
-      config: {}
+  const formData = ref({
+    list: [],
+    form: {
+      size: 'default'
     },
+    config: {
+      submitCancel: true
+    }
+  })
+  const stringFormData = ref() // 用于恢复初始值
+  provide('formData', formData)
+  const state = reactive({
     editor: {},
     loading: false,
     formDataPreview: {},
@@ -127,7 +128,7 @@
           if (result.data) {
             const resultData = stringToObj(result.data)
             if (resultData && Object.keys(resultData).length) {
-              state.formData = resultData
+              formData.value = resultData
             }
           }
           state.formDict = string2json(result.dict)
@@ -152,13 +153,7 @@
   const headToolClick = (type: string) => {
     switch (type) {
       case 'del':
-        state.formData = {
-          list: [],
-          form: {
-            size: 'default'
-          },
-          config: {}
-        }
+        formData.value = JSON.parse(stringFormData.value)
         store.setActiveKey('')
         store.setControlAttr({})
         break
@@ -167,8 +162,8 @@
         store.setActiveKey('')
         store.setControlAttr({})
         state.previewVisible = true
-        let stringPreview = objToStringify(state.formData) // 防止预览窗口数据修改影响
-        const formName = state.formData.form.name
+        let stringPreview = objToStringify(formData.value) // 防止预览窗口数据修改影响
+        const formName = formData.value.form.name
         // eslint-disable-next-line no-case-declarations
         const reg = new RegExp(`get${formName}ControlByName`, 'g')
         stringPreview = stringPreview.replace(
@@ -180,20 +175,20 @@
         break
       case 'json':
         // 生成脚本预览
-        openAceEditDrawer({ type: 'creatJson', content: state.formData })
+        openAceEditDrawer({ type: 'creatJson', content: formData.value })
         break
       case 'save':
         saveData()
         break
       case 'vue':
-        vueFileEl.value.open(state.formData)
+        vueFileEl.value.open(formData.value)
         break
     }
   }
   // 将数据保存在服务端
   const saveData = () => {
     // 添加校验，没有选择数据源时则必须要配置接口url
-    const { submitUrl, editUrl, requestUrl } = state.formData.config
+    const { submitUrl, editUrl, requestUrl } = formData.value.config
     if (
       !state.formOtherData.source &&
       (!submitUrl || !editUrl || !requestUrl) &&
@@ -203,7 +198,7 @@
       return
     }
     let params: any = {
-      data: objToStringify(state.formData),
+      data: objToStringify(formData.value),
       source: state.formOtherData.source, // 数据源允许在表单属性设置里修改的
       name: state.formOtherData.formName, // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1, // 1表单 2列表
@@ -220,7 +215,7 @@
     // 列表搜索模式下只有修改
     if (state.designType === 'search') {
       params = {
-        data: objToStringify(state.formData),
+        data: objToStringify(formData.value),
         dict: json2string(state.formDict),
         id: route.id
       }
@@ -270,7 +265,7 @@
     let editData
     switch (type) {
       case 'editCss':
-        editData = state.formData.config?.style || ''
+        editData = formData.value.config?.style || ''
         break
       case 'editDict':
         // 格式化一下
@@ -281,7 +276,7 @@
       case 'afterFetch':
       case 'afterSubmit':
       case 'change':
-        const beforeData: any = state.formData.events || {}
+        const beforeData: any = formData.value.events || {}
         if (beforeData[type]) {
           editData = objToStringify(beforeData[type], true)
         } else {
@@ -309,7 +304,7 @@
    * @param editVal
    */
   const dialogConfirm = (editVal: string) => {
-    // 生成脚本预览和导入json，都是将编辑器内容更新至state.formData
+    // 生成脚本预览和导入json，都是将编辑器内容更新至formData.value
     try {
       let newObj
       switch (drawer.codeType) {
@@ -328,10 +323,10 @@
       switch (drawer.type) {
         case 'editCss':
           // 表单属性－编辑表单样式
-          if (!state.formData.config) {
-            state.formData.config = {}
+          if (!formData.value.config) {
+            formData.value.config = {}
           }
-          state.formData.config.style = newObj
+          formData.value.config.style = newObj
           break
         case 'editDict':
           state.formDict = newObj
@@ -341,13 +336,13 @@
         case 'afterFetch':
         case 'afterSubmit':
         case 'change':
-          if (!state.formData.events) {
-            state.formData.events = {}
+          if (!formData.value.events) {
+            formData.value.events = {}
           }
-          state.formData.events[drawer.type] = newObj
+          formData.value.events[drawer.type] = newObj
           break
         case 'creatJson':
-          state.formData = newObj
+          formData.value = newObj
           break
       }
       dialogCancel()
@@ -384,21 +379,22 @@
   }
   // 选择模板
   const selectTemplate = (data: FormData) => {
-    state.formData = stringToObj(objToStringify(data))
+    formData.value = stringToObj(objToStringify(data))
   }
   // 搜索设计时左侧快速添加字段
   const searchCheckField = (data: FormData) => {
-    state.formData.list.push(data)
+    formData.value.list.push(data)
   }
   getInitData()
   onMounted(() => {
+    stringFormData.value = JSON.stringify(formData.value)
     if (route.source) {
       //从数据源一键创建过来时带有source参数
       formControlAttrEl.value.getFormFieldBySource(
         route.source,
         (list: any) => {
-          state.formData.list = getOneFormCreation(list)
-          state.formData.config = {
+          formData.value.list = getOneFormCreation(list)
+          formData.value.config = {
             submitCancel: true
           }
         }

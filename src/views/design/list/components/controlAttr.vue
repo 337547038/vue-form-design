@@ -282,6 +282,9 @@
             </el-button>
           </el-form-item>
           <div class="h3"><h3>接口数据事件</h3></div>
+          <el-form-item label="主键">
+            <el-input placeholder="列表主键" v-model="tableData.pk" />
+          </el-form-item>
           <el-form-item label="列表数据请求URL">
             <el-input
               placeholder="一般不需要填写，使用默认值"
@@ -305,9 +308,6 @@
               placeholder="一般不需要填写，使用默认值"
               v-model="tableData.apiKey.export"
             />
-          </el-form-item>
-          <el-form-item label="主键">
-            <el-input placeholder="列表主键" v-model="tableData.pk" />
           </el-form-item>
           <el-form-item class="event-btn">
             <el-button type="primary" @click="editOpenDrawer('before')"

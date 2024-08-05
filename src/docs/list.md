@@ -145,7 +145,7 @@ const newBtn={
 ### 深度使用表格(完整配置设置)
 ```javascript
 const opt = {
-  tableProps: {}, // 支付el-table所有prop设置
+  tableProps: {}, // 支持el-table所有prop设置
   columns: [ //表头设置
     {
       label: "多选",
@@ -235,7 +235,7 @@ const opt = {
   config:
   {
     formId: 1, // 当前列表对应的表单id
-    name: "保存名称",
+    name: "", // 当前设计列表保存的名称
     openType: "dialog", // 点击编辑和新增时显示方式。dialog/page两个方式
     dialogWidth: "500", // openType=dialog时窗口宽度
     fixedBottomScroll: true, // 出现横向滚动条时，是否固定在浏览器底部
@@ -272,16 +272,12 @@ const opt = {
   },
   {
     key: "export"
-  }],
+  }
+  ],
   treeData://侧栏树相关配置
   {
     show: true,
-    before: (params,
-    {
-      type,
-      route,
-      model
-    }) =>
+    before: (params, { type, route, model }) =>
     {
       // params请求的参数，可根据type作判断，对params作修改后return回去
       // 需要将params参数return
@@ -289,11 +285,7 @@ const opt = {
     },
     name: "name",
     requestUrl: "gettree",
-    after: (res,
-    {
-      type,
-      success
-    }) =>
+    after: (res, { type, success }) =>
     {
       // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
       console.log(type, res)
@@ -301,23 +293,14 @@ const opt = {
     }
   },
   events:// 事件
-  {
-    before: (params,
-    {
-      type, // 事件类型
-      route, // 当前路由信息
-      model // 当前表单信息，根据不同类型。表单相关的事件才会有值
-    }) =>
+  { //type 事件类型； route 当前路由信息； model 当前表单信息，根据不同类型。表单相关的事件才会有值
+    before: (params, { type, route, model }) =>
     {
       // params请求的参数，可根据type作判断，对params作修改后return回去
       // 需要将params参数return
       return params
     },
-    after: (res,
-    {
-      type,
-      success
-    }) =>
+    after: (res, { type, success }) =>
     {
       // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
       console.log(type, res)

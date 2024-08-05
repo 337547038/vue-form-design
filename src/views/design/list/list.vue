@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
-  import { ref, reactive, nextTick } from 'vue'
+  import { ref, reactive, nextTick, provide } from 'vue'
 
   const router = useRouter()
   const dialog = reactive({
@@ -95,10 +95,8 @@
     controlBtn: [
       {
         label: '新增列表',
-        icon: 'plus',
-        type: 'primary',
+        key: 'add',
         size: 'small',
-        permission: '/design/list/list',
         click: () => {
           toFormDesign({})
         }
@@ -106,9 +104,7 @@
       {
         label: '删除',
         key: 'del',
-        size: 'small',
-        type: 'danger',
-        icon: 'delete'
+        size: 'small'
       }
     ],
     operateBtn: [

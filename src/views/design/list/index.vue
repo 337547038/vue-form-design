@@ -216,10 +216,16 @@
   const tableData = ref({
     tableProps: {}, //表格所有参数
     columns: [],
-    config: {},
+    config: {
+      openType: 'page', // 页面打开方式
+      fixedBottomScroll: true,
+      columnsSetting: true,
+      expand: true
+    },
     apiKey: {},
     controlBtn: []
   })
+  const stringTableData = ref()
   provide('tableData', tableData)
   const currentObj = ref({})
   provide('currentObj', currentObj)
@@ -319,13 +325,7 @@
     switch (type) {
       case 'del':
         // 清空
-        tableData.value = {
-          tableProps: {}, //表格所有参数
-          columns: [],
-          config: {},
-          apiKey: {},
-          controlBtn: []
-        }
+        tableData.value = JSON.parse(stringTableData.value)
         state.selectField = []
         currentObj.value = {}
         break
@@ -561,6 +561,7 @@
 
   // 数据相关结束
   onMounted(() => {
+    stringTableData.value = JSON.stringify(tableData.value) // 用于恢复初始值
     nextTick(() => {
       columnDrop()
     })

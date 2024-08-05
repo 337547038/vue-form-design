@@ -295,25 +295,6 @@
               @input="formAttrChange(item)"
             />
           </el-form-item>
-          <el-form-item v-if="!state.isSearch">
-            <template #label
-              >添加时获取请求
-              <el-tooltip
-                content="新增表单数据时，从接口获取新增初始数据"
-                placement="top"
-              >
-                <el-icon>
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
-            </template>
-            <el-switch
-              v-model="formConfig.addLoad"
-              @change="
-                formAttrChange({ key: 'addLoad', path: 'config' }, $event)
-              "
-            />
-          </el-form-item>
           <el-form-item>
             <el-button @click="openAttrDialog('editCss')"
               >编辑表单样式
@@ -375,27 +356,16 @@
   import { ElMessage } from 'element-plus'
   import { formatNumber } from '@/utils/design'
 
-  const props = withDefaults(
-    defineProps<{
-      formData: any
-      formConfig: any
-      formOtherData: any
-    }>(),
-    {
-      formConfig: () => {
-        return {}
-      },
-      formOtherData: () => {
-        // 其他不需要保存在formData里的数据
-        return {}
-      }
-    }
-  )
   const emits = defineEmits<{
     (e: 'openDialog', data: any): void
-    (e: 'update:formOtherData', data: any): void
   }>()
-  const { formConfig, formData } = toRefs(props)
+  const formData = inject('formData')
+  const formConfig = computed(() => {
+    return formData.value.config
+  })
+  const form = computed(() => {
+    return formData.value.form
+  })
   const store = useDesignStore() as any
   //const route = useRoute()
   const controlData = computed(() => {
@@ -408,36 +378,38 @@
       {
         label: '表单名称',
         placeholder: '用于保存的表单名称',
-        value: props.formOtherData.formName,
-        key: 'formName',
+        value: formConfig.value.name,
+        key: 'name',
+        path: 'config',
         hide: isSearch
       },
       {
         label: '数据源',
         placeholder: '请选择数据源',
-        value: formatNumber(props.formOtherData.source),
+        value: formatNumber(formConfig.value.sourceId),
         type: 'select',
         options: dataSourceOption.value,
-        key: 'source',
+        key: 'sourceId',
+        path: 'config',
         hide: isSearch || !dataSourceOption.value?.length,
         clearable: true
       },
       {
         label: '表单标识',
-        value: formData.value.name,
+        value: form.value.name,
         placeholder: '表单唯一标识，可为空',
         key: 'name',
         hide: isSearch
       },
       {
         label: '表单标签宽度',
-        value: formData.value.labelWidth,
+        value: form.value.labelWidth,
         placeholder: '表单label宽，如180px',
         key: 'labelWidth'
       },
       {
         label: '表单样式名称',
-        value: formData.value.class,
+        value: form.value.class,
         placeholder: '额外添加的表单class类名',
         key: 'class',
         type: 'select',
@@ -452,13 +424,13 @@
       },
       {
         label: '字段名后添加冒号',
-        value: formData.value.showColon,
+        value: form.value.showColon,
         key: 'showColon',
         type: 'switch'
       },
       {
         label: '组件尺寸',
-        value: formData.value.size,
+        value: form.value.size,
         type: 'select',
         key: 'size',
         options: [
@@ -1122,13 +1094,6 @@
     // select多选属性，
     switch (obj.eventName) {
       case 'selectMultiple':
-        /*if (val) {
-          // 多选，将值改为数组
-          controlData.value.control.modelValue = []
-        } else {
-          // 单选
-          controlData.value.control.modelValue = ''
-        }*/
         controlData.value.control.modelValue = val ? [] : ''
         break
       case 'tableColumn1':
@@ -1187,9 +1152,6 @@
     const key = keyArr[i]
     const value = tempObj[keyArr[i]]
     // 检查最后一级是否存在
-    /*if (!(key in tempObj)) {
-    throw new Error(`${key} is undefined`)
-  }*/
     if (val !== undefined) {
       tempObj[key] = val
     }
@@ -1410,17 +1372,10 @@
       store.setActiveKey('')
       store.setControlAttr({})
     }
-    if (['formName', 'source'].includes(obj.key)) {
-      emits(
-        'update:formOtherData',
-        Object.assign(props.formOtherData, { [obj.key]: obj.value })
-      )
-      return
-    }
     if (obj.path === 'config') {
-      formConfig.value[obj.key] = obj.value || val
+      formData.value.config[obj.key] = obj.value || val
     } else {
-      formData.value[obj.key] = obj.value
+      formData.value.form[obj.key] = obj.value
     }
   }
   // 返回选项配置提示
