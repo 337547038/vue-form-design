@@ -151,4 +151,6 @@ pnpm build
 | vue          | 3.3.x   |
 | element-plus | 2.3.x   |
 
-### 贡献者
+### 相关教程
+
+[如何在本地调演示效果](https://www.bilibili.com/video/BV1xCYeeEEMS/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
