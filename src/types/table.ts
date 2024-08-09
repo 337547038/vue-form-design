@@ -34,7 +34,7 @@ export interface Button {
   popConfirm?: PopconfirmProps //render=confirm时
   // 自定义点击事件
   click?: (row: { [key: string]: any }) => void | boolean
-  // 按钮是否显示，请返回布尔值
+  // 按钮是否显示，请返回布尔值。true显示
   display?: (row: { [key: string]: any }) => boolean
   // 按钮是否禁用，请返回布尔值
   disabled?: (row: { [key: string]: any }) => boolean
