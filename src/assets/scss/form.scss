@@ -140,10 +140,6 @@ $mainColor: #66b1ff;
   .group-txt {margin-bottom: 18px}
 
   .div-layout {
-    /*&.inline {
-      .drag {display: inline-flex}
-      .group {width: auto;margin-right: 10px}
-    }*/
     &.right {
       .drag {text-align: right;justify-content: flex-end}
     }

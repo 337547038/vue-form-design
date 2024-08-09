@@ -4,7 +4,7 @@ import type {
   ButtonProps,
   TableColumnCtx
 } from 'element-plus'
-import { permission } from '@/directive/permissions.ts'
+
 export interface ApiKey {
   list?: string
   edit?: string
@@ -15,8 +15,8 @@ export interface Columns extends Partial<TableColumnCtx<any>> {
   help?: string
   render?: 'switch' | 'image' | 'tag' | 'url' | 'datetime' | 'date' | 'buttons'
   attr?: any //附加属性，当`render=switch、image、tag、button`组件的属性。
-  replaceValue?: { [key: string | number]: string } //仅当`render=tag`时,{ '1': '启用', '0': '禁用' }
-  custom?: { [key: string | number]: string } //仅当`render=tag`时,{ '1': 'success', '0': 'danger' }
+  replaceValue?: { [key: string | number]: string } //仅当`render=tag/text`时,{ '1': '启用', '0': '禁用' }
+  custom?: { [key: string | number]: string } //仅当`render=tag/text`时,{ '1': 'success', '0': 'danger' }
   timeFormat?: string //仅当`render=datetime、date`时，对日期格式化，如YYYY年MM月dd日
   buttons?: Button[]
   prop?: string
@@ -61,6 +61,7 @@ export interface TableData {
   }
   config?: any
   apiKey?: ApiKey
+  pk?: string | number
 }
 
 export type EventType = 'switchChange' | 'getData' | 'del' | 'search' | 'export'

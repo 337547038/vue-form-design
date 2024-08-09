@@ -58,17 +58,12 @@
   import { getRequest } from '@/api'
   import { stringToObj, jsonParseStringify } from '@/utils/design'
 
-  const props = withDefaults(
-    defineProps<{
-      formId?: number | string
-    }>(),
-    {}
-  )
   const emits = defineEmits<{
     (e: 'clickCheck', value: FormList): void
     (e: 'click', value: FormData): void
   }>()
   const designType = inject('formDesignType') as string
+  const tableData = inject('tableData', {})
   const formDataList = ref([])
   // 默认搜索允许显示的字段
   const searchField = [
@@ -109,7 +104,7 @@
     return jsonParseStringify(origin)
   }
   const unWatch = watch(
-    () => props.formId,
+    () => tableData.value.config.sourceId,
     (val: number) => {
       if (val && isSearch.value) {
         getFormField(val)

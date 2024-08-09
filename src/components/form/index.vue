@@ -1,16 +1,12 @@
 <!-- Created by 337547038 on 2021/9/25. -->
 <template>
-  <div v-loading="loading">
+  <div v-loading="loading" class="ak-form">
     <el-form
       v-bind="data.form"
       ref="ruleForm"
       :model="model as any"
-      :disabled="disabled || type === 3"
-      class="add-form"
-      :class="{
-        'design-form': type === 5,
-        'detail-form': type === 3 || type === 4
-      }"
+      :disabled="disabled || operateType === 'detail'"
+      :class="[`form-${operateType}`]"
     >
       <form-group :data="data.list" />
       <slot></slot>
@@ -37,7 +33,7 @@
     provide
   } from 'vue'
   import FormGroup from './formGroup.vue'
-  import type { FormData, FormList } from '@/types/form'
+  import { FormData, FormList, ApiKey, EventType } from '@/types/form'
   import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import {
@@ -51,34 +47,30 @@
   } from '@/utils/design'
   import formChangeValue from '@/utils/formChangeValue'
   import { getStorage } from '@/utils'
-  import { requestResponse, getRequestEvent } from '@/utils/requestResponse.ts'
+  import { requestResponse, getRequestEvent } from '@/utils/requestResponse'
 
   defineOptions({ name: 'akForm' })
   const props = withDefaults(
     defineProps<{
       data: FormData
-      type?: number // 1新增；2修改；3查看（表单模式） ；4查看； 5设计
       disabled?: boolean // 禁用表单提交
-      requestUrl?: string // 编辑数据请求url
-      beforeFetch?: Function | string // 请求编辑数据前参数处理方法，可对请求参数处理
-      afterFetch?: Function | string // 请求数据加载完成后数据处理方法，可对返回数据处理
-      submitUrl?: string // 表单数据新增提交保存url
-      editUrl?: string // 表单数据修改保存提交url
-      beforeSubmit?: Function | string // 表单提交前数据处理，可对提交数据处理，新增和保存都会触发
-      afterSubmit?: Function | string // 表单提交后，默认提示提交结果，可return false阻止提示
+      before?: string | ((type: EventType, params: any, rout: any) => boolean) // 请求编辑数据前参数处理方法，可对请求参数处理
+      after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
       dict?: { [key: string]: any } // 固定匹配的字典
-      btnClick?: (key: string) => boolean | void // 按钮点击事件
       isSearch?: boolean // 列表里作为筛选使用
       query?: { [key: string]: any } // 一些附加的请求参数。也可在`beforeFetch`处添加
       params?: { [key: string]: any } // 提交表单一些附加参数，如在提交修改时可添加id等信息。而不需要在提交前拦截处理
+      apiKey?: ApiKey
+      pk?: string
+      operateType: string // 当前表单操作类型
     }>(),
     {
-      type: 1, // 1新增；2修改；3查看（表单模式） ；4查看； 5设计
       data: () => {
         return {
           list: [],
           form: {},
-          config: {}
+          config: {},
+          apiKey: {}
         }
       },
       dict: () => {
@@ -159,14 +151,7 @@
    */
   const defaultBtnClick = (obj: any) => {
     emits('btnClick', obj.key)
-    if (props.btnClick) {
-      // 可以return false阻止事件
-      const result = props.btnClick(obj.key)
-      if (result === false) {
-        return
-      }
-    }
-    if ([3, 4, 5].includes(props.type)) {
+    if (!['add', 'edit'].includes(props.operateType)) {
       return ElMessage.error('当前模式不能提交表单')
     }
     switch (obj.key) {

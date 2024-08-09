@@ -296,10 +296,10 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button @click="openAttrDialog('editCss')"
+            <el-button @click="openAttrDialog('editCss')" type="primary"
               >编辑表单样式
             </el-button>
-            <el-button @click="openAttrDialog('editDict')"
+            <el-button @click="openAttrDialog('editDict')" type="primary"
               >设置数据字典
             </el-button>
           </el-form-item>
@@ -1366,7 +1366,7 @@
   }
   // 表单属性修改
   const formAttrChange = (obj: any, val?: any) => {
-    if (obj.key === 'source') {
+    if (obj.key === 'sourceId') {
       getFormFieldBySource(obj.value) // 改变了数据源了，重新请求数据
       // 清空设计区已选择的组件，再一次选择时字段标识才会变
       store.setActiveKey('')

@@ -16,7 +16,7 @@
 { meta:{title:'登录',layout:'hidden',permissions:false} }
 </route>
 <script lang="ts" setup>
-  import { ref, markRaw, nextTick } from 'vue'
+  import { ref, markRaw, nextTick, onMounted } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import CodeCom from './components/code.vue'
   //import { ElMessage } from 'element-plus'
@@ -132,6 +132,30 @@
       })
     })
   }
+
+  // 调试 todo
+  onMounted(() => {
+    const data = {
+      nickName: '管理员',
+      roleId: '1',
+      departmentId: 2,
+      ip: '0:0:0:0:0:0:0:1',
+      loginTimer: 85,
+      remark: '',
+      postId: 0,
+      userName: 'admin',
+      lastLoginTime: '2024-07-14 12:01:48',
+      phone: '13800138000',
+      id: 1,
+      status: 1,
+      token:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNzIxMDQzNTM3fQ.zEux8csj_2VeDqVeOCUHwufERucjSuln31IMGQ8-o88',
+      refreshToken:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNzIxMDcyMzM3fQ.TbTSkFHTx08cbfTKGLtpBVPaHsgjF4wXkJNRdcwgm8o',
+      expire_time: 28800000
+    }
+    afterSubmit('success', data)
+  })
 </script>
 
 <style lang="scss" scoped>

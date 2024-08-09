@@ -2,7 +2,6 @@
 <template>
   <div class="design-container">
     <drag-control
-      :form-id="state.formOtherData.source"
       @click-check="searchCheckField as any"
       @click="selectTemplate"
     />
@@ -98,11 +97,7 @@
     formDataPreview: {},
     previewVisible: false, // 预览窗口
     designType: route.type, // 当前页面设计类型，有效值search
-    formDict: {},
-    formOtherData: {
-      source: route.source || '',
-      formName: '未命名表单'
-    }
+    formDict: {}
   })
   const drawer = reactive({
     visible: false,
@@ -133,8 +128,8 @@
           }
           state.formDict = string2json(result.dict)
           // 恢复表单名称
-          state.formOtherData.source = result.source
-          state.formOtherData.formName = result.name
+          formData.value.config.sourceId = result.source
+          formData.value.config.name = result.name
           console.log('ok')
           if (result.source && state.designType !== 'search') {
             console.log('ok2')
@@ -190,7 +185,7 @@
     // 添加校验，没有选择数据源时则必须要配置接口url
     const { submitUrl, editUrl, requestUrl } = formData.value.config
     if (
-      !state.formOtherData.source &&
+      !formData.value.config.sourceId &&
       (!submitUrl || !editUrl || !requestUrl) &&
       state.designType !== 'search'
     ) {
@@ -199,8 +194,8 @@
     }
     let params: any = {
       data: objToStringify(formData.value),
-      source: state.formOtherData.source, // 数据源允许在表单属性设置里修改的
-      name: state.formOtherData.formName, // 表单名称，用于在显示所有已创建的表单列表里显示
+      source: formData.value.config.sourceId, // 数据源允许在表单属性设置里修改的
+      name: formData.value.config.name, // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1, // 1表单 2列表
       dict: json2string(state.formDict)
     }
