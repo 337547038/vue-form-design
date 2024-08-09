@@ -124,7 +124,8 @@ pnpm dev
 
 # 使用json模拟数据
 
-默认下github示例和localhost访问时使用json模拟数据
+默认下github示例和localhost访问时使用json模拟数据。
+
 
 # 使用后端接口数据
 
@@ -138,10 +139,12 @@ pnpm build
 ### 开发环境
 | 名称           | 版本      |
 |--------------|---------|
-| node         | 16.15.x |
+| node         | 18.16.x |
 | pnpm         | 8.11.x  |
-| vite         | 5.0.x   |
-| vue          | 3.3.x   |
-| element-plus | 2.4.x   |
+| vite         | 5.3.x   |
+| vue          | 3.4.x   |
+| element-plus | 2.7.x   |
 
-### 贡献者
+### 相关教程
+
+[如何在本地调演示效果](https://www.bilibili.com/video/BV1xCYeeEEMS/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)

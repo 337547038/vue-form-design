@@ -41,7 +41,7 @@
       ></div>
     </template>
     <template v-else-if="element.type === 'table'">
-      <div class="form-table" v-if="isDesignType">
+      <div class="form-table" v-if="formProps.type === 5">
         <form-group :data="element.list" data-type="not-nested" />
       </div>
       <child-table v-else :data="element" />
@@ -60,7 +60,7 @@
           @click.stop="groupClick(col, i)"
         >
           <form-group :data="col.list" data-type="not-nested" />
-          <div class="drag-control" v-if="isDesignType">
+          <div class="drag-control" v-if="formProps.type === 5">
             <div class="item-control">
               <i
                 class="icon-del"
@@ -102,12 +102,12 @@
       <form-group
         :data="element.list"
         data-type="not-nested"
-        v-if="isDesignType"
+        v-if="formProps.type === 5"
       />
       <flex-box :data="element" v-else />
       <el-button
         style="position: relative; top: -28px; left: 10px"
-        v-if="element.config?.addBtnText && isDesignType"
+        v-if="element.config?.addBtnText && formProps.type === 5"
         size="small"
         >{{ element.config?.addBtnText }}</el-button
       >
@@ -121,7 +121,7 @@
         >
       </div>
     </template>
-    <template v-else-if="element.type === 'inputSlot' && !isDesignType">
+    <template v-else-if="element.type === 'inputSlot' && formProps.type !== 5">
       <!--  除设计外其他无需处理-->
     </template>
     <form-item v-else :data="element" />
@@ -135,14 +135,15 @@
   import FormItem from './formItem.vue'
   import ChildTable from './childTable.vue'
   import { FormList } from '@/types/form'
-  import { inject, computed } from 'vue'
-  import { getGroupName } from '@/utils/design'
-  const formProps = inject('akFormProps', {}) as any
-  const isDesignType = computed(() => {
-    return formProps.operateType === 'design'
-  })
+  import { inject } from 'vue'
+  import {
+    constFormBtnEvent,
+    constFormProps,
+    getGroupName
+  } from '@/utils/design'
+  const formProps = inject(constFormProps, {}) as any
   //按钮点击事件
-  const injectBtnEvent = inject('akFormButtonEvent')
+  const injectBtnEvent = inject(constFormBtnEvent)
   withDefaults(
     defineProps<{
       element: FormList
@@ -188,7 +189,7 @@
     // 1: '重置表单',
     // 2: '取消返回',
     // 3: '无动作(自定义)'
-    if (!isDesignType.value) {
+    if (formProps.value.type !== 5) {
       // 非设计模式才触发事件
       injectBtnEvent && injectBtnEvent(control)
     }
@@ -208,10 +209,11 @@
     if (!list.config) {
       return true
     }
+    const { type } = formProps.value
     const hidden = list.config.hidden
-    if (hidden && !isDesignType.value) {
+    if (hidden && type !== 5) {
       const Fn = new Function('$', `return (${hidden})`)
-      return !Fn(formProps.model) // pass=true满足条件隐藏
+      return !Fn(formProps.value.model) // pass=true满足条件隐藏
     }
     return true
   }
@@ -220,8 +222,9 @@
    * @param obj
    */
   const linksIf = (obj: FormList) => {
+    const { type } = formProps.value
     const { config: { displayAdd, displayEdit, displayDetail } = {} } = obj
-    switch (isDesignType.value) {
+    switch (type) {
       case 1: // 编辑页 || 新增页
         return !displayAdd
       case 2: // 编辑
@@ -231,7 +234,7 @@
         return !displayDetail
     }
     // 如果当前字段的name值存在于表单数据的vIf中，则不显示
-    const vIf: string | string[] = formProps.hideField
+    const vIf: string | string[] = formProps.value.hideField
     if (vIf?.length > 0 && obj.name) {
       return vIf.indexOf(obj.name) === -1 // 存在时返回false隐藏
     }

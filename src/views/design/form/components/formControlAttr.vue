@@ -175,7 +175,7 @@
           </div>
           <template
             v-if="
-              !state.isSearch &&
+              !isSearch &&
               showHide([
                 'txt',
                 'title',
@@ -286,7 +286,7 @@
             <el-switch
               v-else-if="item.type === 'switch'"
               v-model="item.value"
-              @input="formAttrChange(item, $event)"
+              @change="formAttrChange(item)"
             />
             <el-input
               v-else
@@ -303,7 +303,7 @@
               >设置数据字典
             </el-button>
           </el-form-item>
-          <template v-if="!state.isSearch">
+          <template v-if="!isSearch">
             <div class="h3"><h3>接口数据事件</h3></div>
             <el-form-item label="新增数据保存url">
               <el-input
@@ -348,8 +348,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, computed, toRefs, ref, watch, inject } from 'vue'
-  //import { useRoute } from 'vue-router'
+  import {
+    reactive,
+    computed,
+    ref,
+    watch,
+    inject,
+    onMounted,
+    nextTick
+  } from 'vue'
+  import { useRoute } from 'vue-router'
   import { getRequest } from '@/api'
   import { useDesignStore } from '@/store/design'
   import validate from '@/components/form/validate'
@@ -367,13 +375,15 @@
     return formData.value.form
   })
   const store = useDesignStore() as any
-  //const route = useRoute()
+  const route = useRoute()
   const controlData = computed(() => {
     return store.controlAttr
   })
+  const isSearch = computed(() => {
+    return route.query.type === 'search'
+  })
   const dataSourceOption = ref([])
   const formAttr = computed(() => {
-    const isSearch = state.isSearch
     return [
       {
         label: '表单名称',
@@ -381,7 +391,7 @@
         value: formConfig.value.name,
         key: 'name',
         path: 'config',
-        hide: isSearch
+        hide: isSearch.value
       },
       {
         label: '数据源',
@@ -391,7 +401,7 @@
         options: dataSourceOption.value,
         key: 'sourceId',
         path: 'config',
-        hide: isSearch || !dataSourceOption.value?.length,
+        hide: isSearch.value || !dataSourceOption.value?.length,
         clearable: true
       },
       {
@@ -399,7 +409,7 @@
         value: form.value.name,
         placeholder: '表单唯一标识，可为空',
         key: 'name',
-        hide: isSearch
+        hide: isSearch.value
       },
       {
         label: '表单标签宽度',
@@ -419,7 +429,7 @@
           { label: '每行三列', value: 'form-row-3' },
           { label: '每行四列', value: 'form-row-4' }
         ],
-        hide: isSearch,
+        hide: isSearch.value,
         clearable: true
       },
       {
@@ -664,7 +674,7 @@
           dict: { input: '文本', password: '密码' },
           path: 'type',
           vShow: ['input', 'password'],
-          vIf: state.isSearch // 搜索模式下隐藏 为true
+          vIf: isSearch.value // 搜索模式下隐藏 为true
         },
         {
           label: '文本域高度',
@@ -756,7 +766,7 @@
             'datePicker',
             'timePicker'
           ],
-          vIf: state.isSearch
+          vIf: isSearch.value
         },
         {
           label: '是否禁用编辑',
@@ -781,14 +791,14 @@
             'datePicker',
             'timePicker'
           ],
-          vIf: state.isSearch
+          vIf: isSearch.value
         },
         {
           label: '添加页隐藏',
           value: config.displayAdd,
           path: 'config.displayAdd',
           type: 'switch',
-          vIf: state.isSearch,
+          vIf: isSearch.value,
           vHide: ['inputSlot']
         },
         {
@@ -796,7 +806,7 @@
           value: config.displayEdit,
           path: 'config.displayEdit',
           type: 'switch',
-          vIf: state.isSearch,
+          vIf: isSearch.value,
           vHide: ['inputSlot']
         },
         {
@@ -804,7 +814,7 @@
           value: config.displayDetail,
           path: 'config.displayDetail',
           type: 'switch',
-          vIf: state.isSearch,
+          vIf: isSearch.value,
           vHide: ['inputSlot']
         },
         {
@@ -1064,7 +1074,6 @@
       return []
     }
   })
-  const designType = inject('formDesignType')
   const state = reactive({
     dataSourceFiledList: [],
     customRulesList: [
@@ -1078,7 +1087,6 @@
         label: '自定义方法'
       }
     ], // 自定义校验规则
-    isSearch: designType === 'search',
     tabsName: 'second'
   })
   watch(
@@ -1329,43 +1337,8 @@
     controlData.value.customRules?.splice(index, 1)
   }
 
-  // 根据选定数据源获取表单字段
-  const getFormFieldBySource = (
-    id?: string,
-    callback?: (list: any) => void
-  ) => {
-    if (state.isSearch) {
-      // 搜索设计这里不需要数据源
-      return
-    }
-    const source = id
-    if (source) {
-      getRequest('sourceById', { id: source })
-        .then((res: { data: any }) => {
-          // console.log(res)
-          const tableData = res.data?.tableData
-          try {
-            state.dataSourceFiledList = JSON.parse(tableData)
-          } catch (e) {
-            state.dataSourceFiledList = []
-          }
-          callback && callback(state.dataSourceFiledList)
-        })
-        .catch((res: any) => {
-          console.log(res)
-        })
-    }
-  }
-  const getDataSource = () => {
-    // 获取数据源，表单设计才加载，搜索设置不需要
-    if (!state.isSearch) {
-      getRequest('sourceList').then((res: any) => {
-        dataSourceOption.value = res.data.list
-      })
-    }
-  }
   // 表单属性修改
-  const formAttrChange = (obj: any, val?: any) => {
+  const formAttrChange = (obj: any) => {
     if (obj.key === 'sourceId') {
       getFormFieldBySource(obj.value) // 改变了数据源了，重新请求数据
       // 清空设计区已选择的组件，再一次选择时字段标识才会变
@@ -1373,7 +1346,7 @@
       store.setControlAttr({})
     }
     if (obj.path === 'config') {
-      formData.value.config[obj.key] = obj.value || val
+      formData.value.config[obj.key] = obj.value
     } else {
       formData.value.form[obj.key] = obj.value
     }
@@ -1395,6 +1368,48 @@
       item.message = filter[0].message
     }
   }
-  getDataSource()
+
+  //接口数据处理
+  //获取数据源
+  const getDataSource = () => {
+    // 获取数据源，表单设计才加载，搜索设置不需要
+    if (!isSearch.value) {
+      getRequest('sourceList').then((res: any) => {
+        dataSourceOption.value = res.data.list
+      })
+    }
+  }
+  // 根据选定数据源获取表单字段
+  const getFormFieldBySource = (
+    sourceId: string,
+    callback?: (list: any) => void
+  ) => {
+    if (isSearch.value || !id) {
+      // 搜索设计这里不需要数据源
+      return
+    }
+    getRequest('sourceById', { id: sourceId })
+      .then((res: { data: any }) => {
+        // console.log(res)
+        const tableData = res.data?.tableData
+        try {
+          state.dataSourceFiledList = JSON.parse(tableData)
+        } catch (e) {
+          state.dataSourceFiledList = []
+        }
+        callback && callback(state.dataSourceFiledList)
+      })
+      .catch((res: any) => {
+        console.log(res)
+      })
+  }
+  //接口数据处理结束
+  onMounted(() => {
+    nextTick(() => {
+      // 搜索无需加载
+      getDataSource()
+    })
+  })
+
   defineExpose({ getFormFieldBySource })
 </script>

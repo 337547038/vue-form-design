@@ -11,11 +11,7 @@
       {{ getLabel(data.formItem) }}
       <Tooltip :content="config.help" />
     </template>
-    <div
-      class="form-value"
-      v-if="formProps.operateType === 'detail'"
-      v-html="value"
-    ></div>
+    <div class="form-value" v-if="type === 4" v-html="value"></div>
     <template v-else>
       <el-input
         v-bind="control"
@@ -85,8 +81,7 @@
       </el-checkbox-group>
       <AKSelect
         v-if="
-          data.type === 'select' ||
-          (formProps.operateType === 'design' && data.type === 'inputSlot')
+          data.type === 'select' || (type === 5 && data.type === 'inputSlot')
         "
         :data="data"
         :disabled="disabledEdit"
@@ -143,14 +138,12 @@
           :config="config"
           :disabled="disabledEdit"
           v-model="value"
-          v-if="
-            ['add', 'edit', 'detail'].includes(formProps.operateType as number)
-          "
+          v-if="[1, 2, 3].includes(type as number)"
         />
         <img
           alt=""
           src="./tinymce.png"
-          v-if="formProps.operateType === 'design'"
+          v-if="type === 5"
           style="max-width: 100%"
         />
       </template>
@@ -177,7 +170,9 @@
     formatNumber,
     objectToArray,
     constControlChange,
-    constSetFormOptions
+    constSetFormOptions,
+    constFormProps,
+    constGetControlByName
   } from '@/utils/design'
   import validate from './validate'
   import ExpandUser from './expand/user.vue'
@@ -202,9 +197,12 @@
   }>()
   const designStore = useDesignStore()
   const route = useRoute()
-  const formProps = inject('akFormProps', {}) as any
+  const formProps = inject(constFormProps, {}) as any
   const inputType = computed(() => {
     return props.data.type === 'password' ? 'password' : 'text'
+  })
+  const type = computed(() => {
+    return formProps.value.type
   })
   const config = computed(() => {
     return props.data.config || {}
@@ -266,7 +264,7 @@
   }
 
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
-  const getControlByName = inject('akGetControlByName') as any
+  const getControlByName = inject(constGetControlByName) as any
   const sourceFunKey = computed(() => {
     const iReg = new RegExp('(?<=\\${)(.*?)(?=})', 'g')
     //const iReg = new RegExp('\\${.*?}', 'g') // 结果会包含开头和结尾=>${name}
@@ -297,10 +295,10 @@
   })
   // 控制编辑模式下是否可用
   const disabledEdit: boolean = computed(() => {
-    if (formProps.operateType === 'detail') {
+    if (type.value === 3) {
       return true // 查看模式，为不可编辑状态
     }
-    if (formProps.operateType === 'edit' && config.value.disabledEdit) {
+    if (type.value === 2 && config.value.disabledEdit) {
       return true // 编辑模式设置了禁用
     }
     // 使用了禁用条件表达式

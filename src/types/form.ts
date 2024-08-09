@@ -40,7 +40,7 @@ export interface FormData {
     addLoad?: boolean
     submitCancel?: boolean | string[]
   }
-  operateType: 'add' | 'edit' | 'detail' | 'design' // 当前表单操作类型
+  operateType: 'add' | 'edit' | 'detail' | 'design' | 'search' // 当前表单操作类型
   pk?: string // 主键，用于判断当前表单是新增或为修改，判断方式为当前提交的表单内容中存在主键值，则认为是编辑状态
   apiKey?: ApiKey
   events?: {

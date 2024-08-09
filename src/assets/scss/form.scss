@@ -1,31 +1,9 @@
 @charset "UTF-8";
 // 左侧栏
 $mainColor: #66b1ff;
-.design-container {padding: 0 !important;display: flex;}
 
-.components-list {width: 250px;padding: 8px 0;overflow-y: auto;height: calc(100vh - 60px);position: relative;overflow-x: hidden;
 
-  .title {padding: 8px 12px;position: relative;
 
-    .template {position: absolute;right: 12px;top: 0;padding: 8px;cursor: pointer}
-  }
-
-  ul { position: relative;overflow: hidden;padding: 0 10px 10px;margin: 0;
-
-    li {font-size: 13px;display: flex;width: 48%;line-height: 28px;position: relative;float: left;left: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;margin: 0 1% 5px;color: #333;padding: 0 10px;border: 1px solid transparent;background: #f4f6fc;user-select: none;align-items: center;
-
-      i {margin-right: 5px}
-
-      &:hover {
-        color: $mainColor;border: 1px dashed $mainColor;cursor: move;
-      }
-
-      &.title {padding: 0 10px}
-    }
-  }
-
-  .content {margin-left: 12px}
-}
 
 .use-template {position: absolute;left: -100%;top: 0;width: 100%;bottom: 0;background: #fff;opacity: 0;
 
@@ -51,7 +29,7 @@ $mainColor: #66b1ff;
 }
 
 // 框架
-.main-body {flex: 2; border-left: 1px solid #e0e0e0;border-right: 1px solid #e0e0e0;margin: 0;overflow: hidden;
+.main-body {
 
   .empty-tips {text-align: center;width: 100%;font-size: 20px;color: #ccc;position: absolute;left: 0;top: 100px;
   }
@@ -178,52 +156,6 @@ $mainColor: #66b1ff;
 
     .group {width: 25%}
   }
-}
-
-.sidebar-tools {width: 300px;right: 0;top: 0;overflow-y: auto;box-sizing: border-box;padding-bottom: 10px;bottom: 0; height: calc(100vh - 60px);
-
-  .form {
-    .el-form-item {margin-bottom: 10px;}
-  }
-
-  .h3 {font-size: 14px;margin-bottom: 10px;display: flex;align-items: center;
-
-    h3 {font-size: 14px}
-  }
-
-  .el-tabs__nav-wrap {padding: 0 10px}
-
-  .el-tabs__content {padding: 0 10px}
-
-  .icon-del {cursor: pointer}
-
-  .option-radio {
-    > label {margin-right: 8px}
-  }
-
-  .event-btn {
-    button {margin: 0 12px 5px 0}
-  }
-  .flex-end{
-    .el-form-item__content{display: flex;justify-content: flex-end}
-  }
-}
-
-#editJson, #editJsonCopy {width: 100%;height: calc(100vh - 80px)}
-
-#editJsonCopy {height: calc(100vh - 350px)}
-
-.ace-dialog {background: #1e1e1e;
-
-  .el-drawer__body {padding: 0}
-
-  .el-drawer__header {;margin: 0;color: #e9e9e9;font-size: 12px;padding: 3px 10px}
-
-  .dialog-footer {text-align: center;padding: 5px 0 15px;}
-}
-
-.export-dialog {
-  .el-dialog__body {padding: 0 20px}
 }
 
 .design-form {min-height: calc(100vh - 146px);

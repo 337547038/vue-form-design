@@ -31,7 +31,7 @@
     onMounted,
     nextTick,
     provide,
-    reactive
+    inject
   } from 'vue'
   import FormGroup from './formGroup.vue'
   import { FormData, FormList, ApiKey, EventType } from '@/types/form'
@@ -58,8 +58,9 @@
       before?: string | ((type: EventType, params: any, rout: any) => boolean) // 请求编辑数据前参数处理方法，可对请求参数处理
       after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
       dict?: { [key: string]: any } // 固定匹配的字典
-      query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
-      params?: { [key: string]: any } // 提交表单一些附加参数
+      isSearch?: boolean // 列表里作为筛选使用
+      query?: { [key: string]: any } // 一些附加的请求参数。也可在`beforeFetch`处添加
+      params?: { [key: string]: any } // 提交表单一些附加参数，如在提交修改时可添加id等信息。而不需要在提交前拦截处理
       apiKey?: ApiKey
       pk?: string
       operateType: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型
@@ -76,6 +77,7 @@
       dict: () => {
         return {}
       },
+      isSearch: false,
       query: () => {
         return {}
       },
@@ -90,9 +92,7 @@
     (e: 'change', val: any): void // 表单组件值发生变化时
   }>()
 
-  const isSearch = computed(() => {
-    return props.operateType === 'search'
-  })
+  provide('operateType', props.operateType)
 
   const route = useRoute()
   const router = useRouter()
@@ -116,7 +116,7 @@
           cancel = submitBtn[1]
         }
       }
-      if (isSearch.value) {
+      if (props.isSearch) {
         return [
           {
             label: submit || '查询',
@@ -374,28 +374,29 @@
     }
   })
   provide(constFormProps, formProps)*/
-
-  // defineExpose方法，设置表单选项值
-  const setFormOptions = ref({})
-  provide('akSetOptions', setFormOptions)
-  const setOptions = (obj: { [key: string]: string[] }) => {
-    setFormOptions.value = obj
-  }
   /**
    * 根据组件的name获取当前控件的相关信息
    * @param name
    */
-  const getControlByName = (name: string) => {
+  /*const getControlByName = (name: string) => {
     return getNameForEach(props.data.list, name)
   }
-  provide('akGetControlByName', getControlByName)
+  provide(constGetControlByName, getControlByName)*/
+  // 对表单选择项快速设置 defineExpose方法
+  /*const setFormOptions = ref({})
+  provide(constSetFormOptions, setFormOptions)
+  const setOptions = (obj: { [key: string]: string[] }) => {
+    setFormOptions.value = obj
+  }*/
+  // 表单设计中按钮组件的点击事件
+  /*provide(constFormBtnEvent, defaultBtnClick)*/
   /**
    * 编辑时获取表单数据，外部调用并传入请求参数
    * @param params 一般情况下只需传一个id即可{id:xx}
    */
   const getData = (params = {}) => {
     const requestUrl = props.data.config?.requestUrl || props.requestUrl
-    if (props.type === 5 || !requestUrl || isSearch.value) {
+    if (props.type === 5 || !requestUrl || props.isSearch) {
       console.error('执行了获取数据方法，但配置有误！')
       return
     }
@@ -444,8 +445,8 @@
     const { submitUrl = props.submitUrl, editUrl = props.editUrl } =
       props.data.config || {}
     const apiUrl = props.type === 1 ? submitUrl : editUrl
-    if (isSearch.value || !apiUrl || loading.value) {
-      if (!isSearch.value && !apiUrl) {
+    if (props.isSearch || !apiUrl || loading.value) {
+      if (!props.isSearch && !apiUrl) {
         console.error(new Error('请配置表单提交submitUrl'))
       }
       // isSearch列表里作为筛选时，不提交表单
@@ -493,17 +494,6 @@
     })
   }
   // ------------------------数据处理结束------------------------
-
-  // 表单设计中按钮组件的点击事件
-  provide('akFormButtonEvent', defaultBtnClick)
-  // 一些所需参数
-  const akFormProps = reactive({
-    operateType: props.operateType,
-    model: model.value,
-    hideField: props.data.config?.hideField as [],
-    dict: dictForm.value
-  })
-  provide('akFormProps', akFormProps)
   // 重置表单方法
   const resetFields = () => {
     ruleForm.value.resetFields()

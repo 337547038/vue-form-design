@@ -11,7 +11,11 @@
         <div class="empty-tips" v-if="formData.list?.length === 0">
           从左侧拖拽来添加字段
         </div>
-        <ak-form :type="5" :data="formData" :dict="state.formDict" />
+        <ak-form
+          :data="formData"
+          :dict="state.formDict"
+          :operateType="$route.query.type === 'search' ? 'search' : 'design'"
+        />
       </div>
     </div>
     <form-control-attr
@@ -79,7 +83,7 @@
 
   const store = useDesignStore()
   const router = useRouter()
-  const route: any = useRoute().query || {}
+  const route: any = useRoute()
   const formData = ref({
     list: [],
     form: {
@@ -96,7 +100,7 @@
     loading: false,
     formDataPreview: {},
     previewVisible: false, // 预览窗口
-    designType: route.type, // 当前页面设计类型，有效值search
+    operateType: route.query.type, // 当前页面设计类型
     formDict: {}
   })
   const drawer = reactive({
@@ -109,8 +113,7 @@
   })
   const vueFileEl = ref()
   const formControlAttrEl = ref()
-  // 当前表单设计类型，供各子组件调用以展示不同页面，统一方式不需要每个组件都从路由中取
-  provide('formDesignType', state.designType)
+
   const getInitData = () => {
     const id = route.id // 当前记录保存的id
     if (id) {
@@ -143,41 +146,6 @@
           ElMessage.error(res.message || '加载异常')
           state.loading = false
         })
-    }
-  }
-  const headToolClick = (type: string) => {
-    switch (type) {
-      case 'del':
-        formData.value = JSON.parse(stringFormData.value)
-        store.setActiveKey('')
-        store.setControlAttr({})
-        break
-      case 'eye':
-        // 打开预览窗口
-        store.setActiveKey('')
-        store.setControlAttr({})
-        state.previewVisible = true
-        let stringPreview = objToStringify(formData.value) // 防止预览窗口数据修改影响
-        const formName = formData.value.form.name
-        // eslint-disable-next-line no-case-declarations
-        const reg = new RegExp(`get${formName}ControlByName`, 'g')
-        stringPreview = stringPreview.replace(
-          reg,
-          `getPreview${formName}ControlByName`
-        )
-        state.formDataPreview = stringToObj(stringPreview)
-        state.formDataPreview.form.name = `Preview${formName}` // 修改下表单名
-        break
-      case 'json':
-        // 生成脚本预览
-        openAceEditDrawer({ type: 'creatJson', content: formData.value })
-        break
-      case 'save':
-        saveData()
-        break
-      case 'vue':
-        vueFileEl.value.open(formData.value)
-        break
     }
   }
   // 将数据保存在服务端
@@ -244,6 +212,42 @@
     // 清空右侧栏信息
     store.setActiveKey('')
     store.setControlAttr({})
+  }
+
+  const headToolClick = (type: string) => {
+    switch (type) {
+      case 'del':
+        formData.value = JSON.parse(stringFormData.value)
+        store.setActiveKey('')
+        store.setControlAttr({})
+        break
+      case 'eye':
+        // 打开预览窗口
+        store.setActiveKey('')
+        store.setControlAttr({})
+        state.previewVisible = true
+        let stringPreview = objToStringify(formData.value) // 防止预览窗口数据修改影响
+        const formName = formData.value.form.name
+        // eslint-disable-next-line no-case-declarations
+        const reg = new RegExp(`get${formName}ControlByName`, 'g')
+        stringPreview = stringPreview.replace(
+          reg,
+          `getPreview${formName}ControlByName`
+        )
+        state.formDataPreview = stringToObj(stringPreview)
+        state.formDataPreview.form.name = `Preview${formName}` // 修改下表单名
+        break
+      case 'json':
+        // 生成脚本预览
+        openAceEditDrawer({ type: 'creatJson', content: formData.value })
+        break
+      case 'save':
+        saveData()
+        break
+      case 'vue':
+        vueFileEl.value.open(formData.value)
+        break
+    }
   }
   /**
    * 打开编辑器
@@ -380,8 +384,8 @@
   const searchCheckField = (data: FormData) => {
     formData.value.list.push(data)
   }
-  getInitData()
   onMounted(() => {
+    getInitData()
     stringFormData.value = JSON.stringify(formData.value)
     if (route.source) {
       //从数据源一键创建过来时带有source参数
@@ -389,9 +393,6 @@
         route.source,
         (list: any) => {
           formData.value.list = getOneFormCreation(list)
-          formData.value.config = {
-            submitCancel: true
-          }
         }
       )
     }

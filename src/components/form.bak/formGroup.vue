@@ -1,7 +1,7 @@
 <!-- Created by 337547038 on 2021/9/8. -->
 <template>
   <draggable
-    v-if="['design', 'search'].includes(formProps.operateType)"
+    v-if="type === 5"
     itemKey="id"
     :list="dataList"
     name="fade"
@@ -51,23 +51,45 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, computed, inject, onUnmounted } from 'vue'
+  import { reactive, computed, ref, watch, inject, onUnmounted } from 'vue'
   import { onBeforeRouteLeave } from 'vue-router'
   import Draggable from 'vuedraggable-es'
   import GroupControl from './groupControl.vue'
   import { useDesignStore } from '@/store/design'
   import type { FormList } from '@/types/form'
-  import { getGroupName, jsonParseStringify } from '@/utils/design'
-
-  const dataList = defineModel<FormList>('data')
+  import {
+    constFormProps,
+    getGroupName,
+    jsonParseStringify
+  } from '@/utils/design'
+  const props = withDefaults(
+    defineProps<{
+      data: FormList[]
+      dataType?: String
+    }>(),
+    {
+      data: () => {
+        return []
+      }
+    }
+  )
   const store = useDesignStore() as any
-  const formProps = inject('akFormProps', {}) as any
+  const formProps = inject(constFormProps, {}) as any
 
+  const type = computed(() => {
+    return formProps.value.type
+  })
   const state = reactive({
     clone: true, // 允许clone
     gridAdd: false
   })
-
+  const dataList = ref(props.data)
+  const unWatch = watch(
+    () => props.data,
+    (v: FormList[]) => {
+      dataList.value = v
+    }
+  )
   const activeKey = computed(() => {
     return store.activeKey
   })
@@ -84,7 +106,7 @@
    * @param item
    */
   const click = (action: string, index: number, item?: any) => {
-    if (!['design', 'search'].includes(formProps.operateType)) {
+    if (type.value !== 5) {
       return // 非设计模式
     }
     if (action === 'clone') {
@@ -179,6 +201,8 @@
     unWatch() //销毁监听器
   })
   onUnmounted(() => {
+    // console.log('onUnmounted')
+    dataList.value = {}
     store.setActiveKey('')
     store.setControlAttr({})
   })
