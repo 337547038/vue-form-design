@@ -176,7 +176,7 @@
     state.clone = !notNested(item.type)
   }
   onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+    //unWatch() //销毁监听器
   })
   onUnmounted(() => {
     store.setActiveKey('')

@@ -13,7 +13,6 @@
         </div>
         <ak-form
           :data="formData"
-          :dict="state.formDict"
           :operateType="$route.query.type === 'search' ? 'search' : 'design'"
         />
       </div>
@@ -35,7 +34,6 @@
     <el-dialog v-model="state.previewVisible" title="预览" :fullscreen="true">
       <ak-form
         :data="state.formDataPreview"
-        :dict="state.formDict"
         ref="previewForm"
         v-if="state.previewVisible"
       />
@@ -66,12 +64,7 @@
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
   import { useRoute, useRouter } from 'vue-router'
-  import {
-    json2string,
-    objToStringify,
-    string2json,
-    stringToObj
-  } from '@/utils/design'
+  import { objToStringify, string2json, stringToObj } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
   import type { FormData } from '@/types/form'
   import { getDrawerTitle, getDrawerContent } from '../components/aceTooptip'
@@ -91,7 +84,8 @@
     },
     config: {
       submitCancel: true
-    }
+    },
+    apiKey: {}
   })
   const stringFormData = ref() // 用于恢复初始值
   provide('formData', formData)
@@ -100,8 +94,7 @@
     loading: false,
     formDataPreview: {},
     previewVisible: false, // 预览窗口
-    operateType: route.query.type, // 当前页面设计类型
-    formDict: {}
+    operateType: route.query.type // 当前页面设计类型
   })
   const drawer = reactive({
     visible: false,
@@ -129,13 +122,10 @@
               formData.value = resultData
             }
           }
-          state.formDict = string2json(result.dict)
           // 恢复表单名称
           formData.value.config.sourceId = result.source
           formData.value.config.name = result.name
-          console.log('ok')
           if (result.source && state.designType !== 'search') {
-            console.log('ok2')
             // 加载属性侧边栏的字段标识，搜索时不需要请求
             formControlAttrEl.value.getFormFieldBySource(result.source)
           }
@@ -164,8 +154,7 @@
       data: objToStringify(formData.value),
       source: formData.value.config.sourceId, // 数据源允许在表单属性设置里修改的
       name: formData.value.config.name, // 表单名称，用于在显示所有已创建的表单列表里显示
-      type: 1, // 1表单 2列表
-      dict: json2string(state.formDict)
+      type: 1 // 1表单 2列表
     }
     let apiKey = 'designSave'
     if (route.id) {
@@ -179,7 +168,6 @@
     if (state.designType === 'search') {
       params = {
         data: objToStringify(formData.value),
-        dict: json2string(state.formDict),
         id: route.id
       }
     }
@@ -266,14 +254,8 @@
       case 'editCss':
         editData = formData.value.config?.style || ''
         break
-      case 'editDict':
-        // 格式化一下
-        editData = json2string(state.formDict, true)
-        break
-      case 'beforeFetch':
-      case 'beforeSubmit':
-      case 'afterFetch':
-      case 'afterSubmit':
+      case 'before':
+      case 'after':
       case 'change':
         const beforeData: any = formData.value.events || {}
         if (beforeData[type]) {
@@ -282,13 +264,15 @@
           editData = getDrawerContent(type)
         }
         break
-      case 'optionsParams':
-      case 'optionsResult':
+      case 'beforeOption':
+      case 'afterOption':
+        const keyType = type.replace('Option', '')
         if (!content) {
-          editData = getDrawerContent(type)
+          editData = getDrawerContent(keyType)
         } else {
           editData = objToStringify(content, true)
         }
+        drawer.title = (getDrawerTitle as any)[keyType]
         break
       case 'creatJson':
         editData = objToStringify(content, true)
@@ -327,13 +311,8 @@
           }
           formData.value.config.style = newObj
           break
-        case 'editDict':
-          state.formDict = newObj
-          break
-        case 'beforeFetch':
-        case 'beforeSubmit':
-        case 'afterFetch':
-        case 'afterSubmit':
+        case 'before':
+        case 'after':
         case 'change':
           if (!formData.value.events) {
             formData.value.events = {}

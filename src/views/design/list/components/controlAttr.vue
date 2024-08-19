@@ -277,9 +277,6 @@
             <el-button type="primary" @click="editOpenDrawer('tableConfig')"
               >编辑表格属性
             </el-button>
-            <el-button type="primary" @click="editOpenDrawer('editDict')"
-              >设置数据字典
-            </el-button>
           </el-form-item>
           <div class="h3"><h3>接口数据事件</h3></div>
           <el-form-item label="主键">

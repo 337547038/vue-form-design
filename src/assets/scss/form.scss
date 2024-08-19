@@ -2,9 +2,6 @@
 // 左侧栏
 $mainColor: #66b1ff;
 
-
-
-
 .use-template {position: absolute;left: -100%;top: 0;width: 100%;bottom: 0;background: #fff;opacity: 0;
 
   &.active {animation: templateAni .5s forwards;}
@@ -158,11 +155,11 @@ $mainColor: #66b1ff;
   }
 }
 
-.design-form {min-height: calc(100vh - 146px);
+.ak-form-design {min-height: calc(100vh - 126px);
 
   > div {height: 100%}
 
-  > .drag {min-height: calc(100vh - 146px) !important;}
+  > .drag {min-height: calc(100vh - 176px) !important;}
 
   .ghost {
     background: #F56C6C;

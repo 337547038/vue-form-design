@@ -59,23 +59,12 @@ a {text-decoration: none}
       th, td {border: 1px solid #eaeefb;color: #314659;text-align: left;padding: 10px 15px;}
     }
   }
-  /*.anchor-nav {position: fixed;right: 10px;top: 20px;background: #fff;padding: 10px 20px;border: 1px solid #eaeefb; border-radius: 3px;transform: translateX(100%);transition:all .3s;
-    a {display: block;color: #314659;margin: 5px 0}
-    .button{position: absolute;top:5px;cursor: pointer;transform: scale(.8)  rotate(180deg);transition: all .3s;left: -10px}
-    &.visible{transform: translateX(0);
-    .button{right: 5px;transform: scale(.8);left:auto}}
-  }*/
-  /*.left-fade-enter-active {
-    //transition: all 1.2s ease;
-  }
-  .left-fade-leave-active {
-    //transition: all .1s cubic-bezier(2.0, 0.5, 0.8, 1.0);
-  }*/
-  /*.left-fade-leave-to, .left-fade-enter-from {
-    transform: translateX(-20px);
-    opacity: .2;
-  }*/
 
+  .marked-body{
+    li{
+      &:before{content: '•';padding: 0 3px;font-size: 18px;}
+    }
+  }
 
   .left-fade-leave-active,
   .left-fade-enter-active {

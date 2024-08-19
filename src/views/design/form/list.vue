@@ -2,8 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="designList"
-      delete-url="designDelete"
+      :apiKey="{ list: 'designList', del: 'designDelete' }"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 1 }"
@@ -48,37 +47,87 @@
       { label: '勾选', type: 'selection' },
       { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '表单名称', width: '150px' },
-      /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
       {
         prop: 'source',
         label: '数据源名称',
         width: '150px',
-        config: { dictKey: 'source' }
+        render: 'text',
+        replaceValue: 'source',
+        config: {}
       },
-      { prop: 'category', label: '分类', config: { dictKey: 'sys-form' } },
+      {
+        prop: 'category',
+        label: '分类',
+        config: {},
+        render: 'tag',
+        replaceValue: 'sys-form'
+      },
       {
         prop: 'status',
         label: '状态',
+        render: 'switch',
         config: {
-          dictKey: 'sys-status',
-          tagList: {
-            0: 'info',
-            1: 'success'
-          }
+          inlinePrompt: true,
+          activeText: '启用',
+          inactiveText: '禁用',
+          activeValue: 1,
+          inactiveValue: 0
         }
       },
       {
         prop: 'creatUserId',
         label: '创建人',
-        config: { dictKey: 'creatUser' }
+        render: 'text',
+        replaceValue: 'creatUser',
+        config: {}
       },
       {
         prop: 'updateDate',
         label: '更新时间',
         width: 200,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        config: {}
       },
-      { label: '操作', prop: '__control', width: '250px', fixed: 'right' }
+      {
+        label: '操作',
+        prop: 'control',
+        width: '300px',
+        fixed: 'right',
+        render: 'buttons',
+        buttons: [
+          {
+            label: '设置',
+            key: 'set',
+            click: (row: any) => {
+              dialog.visible = true
+              nextTick(() => {
+                formEl.value.setValue({
+                  name: row.name,
+                  id: row.id,
+                  category: row.category,
+                  status: row.status
+                })
+              })
+            }
+          },
+          {
+            label: '编辑',
+            click: (row: any) => {
+              // 跳转到表单设计编辑页
+              toFormDesign(row)
+            }
+          },
+          {
+            label: '删除',
+            key: 'del'
+          },
+          {
+            label: '一键创建列表',
+            click: (row: any) => {
+              router.push({ path: '/design/list', query: { form: row.id } })
+            }
+          }
+        ]
+      }
     ],
     controlBtn: [
       {
@@ -90,40 +139,6 @@
         }
       },
       { label: '删除', key: 'del', size: 'small' }
-    ],
-    operateBtn: [
-      {
-        label: '设置',
-        key: 'set',
-        click: (row: any) => {
-          dialog.visible = true
-          nextTick(() => {
-            formEl.value.setValue({
-              name: row.name,
-              id: row.id,
-              category: row.category,
-              status: row.status
-            })
-          })
-        }
-      },
-      {
-        label: '编辑',
-        click: (row: any) => {
-          // 跳转到表单设计编辑页
-          toFormDesign(row)
-        }
-      },
-      {
-        label: '删除',
-        key: 'del'
-      },
-      {
-        label: '一键创建列表',
-        click: (row: any) => {
-          router.push({ path: '/design/list', query: { form: row.id } })
-        }
-      }
     ],
     config: {
       expand: true

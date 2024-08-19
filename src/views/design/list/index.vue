@@ -45,7 +45,6 @@
               is-search
               v-if="state.searchData?.list?.length"
               :data="state.searchData"
-              :dict="state.dict"
               request-url=""
             />
             <div class="tip" v-else>条件查询搜索区域，单击可编辑</div>
@@ -73,18 +72,20 @@
               />
             </div>
             <div class="control-other">
-              <el-button
-                size="small"
-                circle
-                icon="Search"
-                v-if="tableData.config?.expand"
-              />
-              <el-button
-                size="small"
-                circle
-                icon="SetUp"
-                v-if="tableData.config?.columnsSetting !== false"
-              />
+              <el-button-group>
+                <el-button
+                  circle
+                  icon="Search"
+                  title="展开/收起筛选"
+                  v-if="tableData.config?.expand"
+                />
+                <el-button
+                  circle
+                  icon="SetUp"
+                  title="设置列显示隐藏"
+                  v-if="tableData.config?.columnsSetting !== false"
+                />
+              </el-button-group>
             </div>
           </div>
           <div class="tip" v-if="!tableData.columns?.length">
@@ -348,7 +349,7 @@
     }
   }
   const editOpenDrawer = (type: string) => {
-    let codeType = ''
+    const codeType = ''
     let editData
     let title = ''
     let isString = false
@@ -357,10 +358,6 @@
       case 'json': // 生成脚本
         editData = tableData.value
         direction = 'rtl'
-        break
-      case 'editDict':
-        codeType = 'json'
-        editData = state.dict || {}
         break
       case 'tableConfig':
         title = 'el-table的相关属性'
@@ -450,9 +447,6 @@
       case 'controlBtn':
         tableData.value.controlBtn = val
         break
-      case 'editDict':
-        state.dict = string2json(content)
-        break
       case 'before':
       case 'after':
         if (!tableData.value.events) {
@@ -532,8 +526,7 @@
       data: '{}', // 搜索表单数据，搜索设置不在这里修改
       source: formId,
       name: name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
-      type: 2, // 1表单 2列表
-      dict: json2string(state.dict)
+      type: 2 // 1表单 2列表
     }
     let apiKey = 'designSave'
     if (routeQuery.id) {
@@ -570,7 +563,6 @@
         ({ tableData: tableData2, searchData, dict, source }) => {
           tableData.value = tableData2 // 列表数据
           state.searchData = searchData // 搜索表单数据
-          state.dict = dict
           if (tableData2.config.formId) {
             // 根据选择的表单获取可供选择的表头
             getFormColumns(source).then(data => {

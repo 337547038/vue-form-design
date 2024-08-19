@@ -37,41 +37,37 @@
           <slot name="controlBtn"></slot>
         </div>
         <div class="control-other">
-          <el-button
-            v-if="searchFormExpand"
-            circle
-            icon="Search"
-            size="small"
-            title="展开/收起筛选"
-            @click="state.searchFormDown = !state.searchFormDown"
-          />
-          <el-popover
-            v-if="columnsSetting"
-            :width="80"
-            placement="bottom-end"
-            trigger="click"
-            @hide="popoverHideClick"
-            @show="popoverShowClick"
-          >
-            <template #default>
-              <el-checkbox-group v-model="state.columnsCheck">
-                <el-checkbox
-                  v-for="item in data.columns"
-                  :key="item.prop || item.type"
-                  :value="item.prop || item.type"
-                  >{{ item.label }}
-                </el-checkbox>
-              </el-checkbox-group>
-            </template>
-            <template #reference>
-              <el-button
-                circle
-                icon="SetUp"
-                title="设置列显示隐藏"
-                size="small"
-              />
-            </template>
-          </el-popover>
+          <el-button-group>
+            <el-button
+              v-if="searchFormExpand"
+              circle
+              icon="Search"
+              title="展开/收起筛选"
+              @click="state.searchFormDown = !state.searchFormDown"
+            />
+            <el-popover
+              v-if="columnsSetting"
+              :width="80"
+              placement="bottom-end"
+              trigger="click"
+              @hide="popoverHideClick"
+              @show="popoverShowClick"
+            >
+              <template #default>
+                <el-checkbox-group v-model="state.columnsCheck">
+                  <el-checkbox
+                    v-for="item in data.columns"
+                    :key="item.prop || item.type"
+                    :value="item.prop || item.type"
+                    >{{ item.label }}
+                  </el-checkbox>
+                </el-checkbox-group>
+              </template>
+              <template #reference>
+                <el-button circle icon="SetUp" title="设置列显示隐藏" />
+              </template>
+            </el-popover>
+          </el-button-group>
         </div>
       </div>
       <div
@@ -104,56 +100,54 @@
                   :value="scope.row[item.prop]"
                 >
                 </slot>
-                  <el-switch
-                    v-if="item.prop && item.render === 'switch'"
-                    v-bind="item.config"
-                    :loading="switchLoading"
-                    :before-change="
-                      switchBeforeChange.bind(this, scope.row[item.prop])
-                    "
-                    @change="switchChange($event, item, scope.row)"
-                    v-model="scope.row[item.prop]"
-                  />
-                  <el-image
-                    v-if="item.prop && item.render === 'image'"
-                    v-bind="item.config"
-                    :style="{
-                      width: (item.config?.width || 100) + 'px',
-                      height: (item.config?.height || 100) + 'px'
-                    }"
-                    :preview-teleported="true"
-                    :z-index="99"
-                    :preview-src-list="
-                      getImgSrc(scope.row[item.prop], 'preview')
-                    "
-                    :src="getImgSrc(scope.row[item.prop])"
-                  />
-                  <el-tag
-                    v-if="item.prop && item.render === 'tag'"
-                    v-bind="item.config"
-                    :type="getTagType(scope.row[item.prop], item.custom)"
-                    >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
-                  </el-tag>
-                  <el-text
-                    v-if="item.prop && item.render === 'text'"
-                    v-bind="item.config"
-                    :type="getTagType(scope.row[item.prop], item.custom)"
-                    >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
-                  </el-text>
-                  <el-link
-                    v-if="item.prop && item.render === 'link'"
-                    v-bind="item.config"
-                    >{{ scope.row[item.prop] }}
-                  </el-link>
-                  <span
-                    v-if="
-                      item.prop &&
-                      item.render &&
-                      ['datetime', 'date'].includes(item.render)
-                    "
-                  >
-                    {{ getDateFormat(item, scope.row[item.prop]) }}
-                  </span>
+                <el-switch
+                  v-if="item.prop && item.render === 'switch'"
+                  v-bind="item.config"
+                  :loading="switchLoading"
+                  :before-change="
+                    switchBeforeChange.bind(this, scope.row[item.prop])
+                  "
+                  @change="switchChange($event, item, scope.row)"
+                  v-model="scope.row[item.prop]"
+                />
+                <el-image
+                  v-if="item.prop && item.render === 'image'"
+                  v-bind="item.config"
+                  :style="{
+                    width: (item.config?.width || 100) + 'px',
+                    height: (item.config?.height || 100) + 'px'
+                  }"
+                  :preview-teleported="true"
+                  :z-index="99"
+                  :preview-src-list="getImgSrc(scope.row[item.prop], 'preview')"
+                  :src="getImgSrc(scope.row[item.prop])"
+                />
+                <el-tag
+                  v-if="item.prop && item.render === 'tag'"
+                  v-bind="item.config"
+                  :type="getTagType(scope.row[item.prop], item.custom)"
+                  >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
+                </el-tag>
+                <el-text
+                  v-if="item.prop && item.render === 'text'"
+                  v-bind="item.config"
+                  :type="getTagType(scope.row[item.prop], item.custom)"
+                  >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
+                </el-text>
+                <el-link
+                  v-if="item.prop && item.render === 'link'"
+                  v-bind="item.config"
+                  >{{ scope.row[item.prop] }}
+                </el-link>
+                <span
+                  v-if="
+                    item.prop &&
+                    item.render &&
+                    ['datetime', 'date'].includes(item.render)
+                  "
+                >
+                  {{ getDateFormat(item, scope.row[item.prop]) }}
+                </span>
                 <template
                   v-if="item.render === 'buttons' && item.buttons?.length"
                 >

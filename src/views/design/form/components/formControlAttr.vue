@@ -154,11 +154,11 @@
                 </el-form-item>
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
-                <el-button @click="openAttrDialog('optionsParams')"
-                  >beforeFetch
+                <el-button @click="openAttrDialog('beforeOption')"
+                  >before事件
                 </el-button>
-                <el-button @click="openAttrDialog('optionsResult')"
-                  >afterFetch
+                <el-button @click="openAttrDialog('afterOption')"
+                  >after事件
                 </el-button>
               </el-form-item>
             </template>
@@ -299,45 +299,36 @@
             <el-button @click="openAttrDialog('editCss')" type="primary"
               >编辑表单样式
             </el-button>
-            <el-button @click="openAttrDialog('editDict')" type="primary"
-              >设置数据字典
-            </el-button>
           </el-form-item>
           <template v-if="!isSearch">
             <div class="h3"><h3>接口数据事件</h3></div>
             <el-form-item label="新增数据保存url">
               <el-input
                 placeholder="表单提交的url，通用提交时可不设置"
-                v-model="formConfig.submitUrl"
+                v-model="formData.apiKey.add"
               />
             </el-form-item>
             <el-form-item label="修改数据保存url">
               <el-input
                 placeholder="修改提交的url，通用提交时可不设置"
-                v-model="formConfig.editUrl"
+                v-model="formData.apiKey.edit"
               />
             </el-form-item>
             <el-form-item label="获取表单数据url">
               <el-input
                 placeholder="获取表单数据url，通用提交时可不设置"
-                v-model="formConfig.requestUrl"
+                v-model="formData.apiKey.get"
               />
             </el-form-item>
             <el-form-item class="event-btn">
-              <el-button @click="openAttrDialog('beforeFetch')"
-                >beforeFetch
+              <el-button type="primary" @click="openAttrDialog('before')"
+                >before事件
               </el-button>
-              <el-button @click="openAttrDialog('afterFetch')"
-                >afterFetch
+              <el-button type="primary" @click="openAttrDialog('after')"
+                >after事件
               </el-button>
-              <el-button @click="openAttrDialog('beforeSubmit')"
-                >beforeSubmit
-              </el-button>
-              <el-button @click="openAttrDialog('afterSubmit')"
-                >afterSubmit
-              </el-button>
-              <el-button @click="openAttrDialog('change')"
-                >表单组件改变事件change
+              <el-button type="primary" @click="openAttrDialog('change')"
+                >change改变事件
               </el-button>
             </el-form-item>
           </template>
@@ -424,7 +415,7 @@
         key: 'class',
         type: 'select',
         options: [
-          { label: '无样式', value: '' },
+          { label: '无样式', value: 'none' },
           { label: '每行两列', value: 'form-row-2' },
           { label: '每行三列', value: 'form-row-3' },
           { label: '每行四列', value: 'form-row-4' }
@@ -1217,9 +1208,6 @@
       case 'editCss':
         codeType = 'css'
         break
-      case 'editDict':
-        codeType = 'json'
-        break
       case 'editRules':
         editData = controlData.value.formItem?.rules || []
         break
@@ -1229,11 +1217,11 @@
       case 'cascader':
         editData = options
         break
-      case 'optionsParams': // 选项请求附加参数
-        editData = config.beforeFetch
+      case 'beforeOption': // 选项请求附加参数
+        editData = config.before
         break
-      case 'optionsResult':
-        editData = config.afterFetch
+      case 'afterOption':
+        editData = config.after
         break
     }
     const emitsParams = {
@@ -1258,11 +1246,11 @@
           case 'cascader':
             controlData.value.options = result
             break
-          case 'optionsParams':
-            controlData.value.config.beforeFetch = result
+          case 'beforeOption':
+            controlData.value.config.before = result
             break
-          case 'optionsResult':
-            controlData.value.config.afterFetch = result
+          case 'afterOption':
+            controlData.value.config.after = result
             break
           case 'button':
             controlData.value.config = result
@@ -1384,7 +1372,7 @@
     sourceId: string,
     callback?: (list: any) => void
   ) => {
-    if (isSearch.value || !id) {
+    if (isSearch.value || !sourceId) {
       // 搜索设计这里不需要数据源
       return
     }

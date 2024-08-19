@@ -176,7 +176,6 @@
   import {
     formatNumber,
     objectToArray,
-    constControlChange,
     constSetFormOptions
   } from '@/utils/design'
   import validate from './validate'
@@ -209,45 +208,47 @@
   const config = computed(() => {
     return props.data.config || {}
   })
-  // const control = ref(props.data.control)
+
   const control = computed(() => {
     return props.data.control
   })
   const options = ref(props.data.options)
-  const changeEvent = inject(constControlChange, '') as any
-  const updateModel = (val: any) => {
-    // select时同时返回label的值，暂只处理单选
-    let label = {}
-    if (props.data.type === 'select') {
-      options.value.forEach((item: any) => {
-        if (val.toString() === item.value.toString()) {
-          label = { label: item.label }
-        }
-      })
-    }
-    changeEvent &&
-      changeEvent({
-        key: props.data.name,
-        value: val,
-        data: props.data,
-        tProp: props.tProp,
-        ...label
-      })
-  }
+  const akFormValueChange = inject('akFormValueChange', '') as any
+
   const value = computed({
     get() {
       if (props.tProp) {
         // 表格和弹性布局
         return props.modelValue
       } else {
-        return formProps.value.model[props.data.name]
+        return formProps.model[props.data.name]
       }
     },
     set(newVal: any) {
       if (props.tProp) {
         emits('update:modelValue', newVal)
       }
-      updateModel(newVal)
+      // select时同时返回label的值，暂只处理单选
+      let label = {}
+      if (props.data.type === 'select') {
+        options.value.forEach((item: any) => {
+          if (newVal?.toString() === item.value?.toString()) {
+            label = { label: item.label }
+          }
+        })
+      }
+      const prop = {}
+      //todo 表格和flex弹性布局时返回当前的prop
+      /*if(props.data.type){
+        
+      }*/
+      akFormValueChange &&
+        akFormValueChange({
+          name: props.data.name,
+          value: newVal,
+          ...prop,
+          ...label
+        })
     }
   })
   // 选择数据转换，默认尝试转数字
@@ -278,7 +279,7 @@
     return ''
   })
   const getLabel = (ele: FormItem) => {
-    const showColon = formProps.value.showColon ? '：' : ''
+    const showColon = formProps.showColon ? '：' : ''
     if (ele) {
       return ele.hideLabel ? '' : ele.label + showColon
     } else {
@@ -307,7 +308,7 @@
     const configDisabled = config.value?.disabled
     if (configDisabled) {
       const Fn = new Function('$', `return (${configDisabled})`)
-      const pass = Fn(formProps.value.model) // pass=true满足条件隐藏
+      const pass = Fn(formProps.model) // pass=true满足条件隐藏
       if (pass) {
         return pass
       }
@@ -355,7 +356,7 @@
         } else {
           // 从url里提取一个动态值,${name}形式提取name
           if (sourceFunKey.value) {
-            const val = formProps.value.model[sourceFunKey.value]
+            const val = formProps.model[sourceFunKey.value]
             const string = '${' + sourceFunKey.value + '}'
             sourceFun = sourceFun.replace(string, val)
           }
@@ -366,7 +367,7 @@
             afterFetch: afterFetch,
             options: { method: method },
             route: route,
-            formModel: formProps.value.model
+            formModel: formProps.model
           })
             .then((res: any) => {
               const result = res.data.list || res.data
@@ -402,12 +403,12 @@
             })
         }
       }
-      setFormDict(formProps.value.dict) // 表格里新增时行时需要重新设一次
+      setFormDict(formProps.dict) // 表格里新增时行时需要重新设一次
     }
   })
   const unWatch1 = sourceFunKey.value
     ? watch(
-        () => formProps.value.model[sourceFunKey.value],
+        () => formProps.model[sourceFunKey.value],
         () => {
           getAxiosOptions()
         }
@@ -475,7 +476,7 @@
   }
   // 从接口返回的dict会在这里触发
   const unWatch2 = watch(
-    () => formProps.value.dict,
+    () => formProps.dict,
     (val: any) => {
       setFormDict(val)
     },

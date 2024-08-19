@@ -2,6 +2,118 @@
 
 配置数据由表单设计器通过拖拽添加相应组件及填写对应字段配置自动生成。脱离表单设计器时可按此数据格式要求，直接使用`ak-form`表单，即`ak-form`表单组件可不依懒于表单设计器工作。
 
+## 表单配置
+### - 表单名称
+`config.name`
+
+用于保存的表单设计显示的名称
+
+### - 数据源
+`config.soucrceId`
+
+指定当前表单数据的对应的数据库表，即当前表单数据保存对应的数据库id。若没有配置数据源，则需在下面的接口数据事件中配置增删查改相关的url
+
+### - 表单标识
+`form.name`
+
+当前表单的名称，可根据此标识使用`get[formName]ControlByName`获得当前其他选项数据
+
+### - 表单标签宽度
+`form.labelWidth`
+
+`el-form`的表单属性，设置表单label的宽度
+
+### - 表单样式名称
+`form.class`
+
+自定义的表单样式名称，可快速选择内置好的表单布局类名，或自定义类名
+
+### - 字段名后添加冒号
+`form.showColon`
+
+统一设置表单label是否添加冒号
+
+### - 组件尺寸
+`form.size`
+
+`el-form`的表单属性
+
+### - 快速添加确定取消按钮
+`config.submitCancel`
+
+- 类型：boolean/string[]
+
+快速添加表单提交和取消按钮。为数组时可指定显示的名称，如['保存','取消']
+
+### - 编辑表单样式
+`config.style`
+
+编写有样式时会在当前页面head中插入style脚本，作用范围为当前页面。相当于.vue文件中的style scoped中的样式。
+
+### - 新增数据保存url
+`apiKey.add`
+
+点击表单提交按钮后数据保存的url接口地址，如当前表单设定了数据源，提交时则保存到对应的数据库表中，此时可不设置
+### - 修改数据保存url
+`apiKey.edit`
+
+同add
+
+### - 获取表单数据url
+`apiKey.get`
+
+编辑时获取表单初始值接口url，用法同add
+
+### -before事件
+`events.before`
+- 类型：before?: string | ((type: EventType, params: any, rout: any) => boolean)
+
+请求列表数据，编辑和删除等接口事件发送请求前，这里可对发送的数据进行拦截处理。
+* type支持的类型`get | add | edit`，用于表示接口事件类型
+* params请求的参数，可对此参数进行修改，然后return回去
+* route当前页面路由信息
+
+同时支持string字符串类型，这个需要自定义开发，适用于处理一些比较复杂的逻辑处理时，根据设置的字符将处理逻辑写入本地文件
+
+### -after事件
+`events.after`
+- 类型：after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
+
+类似于前面的`before`。最后需要将处理后的结果 return res
+
+### - change事件
+`events.change`
+- 类型：change?: string | ((key: string, model: any) => any)
+
+表单组件改变事件，可修改model后返回。即可实现当组件a改变时，修改b组件的值
+
+* key 当前组件的name值
+* model 当前表单的值
+
+## 表单方法
+### - get[formName]ControlByName
+
+- 类型：function(name)
+
+表单页全局方法，用于根据组件`form.name`值获取当前的数据项。
+
+注意：`formName`值为表单唯一标识，即`form.name`
+
+```javascript
+const control = getformNameControlByName('name')
+```
+
+### - get[formName]ValueByName
+
+- 类型：function(name)
+
+同get[formName]ControlByName。返回值不一样
+
+
+## 字段配置
+
+
+
 ## list
 
 设计生成的组件列表数据
@@ -330,238 +442,5 @@ none: 无动作(自定义)
 
 点击会触发`btnClick`事件，仅在导出vue文件时
 
-## form
 
-### size
 
-string
-
-表单组件尺寸大小，见ui的size类型
-
-### name
-
-string
-
-表单标识名称
-
-### labelWidth
-
-string
-
-标签的长度，见ui的`label-width`
-
-### class
-
-string
-
-表单样式名称，可选择预设的样式或自定义样式
-
-### showColon
-
-boolean
-
-表单字段名后是否添加冒号
-
-## config
-
-### addLoad
-
-boolean
-
-很多时候在新增数据时，需要先从接口获取一些初始值。设置为`true`可在进行新增数据时请求对应的url
-
-### style
-
-string
-
-编写有样式时会在当前页面head中插入style脚本，作用范围为当前页面。类似于.vue文件中的style scoped中的样式。
-
-### submitUrl
-
-string
-
-表单数据提交url
-
-### editUrl
-
-string
-
-修改表单数据时提交的url
-
-### requestUrl
-
-string
-
-修改或新增时获取表单数据url
-
-### submitCancel
-
-boolean|string[]
-
-为表单快速添加确定取消按钮。也可通过拖拽按钮组件来添加。支持使用数组形式传入按钮文本，如`['提交','取消']`将覆盖默认值
-
-## events
-
-### beforeFetch
-
-function(params, route)
-
-获取数据发送接口请求前方法，可用于对请求的数据进行处理转换等操作，以提交符合接口的数据要求
-
-```javascript
-const beforeFetch = (params, route) => {
-  // 此处可对请求参数params进行修改处理后返回，route为当前路由信息
-  // 如当路由参数name为true时，添加id参数
-  if (route.query.name) {
-    params.id = route.query.name
-  }
-  return params　//　return false时将发不请求
-}
-```
-
-### afterFetch
-
-function(result)|string
-
-获取数据接口请求数据返回后方法，可用于对请求回来的数据进行处理转换等操作，以满足使用。
-
-如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串。同`beforeSubmit`的`formatResult`方法
-
-```javascript
-const afterFetch = (result) => {
-  //　这里是处理逻辑
-  return result // return false时不处理请求结果
-}
-```
-
-### beforeSubmit
-
-function(params, route)|string
-
-表单提交前数据处理，可对提交数据处理。`params`所提交的参数,`route`当前页面路由信息
-
-```javascript
-const beforeSubmit = (params, route) => {
-  // 此处可对请求参数params进行修改处理后返回，route为当前路由信息
-  // 如当路由参数name为true时，添加id参数
-  if (route.query.name) {
-    params.id = route.query.name
-  }
-  return params　//　return false时将发不请求
-}
-```
-
-如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串形式，如`beforeSubmit="beforeSubmit"`
-。此时可在`@/utils/requestResponse.ts`中进行自定义处理。
-
-```javascript
-/**
- * @param res 请求参数或返回结果
- * @param key // 即设置的字符串
- * @param route // 路由信息
- * @returns {*}
- */
-const formatResult = (res, key, route) => {
-    switch (key) {
-      case 'beforeSubmit':
-        // 这里是一些处理逻辑，最后将数据返回
-        return res
-    }
-    return res
-  }
-```
-
-如果为导出`vue`文件的方式使用表单，还可通过`props`参数传参
-
-```html
-
-<template>
-  <ak-form :before-submit="beforeSubmit"/>
-</template>
-<script setup>
-  const beforeSubmit = () => {
-  }
-</script>
-```
-
-### afterSubmit
-
-function(type, result)
-
-表单结果处理方法，`type`结果类型包括1.`success`提交成功；`fail`提交失败；`validate`没通过校验。当`success`或`fail`
-时默认提示返回信息，可通过`return false`阻止提示。`result`返回的结果信息。
-
-```javascript
-const afterSubmit = (type, result) => {
-  //　这里是处理逻辑
-  return result // return false时不处理请求结果
-}
-```
-
-如果为导出`vue`文件的方式使用表单，还可通过`props`参数传参
-
-```html
-
-<template>
-  <ak-form :after-submit="afterSubmit"/>
-</template>
-<script setup>
-  const afterSubmit = () => {
-  }
-</script>
-```
-
-### change
-
-function(name, model)|string
-
-表单控件值改变事件方法，当表单内组件值改变时触发该事件方法。
-
-```javascript
-/**
- * @param name 组件的name值
- * @param model 当前表单的值
- * @returns {*} 需将修改后的值返回
- */
-const change = (name, model) => {
-    //一些处理逻辑。这里可根据指定的name值改变时去修改model其他控件的值
-    return model
-  }
-```
-
-如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串形式，如`change="change"`
-。此时可在`@/utils/formChangeValue.ts`中的`formChangeValue`方法进行处理。
-
-```javascript
-/**
- @params name 当前改变的组件name值
- @params model当前表单的值
- @params key 当前设置的方法标识
- */
-const formChangeValue = (name, model, key) => {
-    switch (name) {
-      case 'change':
-        // 这里是一些处理逻辑，最后将数据返回
-        return model
-    }
-    return model
-  }
-```
-
-## get[formName]ControlByName
-
-function(name)
-
-表单页全局方法，用于根据组件`name`值获取当前的数据项。
-
-注意：`formName`值为表单唯一标识
-
-```javascript
-const control = getformNameControlByName('name')
-```
-
-## get[formName]ValueByName
-
-function(name)
-
-同get[formName]ControlByName。返回值不一样

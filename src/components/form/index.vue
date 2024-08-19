@@ -1,26 +1,26 @@
 <!-- Created by 337547038 on 2021/9/25. -->
 <template>
-  <div v-loading="loading" class="ak-form">
-    <el-form
-      v-bind="data.form"
-      ref="ruleForm"
-      :model="model as any"
-      :disabled="disabled || operateType === 'detail'"
-      :class="[`form-${operateType}`]"
-    >
-      <form-group :data="data.list" />
-      <slot></slot>
-      <div class="group group-btn" v-if="defaultBtnList.length">
-        <el-button
-          v-for="item in defaultBtnList"
-          :key="item.key"
-          v-bind="item"
-          @click="defaultBtnClick(item)"
-          >{{ item.label }}
-        </el-button>
-      </div>
-    </el-form>
-  </div>
+  <el-form
+    class="ak-form"
+    v-loading="loading"
+    v-bind="data.form"
+    ref="ruleForm"
+    :model="model as any"
+    :disabled="disabled || operateType === 'detail'"
+    :class="[`ak-form-${operateType}`]"
+  >
+    <form-group :data="data.list" />
+    <slot></slot>
+    <div class="group group-btn" v-if="defaultBtnList.length">
+      <el-button
+        v-for="item in defaultBtnList"
+        :key="item.key"
+        v-bind="item"
+        @click="defaultBtnClick(item)"
+        >{{ item.label }}
+      </el-button>
+    </div>
+  </el-form>
 </template>
 <script lang="ts" setup>
   import {
@@ -37,18 +37,12 @@
   import { FormData, FormList, ApiKey, EventType } from '@/types/form'
   import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
   import { ElMessage } from 'element-plus'
-  import {
-    constGetControlByName,
-    constSetFormOptions,
-    constFormBtnEvent,
-    constControlChange,
-    constFormProps,
-    appendOrRemoveStyle,
-    jsonParseStringify
-  } from '@/utils/design'
+  import { appendOrRemoveStyle, jsonParseStringify } from '@/utils/design'
   import formChangeValue from '@/utils/formChangeValue'
   import { getStorage } from '@/utils'
   import { requestResponse, getRequestEvent } from '@/utils/requestResponse'
+  import { getOptions } from '@/components/form/request'
+  import { beforeAfter } from '@/utils/beforeAfter.ts'
 
   defineOptions({ name: 'akForm' })
   const props = withDefaults(
@@ -57,7 +51,6 @@
       disabled?: boolean // 禁用表单提交
       before?: string | ((type: EventType, params: any, rout: any) => boolean) // 请求编辑数据前参数处理方法，可对请求参数处理
       after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
-      dict?: { [key: string]: any } // 固定匹配的字典
       query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
       params?: { [key: string]: any } // 提交表单一些附加参数
       apiKey?: ApiKey
@@ -247,7 +240,7 @@
   const dictForm = computed(() => {
     const storage = getStorage('akAllDict', true)
     // 全局的、当前表单配置的以及接口返回的
-    return Object.assign({}, storage || {}, props.dict, resultDict.value)
+    return Object.assign({}, storage || {}, resultDict.value)
   })
 
   /**
@@ -339,10 +332,21 @@
       /* empty */
     }
   }
-
+  /**
+   * 根据组件的name获取当前控件的相关信息
+   * @param name
+   */
+  const getControlByName = (name: string) => {
+    return getNameForEach(props.data.list, name)
+  }
+  provide('akGetControlByName', getControlByName)
+  // 联动事件处理，linkageName
+  // {key:value}=>key表示事件发生源对应的name值；value表示当前组件对应的name的值
+  const linkageName = reactive({})
+  provide('akFormLinkageEvent', linkageName)
   //provide相关
   // 表单组件值改变事件 tProp为子表格相关
-  /*provide(constControlChange, ({ key, value, data, tProp, label }: any) => {
+  provide('akFormValueChange', ({ key, value, data, tProp, label }: any) => {
     if (key) {
       if (!tProp) {
         // 表格和弹性布局不是这里更新，只触change
@@ -358,22 +362,15 @@
           model.value = returnVal
         }
       }
+      // 处理联动
+      if (linkageName[key]) {
+        // 找出对应组件相关的 todo
+        getOptions(getControlByName(linkageName[key]))
+      }
       // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分
       emits('change', { key, value, model: model.value, data, tProp, label })
     }
-  })*/
-  // 一些表单相关参数
-  // 表单参数
-  /* const formProps = computed(() => {
-    return {
-      model: model.value,
-      type: props.type,
-      hideField: props.data.config?.hideField as [],
-      showColon: props.data.form?.showColon,
-      dict: dictForm.value
-    }
   })
-  provide(constFormProps, formProps)*/
 
   // defineExpose方法，设置表单选项值
   const setFormOptions = ref({})
@@ -381,14 +378,7 @@
   const setOptions = (obj: { [key: string]: string[] }) => {
     setFormOptions.value = obj
   }
-  /**
-   * 根据组件的name获取当前控件的相关信息
-   * @param name
-   */
-  const getControlByName = (name: string) => {
-    return getNameForEach(props.data.list, name)
-  }
-  provide('akGetControlByName', getControlByName)
+
   /**
    * 编辑时获取表单数据，外部调用并传入请求参数
    * @param params 一般情况下只需传一个id即可{id:xx}
@@ -402,12 +392,13 @@
     loading.value = true
     const newParams: any = Object.assign({}, params, props.query)
     // 同时可使用props或是events里的事件，根据使用使用其中一种即可
-    requestResponse({
-      requestUrl: requestUrl,
+    beforeAfter({
+      apiKey: requestUrl,
       params: newParams,
-      beforeFetch: getRequestEvent(props, 'beforeFetch'),
-      afterFetch: getRequestEvent(props, 'afterFetch'),
-      route: route
+      before: getRequestEvent(props, 'before'),
+      after: getRequestEvent(props, 'after'),
+      route: route,
+      type: 'get'
     })
       .then((res: any) => {
         loading.value = false

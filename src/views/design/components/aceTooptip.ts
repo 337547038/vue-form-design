@@ -2,18 +2,18 @@ export const getDrawerTitle = {
   after:
     '获取数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式',
   before: '获取数据请求发送之前事件，可对请求参数进行处理；支持返回字符串形式',
-  editDict:
-    '数据字典，用于匹配多选组、下拉选择等，提供动态获取Options接口字典数据，一般不设置，从接口dict获取。json格式："sex":{"0":"男","1":"女"}'
-  /*change:
-    '表单组件值改变事件。这里可修改其他组件的值。返回字符串形式可在@/utils/formChangeValue中处理',
   editCss: '当前表单应用页的样式，类似于.vue文件中的style scoped中的样式',
-  creatJson: '可编辑修改或将已生成的脚本粘贴进来',
+  change:
+    '表单组件值改变事件。这里可修改其他组件的值。返回字符串形式可在@/utils/formChangeValue中处理',
   editRules:
-    "可参考UI组件表单校验，<a href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C' target='_blank' style='color:red'>详情点击</a>",
+    '可参考UI组件表单校验，<a' +
+    " href='https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C'" +
+    " target='_blank' style='color:red'>详情点击</a>",
   editProps: '可添加当前组件所有prop属性及事件方法',
-  button: '可添加当前组件所有prop属性及事件方法'*/
+  creatJson: '可编辑修改或将已生成的脚本粘贴进来',
+  button: '可添加当前组件所有prop属性及事件方法'
 }
-export const getDrawerContent = (key: string, tips?: string) => {
+export const getDrawerContent = (key: string) => {
   switch (key) {
     case 'before':
       return (
@@ -29,6 +29,14 @@ export const getDrawerContent = (key: string, tips?: string) => {
         '  // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回\n' +
         `  console.log(type, res)\n` +
         '  return res\n' +
+        '}'
+      )
+    case 'change':
+      return (
+        'opt=(key,model) => {\n' +
+        '  // key当前改变组件的name值,model表单的值，可修改后返回新值\n' +
+        "  console.log('change',key)\n" +
+        '  return model\n' +
         '}'
       )
     /*case 'before':
@@ -65,14 +73,7 @@ export const getDrawerContent = (key: string, tips?: string) => {
         '  return data\n' +
         '}'
       )
-    case 'change':
-      return (
-        'opt=(key,model) => {\n' +
-        '  // key当前改变组件的name值,model表单的值，可修改后返回新值\n' +
-        "  console.log('change',key)\n" +
-        '  return model\n' +
-        '}'
-      )
+
     case 'afterFetchScreen':
       return (
         'opt=(res, data) => {\n' +
