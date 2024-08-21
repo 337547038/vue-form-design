@@ -14,27 +14,28 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, onMounted, nextTick } from 'vue'
-  const props = withDefaults(
+  import { ref, onMounted, nextTick } from 'vue'
+  /*  const props = withDefaults(
     defineProps<{
       modelValue?: string
       disabled?: boolean
     }>(),
     {}
-  )
+  )*/
 
-  const emits = defineEmits<{
+  /*  const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void
-  }>()
+  }>()*/
   const userDialogEl = ref()
-  const value = computed({
+  const value = defineModel()
+  /*const value = computed({
     get() {
       return props.modelValue
     },
     set(newVal: string) {
       emits('update:modelValue', newVal)
     }
-  })
+  })*/
   const openDialog = () => {
     userDialogEl.value.open()
   }

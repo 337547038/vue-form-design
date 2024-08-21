@@ -39,6 +39,13 @@ export const getDrawerContent = (key: string) => {
         '  return model\n' +
         '}'
       )
+    case 'renderFormatter':
+      return (
+        'opt=(val,row) => {\n' +
+        '  // 渲染前对字段值的预处理方法，需返回新值\n' +
+        '  return val\n' +
+        '}'
+      )
     /*case 'before':
     case 'optionsParams':
       return (

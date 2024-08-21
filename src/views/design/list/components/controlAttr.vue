@@ -206,6 +206,12 @@
               </el-form-item>
             </template>
             <el-form-item>
+              <el-button
+                type="primary"
+                v-if="currentObj.render"
+                @click="editOpenDrawer('renderFormatter')"
+                >renderFormatter</el-button
+              >
               <el-button type="primary" @click="editOpenDrawer('columns')"
                 >设置表格列</el-button
               >

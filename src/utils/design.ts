@@ -224,11 +224,3 @@ export const jsonParseStringify = (val: any) => {
     return val
   }
 }
-
-// provide 方法定义的key
-const prefix: string = 'AK'
-export const constControlChange: string = prefix + 'ControlChange' // 表单组件改变事件
-export const constSetFormOptions: string = prefix + 'SetFormOptions' // 使用setOptions设置下拉值
-export const constGetControlByName: string = prefix + 'GetControlByName' // 根据name从formData.list查找数据
-export const constFormBtnEvent: string = prefix + 'FormBtnEvent' // 按钮组件事件
-export const constFormProps: string = prefix + 'FormProps' // 按钮组件事件

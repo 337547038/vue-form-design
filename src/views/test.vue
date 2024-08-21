@@ -1,6 +1,9 @@
 <template>
   <div>
-    <ak-form :data="formData" />
+    <ak-form :data="formData" ref="akFormEl" operateType="add" />
+  </div>
+  <div>
+    <el-button @click="setOptions">setOption</el-button>
   </div>
 </template>
 <route>
@@ -12,7 +15,7 @@ layout:'hidden'}}
   const formData = ref({
     list: [
       {
-        name: 'input1660637151831', // 表单元素唯一标识
+        name: 'input1', // 表单元素唯一标识
         type: 'input', // 表单元素类型
         // 当前控件类型的所有`props`参数，详见`element-plus`对应的`props`参数
         control: {
@@ -29,6 +32,39 @@ layout:'hidden'}}
         formItem: {
           label: '单行文本',
           rules: [] // 校验规则
+        }
+      },
+      {
+        type: 'select',
+        control: {
+          modelValue: '',
+          appendToBody: true,
+          filterable: true,
+          remote: true
+        },
+        options: [],
+        config: {
+          optionsType: 1,
+          optionsFun: 'demo/options',
+          method: 'post',
+          label: 'label',
+          value: 'value',
+          linkage: 'input1',
+          before: (params, obj) => {
+            // params请求的参数，可根据type作判断，对params作修改后return回去
+            // 需要将params参数return
+            console.log(params, obj)
+            return params
+          },
+          after: (res, success, type) => {
+            // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
+            console.log(res, success, type)
+            return res
+          }
+        },
+        name: 'select1',
+        formItem: {
+          label: '下拉选择框'
         }
       }
     ],
@@ -61,4 +97,11 @@ layout:'hidden'}}
       }
     }
   })
+
+  const akFormEl = ref()
+  const setOptions = () => {
+    akFormEl.value.setOptions({
+      select1: [{ label: '1', value: '1' }]
+    })
+  }
 </script>

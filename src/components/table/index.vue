@@ -105,10 +105,13 @@
                   v-bind="item.config"
                   :loading="switchLoading"
                   :before-change="
-                    switchBeforeChange.bind(this, scope.row[item.prop])
+                    switchBeforeChange.bind(
+                      this,
+                      getRenderFormatValue(scope.row, item)
+                    )
                   "
                   @change="switchChange($event, item, scope.row)"
-                  v-model="scope.row[item.prop]"
+                  :model-value="getRenderFormatValue(scope.row, item)"
                 />
                 <el-image
                   v-if="item.prop && item.render === 'image'"
@@ -119,25 +122,25 @@
                   }"
                   :preview-teleported="true"
                   :z-index="99"
-                  :preview-src-list="getImgSrc(scope.row[item.prop], 'preview')"
-                  :src="getImgSrc(scope.row[item.prop])"
+                  :preview-src-list="getImgSrc(scope.row, item, 'preview')"
+                  :src="getImgSrc(scope.row, item)"
                 />
                 <el-tag
                   v-if="item.prop && item.render === 'tag'"
                   v-bind="item.config"
-                  :type="getTagType(scope.row[item.prop], item.custom)"
-                  >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
+                  :type="getTagType(scope.row, item)"
+                  >{{ getTagVal(scope.row, item) }}
                 </el-tag>
                 <el-text
                   v-if="item.prop && item.render === 'text'"
                   v-bind="item.config"
-                  :type="getTagType(scope.row[item.prop], item.custom)"
-                  >{{ getTagVal(scope.row[item.prop], item.replaceValue) }}
+                  :type="getTagType(scope.row, item)"
+                  >{{ getTagVal(scope.row, item) }}
                 </el-text>
                 <el-link
                   v-if="item.prop && item.render === 'link'"
                   v-bind="item.config"
-                  >{{ scope.row[item.prop] }}
+                  >{{ getRenderFormatValue(scope.row, item) }}
                 </el-link>
                 <span
                   v-if="
@@ -146,7 +149,7 @@
                     ['datetime', 'date'].includes(item.render)
                   "
                 >
-                  {{ getDateFormat(item, scope.row[item.prop]) }}
+                  {{ getDateFormat(item, scope.row) }}
                 </span>
                 <template
                   v-if="item.render === 'buttons' && item.buttons?.length"
@@ -368,6 +371,14 @@
     getListData(page)
   }
 
+  // 使用了 render 属性时,渲染前对字段值的预处理方法，需返回新值
+  const getRenderFormatValue = (row: any, column: any) => {
+    if (typeof column.renderFormatter === 'function') {
+      return column.renderFormatter(row[column.prop], row)
+    }
+    return row[column.prop]
+  }
+
   //处理switch切换事件
   const switchLoading = ref(false)
   const oldVal = ref() //修改前的值
@@ -389,7 +400,8 @@
   //处理switch切换事件结束
 
   //处理图片开始
-  const getImgSrc = (src: string | string[], type?: string) => {
+  const getImgSrc = (row: any, column: any, type?: string) => {
+    const src = getRenderFormatValue(row, column)
     if (!src) {
       return
     }
@@ -410,13 +422,15 @@
   //处理图片结束
 
   //处理tag
-  const getTagType = (val: string | number, custom: any) => {
-    if (!custom) {
+  const getTagType = (row: any, column: any) => {
+    if (!column.custom) {
       return
     }
-    return custom[val]
+    return column.custom[getRenderFormatValue(row, column)]
   }
-  const getTagVal = (val: string | number, replaceValue: any) => {
+  const getTagVal = (row: any, column: any) => {
+    const val = getRenderFormatValue(row, column)
+    const replaceValue = column.replaceValue
     if (!replaceValue) {
       return val
     } else if (typeof replaceValue === 'string') {
@@ -429,11 +443,12 @@
   //处理tag结束
 
   //处理时间
-  const getDateFormat = (obj: any, val: any) => {
+  const getDateFormat = (obj: any, row: any) => {
+    const val = getRenderFormatValue(row, obj)
     if (!obj) {
       return val
     }
-    let formatType = obj.config?.timeFormat //指定格式时
+    let formatType = obj.timeFormat //指定格式时
     if (!formatType) {
       //没有指定格式时
       if (obj.render === 'date') {

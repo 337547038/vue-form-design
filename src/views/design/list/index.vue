@@ -413,6 +413,14 @@
         editData = currentObj.value || []
         title = '支持el-table-column所有属性'
         break
+      case 'renderFormatter':
+        editData = currentObj.value.renderFormatter
+        if (!editData) {
+          editData = getDrawerContent('renderFormatter')
+          isString = true
+        }
+        title = '渲染前对字段值的预处理方法，需返回新值'
+        break
     }
     switch (codeType) {
       case 'json':
@@ -465,6 +473,9 @@
         break
       case 'columns':
         currentObj.value = val
+        break
+      case 'renderFormatter':
+        currentObj.value.renderFormatter = val
         break
     }
     drawerBeforeClose()

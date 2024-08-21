@@ -2,7 +2,7 @@
 <template>
   <el-form-item
     v-bind="data.formItem"
-    :prop="tProp || data.name"
+    :prop="otherProp || data.name"
     :class="config.className"
     :rules="itemRules as any"
     :label="getLabel(data.formItem as FormItem)"
@@ -29,8 +29,6 @@
             <AKSelect
               :data="getInputSlot('p')"
               :disabled="disabledEdit"
-              :transform-option="transformOption"
-              @change="inputSlotChange"
               type="slot"
             />
           </div>
@@ -41,9 +39,7 @@
             <AKSelect
               :data="getInputSlot()"
               :disabled="disabledEdit"
-              :transform-option="transformOption"
               type="slot"
-              @change="inputSlotChange"
             />
           </div>
           <span v-else>{{ config.append }}</span></template
@@ -64,7 +60,7 @@
       >
         <el-radio
           :key="index"
-          :label="transformOption(item.value) as string"
+          :value="item.value"
           v-for="(item, index) in options"
         >
           {{ item.label }}
@@ -79,7 +75,7 @@
         <el-checkbox
           v-for="(item, index) in options"
           :key="index"
-          :value="transformOption(item.value)"
+          :value="item.value"
           >{{ item.label }}
         </el-checkbox>
       </el-checkbox-group>
@@ -92,8 +88,7 @@
         :disabled="disabledEdit"
         v-model="value"
         :options="options"
-        :remote-method="getAxiosOptions"
-        :transformOption="transformOption"
+        :remote-method="getRemoteOptions"
       />
       <upload-file
         v-model="value"
@@ -168,38 +163,30 @@
     onUnmounted,
     markRaw
   } from 'vue'
-  import { onBeforeRouteLeave } from 'vue-router'
-  import SparkMD5 from 'spark-md5'
+  import { onBeforeRouteLeave, useRoute } from 'vue-router'
   import Tooltip from '../tooltip/index.vue'
   import TinymceEdit from './tinymce.vue'
   import { FormItem, FormList } from '@/types/form'
-  import {
-    formatNumber,
-    objectToArray,
-    constSetFormOptions
-  } from '@/utils/design'
+  import { formatNumber, objectToArray } from '@/utils/design'
   import validate from './validate'
   import ExpandUser from './expand/user.vue'
   import AKSelect from './select.vue'
-  import { useRoute } from 'vue-router'
   import { debounce } from '@/utils'
-  import { useDesignStore } from '@/store/design'
   import UploadFile from './upload.vue'
   import ChunkUpload from './chunkUpload/index.vue'
-  import { requestResponse } from '@/utils/requestResponse.ts'
+  import { getOptionsData } from '@/components/form/request'
 
   const props = withDefaults(
     defineProps<{
       data: FormList
-      modelValue?: any // 子表和弹性布局时时有传
-      tProp?: string // 子表时的form-item的prop值，用于子表校验用
+      modelValue?: any
+      otherProp?: string // 子表时的form-item的prop值，用于子表校验用
     }>(),
     {}
   )
   const emits = defineEmits<{
     (e: 'update:modelValue', val: any): void
   }>()
-  const designStore = useDesignStore()
   const route = useRoute()
   const formProps = inject('akFormProps', {}) as any
   const inputType = computed(() => {
@@ -212,48 +199,11 @@
   const control = computed(() => {
     return props.data.control
   })
-  const options = ref(props.data.options)
   const akFormValueChange = inject('akFormValueChange', '') as any
 
-  const value = computed({
-    get() {
-      if (props.tProp) {
-        // 表格和弹性布局
-        return props.modelValue
-      } else {
-        return formProps.model[props.data.name]
-      }
-    },
-    set(newVal: any) {
-      if (props.tProp) {
-        emits('update:modelValue', newVal)
-      }
-      // select时同时返回label的值，暂只处理单选
-      let label = {}
-      if (props.data.type === 'select') {
-        options.value.forEach((item: any) => {
-          if (newVal?.toString() === item.value?.toString()) {
-            label = { label: item.label }
-          }
-        })
-      }
-      const prop = {}
-      //todo 表格和flex弹性布局时返回当前的prop
-      /*if(props.data.type){
-        
-      }*/
-      akFormValueChange &&
-        akFormValueChange({
-          name: props.data.name,
-          value: newVal,
-          ...prop,
-          ...label
-        })
-    }
-  })
   // 选择数据转换，默认尝试转数字
-  const transformOption = (val: string | number, type?: string) => {
-    switch (config.value.transformData || type) {
+  const transformOption = (val: string | number) => {
+    switch (config.value.transformData) {
       case 'none':
         return val
       case 'string':
@@ -266,18 +216,31 @@
     return formatNumber(val)
   }
 
+  const value = computed({
+    get() {
+      return transformOption(props.modelValue)
+    },
+    set(newVal: any) {
+      emits('update:modelValue', newVal)
+      let prop = props.data.name
+      if (['flex', 'table'].includes(props.data.type)) {
+        const parts = props.otherProp?.split('.')
+        if (parts?.length) {
+          prop = parts[parts.length - 1]
+        }
+      }
+      akFormValueChange &&
+        akFormValueChange({
+          name: props.data.name,
+          value: newVal,
+          prop: prop,
+          options: options.value
+        })
+    }
+  })
+
   // 当通用修改属性功能添加新字段时，数组更新但toRefs没更新
   const getControlByName = inject('akGetControlByName') as any
-  const sourceFunKey = computed(() => {
-    const iReg = new RegExp('(?<=\\${)(.*?)(?=})', 'g')
-    //const iReg = new RegExp('\\${.*?}', 'g') // 结果会包含开头和结尾=>${name}
-    const apiUrl = config.value.optionsFun
-    const replace = apiUrl?.match(iReg)
-    if (replace?.length) {
-      return replace[0]
-    }
-    return ''
-  })
   const getLabel = (ele: FormItem) => {
     const showColon = formProps.showColon ? '：' : ''
     if (ele) {
@@ -326,94 +289,6 @@
     }
     return temp
   })
-  // data 根据条件搜索，select远程搜索里data有值
-  const getAxiosOptions = debounce((data = {}) => {
-    const {
-      optionsType,
-      optionsFun,
-      method = 'post',
-      afterFetch,
-      beforeFetch,
-      label,
-      value,
-      debug // =true可用于调试，不缓存
-    } = config.value
-    if (optionsType !== 0) {
-      let sourceFun = optionsFun
-      // 接口数据源
-      if (optionsType === 1 && sourceFun) {
-        // 当前控件为动态获取数据，防多次加载，先从本地取。data=true时直接请求
-        const spark = new SparkMD5()
-        spark.append(sourceFun + data)
-        const key = spark.end()
-        const ajaxCache = designStore.getFormAjaxCache(key)
-        if (ajaxCache && !debug) {
-          if (props.data.type === 'treeSelect') {
-            control.value.data = ajaxCache
-          } else {
-            options.value = ajaxCache
-          }
-        } else {
-          // 从url里提取一个动态值,${name}形式提取name
-          if (sourceFunKey.value) {
-            const val = formProps.model[sourceFunKey.value]
-            const string = '${' + sourceFunKey.value + '}'
-            sourceFun = sourceFun.replace(string, val)
-          }
-          requestResponse({
-            requestUrl: sourceFun,
-            params: data,
-            beforeFetch: beforeFetch,
-            afterFetch: afterFetch,
-            options: { method: method },
-            route: route,
-            formModel: formProps.model
-          })
-            .then((res: any) => {
-              const result = res.data.list || res.data
-              let formatRes: any = result
-              // 这里做数据转换，很多时候后端并不能提供完全符合且一样的数据
-              if (!afterFetch && (label || value)) {
-                // 没有设置afterFetch时，这里将数据转换为[{label:'',value:''}]形式。只处理一级
-                formatRes = []
-                result.forEach((item: any) => {
-                  formatRes.push({
-                    label: item[label] || item.label,
-                    value: item[value] || item.value
-                  })
-                })
-              }
-              // console.log('formatRes', formatRes)
-              if (props.data.type === 'treeSelect') {
-                control.value.data = formatRes
-              } else {
-                options.value = formatRes
-              }
-              if (typeof formatRes === 'object') {
-                designStore.setFormAjaxCache(key, formatRes) //缓存，例如子表添加时不用每添加一行就请求一次
-              }
-            })
-            .catch((res: any) => {
-              if (props.data.type === 'treeSelect') {
-                control.value.data = []
-              } else {
-                options.value = []
-              }
-              console.log(res)
-            })
-        }
-      }
-      setFormDict(formProps.dict) // 表格里新增时行时需要重新设一次
-    }
-  })
-  const unWatch1 = sourceFunKey.value
-    ? watch(
-        () => formProps.model[sourceFunKey.value],
-        () => {
-          getAxiosOptions()
-        }
-      )
-    : null
   // 处理自定义校验规则，将customRules转换后追加到rules里
   const formatCustomRules = () => {
     const rulesList = props.data.customRules
@@ -465,42 +340,6 @@
     })
     return temp
   }
-  // 从数据接口获取数据设置options，在表单添加或编辑时数据加载完成
-  const setFormDict = (val: any) => {
-    if (val && config.value.optionsType === 2) {
-      const opt = val[config.value.optionsFun] || val[props.data.name] // 不填写默认为当前字段名
-      if (opt !== undefined) {
-        options.value = objectToArray(opt)
-      }
-    }
-  }
-  // 从接口返回的dict会在这里触发
-  const unWatch2 = watch(
-    () => formProps.dict,
-    (val: any) => {
-      setFormDict(val)
-    },
-    {
-      deep: true
-    }
-  )
-  // 对单选多选select设置options
-  const formOptions = inject(constSetFormOptions, {}) as any
-  const unWatch3 = watch(
-    () => formOptions.value,
-    (val: any) => {
-      const opt = val[props.data.name]
-      // 子表内的需要注意下，只有在子表有记录时才生效
-      if (val && opt !== undefined) {
-        if (props.data.type === 'treeSelect') {
-          // 树结构的参数为data
-          control.value.data = objectToArray(opt)
-        } else {
-          options.value = objectToArray(opt)
-        }
-      }
-    }
-  )
 
   /****input slot处理***/
   const getInputSlot = (key?: string) => {
@@ -516,23 +355,89 @@
     }
     return control
   }
-  const inputSlotChange = (val: string | number, name: string) => {
-    changeEvent &&
-      changeEvent({
-        key: name,
-        value: val,
-        data: {},
-        tProp: ''
-      })
-  }
-  onBeforeRouteLeave(() => {
-    unWatch1 && unWatch1() //销毁监听器
-    unWatch2()
-    unWatch3()
-  })
 
+  // option选项动态数据
+  const optionsList = ref(props.options)
+  const formOptions = inject('akFormSetOptions', {}) as any
+  const options = computed(() => {
+    // 使用了setOptions时，从set方法里取
+    if (formOptions.value[props.data.name]) {
+      return objectToArray(formOptions.value[props.data.name])
+    } else {
+      return optionsList.value
+    }
+  })
+  const queryName = computed(() => {
+    return props.data.config?.queryName || 'name'
+  })
+  const getOptions = (data = {}, type: string, callback?: any) => {
+    getOptionsData(config.value, formProps.model, type, route, data).then(
+      res => {
+        if (props.data.type === 'treeSelect') {
+          control.value.data = res // todo
+        } else {
+          optionsList.value = res
+        }
+        callback && callback()
+      }
+    )
+  }
+  // option选项远程数据，远程和联动时暂共用queryName
+  const getRemoteOptions = debounce((name, callback: any) => {
+    getOptions({ [queryName.value]: name }, 'remote', callback)
+  })
+  // 联动处理
+  const linkage = computed(() => {
+    return props.data.config?.linkage
+  })
+  const unWatch1 = linkage.value
+    ? watch(
+        () => formProps.model[linkage.value],
+        val => {
+          getOptions({ [queryName.value]: val }, 'linkage')
+        }
+      )
+    : null
+  // 初始化下拉选项
+  const initGetOptions = () => {
+    if (['select', 'radio', 'checkbox'].includes(props.data.type)) {
+      const { optionsType, optionsFun } = props.data.config
+      const { filterable, remote } = props.data.control
+      if (optionsType === 2 && optionsFun) {
+        // 从字典获取
+        const dictVal = formProps.value.dict
+        if (dictVal) {
+          const opt = dictVal[optionsFun]
+          if (opt !== undefined) {
+            optionsList.value = objectToArray(opt)
+          }
+        }
+      } else if (optionsType === 1 && optionsFun) {
+        // 从接口获取
+        if (filterable && remote) {
+          // 远程搜索时，初始不需要请求。编辑时需要回显
+          if (formProps.operateType === 'edit') {
+            // 暂统一按照id从接口获取数据作为回显
+            getOptions({ id: props.modelValue }, 'edit')
+          }
+        } else {
+          let data = {}
+          // 有联动条件的带上联动的参数
+          if (linkage.value) {
+            data = {
+              [queryName.value]: formProps.model[linkage.value]
+            }
+          }
+          getOptions(data, 'default')
+        }
+      }
+    }
+  }
   onMounted(() => {
-    getAxiosOptions()
+    initGetOptions()
   })
   onUnmounted(() => {})
+  onBeforeRouteLeave(() => {
+    unWatch1 && unWatch1()
+  })
 </script>

@@ -20,6 +20,7 @@ export interface Columns extends Partial<TableColumnCtx<any>> {
   timeFormat?: string //仅当`render=datetime、date`时，对日期格式化，如YYYY年MM月dd日
   buttons?: Button[]
   prop?: string
+  renderFormatter?: (val: any, row: any) => any //使用了 render 属性时,渲染前对字段值的预处理方法，需返回新值
 }
 
 export interface Button {

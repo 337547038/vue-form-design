@@ -34,14 +34,13 @@
     reactive
   } from 'vue'
   import FormGroup from './formGroup.vue'
-  import { FormData, FormList, ApiKey, EventType } from '@/types/form'
+  import { FormData, FormList, ApiKey } from '@/types/form'
   import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { appendOrRemoveStyle, jsonParseStringify } from '@/utils/design'
   import formChangeValue from '@/utils/formChangeValue'
   import { getStorage } from '@/utils'
-  import { requestResponse, getRequestEvent } from '@/utils/requestResponse'
-  import { getOptions } from '@/components/form/request'
+  import { getRequestEvent } from '@/utils/requestResponse'
   import { beforeAfter } from '@/utils/beforeAfter.ts'
 
   defineOptions({ name: 'akForm' })
@@ -49,12 +48,11 @@
     defineProps<{
       data: FormData
       disabled?: boolean // 禁用表单提交
-      before?: string | ((type: EventType, params: any, rout: any) => boolean) // 请求编辑数据前参数处理方法，可对请求参数处理
-      after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
+      before?: string | ((params: any, obj: any) => any) // 请求编辑数据前参数处理方法，可对请求参数处理
+      after?: string | ((res: any, obj: any) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
       query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
       params?: { [key: string]: any } // 提交表单一些附加参数
       apiKey?: ApiKey
-      pk?: string
       operateType: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型
     }>(),
     {
@@ -80,7 +78,7 @@
   )
   const emits = defineEmits<{
     (e: 'btnClick', type: string): void
-    (e: 'change', val: any): void // 表单组件值发生变化时
+    (e: 'change', prop: stirng, value: any, model: any): void // 表单组件值发生变化时
   }>()
 
   const isSearch = computed(() => {
@@ -204,19 +202,6 @@
   const resultDict = ref({})
   // 处理表单值开始
   const model = ref({})
-  // 获取表单初始model值
-  const getInitModel = () => {
-    const obj = {}
-    forEachGetFormModel(props.data.list, obj)
-    model.value = obj
-  }
-  const unWatch2 = watch(
-    () => props.data.list,
-    () => {
-      // data从接口获取时
-      getInitModel()
-    }
-  )
   // 从表单数据里提取表单所需的model
   const forEachGetFormModel = (list: FormList[], obj: any) => {
     list.forEach((item: any) => {
@@ -236,6 +221,20 @@
       }
     })
   }
+  // 获取表单初始model值
+  const getInitModel = () => {
+    const obj = {}
+    forEachGetFormModel(props.data.list, obj)
+    model.value = obj
+  }
+  const unWatch2 = watch(
+    () => props.data.list,
+    () => {
+      // data从接口获取时
+      getInitModel()
+    },
+    { immediate: true }
+  )
 
   const dictForm = computed(() => {
     const storage = getStorage('akAllDict', true)
@@ -340,41 +339,32 @@
     return getNameForEach(props.data.list, name)
   }
   provide('akGetControlByName', getControlByName)
-  // 联动事件处理，linkageName
-  // {key:value}=>key表示事件发生源对应的name值；value表示当前组件对应的name的值
-  const linkageName = reactive({})
-  provide('akFormLinkageEvent', linkageName)
+
   //provide相关
-  // 表单组件值改变事件 tProp为子表格相关
-  provide('akFormValueChange', ({ key, value, data, tProp, label }: any) => {
-    if (key) {
-      if (!tProp) {
-        // 表格和弹性布局不是这里更新，只触change
-        model.value[key] = value
+  /**
+   * 表单组件改变事件
+   * @param name 当前组件的name，即form-item的prop值
+   * @param value 当前值
+   * @param prop 子表或flex时的prop，其他情况等于name的值
+   * @param options 当type=select时，同时返回当前选项options数据
+   */
+  provide('akFormValueChange', ({ name, value, prop, options }: any) => {
+    // change事件修改调整model的值
+    const onFormChange = props.data.events?.change
+    if (typeof onFormChange === 'function') {
+      const returnVal = onFormChange(name, model.value)
+      if (returnVal && typeof returnVal === 'string') {
+        model.value = formChangeValue(name, model.value, returnVal)
+      } else if (typeof returnVal === 'object') {
+        model.value = returnVal
       }
-      // 支持在线方式数据处理，如A组件值改变时，可自动修改B组件的值，可参考请假流程自动时长计算
-      const onFormChange = props.data.events?.change
-      if (typeof onFormChange === 'function') {
-        const returnVal = onFormChange(key, model.value)
-        if (returnVal && typeof returnVal === 'string') {
-          model.value = formChangeValue(key, model.value, returnVal)
-        } else if (typeof returnVal === 'object') {
-          model.value = returnVal
-        }
-      }
-      // 处理联动
-      if (linkageName[key]) {
-        // 找出对应组件相关的 todo
-        getOptions(getControlByName(linkageName[key]))
-      }
-      // 当表格和弹性内的字段和外面字段冲突时，可通过tProps区分
-      emits('change', { key, value, model: model.value, data, tProp, label })
     }
+    emits('change', { name, value, model: model.value, prop, options })
   })
 
   // defineExpose方法，设置表单选项值
   const setFormOptions = ref({})
-  provide('akSetOptions', setFormOptions)
+  provide('akFormSetOptions', setFormOptions)
   const setOptions = (obj: { [key: string]: string[] }) => {
     setFormOptions.value = obj
   }
@@ -384,8 +374,8 @@
    * @param params 一般情况下只需传一个id即可{id:xx}
    */
   const getData = (params = {}) => {
-    const requestUrl = props.data.config?.requestUrl || props.requestUrl
-    if (props.type === 5 || !requestUrl || isSearch.value) {
+    const requestUrl = props.data.apiKey?.get || props.apiKey.get
+    if (props.operateType === 'design' || !requestUrl || isSearch.value) {
       console.error('执行了获取数据方法，但配置有误！')
       return
     }
@@ -432,12 +422,12 @@
    * @param params
    */
   const submit = (params = {}) => {
-    const { submitUrl = props.submitUrl, editUrl = props.editUrl } =
-      props.data.config || {}
-    const apiUrl = props.type === 1 ? submitUrl : editUrl
+    const { add = props.apiKey.add, edit = props.apiKey.edit } =
+      props.data.apiKey || {}
+    const apiUrl = props.operateType === 'add' ? add : edit
     if (isSearch.value || !apiUrl || loading.value) {
       if (!isSearch.value && !apiUrl) {
-        console.error(new Error('请配置表单提交submitUrl'))
+        console.error(new Error('请配置表单提交url'))
       }
       // isSearch列表里作为筛选时，不提交表单
       return
@@ -455,11 +445,14 @@
           }
         }
         // 提交保存表单
-        requestResponse({
+        beforeAfter({
           requestUrl: apiUrl,
           params: Object.assign({}, temp, params, props.params),
-          beforeFetch: getRequestEvent(props, 'beforeSubmit'),
-          afterFetch: getRequestEvent(props, 'afterSubmit')
+          before: getRequestEvent(props, 'before'),
+          after: getRequestEvent(props, 'after'),
+          type: props.operateType,
+          route: route,
+          formModel: model.value
         })
           .then((res: any) => {
             loading.value = false
@@ -476,7 +469,7 @@
       } else {
         // 没通过校验，这里单独处理，返回校验结果通知
         loading.value = false
-        const submitEvent = getRequestEvent(props, 'afterSubmit')
+        const submitEvent = getRequestEvent(props, 'after')
         if (typeof submitEvent === 'function') {
           submitEvent('validate', fields)
         }
@@ -506,7 +499,7 @@
   })
 
   onMounted(() => {
-    getInitModel()
+    //getInitModel()
     nextTick(() => {
       appendRemoveStyle(true)
     })

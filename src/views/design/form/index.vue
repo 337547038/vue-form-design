@@ -108,7 +108,7 @@
   const formControlAttrEl = ref()
 
   const getInitData = () => {
-    const id = route.id // 当前记录保存的id
+    const id = route.query.id // 当前记录保存的id
     if (id) {
       // 获取初始表单数据
       state.loading = true

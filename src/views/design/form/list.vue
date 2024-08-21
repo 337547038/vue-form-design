@@ -70,8 +70,11 @@
           inlinePrompt: true,
           activeText: '启用',
           inactiveText: '禁用',
-          activeValue: 1,
-          inactiveValue: 0
+          activeValue: '1',
+          inactiveValue: '0'
+        },
+        renderFormatter: (val: any) => {
+          return val && val.toString()
         }
       },
       {
@@ -85,18 +88,19 @@
         prop: 'updateDate',
         label: '更新时间',
         width: 200,
-        config: {}
+        config: {},
+        timeFormat: '{yyyy}-{mm}-{dd}'
       },
       {
         label: '操作',
         prop: 'control',
-        width: '300px',
+        width: '320px',
         fixed: 'right',
         render: 'buttons',
         buttons: [
           {
             label: '设置',
-            key: 'set',
+            type: 'primary',
             click: (row: any) => {
               dialog.visible = true
               nextTick(() => {
@@ -111,6 +115,7 @@
           },
           {
             label: '编辑',
+            key: 'edit',
             click: (row: any) => {
               // 跳转到表单设计编辑页
               toFormDesign(row)
@@ -122,6 +127,7 @@
           },
           {
             label: '一键创建列表',
+            type: 'primary',
             click: (row: any) => {
               router.push({ path: '/design/list', query: { form: row.id } })
             }

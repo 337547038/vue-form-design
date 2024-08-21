@@ -3,7 +3,7 @@
     <div class="flex-item">
       <template v-for="(list, i) in data.list" :key="i">
         <form-item
-          :tProp="`${data.name}.${index}.${list.name}`"
+          :otherProp="`${data.name}.${index}.${list.name}`"
           v-model="item[list.name]"
           :data="list"
         />
@@ -15,12 +15,15 @@
       type="primary"
       link
       size="small"
-      v-if="data.config?.delBtnText && [1, 2].includes(type as number)"
+      v-if="data.config?.delBtnText && ['add', 'edit'].includes(type as number)"
       >{{ data.config.delBtnText }}</el-button
     >
   </div>
   <el-form-item
-    v-if="data.config?.addBtnText && [1, 2, 5].includes(type as number)"
+    v-if="
+      data.config?.addBtnText &&
+      ['add', 'edit', 'design'].includes(type as number)
+    "
   >
     <el-button class="flex-add-btn" size="small" @click="addRow"
       >{{ data.config.addBtnText }}
@@ -31,8 +34,6 @@
 <script lang="ts" setup>
   import { onMounted, inject, computed, nextTick } from 'vue'
   import FormItem from './formItem.vue'
-  import { constFormProps } from '@/utils/design'
-
   const props = withDefaults(
     defineProps<{
       data: any
@@ -43,12 +44,12 @@
       }
     }
   )
-  const formProps = inject(constFormProps, {}) as any
+  const formProps = inject('akFormProps', {}) as any
   const tableDataNew = computed(() => {
-    return formProps.value.model[props.data.name]
+    return formProps.model[props.data.name]
   })
   const type = computed(() => {
-    return formProps.value.type
+    return formProps.operateType
   })
   const getRow = () => {
     const temp: any = {}

@@ -30,7 +30,7 @@ export interface FormList {
   options?: Options[] // radio,checkbox,select选项
   list?: any
 }
-export type EventType = 'get' | 'edit' | 'add'
+//export type EventType = 'get' | 'edit' | 'add'
 export interface FormData {
   list: FormList[]
   form: FormProps // form所有props
@@ -40,12 +40,12 @@ export interface FormData {
     addLoad?: boolean
     submitCancel?: boolean | string[]
   }
-  operateType: 'add' | 'edit' | 'detail' | 'design' | 'search' // 当前表单操作类型
+  operateType?: 'add' | 'edit' | 'detail' | 'design' | 'search' // 当前表单操作类型
   pk?: string // 主键，用于判断当前表单是新增或为修改，判断方式为当前提交的表单内容中存在主键值，则认为是编辑状态
   apiKey?: ApiKey
   events?: {
-    before?: string | ((type: EventType, params: any, rout: any) => boolean)
-    after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
+    before?: string | ((params: any, obj: any) => any)
+    after?: string | ((res: any, isSuccess: boolean, type?: string) => any)
     change?: string | ((prop: stirng, value: any, model: any) => any)
   }
 }

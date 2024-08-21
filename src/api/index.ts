@@ -75,8 +75,8 @@ export const getRequest = (
     obj = Object.assign(
       {
         url: `${url}${params}.json`,
-        method: 'GET'
-        //params: data
+        method: 'get', // TODO
+        data: data
       },
       options
     )

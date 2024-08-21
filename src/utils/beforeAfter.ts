@@ -9,12 +9,9 @@ interface RequestParams {
   formModel?: { [key: string]: any } // 当前表单所有值
   before?: (
     params: any,
-    { type, route, model }: { type: EventType; route?: any; model?: any }
+    { type, route, model }: { type: string; route?: any; model?: any }
   ) => boolean
-  after?: (
-    res: any,
-    { type, success }: { type: EventType; success?: boolean }
-  ) => any
+  after?: (res: any, success?: boolean, type: string) => any
   type: string
 }
 
@@ -52,7 +49,7 @@ export const beforeAfter = ({
         route: route,
         model: jsonParseStringify(formModel)
       })
-    } else if (before && typeof before === 'string') {
+    } else if (before) {
       console.log('返回字符串处理：' + beforeResult)
       //todo 返回字符串时，这里可根据返回的自定义字符串标识处理各种复杂的情况
       //beforeParams = xx
@@ -69,8 +66,8 @@ export const beforeAfter = ({
         const isBolb = res.request?.responseType === 'blob'
         let result: any = isBolb ? res : res.data
         if (typeof after === 'function') {
-          result = after(result, { type: type, success: true }) || result
-        } else if (typeof after === 'string' && after) {
+          result = after(result, true, type) || result
+        } else if (after) {
           console.log('返回字符串处理：' + result)
           //返回字符串时，这里可根据返回的自定义字符串标识处理各种复杂的情况
           //将处理后的值给result即可
@@ -87,7 +84,7 @@ export const beforeAfter = ({
       })
       .catch((res: any) => {
         if (typeof after === 'function') {
-          after(res, { type: type })
+          after(res, false, type)
         }
         reject(res)
       })

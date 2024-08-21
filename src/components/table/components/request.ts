@@ -149,7 +149,8 @@ const switchEvent = ({
   })
     .then((res: any) => {
       switchLoading.value = false
-      //修改成功，开关值已改变不用刷新数据
+      //修改成功，不刷新更新值
+      params[rowProp] = val
       ElMessage.success(res.message || '操作成功')
     })
     .catch(() => {

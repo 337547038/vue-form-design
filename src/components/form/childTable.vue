@@ -15,13 +15,13 @@
       >
         <template #default="scope">
           <span v-if="item.type === 'index'">{{ scope.$index + 1 }}</span>
-          <div v-if="type === 4 || disabledEdit">
+          <div v-if="type === 'detail' || disabledEdit">
             {{ getText(scope.row[item.name]) }}
           </div>
           <div v-else>
             <form-item
               v-model="scope.row[item.name]"
-              :tProp="`${data.name}.${scope.$index}.${item.name}`"
+              :other-prop="`${data.name}.${scope.$index}.${item.name}`"
               :data="item"
             />
           </div>
@@ -35,7 +35,7 @@
         prop="del"
         label="操作"
         v-if="
-          [1, 2].includes(type as number) &&
+          ['add', 'edit'].includes(type as number) &&
           data.config.delBtnText &&
           !disabledEdit
         "
@@ -50,7 +50,7 @@
     <div
       class="table-btn"
       v-if="
-        [1, 2].includes(type as number) &&
+        ['add', 'edit'].includes(type as number) &&
         data.config.addBtnText &&
         !disabledEdit
       "
@@ -66,7 +66,7 @@
   import FormItem from './formItem.vue'
   import { inject, computed } from 'vue'
   import Tooltip from '../tooltip/index.vue'
-  import { constFormProps, jsonParseStringify } from '@/utils/design'
+  import { jsonParseStringify } from '@/utils/design'
   const props = withDefaults(
     defineProps<{
       data: any
@@ -77,19 +77,19 @@
       }
     }
   )
-  const formProps = inject(constFormProps, {}) as any
+  const formProps = inject('akFormProps', {}) as any
 
   //const tableDataNew: any = toRef(props.data, 'tableData')
   //const tableDataNew: any = toRef(formProps.value.model, props.data.name)
   const tableDataNew = computed(() => {
-    return formProps.value.model[props.data.name]
+    return formProps.model[props.data.name]
   })
   const type = computed(() => {
-    return formProps.value.type
+    return formProps.operateType
   })
   // 如果编辑页禁用时，则返回true
   const disabledEdit = computed(() => {
-    return formProps.value.type === 2 && props.data.config?.disabledEdit
+    return formProps.operateType === 'edit' && props.data.config?.disabledEdit
   })
   const addColumn = () => {
     const temp: any = {}

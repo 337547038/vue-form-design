@@ -124,7 +124,7 @@
     <template v-else-if="element.type === 'inputSlot' && !isDesignType">
       <!--  除设计外其他无需处理-->
     </template>
-    <form-item v-else :data="element" />
+    <form-item v-else :data="element" v-model="formProps.model[element.name]" />
     <slot></slot>
   </div>
 </template>

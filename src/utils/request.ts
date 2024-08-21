@@ -65,7 +65,7 @@ function getNewToken(refreshToken: any) {
 /***************************4.无感刷新换token相关结束****************/
 service.interceptors.request.use(
   (config: any) => {
-    //1. get请求时，将参数放到url后面
+    //1. get请求时，将data参数放到url后面
     if (
       config.method.toUpperCase() === 'GET' &&
       Object.keys(config.params || {}).length === 0

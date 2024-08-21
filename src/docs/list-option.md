@@ -118,6 +118,13 @@ const data={
 
 见下方操作按钮配置
 
+### -renderFormatter
+`data.columns.renderFormatter`
+
+- 类型：renderFormatter?: (val: any, row: any) => any
+
+  使用了 `render` 属性时,渲染前对字段的值进行预处理方法，需返回新值
+
 ### -prop
 `data.cloumns.prop`
 

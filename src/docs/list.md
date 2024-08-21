@@ -29,16 +29,17 @@
 
 ### props.data.columns
 
-| 参数           | 类型             | 说明                                                                        |
-|--------------|----------------|---------------------------------------------------------------------------|
-| help         | string         | 表头tooltip提示信息                                                             |
-| render       | string         | 渲染类型，可选`switch、image、tag、link、datetime、date、buttons、string、text`，默认string |
-| config       | object         | 当前render类型的附加属性，详见当前组件的props。                                             |
-| replaceValue | object         | 仅当`render=tag/text`时,{ '1': '启用', '0': '禁用' }                             |
-| custom       | object         | 仅当`render=tag/text`时,{ '1': 'success', '0': 'danger' }                    |
-| timeFormat   | string         | 仅当`render=datetime、date`时，对日期格式化，如YYYY年MM月dd日                             |
-| buttons      | array          | 仅当`render=buttons`时，表格行右侧边按钮，详情见`自定义表格行右侧边按钮 `                            |
-| －            | －              | 所有`el-table-column`属性                                                     |
+| 参数              | 类型                | 说明                                                        |
+|-----------------|-------------------|-----------------------------------------------------------|
+| help            | string            | 表头tooltip提示信息                                             |
+| render          | string            | 渲染类型，可选`switch、image、tag、link、datetime、date、buttons、text` |
+| config          | object            | 当前render类型的附加属性，详见当前组件的props。                             |
+| replaceValue    | object            | 仅当`render=tag/text`时,{ '1': '启用', '0': '禁用' }             |
+| custom          | object            | 仅当`render=tag/text`时,{ '1': 'success', '0': 'danger' }    |
+| timeFormat      | string            | 仅当`render=datetime、date`时，对日期格式化，如YYYY年MM月dd日             |
+| buttons         | array             | 仅当`render=buttons`时，表格行右侧边按钮，详情见`自定义表格行右侧边按钮`             |
+| renderFormatter | function(val,row) | 使用了 render 属性时,渲染前对字段值的预处理方法，需返回新值                        |
+| －               | －                 | 所有`el-table-column`属性                                     |
 
 
 ### props.apiKey

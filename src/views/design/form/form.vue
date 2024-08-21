@@ -4,14 +4,15 @@
     <ak-form
       ref="formEl"
       :data="state.formData"
-      :type="formType"
-      :dict="state.dict"
-      request-url="getFormContent"
-      submit-url="saveFormContent"
-      edit-url="editFormContent"
-      :before-submit="beforeSubmit"
+      :operateType="formType"
+      :api-key="{
+        get: 'getFormContent',
+        add: 'saveFormContent',
+        edit: 'editFormContent'
+      }"
+      :before="before"
       :params="{ formId: formId.value }"
-      :after-submit="afterSubmit"
+      :after="after"
     />
   </div>
 </template>
@@ -47,9 +48,9 @@
   const formType = computed(() => {
     // 带有参数id为编辑状态
     if (id.value) {
-      return 2
+      return 'edit'
     } else {
-      return 1
+      return 'add'
     }
   })
   const getFormData = () => {
@@ -68,7 +69,6 @@
           if (resultData && Object.keys(resultData).length) {
             state.formData = stringToObj(result.data)
           }
-          state.dict = string2json(result.dict)
           // 编辑时加载表单初始数据。或设置了添加时获取请求
           if (id.value) {
             formEl.value.getData({ formId: formId.value, id: id.value })
@@ -78,20 +78,18 @@
             { label: result.name }
           ])
         }
-        nextTick(() => {
-          state.loading = false
-        })
+        state.loading = false
       })
       .catch((res: any) => {
         state.loading = false
         ElMessage.error(res.message || '非法操作..')
       })
   }
-  const beforeSubmit = (params: any) => {
+  const before = (params: any) => {
     params.formId = formId.value
     return params
   }
-  const afterSubmit = (type: string) => {
+  const after = (type: string) => {
     if (type === 'success') {
       router.go(-1)
     }
