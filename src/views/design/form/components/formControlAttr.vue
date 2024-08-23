@@ -143,15 +143,32 @@
                 <el-form-item label="指定label属性值">
                   <el-input
                     v-model="controlData.config.label"
-                    placeholder="返回数据中没有label时可设置"
+                    placeholder="指定标签为节点对象的某个属性值"
                   />
                 </el-form-item>
                 <el-form-item label="指定value属性值">
                   <el-input
                     v-model="controlData.config.value"
-                    placeholder="返回数据中没有value时可设置"
+                    placeholder="指定值为节点对象的某个属性值"
                   />
                 </el-form-item>
+                <el-form-item label="缓存数据结果">
+                  <el-switch v-model="controlData.config.cache" />
+                </el-form-item>
+                <template v-if="showHide(['select'], true)">
+                  <el-form-item label="开启远程数据Remote">
+                    <el-switch v-model="controlData.config.remote" />
+                  </el-form-item>
+                  <el-form-item label="是否可筛选">
+                    <el-switch v-model="controlData.config.filterable" />
+                  </el-form-item>
+                  <el-form-item label="联动关联设置">
+                    <el-input
+                      v-model="controlData.config.linkage"
+                      placeholder="请输入关联的组件name"
+                    />
+                  </el-form-item>
+                </template>
               </template>
               <el-form-item v-if="controlData.config.optionsType === 1">
                 <el-button @click="openAttrDialog('beforeOption')"
@@ -446,6 +463,13 @@
         type: 'switch',
         path: 'config',
         key: 'submitCancel'
+      },
+      {
+        label: '将object转string提交',
+        value: formConfig.value.transformData,
+        type: 'switch',
+        path: 'config',
+        key: 'transformData'
       }
     ]
   })
@@ -1072,10 +1096,6 @@
       {
         type: 'rules',
         label: '自定义正则'
-      },
-      {
-        type: 'methods',
-        label: '自定义方法'
       }
     ], // 自定义校验规则
     tabsName: 'second'
@@ -1343,7 +1363,7 @@
   const getOptionPlaceholder = (type: number) => {
     switch (type) {
       case 1:
-        return '数据源接口URL或api的key,可带参数'
+        return '数据源接口URL或api的key'
       case 2:
         return '字典key，默认为字段标识'
     }

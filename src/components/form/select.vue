@@ -17,11 +17,11 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, computed, onMounted, inject, watch } from 'vue'
+  import { reactive, computed, onMounted, inject, watch, ref } from 'vue'
   import { onBeforeRouteLeave } from 'vue-router'
   import type { FormList } from '@/types/form'
   import { objectToArray } from '@/utils/design'
-  import { getOptionsData } from '@/components/form/request'
+  import { getOptionsData } from './request'
   const props = withDefaults(
     defineProps<{
       data: FormList
@@ -113,7 +113,7 @@
   }
   const getOptions = (data = {}, type: string) => {
     if (props.type === 'slot') {
-      getOptionsData(props.config.value, formProps.model, type, {}, data).then(
+      getOptionsData(props.data.config, formProps.model, type, {}, data).then(
         res => {
           optionsSlot.value = res
           state.loading = false

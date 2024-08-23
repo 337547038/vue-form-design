@@ -45,6 +45,13 @@
 
 快速添加表单提交和取消按钮。为数组时可指定显示的名称，如['保存','取消']
 
+### - 将object转string提交
+`config.transformData`
+
+- 类型：boolean
+
+统一数据提交格式，开启后会尝试将`object`类型的数据使用`JSON.stringify`转换后提交保存。根据id查询详情时再尝试使用`JSON.parse`恢复。
+
 ### - 编辑表单样式
 `config.style`
 
@@ -64,20 +71,21 @@
 
 编辑时获取表单初始值接口url，用法同add
 
-### -before事件
+### - before事件
 `events.before`
-- 类型：before?: string | ((type: EventType, params: any, rout: any) => boolean)
+- 类型：before?: string | ((params: any, obj: any) => any)
 
-请求列表数据，编辑和删除等接口事件发送请求前，这里可对发送的数据进行拦截处理。
-* type支持的类型`get | add | edit`，用于表示接口事件类型
+请求列表数据，编辑和删除等接口事件发送请求前执行事件，这里可对发送的数据进行拦截处理。
 * params请求的参数，可对此参数进行修改，然后return回去
-* route当前页面路由信息
+* obj.type支持的类型，表单数据`get | add | edit`，选项数据`linkage | remote | edit | default`用于表示接口事件类型
+* obj.route当前页面路由信息
+* obj.model当前表单值
 
-同时支持string字符串类型，这个需要自定义开发，适用于处理一些比较复杂的逻辑处理时，根据设置的字符将处理逻辑写入本地文件
+同时支持string字符串类型，这个需要自定义开发，适用于处理一些比较复杂的逻辑处理时，根据设置的字符将处理逻辑写入本地文件。可查看`/src/utils/beforeAfter.ts`根据提示完成
 
-### -after事件
+### - after事件
 `events.after`
-- 类型：after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
+- 类型：after?: string | ((res: any, success: boolean, type?: string) => any)
 
 类似于前面的`before`。最后需要将处理后的结果 return res
 
@@ -89,6 +97,21 @@
 
 * key 当前组件的name值
 * model 当前表单的值
+
+
+```javascript
+const opt={
+  events:{
+    change:(key,model)=>{
+      // 当名为name1的组件值改变时，设置表单xxx的值
+      if(key==='name1'){
+        model.xxxx='xx'
+      }
+      return model
+    }
+  }
+}
+```
 
 ## 表单方法
 ### - get[formName]ControlByName
@@ -111,336 +134,199 @@ const control = getformNameControlByName('name')
 
 
 ## 字段配置
-
-
-
-## list
-
-设计生成的组件列表数据
-
-### type
-
-string
-
 支持的组件类型`input、textarea、radio、checkbox、select、inputSlot、datePicker、timePicker、colorPicker、switch、inputNumber、cascader、rate、slider、treeSelect、txt、title、tabs、flex、card、divider、button、table、component、upload、tinymce、grid、div……`
 
-### control
+对不同的组件类型有不一样的属性，部分是组件原来的prop，为了方便配置选择了部分些常用的prop用于可视化设计，其他的可通过`编辑属性`或`生成预览脚本`窗口进行编写。当然也可以自定义开发你所需要的prop
 
-当前组件所有支持的`props`，详见对应ui的`props`
+### 通用属性
+### 选项配置
 
-#### modelValue
+ 支持组件`radio、select、checkbox、cascader、treeSelect`配置选项数据
 
-#### placeholder
+#### - 选项数据源
+`config.optionsType` 
+- 类型：number 可选值0固定数据；1接口数据；2字典数据
 
-#### disabled
+#### - 选项数据源接口URL
 
-#### rows
+`config.optionsFun`
 
-number
+* 类型：string
 
-`textarea`输入框行数
+- 当config.optionsType===1时，为接口url
+- 当config.optionsType===2时，为字典标识
 
-### options
+#### - 远程数据参数
 
-组件`radio、select、checkbox、cascader、treeSelect`的固定选项值
+`config.queryName`
 
-### config
+* 类型：string  default:'name'
 
-#### addAll
+当开启了`Remote`远程数据时有效，作为参数请求接口，如`{name:'xxx'}`
 
-string
 
-`select`控件时，添加添加全部项文案，此时`value`值为空
+#### - 开启远程数据Remote
 
-#### className
+`config.remote`
 
-string
+* 类型：boolean
 
-当前控件添加的样式类名
+用于从接口数据中提取指定的字段作为下拉选项的label值，默认为`label`。如接口返回没有`label`和`value`字段，则需设置。当值发生变化时，将根据输入的参数从配置的`config.
+optionsFun`接口地址获取选项数据，参数key可通过`config.queryName`设置。
 
-#### help
+**远程数据编辑回显问题**
 
-string
+当`label`和`value`不相同时，接口服务端保存的一般为`value`值，由于是远程搜索在编辑时只能显示`value`的值。
+为方便回显目前暂定在搜索时根据`value`的值请求，接口需要能够根据value id查找出初始默认值
 
-帮助提示信息，标签后面显示问号icon，鼠标滑过时显示的提示语
+#### - 指定label属性值
 
-#### span
+`config.label`
 
-number
+- 当config.optionsType===1时有效
 
-表单区域栅格宽，0为自动宽。值区间0-24
-
-#### prepend
-
-string
-
-`input`输入框前缀，见ui
-
-#### append
-
-string
-
-`input`输入框后缀，见ui
-
-#### disabledEdit
-
-boolean
-
-是否禁用编辑
-
-#### displayAdd
-
-boolean
-
-新增添加页是否可见
-
-#### displayEdit
-
-boolean
-
-编辑页是否可见
-
-#### displayDetail
-
-boolean
-
-详情页是否可见
-
-#### hidden
-
-#### disabled
-
-string
-
-联动显示的条件表达式，支持运算符。其中$表示当前表单的值，如：
-
-`$.sex===1&&age>18`
-
-表示当前表单中`name`值为`sex`的值为1和`age`的值大于18时，显示/禁用该字段
-
-#### queryName
-
-string
-
-仅作用于`select`选项从服务器远程加载时，发送接口的关键词标识，默认`name`
-
-#### optionsType
-
-number
-
-`radio、select、checkbox、cascader、treeSelect`组件option选项数据源来源方式。
-
-可选值：0:固定选项；1:数据源；2:接口字典
-
-当使用数据源时还可使用`query`配置一些固定的请求参数
-
-当复杂表单中存在大量需要配置选项的组件时，每个组件都从指定URL数据源获取，这是不太现实的。对此可以设计表单时预设一些固定的选项值或者在接口里返回
-
-#### optionsFun
-
-string
-
-当`optionsType=1`时，此时值为请求的数据url；同时可带一个动态参数，如`/api?id=${key}`，`key`可以是当前表单任意`name=key`
-的组件，并且当该组件值发生改变时会重新请求；可实现联动功能。
-
-当`optionsType=2`时，此时值为字典的key；
+用于从接口数据中提取指定的字段作为下拉选项的label值，默认为`label`。如接口返回没有`label`和`value`字段，则需设置
 
 ```javascript
-//optionsType=2
-const dict = {sex: {0: '男', 1: '女'}, ...}
-// 设置optionsFun=sex，即可从字典中获取sex
-```
-
-#### query
-
-object
-
-在`optionsType=1`使用数据源时，可对当前请求附加一些固定的请求参数
-
-#### method
-
-string
-
-数据请求方法，get/post两种
-
-#### label
-
-string
-
-#### value
-
-string
-
-当`optionsType=1`时，如果接口返回的数据列表中并不是`label`和`value`字段，此时需要指定`label`和`value`取列表数据的哪个字段
-
-```javascript
-const list = [{name: '', val: ''}]
-// 可设置为label:'name',value:'val'
-```
-
-#### transformData
-
-string
-
-尝试转换`value`值。因为option遍历时可能会将数字类型的的数字转为字符类型，导致选不中
-
-none:不转换；number：转换为数字；string：转换为字符串
-
-### name
-
-string
-
-当前组件的`name`值，用于提交数据
-
-### formItem
-
-详见`formItem`组件，支持的组件所有`props`
-
-#### label
-
-标签名
-
-#### showLabel
-
-boolean
-
-是否显示标签名
-
-#### rules
-
-校验规则，见ui的`formItem.rules`
-
-```javascript
-[
-  {required: true, message: 'age is required'},
-  {type: 'number', message: 'age must be a number'}
+// 接口返回数据为name和id,则此时需要设置label='name',valule='id'
+const res=[
+  {
+    name:'选项1',
+    id:'1'
+  },
+  {
+    name:'选项2',
+    id:'2'
+  }
 ]
 ```
 
-### customRules
+#### - 指定value属性值
+`config.value`
 
-object
+同上面label
 
-自定义检验规则,这个规则经处理后合并进`formItem.rules`
+
+#### - 缓存数据结果
+`config.cache`
+
+* 类型：boolean
+
+* 当config.optionsType===1时有效
+
+将接口返回的数据存在sessionStorage，减少重复请求
+
+
+#### - 尝试转换value值为
+`config.transformData`
+
+* 可选值 none、number、string
+
+对组件的数字值进行转换，Number型数字和String型数字互转。实际场景：
 
 ```javascript
-[{
-  type: 'required', // 支持类型见下方type
-  message: '必填项',
-  trigger: 'blur'
-}]
-```
-
-#### type
-
-string
-
-支持的自定义检验规则类型`required、mobile、tel、phone、email、int(整数)、number(数字)、money(金额)、card(身份证号)、cn(中文)、numberLetter(数字英文)、url、longitude、latitude、rules(正则)、methods(方法)`。
-
-除系统内置的校验规则，还可通过可`@/components/form/validate.ts`扩展，添加常用校验规则
-
-其中类型`methods`仅支持导出`vue`文件方式，需要根据定义好的方法名，在当前页面使用`provide`的形式将方法传递给表单组件，如：
-
-```javascript
-provide("myMethods", (rule, value, callback) => {
-  if (value === '') {
-    callback(new Error('Please input the password again'))
-  } else if (value !== 'abc') {
-    callback(new Error("Two inputs don't match!"))
-  } else {
-    callback()
+// 接口返回的value为String类型时
+const result = {value:'1'}
+// 接口返回选项数据如：
+const options=[
+  {
+    label:'选项1',
+    value:1
   }
+]
+
+// 此时无法回显正常的值，<el-select v-model=result.value/>
+```
+
+
+#### - 联动关联
+`config.linkage`
+
+* 类型：string
+* 
+实现省市联动的效果，当关联的name发生改变时，当前组件会重新根据name对应组件值发起请求
+
+```vue demo
+<template>
+  <ak-form :data="formData"/>
+</template>
+<script setup>
+  import {ref} from 'vue'
+  
+const formData = ref({
+  list:[
+    {
+      name: 'input1', // 表单元素唯一标识
+      // ...其他配置
+    },
+    {
+      type: 'select',
+      config: {
+        optionsType: 1,
+        optionsFun: 'demo/options',
+        method: 'post',
+        linkage: 'input1', // 关联前面的name=input1的组件
+        before: (params, obj) => {
+          // 由name=input1组件改变发起请求时，此时的obj.type==='linkage'
+          console.log(obj.type)
+          return params
+        },
+        after: (res, success, type) => {
+          // 由name=input1组件改变发起请求时， 此时的type==='linkage'
+          console.log(type)
+          return res
+        }
+      },
+      // ...其他配置
+    },
+  ]
 })
+</script>
 ```
 
-#### message
+### 校验设置
 
-string
+- 对于input输入框，我们提供了丰富的校验规则，你只需选择校验的正确类型和输入提示语即可。如还不满足使用，可通过`编写校验规则`弹窗编写规则，如
 
-自定义校验提示语
-
-#### trigger
-
-string
-
-校验触发类型,`change`和`blur`，见`formItem`的校验触发类型
-
-### list.type
-
-#### inputSlot
-
-`select`的一种扩展类型，可作为`input`的前后插槽使用。通过在`input`的前后缀填入`key:inputSlotName`
-的形式引用，其中`inputSlotName`为当前组件的`name`值。如：
 
 ```javascript
-[
+const opt=[
   {
-    type: "inputSlot",
-    control:
-      {
-        modelValue: "",
-        appendToBody: true
-      },
-    options: [
-      {
-        label: "标签1",
-        value: "1"
-      }],
-    config:
-      {
-        // 一些配置信息
-      },
-    name: "slotName",　//　重点：设置好inputSlot的name值
-    formItem:
-      {
-        label: "下拉选择框"
-      }
+    type: 'date',
+    required: true,
+    message: 'Please pick a time',
+    trigger: 'change',
   },
-  {
-    type: "input",
-    control:
-      {
-        modelValue: ""
-      },
-    config:
-      {
-        append: "key:slotName"　// 重点：使用key:加前面设置好的name值，即key:slotName
-      },
-    name: "input",
-    formItem:
-      {
-        label: "单行文本"
+  { validator: (rule: any, value: any, callback: any) => {
+      if (value === '') {
+        callback(new Error('请输入确认密码'))
+      } else {
+        // 假如当前表单名为form1。获取组件password的值和当前值对比
+        const password = getform1ValueByName('password')
+        if (password === value) {
+          callback()
+        }
+        callback(new Error('两次密码输入不一致'))
       }
-  }]
+    }, trigger: 'blur' }
+]
 ```
 
-#### button
 
-`control.key`预设约定key事件
+- 除系统内置的校验规则，还可通过可`@/components/form/validate.ts`扩展，添加常用校验规则
 
-#### component
+- 对于选择类的如select、checkbox类的可以校验是否为空
 
-自定义组件需全局注册，导出vue文件使用可使用当前页面导入的。组件需要`v-model`才级实现更新
+### 其他属性
 
-引入当前页面组件时建议使用`markRaw`，如：
+可通过其他属性弹窗编写当前组件的prop，详见ui官网
 
-```javascript
-import component from 'xxx.vue'
 
-config: {
-  componentName: markRaw(component)
-}
-```
 
-submit: 提交表单
 
-reset: 重置表单
 
-cancel: 取消返回 即router.go(-1) 这个刷新后可能会失败
 
-none: 无动作(自定义)
 
-点击会触发`btnClick`事件，仅在导出vue文件时
 
 
 

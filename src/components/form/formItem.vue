@@ -25,23 +25,21 @@
         v-if="['input', 'password'].includes(data.type)"
       >
         <template #prepend v-if="config.prepend">
-          <div v-if="getInputSlot('p')">
-            <AKSelect
-              :data="getInputSlot('p')"
-              :disabled="disabledEdit"
-              type="slot"
-            />
-          </div>
+          <AKSelect
+            v-if="getInputSlot('p')"
+            :data="getInputSlot('p')"
+            :disabled="disabledEdit"
+            type="slot"
+          />
           <span v-else>{{ config.prepend }}</span>
         </template>
         <template #append v-if="config.append">
-          <div v-if="getInputSlot()">
-            <AKSelect
-              :data="getInputSlot()"
-              :disabled="disabledEdit"
-              type="slot"
-            />
-          </div>
+          <AKSelect
+            v-if="getInputSlot()"
+            :data="getInputSlot()"
+            :disabled="disabledEdit"
+            type="slot"
+          />
           <span v-else>{{ config.append }}</span></template
         >
       </el-input>
@@ -304,7 +302,7 @@
     // 获取校验方法 父级使用provide方法注入
     const temp: any = []
     rulesList.forEach((item: any) => {
-      if (!item.message && item.type !== 'methods') {
+      if (!item.message) {
         return // 方法时允许提示信息为空
       }
       let obj = {}
@@ -313,12 +311,6 @@
       } else if (item.type === 'rules') {
         // 自定义表达式
         obj = { pattern: item.rules }
-      } else if (item.type === 'methods') {
-        // 方法时
-        const methods: any = item.methods
-        if (methods) {
-          obj = { validator: inject(methods, {}) }
-        }
       } else if (item.type) {
         obj = { pattern: rulesReg[item.type as string] }
       }

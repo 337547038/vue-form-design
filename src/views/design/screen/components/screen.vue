@@ -115,10 +115,10 @@
   import type { ScreenData, UpdatePosition } from '../types'
   import formatScreen from '@/utils/formatScreen'
   import { cannotDragResize, addUnit, removeUnit } from '../utils'
-  import { requestResponse } from '@/utils/requestResponse.ts'
   import ScreenGroup from './screenGroup.vue'
   import { useScreenStore } from '@/store/screen'
-  import { objToStringify, stringToObj } from '@/utils/design.ts'
+  import { objToStringify, stringToObj } from '@/utils/design'
+  import { beforeAfter } from '@/utils/beforeAfter'
 
   const props = withDefaults(
     defineProps<{
@@ -423,10 +423,10 @@
     const { optionsType, requestUrl, method = 'post' } = config.value
     const { beforeFetch, afterFetch } = props.data.events || {}
     if (optionsType === 1 && requestUrl) {
-      requestResponse({
-        requestUrl,
+      beforeAfter({
+        apiKey: requestUrl,
         params: {},
-        beforeFetch,
+        before,
         //afterFetch,这里不能传after事件，这个要特殊处理。回调的参数不一样
         options: { method: method }
         //route

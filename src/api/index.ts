@@ -54,6 +54,7 @@ export const getRequest = (
   if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
     const { query = {}, id = '', extend = {} } = data
     let params: string = (query.type || '') + id + (extend.formId || '')
+    let suffix = '.json'
     if (
       url.includes('/get') ||
       url.includes('/list') ||
@@ -63,7 +64,7 @@ export const getRequest = (
     ) {
       /* empty */
     } else if (url.includes('static/')) {
-      url = url.replace('.json', '')
+      suffix = '' // 这情况不需要加后缀
     } else {
       url = 'mock/ok'
       params = ''
@@ -74,8 +75,8 @@ export const getRequest = (
     url = url.replace('api/', 'mock/')
     obj = Object.assign(
       {
-        url: `${url}${params}.json`,
-        method: 'get', // TODO
+        url: `${url}${params}${suffix}`,
+        method: 'get', // json演示时统一使用get
         data: data
       },
       options

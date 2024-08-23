@@ -40,8 +40,7 @@
   import { appendOrRemoveStyle, jsonParseStringify } from '@/utils/design'
   import formChangeValue from '@/utils/formChangeValue'
   import { getStorage } from '@/utils'
-  import { getRequestEvent } from '@/utils/requestResponse'
-  import { beforeAfter } from '@/utils/beforeAfter.ts'
+  import { beforeAfter, getRequestEvent } from '@/utils/beforeAfter'
 
   defineOptions({ name: 'akForm' })
   const props = withDefaults(
@@ -396,13 +395,17 @@
         if (result) {
           const formatRes: any = result.result || result || {} //兼容两种返回格式
           // 这里尝试将string转obj以恢复提交保存时的转换
-          const temp: any = {}
-          for (const key in formatRes) {
-            try {
-              temp[key] = JSON.parse(formatRes[key])
-            } catch (e) {
-              temp[key] = formatRes[key]
+          let temp: any = {}
+          if (props.data.config?.transformData) {
+            for (const key in formatRes) {
+              try {
+                temp[key] = JSON.parse(formatRes[key])
+              } catch (e) {
+                temp[key] = formatRes[key]
+              }
             }
+          } else {
+            temp = formatRes
           }
           setValue(temp)
           nextTick(() => {
@@ -436,13 +439,17 @@
       if (valid) {
         loading.value = true
         // 处理数据格式，将多选表格之类的转为字符串形式提交
-        const temp: any = {}
-        for (const key in fields) {
-          if (typeof fields[key] === 'object') {
-            temp[key] = JSON.stringify(fields[key])
-          } else {
-            temp[key] = fields[key]
+        let temp: any = {}
+        if (props.data.config?.transformData) {
+          for (const key in fields) {
+            if (typeof fields[key] === 'object') {
+              temp[key] = JSON.stringify(fields[key])
+            } else {
+              temp[key] = fields[key]
+            }
           }
+        } else {
+          temp = fields
         }
         // 提交保存表单
         beforeAfter({

@@ -45,7 +45,7 @@ export interface FormData {
   apiKey?: ApiKey
   events?: {
     before?: string | ((params: any, obj: any) => any)
-    after?: string | ((res: any, isSuccess: boolean, type?: string) => any)
+    after?: string | ((res: any, success: boolean, type?: string) => any)
     change?: string | ((prop: stirng, value: any, model: any) => any)
   }
 }

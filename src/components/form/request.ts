@@ -17,7 +17,7 @@ export const getOptionsData = (
       method = 'post',
       after,
       before,
-      cache // =cache=false不缓存
+      cache = true // cache=false不缓存
     } = config
     const designStore = useDesignStore()
     if (optionsType === 1 && optionsFun) {
@@ -26,7 +26,7 @@ export const getOptionsData = (
       spark.append(optionsFun + data)
       const key = spark.end()
       const ajaxCache = designStore.getFormAjaxCache(key)
-      if (ajaxCache && !cache) {
+      if (ajaxCache && cache) {
         resolve(ajaxCache)
       } else {
         beforeAfter({

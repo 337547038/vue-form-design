@@ -51,7 +51,7 @@ export default [
         icon: 'select',
         control: {
           modelValue: '',
-          appendToBody: true
+          teleported: true
         },
         options: selectOption,
         config: config

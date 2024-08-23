@@ -5,6 +5,11 @@
   <div>
     <el-button @click="setOptions">setOption</el-button>
   </div>
+  <!--  <el-form>
+    <el-form-item label="input">
+      <el-input />
+    </el-form-item>
+  </el-form>-->
 </template>
 <route>
 {meta:{
@@ -65,6 +70,37 @@ layout:'hidden'}}
         name: 'select1',
         formItem: {
           label: '下拉选择框'
+        }
+      },
+      {
+        type: 'inputSlot',
+        control: {
+          modelValue: '',
+          teleported: true,
+          style: { width: '150px' }
+        },
+        options: [],
+        config: {
+          optionsType: 1,
+          optionsFun: 'demo/options',
+          method: 'get'
+        },
+        name: 'select17',
+        formItem: {
+          label: '下拉选择框'
+        }
+      },
+      {
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {
+          append: 'key:select17'
+        },
+        name: 'input1724248587433',
+        formItem: {
+          label: '单行文本'
         }
       }
     ],
