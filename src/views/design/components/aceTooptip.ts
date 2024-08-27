@@ -25,7 +25,7 @@ export const getDrawerContent = (key: string) => {
       )
     case 'after':
       return (
-        'opt=(res, { type, success }) => {\n' +
+        'opt=(res, success, type) => {\n' +
         '  // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回\n' +
         `  console.log(type, res)\n` +
         '  return res\n' +

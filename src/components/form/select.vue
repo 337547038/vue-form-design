@@ -37,6 +37,9 @@
       }
     }
   )
+  const queryName = computed(() => {
+    return props.data.config?.queryName || 'name'
+  })
   const labelKey = computed(() => {
     return props.data.config?.label || 'label'
   })

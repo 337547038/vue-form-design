@@ -143,29 +143,40 @@
                 <el-form-item label="指定label属性值">
                   <el-input
                     v-model="controlData.config.label"
-                    placeholder="指定标签为节点对象的某个属性值"
+                    placeholder="指定选项标签为选项对象的某个属性值"
                   />
                 </el-form-item>
                 <el-form-item label="指定value属性值">
                   <el-input
                     v-model="controlData.config.value"
-                    placeholder="指定值为节点对象的某个属性值"
+                    placeholder="指定选项的值为选项对象的某个属性值"
                   />
                 </el-form-item>
-                <el-form-item label="缓存数据结果">
-                  <el-switch v-model="controlData.config.cache" />
+                <el-form-item label="是否可筛选">
+                  <el-switch v-model="controlData.control.filterable" />
                 </el-form-item>
                 <template v-if="showHide(['select'], true)">
                   <el-form-item label="开启远程数据Remote">
-                    <el-switch v-model="controlData.config.remote" />
+                    <el-switch v-model="controlData.control.remote" />
                   </el-form-item>
-                  <el-form-item label="是否可筛选">
-                    <el-switch v-model="controlData.config.filterable" />
+                  <el-form-item label="缓存数据结果">
+                    <el-switch v-model="controlData.config.cache" />
                   </el-form-item>
                   <el-form-item label="联动关联设置">
                     <el-input
                       v-model="controlData.config.linkage"
                       placeholder="请输入关联的组件name"
+                    />
+                  </el-form-item>
+                  <el-form-item
+                    label="远程数据参数字段名"
+                    v-if="
+                      controlData.config.remote || controlData.config.linkage
+                    "
+                  >
+                    <el-input
+                      placeholder="远程数据参数字段名"
+                      v-model="controlData.config.queryName"
                     />
                   </el-form-item>
                 </template>

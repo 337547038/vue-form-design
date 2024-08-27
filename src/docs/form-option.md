@@ -113,25 +113,6 @@ const opt={
 }
 ```
 
-## 表单方法
-### - get[formName]ControlByName
-
-- 类型：function(name)
-
-表单页全局方法，用于根据组件`form.name`值获取当前的数据项。
-
-注意：`formName`值为表单唯一标识，即`form.name`
-
-```javascript
-const control = getformNameControlByName('name')
-```
-
-### - get[formName]ValueByName
-
-- 类型：function(name)
-
-同get[formName]ControlByName。返回值不一样
-
 
 ## 字段配置
 支持的组件类型`input、textarea、radio、checkbox、select、inputSlot、datePicker、timePicker、colorPicker、switch、inputNumber、cascader、rate、slider、treeSelect、txt、title、tabs、flex、card、divider、button、table、component、upload、tinymce、grid、div……`
@@ -139,6 +120,80 @@ const control = getformNameControlByName('name')
 对不同的组件类型有不一样的属性，部分是组件原来的prop，为了方便配置选择了部分些常用的prop用于可视化设计，其他的可通过`编辑属性`或`生成预览脚本`窗口进行编写。当然也可以自定义开发你所需要的prop
 
 ### 通用属性
+
+#### - 设为Input输入框的前/后缀
+
+设置为`true`即当前组件的`type=inputSlot`，将可在input组件的前后缀使用，使用方法同`select`。
+使用时设置input的前缀或后缀为当前组件name值即可，格式为`key:name`
+
+```vue preview
+
+<template>
+  <ak-form :data="formData" />
+</template>
+<script setup>
+  import { ref } from "vue";
+
+  const formData = ref({
+    list: [
+      {
+        type: "inputSlot",
+        control:
+          {
+            modelValue: "",
+            teleported: true,
+            style: { width: "100px" }
+          },
+        options: [
+          {
+            label: "选项1",
+            value: "1"
+          }
+        ],
+        config:
+          {
+            optionsType: 0,
+            optionsFun: ""
+          },
+        name: "select1",
+        formItem:
+          {
+            label: "下拉选择框"
+          }
+      },
+      {
+        type: "input",
+        control:
+          {
+            modelValue: ""
+          },
+        config:
+          {
+            prepend: "",
+            append: "key:select1" // 这里是重点：将name=select1的组件作为当前组件的后缀
+          },
+        name: "input1724465076902",
+        formItem:
+          {
+            label: "单行文本"
+          }
+      }],
+    form:
+      {
+        size: "default"
+      },
+    config:
+      {
+        submitCancel: false
+      },
+    apiKey:
+      {}
+  });
+</script>
+```
+
+其他通用属性大部分都是当前组件的一些属性，比较容易理解，这里就不一一介绍了。
+
 ### 选项配置
 
  支持组件`radio、select、checkbox、cascader、treeSelect`配置选项数据
@@ -156,7 +211,7 @@ const control = getformNameControlByName('name')
 - 当config.optionsType===1时，为接口url
 - 当config.optionsType===2时，为字典标识
 
-#### - 远程数据参数
+#### - 远程数据参数字段名
 
 `config.queryName`
 
@@ -243,43 +298,78 @@ const options=[
 `config.linkage`
 
 * 类型：string
-* 
-实现省市联动的效果，当关联的name发生改变时，当前组件会重新根据name对应组件值发起请求
 
-```vue demo
+实现如省市联动的效果，当关联的name发生改变时，当前组件会重新根据name对应组件值发起请求。可查看示例控制面板输出
+
+```vue preview
 <template>
-  <ak-form :data="formData"/>
+  <ak-form :data="formData"></ak-form>
 </template>
 <script setup>
   import {ref} from 'vue'
   
 const formData = ref({
-  list:[
+  list: [
     {
-      name: 'input1', // 表单元素唯一标识
-      // ...其他配置
-    },
-    {
-      type: 'select',
-      config: {
-        optionsType: 1,
-        optionsFun: 'demo/options',
-        method: 'post',
-        linkage: 'input1', // 关联前面的name=input1的组件
-        before: (params, obj) => {
-          // 由name=input1组件改变发起请求时，此时的obj.type==='linkage'
-          console.log(obj.type)
-          return params
+      type: "input",
+      control:
+        {
+          modelValue: "",
+          placeholder:'值发生改变时，下拉选择框会重新发起请求'
         },
-        after: (res, success, type) => {
-          // 由name=input1组件改变发起请求时， 此时的type==='linkage'
-          console.log(type)
-          return res
+      config:
+        {},
+      name: "name1",
+      formItem:
+        {
+          label: "单行文本"
         }
-      },
-      // ...其他配置
     },
-  ]
+    {
+      type: "select",
+      control:
+        {
+          modelValue: "",
+          teleported: true,
+          remote: false,
+          filterable: false,
+        },
+      options: [],
+      config:
+        {
+          optionsType: 1,
+          optionsFun: "demo/options",
+          method: "get",
+          linkage: "name1", // 关联前面的单行文本name=input1的组件
+          before: (params, {type, route,model}) =>
+          {
+            // 当由name1发生改变触发的请求时，此时type=linkage
+            console.log(type)
+            return params
+          },
+          after: (res, success, type) =>
+          {
+            // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
+            console.log(type, res)
+            return res
+          }
+        },
+      name: "select1",
+      formItem:
+        {
+          label: "下拉选择框"
+        }
+    }],
+  form:
+    {
+      size: "default"
+    },
+  config:
+    {
+      submitCancel: false
+    },
+  apiKey:
+    {}
 })
 </script>
 ```
@@ -288,28 +378,88 @@ const formData = ref({
 
 - 对于input输入框，我们提供了丰富的校验规则，你只需选择校验的正确类型和输入提示语即可。如还不满足使用，可通过`编写校验规则`弹窗编写规则，如
 
-
-```javascript
-const opt=[
-  {
-    type: 'date',
-    required: true,
-    message: 'Please pick a time',
-    trigger: 'change',
-  },
-  { validator: (rule: any, value: any, callback: any) => {
-      if (value === '') {
-        callback(new Error('请输入确认密码'))
-      } else {
-        // 假如当前表单名为form1。获取组件password的值和当前值对比
-        const password = getform1ValueByName('password')
-        if (password === value) {
-          callback()
-        }
-        callback(new Error('两次密码输入不一致'))
-      }
-    }, trigger: 'blur' }
-]
+```vue preview
+<template>
+  <ak-form :data="formData"></ak-form>
+</template>
+<script setup>
+  import {ref} from 'vue'
+  const formData=ref({
+    list: [
+      {
+        type: "input",
+        control:
+          {
+            modelValue: ""
+          },
+        config:
+          {},
+        name: "password",
+        formItem:
+          {
+            label: "密码"
+          },
+        customRules: [
+          {
+            type: "required",
+            message: "必填项",
+            trigger: "blur"
+          }]
+      },
+      {
+        type: "input",
+        control:
+          {
+            modelValue: ""
+          },
+        config:
+          {},
+        name: "password2",
+        formItem:
+          {
+            label: "确认密码",
+            rules: [
+              {
+                validator: (rule, value, callback) =>
+                {
+                  if (value === '')
+                  {
+                    callback(new Error('请输入确认密码'))
+                  }
+                  else
+                  {
+                    // 假如当前表单名为form1。获取组件password的值和当前值对比
+                    const password = getform1ValueByName('password')
+                    if (password === value)
+                    {
+                      callback()
+                    }
+                    callback(new Error('两次密码输入不一致'))
+                  }
+                },
+                trigger: "blur"
+              }]
+          },
+        customRules: [
+          {
+            type: "required",
+            message: "必填项",
+            trigger: "blur"
+          }]
+      }],
+    form:
+      {
+        size: "default",
+        name: "form1"
+      },
+    config:
+      {
+        submitCancel: true
+      },
+    apiKey:
+      {}
+  })
+</script>
 ```
 
 
@@ -323,6 +473,24 @@ const opt=[
 
 
 
+## 表单方法
+### - get[formName]ControlByName
+
+- 类型：function(name)
+
+表单页全局方法，用于根据组件`form.name`值获取当前的数据项。
+
+注意：`formName`值为表单唯一标识，即`form.name`
+
+```javascript
+const control = getformNameControlByName('name')
+```
+
+### - get[formName]ValueByName
+
+- 类型：function(name)
+
+同get[formName]ControlByName。返回值不一样
 
 
 

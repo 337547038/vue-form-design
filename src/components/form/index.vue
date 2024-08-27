@@ -77,7 +77,10 @@
   )
   const emits = defineEmits<{
     (e: 'btnClick', type: string): void
-    (e: 'change', prop: stirng, value: any, model: any): void // 表单组件值发生变化时
+    (
+      e: 'change',
+      { name: string, value: any, model: any, prop: string, options: any }
+    ): void // 表单组件值发生变化时
   }>()
 
   const isSearch = computed(() => {
