@@ -35,7 +35,7 @@
         prop="del"
         label="操作"
         v-if="
-          ['add', 'edit'].includes(type as number) &&
+          ['add', 'edit'].includes(type) &&
           data.config.delBtnText &&
           !disabledEdit
         "
@@ -50,7 +50,7 @@
     <div
       class="table-btn"
       v-if="
-        ['add', 'edit'].includes(type as number) &&
+        ['add', 'edit'].includes(type) &&
         data.config.addBtnText &&
         !disabledEdit
       "

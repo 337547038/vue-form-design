@@ -1,7 +1,7 @@
 import { getRequest } from '@/api'
 import { stringToObj, appendOrRemoveStyle } from '@/utils/design'
 import { ElMessage } from 'element-plus'
-import { requestResponse } from '@/utils/requestResponse'
+import { beforeAfter } from '@/utils/beforeAfter'
 
 export const getInitData = (id: string | number, route?: any) => {
   return new Promise((resolve, reject) => {
@@ -16,38 +16,37 @@ export const getInitData = (id: string | number, route?: any) => {
         if (resultData.config?.style) {
           appendOrRemoveStyle('screenStyle', resultData.config.style, true)
         }
-        const { requestUrl, beforeFetch, afterFetch, method }: any =
-          resultData.config
-        if (requestUrl) {
-          requestResponse({
-            requestUrl,
-            beforeFetch,
-            afterFetch,
-            route,
-            params: {},
-            options: { method: method }
-          })
-            .then((res: any) => {
-              //将全局数据保存在window里，以方便调用
-              window.getScreenGlobal = res.data
-              resolve({
-                screenData: resultData,
-                globalData: res.data
-              })
-            })
-            .catch(() => {
-              reject({ screenData: resultData })
-            })
-        } else {
-          resolve({
-            screenData: resultData
-          })
-        }
+        getGlobalData(resultData.config, route).then()
+        resolve(resultData)
       })
       .catch((res: any) => {
         console.log('catch', res)
         ElMessage.error(res.message || '加载异常')
         reject()
       })
+  })
+}
+export const getGlobalData = (config: any, route?: any) => {
+  return new Promise((resolve, reject) => {
+    const { requestUrl, before, after, method }: any = config
+    if (requestUrl) {
+      beforeAfter({
+        apiKey: requestUrl,
+        before: before,
+        after: after,
+        route,
+        params: {},
+        options: { method: method },
+        type: 'get'
+      })
+        .then((res: any) => {
+          //将全局数据保存在window里，以方便调用
+          window.getScreenGlobal = res.data
+          resolve(res.data)
+        })
+        .catch((res: any) => {
+          reject(res)
+        })
+    }
   })
 }

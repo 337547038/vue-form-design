@@ -148,15 +148,7 @@
     }
   }
   const openDrawer = (params: OpenDrawer) => {
-    const {
-      type = '',
-      direction,
-      codeType,
-      title,
-      callback,
-      content,
-      tips
-    } = params
+    const { type = '', direction, codeType, title, callback, content } = params
     drawer.direction = direction || 'ltr' // 窗口位置ltr/rtl
     drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
     drawer.codeType = codeType || '' // 显示代码类型
@@ -171,11 +163,13 @@
       case 'editCss':
         editData = screenData.value.config.style || ''
         break
-      case 'beforeFetch':
-      case 'afterFetch':
-      case 'afterFetchScreen':
+      case 'before':
+      case 'after':
+      case 'afterScreen':
+        console.log('caseafterScreen')
+        console.log(type)
         if (!content) {
-          editData = getDrawerContent(type, tips)
+          editData = getDrawerContent(type)
         }
         break
     }
@@ -227,15 +221,11 @@
   const getData = () => {
     loading.value = true
     getInitData(route.query.id)
-      .then((res: any) => {
+      .then((data: any) => {
         loading.value = false
-        screenData.value = res.screenData
+        screenData.value = data
       })
-      .catch((res: any) => {
-        if (res?.screenData) {
-          //一个请求成功进
-          screenData.value = res.screenData
-        }
+      .catch(() => {
         loading.value = false
       })
   }

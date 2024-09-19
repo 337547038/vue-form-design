@@ -354,7 +354,13 @@
     // change事件修改调整model的值
     const onFormChange = props.data.events?.change
     if (typeof onFormChange === 'function') {
-      const returnVal = onFormChange(name, model.value)
+      const returnVal = onFormChange({
+        name,
+        value,
+        model: model.value,
+        prop,
+        options
+      })
       if (returnVal && typeof returnVal === 'string') {
         model.value = formChangeValue(name, model.value, returnVal)
       } else if (typeof returnVal === 'object') {

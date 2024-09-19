@@ -20,10 +20,7 @@
     >
   </div>
   <el-form-item
-    v-if="
-      data.config?.addBtnText &&
-      ['add', 'edit', 'design'].includes(type as number)
-    "
+    v-if="data.config?.addBtnText && ['add', 'edit', 'design'].includes(type)"
   >
     <el-button class="flex-add-btn" size="small" @click="addRow"
       >{{ data.config.addBtnText }}

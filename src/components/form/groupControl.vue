@@ -106,7 +106,6 @@
       />
       <flex-box :data="element" v-else />
       <el-button
-        style="position: relative; top: -28px; left: 10px"
         v-if="element.config?.addBtnText && isDesignType"
         size="small"
         >{{ element.config?.addBtnText }}</el-button

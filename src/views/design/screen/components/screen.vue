@@ -420,27 +420,34 @@
     if (['image', 'background', 'border', 'clock'].includes(props.data.type)) {
       return // 不支持动态数据获取的return
     }
-    const { optionsType, requestUrl, method = 'post' } = config.value
-    const { beforeFetch, afterFetch } = props.data.events || {}
+    const {
+      optionsType,
+      requestUrl,
+      method = 'post',
+      before,
+      after
+    } = config.value
     if (optionsType === 1 && requestUrl) {
       beforeAfter({
         apiKey: requestUrl,
         params: {},
         before,
         //afterFetch,这里不能传after事件，这个要特殊处理。回调的参数不一样
-        options: { method: method }
-        //route
+        options: { method: method },
+        //route,
+        type: 'get'
       })
         .then((res: any) => {
           const resultData = res.data
-          if (typeof afterFetch === 'function') {
-            requestResult.value = afterFetch(resultData, getDataByType.value)
+          if (typeof after === 'function') {
+            requestResult.value = after(resultData, getDataByType.value)
           } else {
-            requestResult.value = formatScreen(
-              afterFetch,
+            // 本地数据，需自定义开发
+            /*requestResult.value = formatScreen(
+              after,
               resultData,
               getDataByType.value
-            )
+            )*/
           }
         })
         .catch((res: any) => {

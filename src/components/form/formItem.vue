@@ -221,10 +221,11 @@
     set(newVal: any) {
       emits('update:modelValue', newVal)
       let prop = props.data.name
-      if (['flex', 'table'].includes(props.data.type)) {
+      if (props.otherProp) {
+        // 将prop设为当前table或flex的name
         const parts = props.otherProp?.split('.')
         if (parts?.length) {
-          prop = parts[parts.length - 1]
+          prop = parts[0]
         }
       }
       akFormValueChange &&

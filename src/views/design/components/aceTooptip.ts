@@ -17,7 +17,7 @@ export const getDrawerContent = (key: string) => {
   switch (key) {
     case 'before':
       return (
-        'opt=(params, { type, route, model }) => {\n' +
+        'opt=(params, obj) => {\n' +
         '  // params请求的参数，可根据type作判断，对params作修改后return回去\n' +
         `  // 需要将params参数return\n` +
         '  return params\n' +
@@ -44,6 +44,15 @@ export const getDrawerContent = (key: string) => {
         'opt=(val,row) => {\n' +
         '  // 渲染前对字段值的预处理方法，需返回新值\n' +
         '  return val\n' +
+        '}'
+      )
+    case 'afterScreen':
+      return (
+        'opt=(res, data) => {\n' +
+        '  // res响应数据, 当前组件数据data\n' +
+        '  // 这里可直接使用getScreenGlobal取得全局的数据\n' +
+        "  console.log('afterFetchScreen',data)\n" +
+        '  return data //返回新的图表数据\n' +
         '}'
       )
     /*case 'before':

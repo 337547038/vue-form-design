@@ -69,15 +69,15 @@
             <el-button
               type="primary"
               @click="openUpload(type === 'image' ? 'img' : 'bg', 'src')"
-              >选择图片</el-button
-            >
+              >选择图片
+            </el-button>
           </el-form-item>
           <el-form-item
             v-if="['line', 'bar', 'pie', 'echarts'].includes(type as string)"
           >
             <el-button type="primary" @click="openDrawer('echartsEdit')"
-              >图表编辑</el-button
-            >
+              >图表编辑
+            </el-button>
           </el-form-item>
           <el-form-item
             v-if="
@@ -92,13 +92,13 @@
             "
           >
             <el-button type="primary" @click="openDrawer('style')"
-              >编辑更多内联样式</el-button
-            >
+              >编辑更多内联样式
+            </el-button>
           </el-form-item>
           <el-form-item v-if="['table'].includes(type as string)">
             <el-button type="primary" @click="openDrawer('tablePropsEdit')"
-              >表格属性</el-button
-            >
+              >表格属性
+            </el-button>
           </el-form-item>
         </el-form>
         <el-form
@@ -121,15 +121,15 @@
           <el-form-item label="数据类型">
             <el-radio-group v-model="current.config.optionsType">
               <el-radio :value="0" style="margin-right: 4px"
-                >静态/全局</el-radio
-              >
+                >静态/全局
+              </el-radio>
               <el-radio :value="1">动态</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="current.config.optionsType !== 1">
             <el-button type="primary" @click="openDrawer('editData')"
-              >编辑数据</el-button
-            >
+              >编辑数据
+            </el-button>
           </el-form-item>
           <template v-if="current.config.optionsType === 1">
             <el-form-item>
@@ -156,14 +156,14 @@
               <h3>接口数据处理事件</h3>
             </el-form-item>
             <el-form-item>
-              <el-button @click="openDrawer('beforeFetch')"
-                >beforeFetch</el-button
-              >
+              <el-button type="primary" @click="openDrawer('before')"
+                >before事件
+              </el-button>
             </el-form-item>
             <el-form-item>
-              <el-button @click="openDrawer('afterFetchScreen')"
-                >afterFetch</el-button
-              >
+              <el-button type="primary" @click="openDrawer('afterScreen')"
+                >after事件
+              </el-button>
             </el-form-item>
           </template>
         </el-form>
@@ -211,8 +211,8 @@
               @change="stateChange"
             />
             <el-button type="primary" @click="openUpload('bg', 'screenBg')"
-              >上传</el-button
-            >
+              >上传
+            </el-button>
           </el-form-item>
           <el-form-item>
             <el-button @click="openDrawer('editCss')">编辑样式</el-button>
@@ -239,6 +239,11 @@
               </template>
             </el-input>
           </el-form-item>
+          <el-form-item v-if="config.requestUrl">
+            <el-button type="primary" @click="getGlobalDataTest"
+              >连接测试
+            </el-button>
+          </el-form-item>
           <el-form-item label="刷新时间">
             <el-input-number
               disabled
@@ -250,14 +255,14 @@
             <h3>接口数据处理事件</h3>
           </el-form-item>
           <el-form-item>
-            <el-button @click="openDrawer('beforeFetch', true)"
-              >beforeFetch</el-button
-            >
+            <el-button type="primary" @click="openDrawer('before', true)"
+              >before事件
+            </el-button>
           </el-form-item>
           <el-form-item>
-            <el-button @click="openDrawer('afterFetch', true)"
-              >afterFetch</el-button
-            >
+            <el-button type="primary" @click="openDrawer('after', true)"
+              >after事件
+            </el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -272,6 +277,10 @@
   import type { OpenDrawer, Config } from '../types'
   import UploadImage from './upload.vue'
   import { useScreenStore } from '@/store/screen'
+  import { getGlobalData } from '../getData'
+  import { ElMessage } from 'element-plus'
+  import { getDrawerContent } from '@/views/design/components/aceTooptip.ts'
+
   const emits = defineEmits<{
     (e: 'openDrawer', val: OpenDrawer): void
   }>()
@@ -584,29 +593,24 @@
   }
 
   // ace编辑器相关
-  const openDrawer = (type: string, isGlobal?: boolean) => {
+  const openDrawer = (eventType: string, isGlobal?: boolean) => {
     let codeType: string = ''
     let editData
     let title: string = ''
-    let tips = ''
-    let eventType = type
-    if (type === 'afterFetchScreen') {
-      eventType = 'afterFetch'
-    }
-    switch (type) {
+    switch (eventType) {
       case 'editCss':
         codeType = 'css'
         break
-      case 'beforeFetch':
-      case 'afterFetch':
-      case 'afterFetchScreen':
+      case 'before':
+      case 'after':
+      case 'afterScreen':
         if (isGlobal) {
-          if (type === 'afterFetch') {
-            tips = '这里返回的数据在当前页面可使用getScreenGlobal方法获取'
-          }
           editData = config.value && (config.value as any)[eventType]
         } else {
-          editData = current.value.events && current.value.events[eventType]
+          title = '获取数据响应处理之后事件，可对请求返回数据进行处理'
+          editData =
+            current.value.config &&
+            current.value.config[eventType.replace('Screen', '')]
         }
         break
       case 'style':
@@ -641,21 +645,17 @@
     const emitsParams = {
       content: editData,
       codeType: codeType,
-      type: type,
+      type: eventType,
       title: title,
-      tips: tips,
       callback: (result: any) => {
-        switch (type) {
-          case 'beforeFetch':
-          case 'afterFetch':
-          case 'afterFetchScreen':
+        switch (type.value) {
+          case 'before':
+          case 'after':
+          case 'afterScreen':
             if (isGlobal) {
               ;(config.value as any)[eventType] = result
             } else {
-              if (!current.value.events) {
-                current.value.events = {}
-              }
-              current.value.events[eventType] = result
+              current.value.config[eventType] = result
             }
             break
           case 'style':
@@ -679,6 +679,16 @@
       }
     }
     emits('openDrawer', emitsParams)
+  }
+
+  const getGlobalDataTest = () => {
+    getGlobalData(config.value)
+      .then(() => {
+        ElMessage.success('连接成功')
+      })
+      .catch((res: any) => {
+        ElMessage.error(res.msg || '连接失败')
+      })
   }
   onBeforeRouteLeave(() => {
     unWatch() //销毁监听器
