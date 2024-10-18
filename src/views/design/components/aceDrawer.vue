@@ -10,11 +10,19 @@
     :before-close="drawerBeforeClose"
   >
     <template #header>
-      <div v-html="title"></div>
+      <div v-html="title" />
     </template>
-    <div v-if="visible" :id="id"></div>
+    <div
+      v-if="visible"
+      :id="id"
+    />
     <div class="dialog-footer">
-      <el-button type="primary" @click="dialogConfirm"> 确定 </el-button>
+      <el-button
+        type="primary"
+        @click="dialogConfirm"
+      >
+        确定
+      </el-button>
     </div>
   </el-drawer>
 </template>
@@ -35,7 +43,9 @@
     {
       id: 'editJson',
       content: '',
-      direction: 'ltr'
+      direction: 'ltr',
+      title: '',
+      codeType: ''
     }
   )
   const emits = defineEmits<{
@@ -68,7 +78,7 @@
     emits('beforeClose')
   }
   onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+    unWatch() // 销毁监听器
   })
   onMounted(() => {})
   onUnmounted(() => {

@@ -22,13 +22,13 @@ function obj2string(o: any) {
   }
   if (typeof o === 'string') {
     return (
-      '"' +
-      o
+      '"'
+      + o
         .replace(/([\\'\\"\\])/g, '\\$1')
         .replace(/(\n)/g, '\\n')
         .replace(/(\r)/g, '\\r')
-        .replace(/(\t)/g, '\\t') +
-      '"'
+        .replace(/(\t)/g, '\\t')
+        + '"'
     )
   }
   if (typeof o === 'object') {
@@ -38,16 +38,16 @@ function obj2string(o: any) {
         if (i.indexOf('-') !== -1) {
           iii = `"${i}"`
         }
-        //r.push(iii + ':' + obj2string(o[i]))
+        // r.push(iii + ':' + obj2string(o[i]))
         r.push(`${iii}:${obj2string(o[i])}`)
       }
       if (
-        !!document.all &&
-        !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(
+        !!document.all
+        && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(
           o.toString
         )
       ) {
-        //r.push('toString:' + o.toString.toString())
+        // r.push('toString:' + o.toString.toString())
         r.push(`toString:${o.toString.toString()}`)
       }
       // r = '{' + r.join() + '}'
@@ -113,7 +113,6 @@ export function json2string(obj: any, isBeautify?: boolean) {
 export const aceEdit = (data: any, id?: string, type?: string) => {
   type = type ? type : 'javascript'
   id = id ? id : 'editJson'
-  // @ts-ignore
   const editor = ace.edit(id)
   editor.setOptions({
     enableBasicAutocompletion: true,
@@ -196,7 +195,9 @@ export const appendOrRemoveStyle = (
   }
   if (!append || !cssContent) {
     // 移除
-    styleId && styleId.parentNode.removeChild(styleId)
+    if (styleId) {
+      styleId.parentNode.removeChild(styleId)
+    }
   }
 }
 /**

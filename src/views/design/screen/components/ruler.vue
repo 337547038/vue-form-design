@@ -1,18 +1,17 @@
 <!-- Created by weiXin:337547038 -->
 <template>
   <div
+    v-show="showRuler"
     class="screen-ruler"
     :class="`ruler-${direction}`"
     :style="rulerStyle"
-    v-show="showRuler"
   >
     <div class="ruler-box">
       <span
         v-for="item in rulerLen"
         :key="item"
         :style="{ width: `${scale}px` }"
-        >{{ item }}</span
-      >
+      >{{ item }}</span>
     </div>
   </div>
 </template>
@@ -37,7 +36,7 @@
     }
   })
   const rulerLen = computed(() => {
-    //const len = props.direction === 'h' ? 1920 : 1080
+    // const len = props.direction === 'h' ? 1920 : 1080
     const len = parseInt(props.size) + 100
     const temp = []
     for (let i = 0; i < len; i = i + 100) {

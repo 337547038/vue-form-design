@@ -1,32 +1,52 @@
 <template>
-  <el-icon @click="toolClick('collapse')" class="collapse-icon">
+  <el-icon
+    class="collapse-icon"
+    @click="toolClick('collapse')"
+  >
     <Fold v-if="!collapse" />
     <Expand v-else />
   </el-icon>
-  <el-breadcrumb separator="/" class="breadcrumb">
-    <el-breadcrumb-item :to="{ path: '/' } as string">首页</el-breadcrumb-item>
-    <template v-for="(item, index) in breadcrumb" :key="index">
+  <el-breadcrumb
+    separator="/"
+    class="breadcrumb"
+  >
+    <el-breadcrumb-item :to="{ path: '/' } as string">
+      首页
+    </el-breadcrumb-item>
+    <template
+      v-for="(item, index) in breadcrumb"
+      :key="index"
+    >
       <el-breadcrumb-item
-        :to="{ path: item.path } as string"
         v-if="item.path"
-        >{{ item.label || item.name }}</el-breadcrumb-item
+        :to="{ path: item.path } as string"
       >
-      <el-breadcrumb-item v-else>{{
-        item.label || item.name
-      }}</el-breadcrumb-item>
+        {{ item.label || item.name }}
+      </el-breadcrumb-item>
+      <el-breadcrumb-item v-else>
+        {{
+          item.label || item.name
+        }}
+      </el-breadcrumb-item>
     </template>
   </el-breadcrumb>
   <div class="comm-header-tool">
-    <el-icon @click="toolClick('refresh')" title="刷新页面"
-      ><RefreshRight
-    /></el-icon>
-    <el-icon title="全屏"
-      ><FullScreen @click="toolClick('fullScreen')"
-    /></el-icon>
+    <el-icon
+      title="刷新页面"
+      @click="toolClick('refresh')"
+    >
+      <RefreshRight />
+    </el-icon>
+    <el-icon title="全屏">
+      <FullScreen @click="toolClick('fullScreen')" />
+    </el-icon>
   </div>
   <div class="header-right">
     <el-dropdown>
-      <div class="header-avatar" style="cursor: pointer">
+      <div
+        class="header-avatar"
+        style="cursor: pointer"
+      >
         <el-avatar
           class="avatar"
           size="small"
@@ -40,16 +60,16 @@
       </div>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item
-            ><el-icon><User /></el-icon>
+          <el-dropdown-item>
+            <el-icon><User /></el-icon>
             <span class="title">个人中心</span>
           </el-dropdown-item>
-          <el-dropdown-item
-            ><el-icon><Setting /></el-icon>
+          <el-dropdown-item>
+            <el-icon><Setting /></el-icon>
             <span class="title">设置</span>
           </el-dropdown-item>
-          <el-dropdown-item @click="logout"
-            ><el-icon><CircleClose /></el-icon>
+          <el-dropdown-item @click="logout">
+            <el-icon><CircleClose /></el-icon>
             <span class="title">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>

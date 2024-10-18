@@ -1,4 +1,4 @@
-import type { FormProps } from 'element-plus'
+import type { FormProps } from 'element-plus/es'
 
 export interface Options {
   label: string
@@ -30,7 +30,7 @@ export interface FormList {
   options?: Options[] // radio,checkbox,select选项
   list?: any
 }
-//export type EventType = 'get' | 'edit' | 'add'
+// export type EventType = 'get' | 'edit' | 'add'
 export interface FormData {
   list: FormList[]
   form: FormProps // form所有props
@@ -49,7 +49,7 @@ export interface FormData {
     change?:
       | string
       | ((
-          prop: stirng,
+          prop: string,
           value: any,
           model: any,
           name: string,
@@ -59,7 +59,7 @@ export interface FormData {
 }
 
 export interface ApiKey {
-  get?: string //根据id获取编辑数据
+  get?: string // 根据id获取编辑数据
   edit?: string // 修改保存
   add?: string // 新增保存
 }

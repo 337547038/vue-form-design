@@ -2,10 +2,23 @@
 <template>
   <div class="design-flow-container">
     <div class="tools">
-      <el-button type="primary" @click="saveClick">保存</el-button>
+      <el-button
+        type="primary"
+        @click="saveClick"
+      >
+        保存
+      </el-button>
     </div>
-    <el-tabs v-model="tabName" class="flow-tabs" @tab-click="tabsClick">
-      <el-tab-pane label="基础信息" name="info" class="tabs-info">
+    <el-tabs
+      v-model="tabName"
+      class="flow-tabs"
+      @tab-click="tabsClick"
+    >
+      <el-tab-pane
+        label="基础信息"
+        name="info"
+        class="tabs-info"
+      >
         <ak-form
           ref="formEl"
           :data="formData"
@@ -18,7 +31,10 @@
           :after-fetch="afterFetch"
         />
       </el-tab-pane>
-      <el-tab-pane label="审批流程" name="flow">
+      <el-tab-pane
+        label="审批流程"
+        name="flow"
+      >
         <ak-flow ref="flowEl" />
       </el-tab-pane>
     </el-tabs>
@@ -79,7 +95,7 @@
           value: 'id',
           beforeFetch: (data: any) => {
             // data经过处理后返回
-            //console.log('beforeFetch', data)
+            // console.log('beforeFetch', data)
             data.query = {}
             data.query.type = 1
             return data
@@ -120,7 +136,7 @@
           colorPicker: true
         },
         config: {
-          //componentName: markRaw(iconfont)
+          // componentName: markRaw(iconfont)
           componentName: 'DiyIconfont'
         },
         name: 'icon',
@@ -193,7 +209,7 @@
   })
   const tabsClick = (pane: any) => {
     if (pane.paneName === 'info') {
-      //getInitData()
+      // getInitData()
     }
   }
   const saveClick = () => {
@@ -243,9 +259,8 @@
           }
         }
         ElMessage.error(message)
-      } catch (e) {
-        /* empty */
-      }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) { /* empty */ }
     }
   }
   const getInitData = () => {

@@ -1,31 +1,46 @@
 <!-- Created by 337547038 weixin:337547038 -->
 <template>
   <template v-if="tableData.length">
-    <div v-if="listType === 'table'" class="list-table">
-      <el-table :data="tableData" style="width: 100%">
+    <div
+      v-if="listType === 'table'"
+      class="list-table"
+    >
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+      >
         <el-table-column label="文件名">
-          <template v-slot="scope">
+          <template #default="scope">
             <el-checkbox
               v-if="limit > 1"
               :disabled="checkboxDisabled(scope.row.fileUrl)"
               :model-value="checkedListCheckbox.includes(scope.row.fileUrl)"
               :value="scope.row.fileUrl"
               @change="checkboxChange(scope.row)"
-              >{{ scope.row.fileName }}</el-checkbox
             >
+              {{ scope.row.fileName }}
+            </el-checkbox>
             <el-radio
               v-else
               :model-value="checkedListCheckbox[0]"
               :label="scope.row.fileUrl"
               @change="radioChange(scope.row)"
-              >{{ scope.row.fileName }}
+            >
+              {{ scope.row.fileName }}
             </el-radio>
           </template>
         </el-table-column>
-        <el-table-column label="上传时间" prop="createTime" width="170" />
+        <el-table-column
+          label="上传时间"
+          prop="createTime"
+          width="170"
+        />
       </el-table>
     </div>
-    <div v-if="listType === 'grid'" class="list-grid">
+    <div
+      v-if="listType === 'grid'"
+      class="list-grid"
+    >
       <ul>
         <li
           v-for="item in tableData"
@@ -33,24 +48,39 @@
           @click="gridCheckClick(item)"
         >
           <i
-            class="icon-checkbox"
             v-if="checkedListCheckbox.includes(item.fileUrl)"
-          ></i>
-          <img v-if="fileIsImg(item.fileUrl)" :src="item.fileUrl" alt="" />
-          <i v-else class="other icon-help">无预览</i>
+            class="icon-checkbox"
+          />
+          <img
+            v-if="fileIsImg(item.fileUrl)"
+            :src="item.fileUrl"
+            alt=""
+          >
+          <i
+            v-else
+            class="other icon-help"
+          >无预览</i>
           <span :title="item.fileName">{{ item.fileName }}</span>
         </li>
       </ul>
     </div>
   </template>
-  <div class="empty" v-else><i class="icon-empty"></i>暂无数据</div>
-  <div class="pages" v-if="total > pageSize">
+  <div
+    v-else
+    class="empty"
+  >
+    <i class="icon-empty" />暂无数据
+  </div>
+  <div
+    v-if="total > pageSize"
+    class="pages"
+  >
     <el-pagination
+      v-model:page-size="pageSize"
+      v-model:current-page="pageNum"
       background
       layout="prev, pager, next"
       :total="total"
-      v-model:page-size="pageSize"
-      v-model:current-page="pageNum"
       @current-change="getList"
     />
   </div>
@@ -66,7 +96,7 @@
       listType: string
       modelValue: FileList[]
       limit: number
-      groupId: String | Number
+      groupId: string | number
     }>(),
     {
       modelValue: () => {

@@ -7,24 +7,30 @@
     :rules="itemRules as any"
     :label="getLabel(data.formItem as FormItem)"
   >
-    <template #label v-if="config.help">
+    <template
+      v-if="config.help"
+      #label
+    >
       {{ getLabel(data.formItem) }}
       <Tooltip :content="config.help" />
     </template>
     <div
-      class="form-value"
       v-if="formProps.operateType === 'detail'"
+      class="form-value"
       v-html="value"
-    ></div>
+    />
     <template v-else>
       <el-input
+        v-if="['input', 'password'].includes(data.type)"
         v-bind="control"
         v-model="value"
         :disabled="disabledEdit"
         :type="inputType as any"
-        v-if="['input', 'password'].includes(data.type)"
       >
-        <template #prepend v-if="config.prepend">
+        <template
+          v-if="config.prepend"
+          #prepend
+        >
           <AKSelect
             v-if="getInputSlot('p')"
             :data="getInputSlot('p')"
@@ -33,64 +39,68 @@
           />
           <span v-else>{{ config.prepend }}</span>
         </template>
-        <template #append v-if="config.append">
+        <template
+          v-if="config.append"
+          #append
+        >
           <AKSelect
             v-if="getInputSlot()"
             :data="getInputSlot()"
             :disabled="disabledEdit"
             type="slot"
           />
-          <span v-else>{{ config.append }}</span></template
-        >
+          <span v-else>{{ config.append }}</span>
+        </template>
       </el-input>
       <el-input
+        v-if="data.type === 'textarea'"
         v-bind="control"
         v-model="value"
         :disabled="disabledEdit"
         type="textarea"
-        v-if="data.type === 'textarea'"
       />
       <el-radio-group
-        v-bind="control"
-        :disabled="disabledEdit"
-        v-model="value"
         v-if="data.type === 'radio'"
+        v-bind="control"
+        v-model="value"
+        :disabled="disabledEdit"
       >
         <el-radio
+          v-for="(item, index) in options"
           :key="index"
           :value="item.value"
-          v-for="(item, index) in options"
         >
           {{ item.label }}
         </el-radio>
       </el-radio-group>
       <el-checkbox-group
-        v-bind="control"
-        :disabled="disabledEdit"
-        v-model="value"
         v-if="data.type === 'checkbox'"
+        v-bind="control"
+        v-model="value"
+        :disabled="disabledEdit"
       >
         <el-checkbox
           v-for="(item, index) in options"
           :key="index"
           :value="item.value"
-          >{{ item.label }}
+        >
+          {{ item.label }}
         </el-checkbox>
       </el-checkbox-group>
       <AKSelect
         v-if="
           data.type === 'select' ||
-          (formProps.operateType === 'design' && data.type === 'inputSlot')
+            (formProps.operateType === 'design' && data.type === 'inputSlot')
         "
+        v-model="value"
         :data="data"
         :disabled="disabledEdit"
-        v-model="value"
         :options="options"
         :remote-method="getRemoteOptions"
       />
       <upload-file
-        v-model="value"
         v-if="data.type === 'upload'"
+        v-model="value"
         :control="control"
         :disabled="disabledEdit"
         :config="config"
@@ -103,14 +113,15 @@
         :config="config as any"
       />
       <component
-        v-if="['cascader', 'treeSelect'].includes(data.type)"
         :is="currentComponent"
+        v-if="['cascader', 'treeSelect'].includes(data.type)"
         v-bind="control"
+        v-model="value"
         :disabled="disabledEdit"
         :options="options"
-        v-model="value"
       />
       <component
+        :is="currentComponent"
         v-if="
           [
             'rate',
@@ -124,28 +135,27 @@
             'expand-user'
           ].includes(data.type)
         "
-        :is="currentComponent"
         v-bind="control"
-        :disabled="disabledEdit"
         v-model="value"
+        :disabled="disabledEdit"
       />
       <template v-if="data.type === 'tinymce'">
         <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
         <tinymce-edit
-          v-bind="control"
-          :config="config"
-          :disabled="disabledEdit"
-          v-model="value"
           v-if="
             ['add', 'edit', 'detail'].includes(formProps.operateType as number)
           "
+          v-bind="control"
+          v-model="value"
+          :config="config"
+          :disabled="disabledEdit"
         />
         <img
+          v-if="formProps.operateType === 'design'"
           alt=""
           src="./tinymce.png"
-          v-if="formProps.operateType === 'design'"
           style="max-width: 100%"
-        />
+        >
       </template>
     </template>
   </el-form-item>
@@ -175,12 +185,15 @@
   import { getOptionsData } from '@/components/form/request'
 
   const props = withDefaults(
-    defineProps<{
-      data: FormList
-      modelValue?: any
-      otherProp?: string // 子表时的form-item的prop值，用于子表校验用
-    }>(),
-    {}
+      defineProps<{
+        data: FormList
+        modelValue?: any
+        otherProp?: string // 子表时的form-item的prop值，用于子表校验用
+      }>(),
+      {
+        modelValue: '',
+        otherProp: ''
+      }
   )
   const emits = defineEmits<{
     (e: 'update:modelValue', val: any): void
@@ -207,6 +220,7 @@
       case 'string':
         try {
           return val.toString()
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
           return val
         }
@@ -228,13 +242,14 @@
           prop = parts[0]
         }
       }
-      akFormValueChange &&
+      if (akFormValueChange) {
         akFormValueChange({
           name: props.data.name,
           value: newVal,
           prop: prop,
           options: options.value
         })
+      }
     }
   })
 
@@ -295,10 +310,9 @@
       return []
     }
     const rulesReg: any = {}
-    validate &&
-      validate.forEach(item => {
-        rulesReg[item.type] = item.regExp
-      })
+    validate.forEach((item) => {
+      rulesReg[item.type] = item.regExp
+    })
 
     // 获取校验方法 父级使用provide方法注入
     const temp: any = []
@@ -322,19 +336,19 @@
         message = {}
       }
       temp.push(
-        Object.assign(
-          {
-            trigger: item.trigger || 'blur'
-          },
-          obj,
-          message
-        )
+          Object.assign(
+              {
+                trigger: item.trigger || 'blur'
+              },
+              obj,
+              message
+          )
       )
     })
     return temp
   }
 
-  /****input slot处理***/
+  /** **input slot处理***/
   const getInputSlot = (key?: string) => {
     const slot = key === 'p' ? config.value.prepend : config.value.append
     const has = slot.indexOf('key:') === 0
@@ -365,14 +379,16 @@
   })
   const getOptions = (data = {}, type: string, callback?: any) => {
     getOptionsData(config.value, formProps.model, type, route, data).then(
-      res => {
-        if (props.data.type === 'treeSelect') {
-          control.value.data = res // todo
-        } else {
-          optionsList.value = res
+        (res) => {
+          if (props.data.type === 'treeSelect') {
+            control.value.data = res // todo
+          } else {
+            optionsList.value = res
+          }
+          if (callback) {
+            callback()
+          }
         }
-        callback && callback()
-      }
     )
   }
   // option选项远程数据，远程和联动时暂共用queryName
@@ -384,13 +400,13 @@
     return props.data.config?.linkage
   })
   const unWatch1 = linkage.value
-    ? watch(
-        () => formProps.model[linkage.value],
-        val => {
-          getOptions({ [queryName.value]: val }, 'linkage')
-        }
+      ? watch(
+          () => formProps.model[linkage.value],
+          (val) => {
+            getOptions({ [queryName.value]: val }, 'linkage')
+          }
       )
-    : null
+      : null
   // 初始化下拉选项
   const initGetOptions = () => {
     if (['select', 'radio', 'checkbox'].includes(props.data.type)) {
@@ -429,8 +445,11 @@
   onMounted(() => {
     initGetOptions()
   })
-  onUnmounted(() => {})
+  onUnmounted(() => {
+  })
   onBeforeRouteLeave(() => {
-    unWatch1 && unWatch1()
+    if (unWatch1) {
+      unWatch1()
+    }
   })
 </script>

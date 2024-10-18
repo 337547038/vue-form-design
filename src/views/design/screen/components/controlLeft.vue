@@ -1,15 +1,26 @@
 <!-- Created by weiXin:337547038 -->
 <template>
   <div class="main-left">
-    <el-tabs model-value="component" class="tabs">
-      <el-tab-pane label="组件" name="component">
+    <el-tabs
+      model-value="component"
+      class="tabs"
+    >
+      <el-tab-pane
+        label="组件"
+        name="component"
+      >
         <div class="components-list scroll">
-          <div v-for="(item, index) in controlList" :key="index">
-            <div class="title">{{ item.label }}</div>
+          <div
+            v-for="(item, index) in controlList"
+            :key="index"
+          >
+            <div class="title">
+              {{ item.label }}
+            </div>
             <draggable
-              itemKey="label"
-              tag="ul"
               v-model="item.children"
+              item-key="label"
+              tag="ul"
               :group="{ name: 'screen', pull: 'clone', put: false }"
               ghost-class="ghost"
               :sort="false"
@@ -17,7 +28,7 @@
             >
               <template #item="{ element }">
                 <li :class="[element.type]">
-                  <i :class="`icon-${iconList[element.type]}`"></i>
+                  <i :class="`icon-${iconList[element.type]}`" />
                   <span :title="element.label">{{ element.label }}</span>
                 </li>
               </template>
@@ -25,7 +36,10 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="图层" name="layer">
+      <el-tab-pane
+        label="图层"
+        name="layer"
+      >
         <div class="scroll layer-list">
           <ul>
             <li
@@ -38,37 +52,43 @@
                 'text-indent': element.pid
               }"
             >
-              <div class="name" @click="showLockClick(element, 'active')">
-                <i :class="getIcon(element)"></i>
+              <div
+                class="name"
+                @click="showLockClick(element, 'active')"
+              >
+                <i :class="getIcon(element)" />
                 <input
-                  v-model="element.layerName"
                   v-if="screenStore.activeId === element.id"
-                />
-                <span :title="element.layerName || element.id" v-else>{{
+                  v-model="element.layerName"
+                >
+                <span
+                  v-else
+                  :title="element.layerName || element.id"
+                >{{
                   element.layerName || element.id
                 }}</span>
               </div>
               <div class="icon-group">
                 <i
-                  @click="showLockClick(element, 'display')"
                   class="icon"
                   :class="[
                     element.position?.display ? 'icon-eye-close' : 'icon-eye'
                   ]"
-                ></i>
+                  @click="showLockClick(element, 'display')"
+                />
                 <i
-                  @click="showLockClick(element, 'lock')"
                   class="icon"
                   :class="[
                     element.config?.lock ? 'icon-lock' : 'icon-lock-open'
                   ]"
-                ></i>
+                  @click="showLockClick(element, 'lock')"
+                />
                 <el-popconfirm
                   title="确认删除"
                   @confirm="showLockClick(element, 'del')"
                 >
                   <template #reference>
-                    <i class="icon-del"></i>
+                    <i class="icon-del" />
                   </template>
                 </el-popconfirm>
               </div>
@@ -97,7 +117,7 @@
         temp.push(item)
         if (['div', 'group'].includes(item.type) && item.list?.length) {
           item.list.forEach((li: ScreenData) => {
-            li.pid = item.id //添加一个父id作为关系，在图层用于低格样式控制
+            li.pid = item.id // 添加一个父id作为关系，在图层用于低格样式控制
           })
           temp = [...temp, ...item.list]
         }
@@ -133,7 +153,7 @@
       case 'lock':
         obj.config.lock = !obj.config.lock
         if (obj.type === 'div') {
-          //将子级全锁定
+          // 将子级全锁定
           obj.list?.forEach((item: ScreenData) => {
             item.config.lock = !obj.config.lock
           })
@@ -144,13 +164,13 @@
         screenStore.setControlAttr(obj)
         break
       case 'del':
-        //根据id删除
+        // 根据id删除
         screenData.value.list.forEach((item: ScreenData, index: number) => {
           if (item.id === obj.id) {
             screenData.value.list.splice(index, 1)
           } else if (
-            ['div', 'group'].includes(item.type) &&
-            item.list?.length
+            ['div', 'group'].includes(item.type)
+            && item.list?.length
           ) {
             item.list.forEach((li: ScreenData, liIndex: number) => {
               if (li.id === obj.id) {

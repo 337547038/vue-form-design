@@ -462,7 +462,7 @@
         }
         // 提交保存表单
         beforeAfter({
-          requestUrl: apiUrl,
+          apiKey: apiUrl,
           params: Object.assign({}, temp, params, props.params),
           before: getRequestEvent(props, 'before'),
           after: getRequestEvent(props, 'after'),

@@ -11,7 +11,8 @@
       <template #source="{ row, dict }">
         <router-link
           :to="`/design/form?id=${row.source}&redirect=/design/list/list`"
-          >{{ dict.formName && dict.formName[row.source] }}
+        >
+          {{ dict.formName && dict.formName[row.source] }}
         </router-link>
       </template>
     </ak-list>

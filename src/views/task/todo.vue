@@ -8,12 +8,20 @@
       :data="tableData"
     >
       <template #status="{ row }">
-        <el-tag v-if="row.status">{{ row.status }}</el-tag>
+        <el-tag v-if="row.status">
+          {{ row.status }}
+        </el-tag>
       </template>
       <template #title="{ row }">
-        <el-button link type="primary" @click="openDrawer(row)">{{
-          row.title
-        }}</el-button>
+        <el-button
+          link
+          type="primary"
+          @click="openDrawer(row)"
+        >
+          {{
+            row.title
+          }}
+        </el-button>
       </template>
     </ak-list>
     <drawer-com ref="drawerEl" />

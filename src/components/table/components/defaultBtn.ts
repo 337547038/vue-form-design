@@ -1,7 +1,7 @@
 // 这个要先合并好再传给operateButton.vue
 import type { Button } from '@/types/table'
 import { permission } from '@/directive/permissions'
-const defaultBtn: Button = {
+const defaultBtn: any = {
   add: {
     type: 'primary',
     name: 'Add',
@@ -53,11 +53,11 @@ const defaultBtn: Button = {
     key: 'export'
   }
 }
-export const mergeDefaultBtn = (buttons: Button, position = 'top') => {
+export const mergeDefaultBtn = (buttons: any, position = 'top') => {
   const temp: any = []
-  //表格上方按钮预设有add/edit/del，表格行右侧预设有edit/detail/del
-  const includeBtn =
-    position === 'top'
+  // 表格上方按钮预设有add/edit/del，表格行右侧预设有edit/detail/del
+  const includeBtn
+    = position === 'top'
       ? ['edit', 'add', 'del', 'export']
       : ['edit', 'detail', 'del']
   buttons.forEach((item: Button) => {
@@ -70,7 +70,7 @@ export const mergeDefaultBtn = (buttons: Button, position = 'top') => {
             item.popConfirm || {}
           )
         }
-        //表格上方时默认添加label
+        // 表格上方时默认添加label
         let defaultLabel: any = {}
         if (position === 'top' && !item.label) {
           const labelArray: any = {

@@ -6,12 +6,12 @@
       delete-url="userDelete"
       :search-data="searchData"
       :data="tableData"
-      @btn-click="listBtnClick"
       :auto-load="false"
+      @btn-click="listBtnClick"
     />
     <el-dialog
-      destroy-on-close
       v-model="dialog.visible"
+      destroy-on-close
       :title="dialog.title"
       width="600px"
     >
@@ -407,13 +407,13 @@
           // 将密码值设给确认密码框
           newRow.password2 = newRow.password
           formEl.value.setValue(newRow)
-          //formEl.value.getData({ id: row.id })
+          // formEl.value.getData({ id: row.id })
         })
       }
     }
   }
   // 提交表单前事件
-  const beforeSubmit = params => {
+  const beforeSubmit = (params) => {
     // 将角色转字符串传
     if (params.role) {
       params.role = params.role.join(',')
@@ -426,7 +426,7 @@
     return params
   }
   // 提交表单后事件
-  const afterSubmit = type => {
+  const afterSubmit = (type) => {
     if (type === 'success') {
       // 添加成功，刷新列表数据
       closeResetDialog()
@@ -440,7 +440,7 @@
     // formEl.value.resetFields() // 重置表单
   }
   // 点击弹窗取消按钮时
-  const dialogBtnClick = type => {
+  const dialogBtnClick = (type) => {
     if (type === 'reset') {
       closeResetDialog()
     }

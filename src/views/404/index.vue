@@ -1,7 +1,9 @@
 <template>
   <div class="error-404">
-    <img src="../../assets/img/404.svg" />
-    <el-button @click="$router.push({ path: '/' })">返回首页</el-button>
+    <img src="../../assets/img/404.svg">
+    <el-button @click="$router.push({ path: '/' })">
+      返回首页
+    </el-button>
   </div>
 </template>
 <route>

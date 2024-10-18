@@ -7,9 +7,9 @@
     }"
     :list="model"
     class="drag"
-    itemKey="id"
+    item-key="id"
     name="fade"
-    ghostClass="ghost"
+    ghost-class="ghost"
     @add="draggableAdd"
   >
     <template #item="{ element }">
@@ -34,7 +34,9 @@
     defineProps<{
       pId?: string
     }>(),
-    {}
+    {
+      pId: ''
+    }
   )
   const emits = defineEmits<{
     (e: 'itemClick', val: string[]): void
@@ -52,10 +54,10 @@
 
   const itemClick = (data: ScreenData) => {
     if (stateData.ctrlPress) {
-      //当前选中type=div内的元素时，则选中当前div，不允许选中div内的单个
+      // 当前选中type=div内的元素时，则选中当前div，不允许选中div内的单个
       if (props.pId) {
-        //这里选中还有点问题，因递归没传事件，不会触发矩形，暂不让选中
-        //screenStore.setTempActiveId(props.pId)
+        // 这里选中还有点问题，因递归没传事件，不会触发矩形，暂不让选中
+        // screenStore.setTempActiveId(props.pId)
         return
       } else {
         screenStore.setTempActiveId(data.id)
@@ -65,8 +67,8 @@
       const len = screenStore.tempActiveId?.length
       screenStore.setControlTip(`当前选中${len}个`)
       if (len > 1) {
-        //选中了两个或以上时，显示id=rect的图层并计算宽高位置信息
-        //放外面处理，外面还有点击鼠标拖动选区选中的效果
+        // 选中了两个或以上时，显示id=rect的图层并计算宽高位置信息
+        // 放外面处理，外面还有点击鼠标拖动选区选中的效果
         screenStore.setActiveId('rect')
         emits('itemClick')
       }
@@ -87,7 +89,7 @@
     if (obj.height) {
       data.position.height = obj.height
     }
-    //临时选区移动时，则移动下面所有选中的。这里不是实时移动，要实时移动还需要先取出鼠标按下时的位置，为一个固定值然后才能+obj.moveX
+    // 临时选区移动时，则移动下面所有选中的。这里不是实时移动，要实时移动还需要先取出鼠标按下时的位置，为一个固定值然后才能+obj.moveX
     if (data.type === 'tempRect' && obj.type === 'move') {
       model.value.forEach((item: ScreenData) => {
         if (screenStore.tempActiveId.includes(item.id)) {
@@ -126,7 +128,7 @@
     setCurrentConfig(obj)
   }
 
-  const setCurrentConfig = (obj: ScreenData | {}) => {
+  const setCurrentConfig = (obj: ScreenData) => {
     screenStore.setActiveId(obj.id)
     screenStore.setControlAttr(obj)
   }

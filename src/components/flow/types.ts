@@ -6,7 +6,7 @@ export interface NodeList {
   userType?: string
   flowType?: string
   priority?: number
-  //rules?: string // 条件规则
+  // rules?: string // 条件规则
 }
 export interface EmitsEvent {
   event: string

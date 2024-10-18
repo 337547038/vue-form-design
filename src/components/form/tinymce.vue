@@ -1,5 +1,8 @@
 <template>
-  <textarea id="myTextarea" v-model="contentValue"></textarea>
+  <textarea
+    id="myTextarea"
+    v-model="contentValue"
+  />
 </template>
 
 <script setup lang="ts">
@@ -35,16 +38,16 @@
   }>()
   const contentValue = ref(props.modelValue)
   // 参数自定义初始化
-  // eslint-disable-next-line max-len
-  const buttonPlugins =
-    'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave '
+
+  const buttonPlugins
+    = 'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave '
 
   // 导入工具栏
-  // eslint-disable-next-line max-len
-  const toolbar =
-    'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor table image | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
-  const toolbarSimple =
-    'undo cut copy paste pastetext |forecolor backcolor bold italic underline strikethrough|alignleft aligncenter alignright alignjustify|'
+
+  const toolbar
+    = 'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor table image | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
+  const toolbarSimple
+    = 'undo cut copy paste pastetext |forecolor backcolor bold italic underline strikethrough|alignleft aligncenter alignright alignjustify|'
   const commInit = {
     selector: '#myTextarea',
     cleanup: true,
@@ -80,7 +83,7 @@
         }
       }
       getRequest('upload', params, options)
-        .then((res: { data: { code: number; path: unknown } }) => {
+        .then((res: { data: { code: number, path: unknown } }) => {
           // console.log(res)
           // console.log(res.data.path)
           if (res.data.code === 1) {
@@ -95,15 +98,15 @@
         })
     })
   const fileUpload = (callback: any, value: string, meta: any) => {
-    const filetype =
-      '.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4'
-    //后端接收上传文件的地址
-    const input = document.createElement('input') //创建文件选择
+    const filetype
+      = '.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4'
+    // 后端接收上传文件的地址
+    const input = document.createElement('input') // 创建文件选择
     input.setAttribute('type', 'file')
     input.setAttribute('accept', filetype)
     input.click()
     input.onchange = () => {
-      const file = input?.files && input.files[0] //获取文件信息
+      const file = input?.files && input.files[0] // 获取文件信息
       // console.log(file)
       // meta对应于file_picker_types的三种类型
       let attr = {}
@@ -116,13 +119,13 @@
       if (meta.filetype === 'media') {
         // attr={source2: 'alt.ogg', poster: 'image.jpg'}
       }
-      /*if(file.type.slice(0,5)=='image'&&file.size/1024/1024>2){
+      /* if(file.type.slice(0,5)=='image'&&file.size/1024/1024>2){
       alert("上传失败，图片大小请控制在2M以内")
     }else if(file.type.slice(0,5)=='video'&&file.size/1024/1024>500){
       alert("上传失败，视频大小请控制在 500M 以内")
     }else if(file.size/1024/1024>10){
       alert("上传失败，文件大小请控制在 10M 以内")
-    }*/
+    } */
       const params = new FormData()
       params.append('file', file as any)
       let options = {}
@@ -132,7 +135,7 @@
         }
       }
       getRequest('upload', params, options)
-        .then((res: { data: { code: number; path: any; message: any } }) => {
+        .then((res: { data: { code: number, path: any, message: any } }) => {
           if (res.data.code === 1) {
             callback(res.data.path, attr) // 上传成功，在成功函数里填入图片路径
           } else {
@@ -148,8 +151,8 @@
     plugins: buttonPlugins, // 插件配置
     toolbar: toolbar, // 工具栏配置，设为false则隐藏
     menubar: true, // 菜单栏配置，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看 http://tinymce.ax-z.cn/configure/editor-appearance.php --搜索“自定义菜单”
-    //emoticons_database_url: './tinymce/emoticons/js/emojis.js',
-    // eslint-disable-next-line max-len
+    // emoticons_database_url: './tinymce/emoticons/js/emojis.js',
+
     font_formats:
       '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;', // 字体样式 微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif, 宋体=simsun,serif,仿宋体=FangSong,黑体=SimHei,Arial=arial,
     // content_style: 'p {margin-block-start: 0; margin-block-end: 0; color: #606D81; font-size: 14px;}; table { border: 1px}', // 直接自定义可编辑区域的css样式
@@ -158,15 +161,14 @@
     // 允许外界传进来高度和placeholder
     // 粘贴图片 自动处理 base64
     urlconverter_callback: (url: string, node: string) => {
-      if (node === 'img' && url.startsWith('blob:')) {
-        // @ts-ignore
-        tinymce.activeEditor && tinymce.activeEditor.uploadImages()
+      if (node === 'img' && url.startsWith('blob:') && tinymce.activeEditor) {
+        tinymce.activeEditor.uploadImages()
       }
       return url
     },
     // 图片上传
     images_upload_handler: imgUploadFn,
-    file_picker_types: 'file image media', //分别对应三个类型文件的上传：link插件，image和axupimgs插件，media插件。想屏蔽某个插件的上传就去掉对应的参数
+    file_picker_types: 'file image media', // 分别对应三个类型文件的上传：link插件，image和axupimgs插件，media插件。想屏蔽某个插件的上传就去掉对应的参数
     file_picker_callback: fileUpload
   }
   const simpleInit = {
@@ -177,16 +179,14 @@
     paste_data_images: false // 图片是否可粘贴
   }
   const myInit = computed(() => {
-    const styleType =
-      props.config?.style === 'simple' ? simpleInit : defaultInit
+    const styleType
+      = props.config?.style === 'simple' ? simpleInit : defaultInit
     return Object.assign(commInit, styleType)
   })
   onMounted(() => {
-    // @ts-ignore
     tinymce.init(myInit.value)
   })
   onUnmounted(() => {
-    // @ts-ignore
     tinymce.remove()
   })
   // 侦听默认值 外界第一次传进来一个 v-model 就赋值给 contentValue

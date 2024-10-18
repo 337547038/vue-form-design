@@ -1,5 +1,9 @@
 <template>
-  <el-select v-model="selectChecked" multiple @change="change">
+  <el-select
+    v-model="selectChecked"
+    multiple
+    @change="change"
+  >
     <el-option
       v-for="item in btnList"
       :key="item.key"
@@ -48,9 +52,9 @@
         key: 'export',
         show: props.position === 'top'
       }
-    ].filter(item => item.show)
+    ].filter((item) => item.show)
   })
-  const allKey = btnList.value.map(item => item.key)
+  const allKey = btnList.value.map((item) => item.key)
   watch(
     () => model.value,
     (val: any) => {
@@ -67,20 +71,20 @@
     },
     { deep: true, immediate: true }
   )
-  const change = val => {
+  const change = (val) => {
     // 找出新增的选项
     const addedItems = val.filter(
-      item => !lastSelectChecked.value.includes(item)
+      (item) => !lastSelectChecked.value.includes(item)
     )
     if (addedItems.length) {
-      //表示当前为新增
+      // 表示当前为新增
       model.value.push({ key: addedItems[0] })
     } else {
       // 找出删除的选项
       const removedItems = lastSelectChecked.value.filter(
-        item => !val.includes(item)
+        (item) => !val.includes(item)
       )
-      model.value = model.value.filter(item => item.key !== removedItems[0])
+      model.value = model.value.filter((item) => item.key !== removedItems[0])
     }
     lastSelectChecked.value = val
   }

@@ -26,38 +26,50 @@
             />
           </div>
         </template>
-        <template #header="scope" v-if="item.config?.help">
+        <template
+          v-if="item.config?.help"
+          #header="scope"
+        >
           {{ scope.column.label }}
           <tooltip :content="item.config?.help" />
         </template>
       </el-table-column>
       <el-table-column
-        prop="del"
-        label="操作"
         v-if="
           ['add', 'edit'].includes(type) &&
-          data.config.delBtnText &&
-          !disabledEdit
+            data.config.delBtnText &&
+            !disabledEdit
         "
+        prop="del"
+        label="操作"
       >
         <template #default="scope">
-          <el-button text type="primary" @click="delColumn(scope.$index)"
-            >{{ data.config.delBtnText }}
+          <el-button
+            text
+            type="primary"
+            @click="delColumn(scope.$index)"
+          >
+            {{ data.config.delBtnText }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <div
-      class="table-btn"
       v-if="
         ['add', 'edit'].includes(type) &&
-        data.config.addBtnText &&
-        !disabledEdit
+          data.config.addBtnText &&
+          !disabledEdit
       "
+      class="table-btn"
     >
-      <el-button size="small" @click="addColumn">{{
-        data.config.addBtnText
-      }}</el-button>
+      <el-button
+        size="small"
+        @click="addColumn"
+      >
+        {{
+          data.config.addBtnText
+        }}
+      </el-button>
     </div>
   </div>
 </template>
@@ -79,8 +91,8 @@
   )
   const formProps = inject('akFormProps', {}) as any
 
-  //const tableDataNew: any = toRef(props.data, 'tableData')
-  //const tableDataNew: any = toRef(formProps.value.model, props.data.name)
+  // const tableDataNew: any = toRef(props.data, 'tableData')
+  // const tableDataNew: any = toRef(formProps.value.model, props.data.name)
   const tableDataNew = computed(() => {
     return formProps.model[props.data.name]
   })

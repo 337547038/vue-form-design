@@ -1,23 +1,30 @@
 <template>
   <div class="operate-button">
-    <template v-for="(btn, index) in getOperateButton()" :key="index">
+    <template
+      v-for="(btn, index) in getOperateButton()"
+      :key="index"
+    >
       <el-popconfirm
-        v-bind="btn.popConfirm"
         v-if="btn.render === 'confirm'"
+        v-bind="btn.popConfirm"
         @confirm="btnClick(btn)"
       >
         <template #reference>
           <div>
-            <table-button :btn="btn" :row="row" :position="position" />
+            <table-button
+              :btn="btn"
+              :row="row"
+              :position="position"
+            />
           </div>
         </template>
       </el-popconfirm>
       <table-button
+        v-else
         :btn="btn"
         :row="row"
-        @click="btnClick(btn)"
         :position="position"
-        v-else
+        @click="btnClick(btn)"
       />
     </template>
     <el-dropdown v-if="dropdown && getOperateButton(true)?.length > dropdown">
@@ -57,7 +64,7 @@
     defineProps<{
       row: any // 表格右侧是当前行数据，表格上面按钮时为勾选中的行
       buttons: Button[]
-      position?: string //位置
+      position?: string // 位置
       dropdown?: number // 按钮最大显示个数，超出以下拉形式展示
     }>(),
     {
@@ -70,26 +77,26 @@
     (e: 'click', key: string): void
   }>()
 
-  //按钮事件规则，当设置了自定义click事件时，当return false时可阻止默认事件
+  // 按钮事件规则，当设置了自定义click事件时，当return false时可阻止默认事件
   const btnClick = (btn: Button) => {
     let clickEventResult: any = true
     if (btn.click && typeof btn.click === 'function') {
       clickEventResult = btn.click(props.row)
     }
-    //只有系统预设的add,edit,detail,del才有默认事件
+    // 只有系统预设的add,edit,detail,del才有默认事件
     if (clickEventResult === false) {
       return false
     }
     if (
-      btn.key &&
-      ['add', 'del', 'edit', 'detail', 'export'].includes(btn.key)
+      btn.key
+      && ['add', 'del', 'edit', 'detail', 'export'].includes(btn.key)
     ) {
       emits('click', btn.key)
     }
   }
   const dropdownBtnClick = (btn: Button) => {
     if (btn.render === 'confirm') {
-      //下拉菜单再放el-popconfirm时会导致弹出窗定位不准。这里改用messageBox
+      // 下拉菜单再放el-popconfirm时会导致弹出窗定位不准。这里改用messageBox
       const { title, confirmButtonText, cancelButtonText } = btn.popConfirm
       ElMessageBox({
         title: '温馨提示',
@@ -109,11 +116,11 @@
 
   const getOperateButton = (more?: boolean) => {
     if (more && props.dropdown) {
-      //用于下拉部分
+      // 用于下拉部分
       return props.buttons.slice(props.dropdown)
     } else {
       if (props?.dropdown) {
-        //截取前面
+        // 截取前面
         return props.buttons.slice(0, props.dropdown)
       } else {
         return props.buttons
@@ -121,7 +128,7 @@
     }
   }
 
-  //操作按钮处理结束
+  // 操作按钮处理结束
 </script>
 <style scoped lang="scss">
   .operate-button {

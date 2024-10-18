@@ -1,4 +1,4 @@
-//数据处理
+// 数据处理
 import { beforeAfter } from '@/utils/beforeAfter'
 import SparkMD5 from 'spark-md5'
 import { useDesignStore } from '@/store/design'
@@ -6,7 +6,7 @@ import { useDesignStore } from '@/store/design'
 export const getOptionsData = (
   config: any,
   formModel: any,
-  type: 'linkage' | 'remote' | 'edit' | 'default', //linkage联动改变时,remote远程搜索,edit远程搜索模式下修改时回显,default初始请求
+  type: 'linkage' | 'remote' | 'edit' | 'default', // linkage联动改变时,remote远程搜索,edit远程搜索模式下修改时回显,default初始请求
   route: any,
   data?: any
 ) => {
@@ -43,7 +43,7 @@ export const getOptionsData = (
             const result = res.data.list || res.data
             resolve(result)
             if (typeof formatRes === 'object') {
-              designStore.setFormAjaxCache(key, result) //缓存，例如子表添加时不用每添加一行就请求一次
+              designStore.setFormAjaxCache(key, result) // 缓存，例如子表添加时不用每添加一行就请求一次
             }
           })
           .catch((res: any) => {

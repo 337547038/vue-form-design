@@ -1,11 +1,11 @@
 <!-- Created by 337547038 weixin:337547038 -->
 <template>
   <el-dialog
+    v-model="visible"
     :append-to-body="true"
     :before-close="beforeClose"
     :destroy-on-close="true"
     title="选择上传文件"
-    v-model="visible"
     class="select-upload-dialog"
     width="1000px"
   >
@@ -16,13 +16,19 @@
           v-if="showUploadList"
           :accept="config.accept"
           :auto="config.auto"
-          :groupId="currentGroupId"
+          :group-id="currentGroupId"
         />
-        <div class="upload-header" v-else>
+        <div
+          v-else
+          class="upload-header"
+        >
           <div class="control">
             <div class="btn">
-              <el-button type="primary" @click="showUploadList = true"
-                >本地上传
+              <el-button
+                type="primary"
+                @click="showUploadList = true"
+              >
+                本地上传
               </el-button>
             </div>
             <div class="search">
@@ -32,7 +38,10 @@
                 placeholder="请输入名称"
               >
                 <template #append>
-                  <el-button icon="search" @click="getFileList" />
+                  <el-button
+                    icon="search"
+                    @click="getFileList"
+                  />
                 </template>
               </el-input>
             </div>
@@ -41,37 +50,48 @@
                 :class="{ active: listType === 'table' }"
                 class="icon-list"
                 @click="listType = 'table'"
-              ></i>
+              />
               <i
                 :class="{ active: listType === 'grid' }"
                 class="icon-grid"
                 @click="listType = 'grid'"
-              ></i>
+              />
             </div>
           </div>
           <table-list
-            :limit="configLimit"
-            v-model="checkList"
-            :list-type="listType"
-            :groupId="currentGroupId"
             ref="tableListEl"
+            v-model="checkList"
+            :limit="configLimit"
+            :list-type="listType"
+            :group-id="currentGroupId"
           />
         </div>
       </div>
       <checked-list
-        :limit="configLimit"
-        v-model="checkList"
         v-if="configLimit > 1 && !showUploadList"
+        v-model="checkList"
+        :limit="configLimit"
       />
     </div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button v-if="showUploadList" type="primary" @click="backListClick"
-          >返回列表
+        <el-button
+          v-if="showUploadList"
+          type="primary"
+          @click="backListClick"
+        >
+          返回列表
         </el-button>
         <template v-else>
-          <el-button @click="cancelClick">取 消</el-button>
-          <el-button type="primary" @click="confirmClick">确 定</el-button>
+          <el-button @click="cancelClick">
+            取 消
+          </el-button>
+          <el-button
+            type="primary"
+            @click="confirmClick"
+          >
+            确 定
+          </el-button>
         </template>
       </div>
     </template>

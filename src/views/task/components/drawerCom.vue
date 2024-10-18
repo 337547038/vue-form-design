@@ -8,20 +8,33 @@
   >
     <div class="flow-detail-drawer">
       <div class="header">
-        <div class="face"><i class="icon-user"></i></div>
+        <div class="face">
+          <i class="icon-user" />
+        </div>
         <div>
-          <div class="name">张三总</div>
+          <div class="name">
+            张三总
+          </div>
           <el-tag>总裁助理审批中</el-tag>
         </div>
         <div class="button">
-          <el-button type="success">同意</el-button>
-          <el-button type="danger">拒绝</el-button>
-          <el-button type="primary">流转</el-button>
+          <el-button type="success">
+            同意
+          </el-button>
+          <el-button type="danger">
+            拒绝
+          </el-button>
+          <el-button type="primary">
+            流转
+          </el-button>
         </div>
       </div>
       <el-tabs>
         <el-tab-pane label="表单信息">
-          <div class="form-info" v-loading="state.loading">
+          <div
+            v-loading="state.loading"
+            class="form-info"
+          >
             <ak-form
               ref="formEl"
               :data="formData"
@@ -37,23 +50,43 @@
               :type="1"
               @change="formChange"
             />
-            <div class="flow-list"></div>
+            <div class="flow-list" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="流程图" name="flow" class="flow-box">
+        <el-tab-pane
+          label="流程图"
+          name="flow"
+          class="flow-box"
+        >
           <div class="status">
             <ul>
-              <li class="s1">● 已完成</li>
-              <li class="s2">● 进行中</li>
-              <li class="s3">● 未进行</li>
-              <li class="s4">● 已拒绝</li>
-              <li class="s5">● 跳过</li>
+              <li class="s1">
+                ● 已完成
+              </li>
+              <li class="s2">
+                ● 进行中
+              </li>
+              <li class="s3">
+                ● 未进行
+              </li>
+              <li class="s4">
+                ● 已拒绝
+              </li>
+              <li class="s5">
+                ● 跳过
+              </li>
             </ul>
           </div>
-          <ak-flow :type="1" ref="flowEl" />
+          <ak-flow
+            ref="flowEl"
+            :type="1"
+          />
         </el-tab-pane>
         <el-tab-pane label="流转记录">
-          <ak-list ref="tableListEl" :data="tableData" />
+          <ak-list
+            ref="tableListEl"
+            :data="tableData"
+          />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -170,7 +203,7 @@
     },
     config: {}
   })
-  const formChange = ({ key, value }: { key: string; value: any }) => {
+  const formChange = ({ key, value }: { key: string, value: any }) => {
     if (key === 'type') {
       formOptionsEl.value.setValue({ remark: value === 1 ? '同意' : '不同意' })
     }

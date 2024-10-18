@@ -9,8 +9,8 @@
       @btn-click="listBtnClick"
     />
     <el-dialog
-      destroy-on-close
       v-model="dialog.visible"
+      destroy-on-close
       :title="dialog.title"
       width="420px"
     >
@@ -99,7 +99,7 @@
         click: (row: any) => {
           nextTick(() => {
             console.log(row)
-            //formEl.value.setValue(row) // 可以这里使用click处理，也可以放listBtnClick里处理
+            // formEl.value.setValue(row) // 可以这里使用click处理，也可以放listBtnClick里处理
           })
         }
       },
@@ -213,7 +213,7 @@
       if (btn.key === 'edit') {
         nextTick(() => {
           formEl.value.setValue(row)
-          //formEl.value.getData({ id: row.id })
+          // formEl.value.getData({ id: row.id })
         })
       }
     }
@@ -238,7 +238,7 @@
   const closeResetDialog = () => {
     dialog.visible = false
     dialog.editId = ''
-    //formEl.value.resetFields() // 重置表单
+    // formEl.value.resetFields() // 重置表单
   }
   // 点击弹窗取消按钮时
   const dialogBtnClick = (type: string) => {

@@ -14,19 +14,24 @@
           <el-form-item label="优先级">
             <el-select v-model="state.priority">
               <el-option
-                :value="item"
                 v-for="item in branchLen - 1"
                 :key="item"
-                >{{ item }}</el-option
+                :value="item"
               >
+                {{ item }}
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
             <div>条件规则</div>
-            <el-input type="textarea" rows="5" v-model="state.content" />
+            <el-input
+              v-model="state.content"
+              type="textarea"
+              rows="5"
+            />
           </el-form-item>
           <div class="tip">
-            可使用运算符+-*/()&lt;&gt;=&&||符号编写条件规则，$代表当前流程表单所有值，如$.name即为流程表单输入字段名称为name的值。<br />
+            可使用运算符+-*/()&lt;&gt;=&&||符号编写条件规则，$代表当前流程表单所有值，如$.name即为流程表单输入字段名称为name的值。<br>
             如请假流程表单day为请假天数，当条件规则设置为 $.day>2
             即表示请假天假大于2天时，该条件成立
           </div>
@@ -36,23 +41,27 @@
             <el-radio-group v-model="state.userType">
               <el-radio
                 v-for="(item, key) in userTypeList"
-                :label="key"
                 :key="key"
-                >{{ item }}</el-radio
+                :label="key"
               >
+                {{ item }}
+              </el-radio>
             </el-radio-group>
           </el-form-item>
           <template v-if="['1', '5'].includes(state.userType)">
             <el-form-item>
-              <el-button type="primary" @click="selectClick"
-                >选择/修改{{ userTypeList[state.userType] }}</el-button
+              <el-button
+                type="primary"
+                @click="selectClick"
               >
+                选择/修改{{ userTypeList[state.userType] }}
+              </el-button>
             </el-form-item>
             <el-form-item>
               <el-tag
-                style="margin-right: 5px"
                 v-for="(item, index) in userTagList"
                 :key="item"
+                style="margin-right: 5px"
                 closable
                 @close="tagClose(index as number)"
               >
@@ -62,9 +71,15 @@
           </template>
           <el-form-item label="审批方式">
             <el-radio-group v-model="state.flowType">
-              <el-radio label="1">多人审批，采用依次审批</el-radio>
-              <el-radio label="2">多人审批，通过只需一个，拒绝需全员</el-radio>
-              <el-radio label="3">多人审批，一个通过或拒绝</el-radio>
+              <el-radio label="1">
+                多人审批，采用依次审批
+              </el-radio>
+              <el-radio label="2">
+                多人审批，通过只需一个，拒绝需全员
+              </el-radio>
+              <el-radio label="3">
+                多人审批，一个通过或拒绝
+              </el-radio>
             </el-radio-group>
           </el-form-item>
           <div class="tip">
@@ -74,13 +89,23 @@
           </div>
         </template>
         <el-form-item>
-          <el-button @click="visible = false">取消</el-button>
-          <el-button type="primary" @click="confirmClick">确认</el-button>
+          <el-button @click="visible = false">
+            取消
+          </el-button>
+          <el-button
+            type="primary"
+            @click="confirmClick"
+          >
+            确认
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
   </el-drawer>
-  <user-dialog v-model="state.content" ref="userDialogEl" />
+  <user-dialog
+    ref="userDialogEl"
+    v-model="state.content"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -99,7 +124,7 @@
     priority: 1
   })
   const nodeData = ref({})
-  //const branchIndex = ref(0) // 条件分支时，当前为第几个
+  // const branchIndex = ref(0) // 条件分支时，当前为第几个
   const branchLen = ref(1)
   // 打开成员或系统角色选择弹窗
   const userTagList = computed(() => {

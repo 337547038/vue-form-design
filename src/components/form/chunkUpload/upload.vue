@@ -1,6 +1,10 @@
 <!-- Created by 337547038 weixin:337547038 -->
 <template>
-  <label class="split-upload-file" @dragover="fileDragOver" @drop="fileDrop">
+  <label
+    class="split-upload-file"
+    @dragover="fileDragOver"
+    @drop="fileDrop"
+  >
     <input
       ref="inputEl"
       style="display: none"
@@ -8,50 +12,67 @@
       multiple="multiple"
       :accept="accept"
       @change="onFileChange"
-    />
-    <i class="icon-upload"></i>
+    >
+    <i class="icon-upload" />
     <span>将文件拖放到此处以上传或<b>选择文件</b></span>
   </label>
   <div class="split-upload-list">
     <div
-      class="split-item"
       v-for="(item, index) in tempFileList"
       :key="item.name"
+      class="split-item"
     >
-      <img :src="item.src" v-if="item.src" alt="" />
-      <i v-else class="icon-apply"></i>
+      <img
+        v-if="item.src"
+        :src="item.src"
+        alt=""
+      >
+      <i
+        v-else
+        class="icon-apply"
+      />
       <span class="name">{{ item.name }}</span>
       <span class="size">{{ item.size }}</span>
       <span class="progress">{{ getStatusProgress(item) }}</span>
       <span
-        class="speed-time"
         v-if="(item.status === 1) & !!item.speed && !!item.remainingTime"
-        >{{ item.speed }}/s {{ item.remainingTime }}</span
-      >
+        class="speed-time"
+      >{{ item.speed }}/s {{ item.remainingTime }}</span>
       <i
-        class="icon icon-pause"
         v-show="item.status === 1"
+        class="icon icon-pause"
         @click="pauseClick(item)"
-      ></i>
+      />
       <i
-        class="icon icon-refresh"
         v-show="item.status === 3"
+        class="icon icon-refresh"
         @click="startUpload(item)"
-      ></i>
+      />
       <i
-        class="icon icon-play"
         v-show="item.status === 0"
+        class="icon icon-play"
         @click="startUpload(item)"
-      ></i>
-      <i class="icon icon-del" @click="delUploadClick(index)"></i>
+      />
+      <i
+        class="icon icon-del"
+        @click="delUploadClick(index)"
+      />
       <span
         class="progress-bar"
         :style="{ width: `${item.progress}%` }"
         :class="[`status-${item.status}`]"
-      ></span>
+      />
     </div>
-    <div class="upload-btn" v-if="!auto && tempFileList.length">
-      <el-button type="primary" @click="confirmUpload">确认上传</el-button>
+    <div
+      v-if="!auto && tempFileList.length"
+      class="upload-btn"
+    >
+      <el-button
+        type="primary"
+        @click="confirmUpload"
+      >
+        确认上传
+      </el-button>
     </div>
   </div>
 </template>
@@ -66,20 +87,23 @@
 
   const props = withDefaults(
     defineProps<{
-      auto?: Boolean // 选择文件后自动上传
-      accept?: String
-      groupId?: String | Number
+      auto?: boolean // 选择文件后自动上传
+      accept?: string
+      groupId?: string | number
     }>(),
-    {}
+    {
+      accept: '',
+      groupId: ''
+    }
   )
-  /*const emits = defineEmits<{
+  /* const emits = defineEmits<{
     (e: 'update:modelValue', val: any): void
-  }>()*/
+  }>() */
 
   const tempFileList = ref([])
   const startTime = ref()
   const chunkSize = 20 * 1024 * 1024 // 每片大小
-  const maxParallelUploads = 3 //同时上传并发数
+  const maxParallelUploads = 3 // 同时上传并发数
 
   const getStatusProgress = (obj: TempFileList) => {
     const statusDict: any = {
@@ -88,7 +112,7 @@
       2: '上传失败',
       3: '暂停上传',
       4: '上传成功',
-      5: '正在处理' //计算md5
+      5: '正在处理' // 计算md5
     }
     if (obj.status === 1) {
       return obj.progress + '%'
@@ -135,8 +159,8 @@
         size: unitFormat(data.size), // 大小
         progress: 0, // 上传进度
         speed: '', // 上传速度
-        remainingTime: '', //剩余时间预估
-        status: 0, //上传状态
+        remainingTime: '', // 剩余时间预估
+        status: 0, // 上传状态
         name: data.name,
         src: src, // 预览用的src
         type: data.type,
@@ -169,7 +193,7 @@
         filename: file.name, // 文件名
         totalChunks: chunkCount, // 总片数
         file: chunk, // 每片文件
-        groupId: props.groupId //上传到指定分组
+        groupId: props.groupId // 上传到指定分组
       }
       await uploadChunk(params, currentFile)
     }
@@ -180,7 +204,7 @@
   const uploadChunk = (params: any, currentFile: TempFileList) => {
     return new Promise((resolve, reject) => {
       const formData = new FormData()
-      //formData.append('file', chunk, file.name)
+      // formData.append('file', chunk, file.name)
       for (const i in params) {
         formData.append(i, params[i])
       }
@@ -188,9 +212,9 @@
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 0, // `timeout` 指定请求超时的毫秒数(0 表示无超时时间)
         onUploadProgress: (progressEvent: any) => {
-          //这个progressEvent.total!=file.size两者有小偏差。结果存在大于100的可能
-          const hasProgress =
-            params.chunkSize * (params.chunkNumber - 1) + progressEvent.loaded
+          // 这个progressEvent.total!=file.size两者有小偏差。结果存在大于100的可能
+          const hasProgress
+            = params.chunkSize * (params.chunkNumber - 1) + progressEvent.loaded
           const result = (hasProgress / params.totalSize) * 100
           currentFile.progress = Number(result > 100 ? 100 : result.toFixed(2))
           getSpeedTime(hasProgress, params.totalSize, currentFile)
@@ -205,7 +229,7 @@
         .catch((res: any) => {
           switch (res.code) {
             case 2:
-              //拦截处设置了只有code=1才正常
+              // 拦截处设置了只有code=1才正常
               currentFile.status = 4 // 上传成功
               resolve(res)
               break
@@ -245,7 +269,7 @@
   )
 
   const pauseClick = (item: TempFileList) => {
-    item.source && item.source.cancel('cancel')
+    item.source?.cancel('cancel')
   }
   const startUpload = (item: TempFileList) => {
     item.source = null
@@ -265,7 +289,7 @@
     e.preventDefault()
     onFileChange(e.dataTransfer.files, 'drag')
   }
-  /*******一些转换工具类****************/
+  /** *****一些转换工具类****************/
   const unitFormat = (size: number) => {
     if (size === 0) return '0B'
     const k = 1024
@@ -305,7 +329,7 @@
       const startTime = new Date().getTime()
       const spark = new SparkMD5.ArrayBuffer()
       const fileReader = new FileReader()
-      //fileReader.readAsBinaryString(file)
+      // fileReader.readAsBinaryString(file)
       loadNextChunk()
       fileReader.onload = function (e) {
         spark.append(e.target?.result)

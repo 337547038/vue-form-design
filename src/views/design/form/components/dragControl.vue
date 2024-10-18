@@ -2,7 +2,9 @@
 <template>
   <div class="components-list">
     <div v-if="isSearch && formDataList?.length">
-      <div class="title">快速选择表单字段</div>
+      <div class="title">
+        快速选择表单字段
+      </div>
       <div class="content">
         <el-checkbox
           v-for="item in formDataList"
@@ -13,21 +15,24 @@
         </el-checkbox>
       </div>
     </div>
-    <div v-for="(list, index) in controlList" :key="index">
+    <div
+      v-for="(list, index) in controlList"
+      :key="index"
+    >
       <div class="title">
         {{ list.title }}
         <div
-          class="template"
           v-if="index === 0 && !isSearch"
+          class="template"
           @click="useTemplateClick"
         >
           使用模板
         </div>
       </div>
       <draggable
-        itemKey="key123"
-        tag="ul"
         v-model="list.children"
+        item-key="key123"
+        tag="ul"
         :group="{ name: 'form', pull: 'clone', put: false }"
         ghost-class="ghost"
         :sort="false"
@@ -35,16 +40,16 @@
       >
         <template #item="{ element }">
           <li :class="[element.type]">
-            <i :class="`icon-${element.icon}`"></i>
+            <i :class="`icon-${element.icon}`" />
             <span :title="element.label">{{ element.label }}</span>
           </li>
         </template>
       </draggable>
     </div>
     <use-template
+      v-if="!isSearch"
       ref="useTemplateEl"
       @click="useTemplateSelect"
-      v-if="!isSearch"
     />
   </div>
 </template>

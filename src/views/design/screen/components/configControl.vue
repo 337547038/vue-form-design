@@ -1,41 +1,52 @@
 <!-- Created by weiXin:337547038 -->
 <template>
-  <div class="main-right" :class="{ lock: isLockDisplay }">
-    <el-tabs class="tabs" model-value="position">
-      <el-tab-pane label="属性配置" name="position">
+  <div
+    class="main-right"
+    :class="{ lock: isLockDisplay }"
+  >
+    <el-tabs
+      class="tabs"
+      model-value="position"
+    >
+      <el-tab-pane
+        label="属性配置"
+        name="position"
+      >
         <el-form size="small">
           <el-form-item
-            :label="item.label"
             v-for="(item, index) in positionProperty"
             :key="index"
+            :label="item.label"
           >
-            <h3 v-if="item.type === 'group'">{{ item.title }}</h3>
+            <h3 v-if="item.type === 'group'">
+              {{ item.title }}
+            </h3>
             <el-switch
               v-else-if="item.type === 'switch'"
               :model-value="item.value"
-              @change="propertyChange(item, $event)"
               :class="[item.key]"
+              @change="propertyChange(item, $event)"
             />
             <el-color-picker
               v-else-if="item.type === 'color'"
               show-alpha
-              @change="propertyChange(item, $event)"
               :model-value="item.value"
+              @change="propertyChange(item, $event)"
             />
             <el-input
-              type="textarea"
               v-else-if="item.type === 'textarea'"
+              type="textarea"
               :placeholder="item.placeholder"
-              @change="propertyChange(item, $event)"
               :model-value="item.value"
+              @change="propertyChange(item, $event)"
             />
             <el-select
               v-else-if="item.type === 'select'"
-              :allowCreate="item.allowCreate"
+              :allow-create="item.allowCreate"
               :filterable="item.filterable"
               :placeholder="item.placeholder"
-              @change="propertyChange(item, $event)"
               :model-value="item.value"
+              @change="propertyChange(item, $event)"
             >
               <el-option
                 v-for="(opt, key) in item.options"
@@ -63,20 +74,24 @@
             class="upload-image"
           >
             <el-input
-              placeholder="请输入图片地址"
               v-model="current.config.src"
+              placeholder="请输入图片地址"
             />
             <el-button
               type="primary"
               @click="openUpload(type === 'image' ? 'img' : 'bg', 'src')"
-              >选择图片
+            >
+              选择图片
             </el-button>
           </el-form-item>
           <el-form-item
             v-if="['line', 'bar', 'pie', 'echarts'].includes(type as string)"
           >
-            <el-button type="primary" @click="openDrawer('echartsEdit')"
-              >图表编辑
+            <el-button
+              type="primary"
+              @click="openDrawer('echartsEdit')"
+            >
+              图表编辑
             </el-button>
           </el-form-item>
           <el-form-item
@@ -91,18 +106,23 @@
               ].includes(type as string)
             "
           >
-            <el-button type="primary" @click="openDrawer('style')"
-              >编辑更多内联样式
+            <el-button
+              type="primary"
+              @click="openDrawer('style')"
+            >
+              编辑更多内联样式
             </el-button>
           </el-form-item>
           <el-form-item v-if="['table'].includes(type as string)">
-            <el-button type="primary" @click="openDrawer('tablePropsEdit')"
-              >表格属性
+            <el-button
+              type="primary"
+              @click="openDrawer('tablePropsEdit')"
+            >
+              表格属性
             </el-button>
           </el-form-item>
         </el-form>
         <el-form
-          size="small"
           v-if="
             [
               'line',
@@ -114,21 +134,30 @@
               'table'
             ].includes(type as string)
           "
+          size="small"
         >
           <el-form-item>
             <h3>数据</h3>
           </el-form-item>
           <el-form-item label="数据类型">
             <el-radio-group v-model="current.config.optionsType">
-              <el-radio :value="0" style="margin-right: 4px"
-                >静态/全局
+              <el-radio
+                :value="0"
+                style="margin-right: 4px"
+              >
+                静态/全局
               </el-radio>
-              <el-radio :value="1">动态</el-radio>
+              <el-radio :value="1">
+                动态
+              </el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="current.config.optionsType !== 1">
-            <el-button type="primary" @click="openDrawer('editData')"
-              >编辑数据
+            <el-button
+              type="primary"
+              @click="openDrawer('editData')"
+            >
+              编辑数据
             </el-button>
           </el-form-item>
           <template v-if="current.config.optionsType === 1">
@@ -142,33 +171,55 @@
                     v-model="current.config.method"
                     style="width: 60px"
                   >
-                    <el-option label="get" value="get" />
-                    <el-option label="post" value="post" />
-                    <el-option label="ws" value="ws" disabled />
+                    <el-option
+                      label="get"
+                      value="get"
+                    />
+                    <el-option
+                      label="post"
+                      value="post"
+                    />
+                    <el-option
+                      label="ws"
+                      value="ws"
+                      disabled
+                    />
                   </el-select>
                 </template>
               </el-input>
             </el-form-item>
             <el-form-item label="刷新时间">
-              <el-input-number v-model="current.config.loopTime" disabled />
+              <el-input-number
+                v-model="current.config.loopTime"
+                disabled
+              />
             </el-form-item>
             <el-form-item>
               <h3>接口数据处理事件</h3>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="openDrawer('before')"
-                >before事件
+              <el-button
+                type="primary"
+                @click="openDrawer('before')"
+              >
+                before事件
               </el-button>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="openDrawer('afterScreen')"
-                >after事件
+              <el-button
+                type="primary"
+                @click="openDrawer('after')"
+              >
+                after事件
               </el-button>
             </el-form-item>
           </template>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="大屏配置" name="screen">
+      <el-tab-pane
+        label="大屏配置"
+        name="screen"
+      >
         <el-form size="small">
           <el-form-item label="大屏宽度">
             <el-input
@@ -184,38 +235,61 @@
               @input="configChange('height', $event)"
             />
           </el-form-item>
-          <el-form-item class="color-picker" label="主色">
+          <el-form-item
+            class="color-picker"
+            label="主色"
+          >
             <el-color-picker
               show-alpha
-              @change="configChange('primary', $event)"
               :model-value="config.primary"
+              @change="configChange('primary', $event)"
             />
           </el-form-item>
           <el-form-item label="背景">
-            <el-select v-model="state.bgSelect" @change="stateChange">
-              <el-option :value="1" label="背景色" />
-              <el-option :value="2" label="背景图" />
+            <el-select
+              v-model="state.bgSelect"
+              @change="stateChange"
+            >
+              <el-option
+                :value="1"
+                label="背景色"
+              />
+              <el-option
+                :value="2"
+                label="背景图"
+              />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="state.bgSelect === 1" class="color-picker">
+          <el-form-item
+            v-if="state.bgSelect === 1"
+            class="color-picker"
+          >
             <el-color-picker
-              show-alpha
               v-model="state.bgColor"
+              show-alpha
               @change="stateChange"
             />
           </el-form-item>
-          <el-form-item v-if="state.bgSelect === 2" class="upload-image">
+          <el-form-item
+            v-if="state.bgSelect === 2"
+            class="upload-image"
+          >
             <el-input
-              placeholder="请输入图片地址"
               v-model="state.bgUpload"
+              placeholder="请输入图片地址"
               @change="stateChange"
             />
-            <el-button type="primary" @click="openUpload('bg', 'screenBg')"
-              >上传
+            <el-button
+              type="primary"
+              @click="openUpload('bg', 'screenBg')"
+            >
+              上传
             </el-button>
           </el-form-item>
           <el-form-item>
-            <el-button @click="openDrawer('editCss')">编辑样式</el-button>
+            <el-button @click="openDrawer('editCss')">
+              编辑样式
+            </el-button>
           </el-form-item>
           <el-form-item>
             <h3>全局数据</h3>
@@ -232,16 +306,29 @@
                   style="width: 60px"
                   @change="configChange('method', $event)"
                 >
-                  <el-option label="get" value="get" />
-                  <el-option label="post" value="post" />
-                  <el-option label="ws" value="ws" disabled />
+                  <el-option
+                    label="get"
+                    value="get"
+                  />
+                  <el-option
+                    label="post"
+                    value="post"
+                  />
+                  <el-option
+                    label="ws"
+                    value="ws"
+                    disabled
+                  />
                 </el-select>
               </template>
             </el-input>
           </el-form-item>
           <el-form-item v-if="config.requestUrl">
-            <el-button type="primary" @click="getGlobalDataTest"
-              >连接测试
+            <el-button
+              type="primary"
+              @click="getGlobalDataTest"
+            >
+              连接测试
             </el-button>
           </el-form-item>
           <el-form-item label="刷新时间">
@@ -255,19 +342,28 @@
             <h3>接口数据处理事件</h3>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="openDrawer('before', true)"
-              >before事件
+            <el-button
+              type="primary"
+              @click="openDrawer('before', true)"
+            >
+              before事件
             </el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="openDrawer('after', true)"
-              >after事件
+            <el-button
+              type="primary"
+              @click="openDrawer('after', true)"
+            >
+              after事件
             </el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>
-    <upload-image ref="uploadImageEl" @click="selectImg" />
+    <upload-image
+      ref="uploadImageEl"
+      @click="selectImg"
+    />
   </div>
 </template>
 
@@ -279,7 +375,6 @@
   import { useScreenStore } from '@/store/screen'
   import { getGlobalData } from '../getData'
   import { ElMessage } from 'element-plus'
-  import { getDrawerContent } from '@/views/design/components/aceTooptip.ts'
 
   const emits = defineEmits<{
     (e: 'openDrawer', val: OpenDrawer): void
@@ -342,7 +437,7 @@
     configChange('background', bg)
   }
   const configChange = (key: string, val: any) => {
-    //这里回调一个方法去修改config更规范些
+    // 这里回调一个方法去修改config更规范些
     screenData.value.config = Object.assign({}, config.value, { [key]: val })
   }
   // ---------------------大屏配置结束---------------------
@@ -352,7 +447,7 @@
         config = {},
         position,
         type
-      }: { config: any; position: any; type: any } = current.value
+      }: { config: any, position: any, type: any } = current.value
       return [
         {
           type: 'group',
@@ -597,20 +692,19 @@
     let codeType: string = ''
     let editData
     let title: string = ''
+    let paramsEventType = eventType
     switch (eventType) {
       case 'editCss':
         codeType = 'css'
         break
       case 'before':
       case 'after':
-      case 'afterScreen':
         if (isGlobal) {
           editData = config.value && (config.value as any)[eventType]
+          paramsEventType = 'afterScreen'
         } else {
           title = '获取数据响应处理之后事件，可对请求返回数据进行处理'
-          editData =
-            current.value.config &&
-            current.value.config[eventType.replace('Screen', '')]
+          editData = current.value.config && current.value.config[eventType]
         }
         break
       case 'style':
@@ -645,13 +739,12 @@
     const emitsParams = {
       content: editData,
       codeType: codeType,
-      type: eventType,
+      type: paramsEventType,
       title: title,
       callback: (result: any) => {
-        switch (type.value) {
+        switch (eventType) {
           case 'before':
           case 'after':
-          case 'afterScreen':
             if (isGlobal) {
               ;(config.value as any)[eventType] = result
             } else {
@@ -678,6 +771,7 @@
         }
       }
     }
+    console.log('open', emitsParams)
     emits('openDrawer', emitsParams)
   }
 
@@ -691,6 +785,6 @@
       })
   }
   onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+    unWatch() // 销毁监听器
   })
 </script>

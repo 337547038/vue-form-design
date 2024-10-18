@@ -1,15 +1,24 @@
 <template>
   <div class="sidebar-tools">
-    <el-form size="small" class="form">
+    <el-form
+      size="small"
+      class="form"
+    >
       <el-tabs v-model="tabsName">
-        <el-tab-pane label="字段属性" name="first">
+        <el-tab-pane
+          label="字段属性"
+          name="first"
+        >
           <div v-show="Object.keys(currentObj).length">
             <div class="h3">
               <h3>{{ currentObj.label }}</h3>
               列设置
             </div>
             <el-form-item label="渲染模式">
-              <el-select v-model="currentObj.render" @change="renderChange">
+              <el-select
+                v-model="currentObj.render"
+                @change="renderChange"
+              >
                 <el-option
                   v-for="item in renderList"
                   :key="item"
@@ -62,15 +71,18 @@
               </el-form-item>
             </template>
             <template v-if="['tag', 'text'].includes(currentObj.render)">
-              <el-form-item label="值设置类型" style="margin-bottom: 0">
+              <el-form-item
+                label="值设置类型"
+                style="margin-bottom: 0"
+              >
                 <div
+                  v-for="(item, index) in state.tagCustomList"
+                  :key="index"
                   style="
                     margin-bottom: 10px;
                     display: flex;
                     align-items: center;
                   "
-                  v-for="(item, index) in state.tagCustomList"
-                  :key="index"
                 >
                   <el-input
                     v-model="item.value"
@@ -96,33 +108,40 @@
                     style="margin-left: 10px"
                     class="icon-del"
                     @click="delTagCustomList(index as number)"
-                  ></i>
+                  />
                 </div>
               </el-form-item>
               <el-form-item class="flex-end">
                 <el-button
+                  v-show="state.tagCustomList.length < uiType.length"
                   type="primary"
                   @click="tagCustomAdd"
-                  v-show="state.tagCustomList.length < uiType.length"
-                  >新增值设置类型</el-button
                 >
+                  新增值设置类型
+                </el-button>
               </el-form-item>
               <el-form-item label="值替换数据">
                 <el-select
                   v-model="state.replaceValueType"
                   @change="replaceValueTypeChange"
                 >
-                  <el-option label="使用字典" :value="0" />
-                  <el-option label="自定义" :value="1" />
+                  <el-option
+                    label="使用字典"
+                    :value="0"
+                  />
+                  <el-option
+                    label="自定义"
+                    :value="1"
+                  />
                 </el-select>
               </el-form-item>
               <el-form-item
-                label="字典类型key"
                 v-if="state.replaceValueType === 0"
+                label="字典类型key"
               >
                 <el-input
-                  placeholder="请输入字典类型key"
                   v-model="currentObj.replaceValue"
+                  placeholder="请输入字典类型key"
                 />
               </el-form-item>
               <template v-else>
@@ -137,26 +156,29 @@
                     "
                   >
                     <el-input
-                      placeholder="对应的值"
                       v-model="item.value"
+                      placeholder="对应的值"
                       @change="replaceChange"
                     />
                     <el-input
-                      placeholder="替换的值"
                       v-model="item.label"
+                      placeholder="替换的值"
                       @change="replaceChange"
                     />
                     <i
                       style="margin-left: 10px"
                       class="icon-del"
                       @click="delReplaceList(index as number)"
-                    ></i>
+                    />
                   </div>
                 </el-form-item>
                 <el-form-item class="flex-end">
-                  <el-button @click="replaceValueAdd" type="primary"
-                    >新增值替换数据</el-button
+                  <el-button
+                    type="primary"
+                    @click="replaceValueAdd"
                   >
+                    新增值替换数据
+                  </el-button>
                 </el-form-item>
               </template>
             </template>
@@ -176,10 +198,18 @@
               </el-form-item>
               <el-form-item label="打开方式">
                 <el-select v-model="currentObj.config.target">
-                  <el-option value="_blank">_blank</el-option>
-                  <el-option value="_parent">_parent</el-option>
-                  <el-option value="_self">_self</el-option>
-                  <el-option value="_top">_top</el-option>
+                  <el-option value="_blank">
+                    _blank
+                  </el-option>
+                  <el-option value="_parent">
+                    _parent
+                  </el-option>
+                  <el-option value="_self">
+                    _self
+                  </el-option>
+                  <el-option value="_top">
+                    _top
+                  </el-option>
                 </el-select>
               </el-form-item>
             </template>
@@ -197,32 +227,45 @@
             </template>
             <template v-if="currentObj.render === 'buttons'">
               <el-form-item label="按钮设置">
-                <operate-btn v-model="currentObj.buttons" position="right" />
+                <operate-btn
+                  v-model="currentObj.buttons"
+                  position="right"
+                />
               </el-form-item>
               <el-form-item class="flex-end">
-                <el-button type="primary" @click="editOpenDrawer('buttons')"
-                  >添加设置更多按钮</el-button
+                <el-button
+                  type="primary"
+                  @click="editOpenDrawer('buttons')"
                 >
+                  添加设置更多按钮
+                </el-button>
               </el-form-item>
             </template>
             <el-form-item>
               <el-button
-                type="primary"
                 v-if="currentObj.render"
+                type="primary"
                 @click="editOpenDrawer('renderFormatter')"
-                >renderFormatter</el-button
               >
-              <el-button type="primary" @click="editOpenDrawer('columns')"
-                >设置表格列</el-button
+                renderFormatter
+              </el-button>
+              <el-button
+                type="primary"
+                @click="editOpenDrawer('columns')"
               >
+                设置表格列
+              </el-button>
             </el-form-item>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="数据列表配置" name="second">
+        <el-tab-pane
+          label="数据列表配置"
+          name="second"
+        >
           <el-form-item
             v-for="(item, index) in tableListAttr.filter(item => !item.hide)"
-            :label="item.label"
             :key="index"
+            :label="item.label"
           >
             <el-select
               v-if="item.type === 'select'"
@@ -232,9 +275,9 @@
               @change="tableListAttrChange(item)"
             >
               <el-option
-                :label="opt.label || opt.name"
                 v-for="opt in item.options"
                 :key="opt.label || opt.name"
+                :label="opt.label || opt.name"
                 :value="formatNumber(opt.value ?? opt.id)"
               />
             </el-select>
@@ -244,8 +287,8 @@
               @input="tableListAttrChange(item, $event)"
             />
             <operate-btn
-              v-model="tableData.controlBtn"
               v-else-if="item.type === 'operate'"
+              v-model="tableData.controlBtn"
             />
             <el-input
               v-else
@@ -268,56 +311,79 @@
               />
             </el-form-item>
             <el-form-item class="event-btn">
-              <el-button type="primary" @click="editOpenDrawer('treeProp')"
-                >编辑侧栏树属性
+              <el-button
+                type="primary"
+                @click="editOpenDrawer('treeProp')"
+              >
+                编辑侧栏树属性
               </el-button>
-              <el-button type="primary" @click="editOpenDrawer('treeBefore')"
-                >树before事件
+              <el-button
+                type="primary"
+                @click="editOpenDrawer('treeBefore')"
+              >
+                树before事件
               </el-button>
-              <el-button type="primary" @click="editOpenDrawer('treeAfter')"
-                >树after事件
+              <el-button
+                type="primary"
+                @click="editOpenDrawer('treeAfter')"
+              >
+                树after事件
               </el-button>
             </el-form-item>
           </template>
           <el-form-item class="event-btn">
-            <el-button type="primary" @click="editOpenDrawer('tableConfig')"
-              >编辑表格属性
+            <el-button
+              type="primary"
+              @click="editOpenDrawer('tableConfig')"
+            >
+              编辑表格属性
             </el-button>
           </el-form-item>
-          <div class="h3"><h3>接口数据事件</h3></div>
+          <div class="h3">
+            <h3>接口数据事件</h3>
+          </div>
           <el-form-item label="主键">
-            <el-input placeholder="列表主键" v-model="tableData.pk" />
+            <el-input
+              v-model="tableData.pk"
+              placeholder="列表主键"
+            />
           </el-form-item>
           <el-form-item label="列表数据请求URL">
             <el-input
-              placeholder="一般不需要填写，使用默认值"
               v-model="tableData.apiKey!.list"
+              placeholder="一般不需要填写，使用默认值"
             />
           </el-form-item>
           <el-form-item label="删除列表数据URL">
             <el-input
-              placeholder="一般不需要填写，使用默认值"
               v-model="tableData.apiKey.del"
+              placeholder="一般不需要填写，使用默认值"
             />
           </el-form-item>
           <el-form-item label="编辑保存状态URL">
             <el-input
-              placeholder="一般不需要填写，使用默认值"
               v-model="tableData.apiKey.edit"
+              placeholder="一般不需要填写，使用默认值"
             />
           </el-form-item>
           <el-form-item label="导出列表URL">
             <el-input
-              placeholder="一般不需要填写，使用默认值"
               v-model="tableData.apiKey.export"
+              placeholder="一般不需要填写，使用默认值"
             />
           </el-form-item>
           <el-form-item class="event-btn">
-            <el-button type="primary" @click="editOpenDrawer('before')"
-              >before事件
+            <el-button
+              type="primary"
+              @click="editOpenDrawer('before')"
+            >
+              before事件
             </el-button>
-            <el-button type="primary" @click="editOpenDrawer('after')"
-              >after事件
+            <el-button
+              type="primary"
+              @click="editOpenDrawer('after')"
+            >
+              after事件
             </el-button>
           </el-form-item>
         </el-tab-pane>
@@ -338,7 +404,7 @@
   const tabsName = defineModel('tabsName')
   const state = reactive({
     formSourceList: [],
-    tagCustomList: [], //渲染为tag时
+    tagCustomList: [], // 渲染为tag时
     replaceValueList: [],
     replaceValueType: 0 // 默认为字典
   })
@@ -366,7 +432,7 @@
   ]
   const uiType = ['primary', 'success', 'warning', 'danger', 'info']
   const renderChange = (val: any) => {
-    //if (!currentObj.value.config) {
+    // if (!currentObj.value.config) {
     // 切换时清空这些与当前不匹配的设置
     currentObj.value.config = {}
     delete currentObj.value.replaceValue
@@ -471,7 +537,7 @@
         ],
         key: 'openType',
         clearable: true
-        //hide: !state.formId
+        // hide: !state.formId
       },
       {
         label: '窗口宽度',
@@ -579,9 +645,9 @@
     emits('changeEvent', { type: 'openDrawer', value: type })
   }
 
-  const getData = (name?: stirng) => {
+  const getData = (name?: string) => {
     //  获取所有可用的表单数据源
-    getFormSourceList(name).then(data => {
+    getFormSourceList(name).then((data) => {
       state.formSourceList = data
     })
   }
@@ -607,8 +673,8 @@
         state.tagCustomList = objectToArray(currentObj.value.custom)
       }
       if (
-        currentObj.value.replaceValue &&
-        typeof currentObj.value.replaceValue === 'object'
+        currentObj.value.replaceValue
+        && typeof currentObj.value.replaceValue === 'object'
       ) {
         state.replaceValueList = objectToArray(currentObj.value.replaceValue)
         state.replaceValueType = 1

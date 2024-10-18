@@ -7,10 +7,10 @@
   >
     <el-text
       v-if="type === 'text'"
+      v-show="getDisplay(btn)"
       :type="btn.type"
       :class="[btn.class]"
       v-bind="btn.attr"
-      v-show="getDisplay(btn)"
       :disabled="getDisabled(btn)"
       @click="clickEvent"
     >
@@ -19,10 +19,10 @@
     </el-text>
     <el-button
       v-else
+      v-show="getDisplay(btn)"
       :type="btn.type"
       :class="[btn.class]"
       v-bind="btn.attr"
-      v-show="getDisplay(btn)"
       :disabled="getDisabled(btn)"
       @click="clickEvent"
     >
@@ -33,7 +33,7 @@
 </template>
 <script setup lang="ts">
   import Icon from '@/components/icon/index.vue'
-  import { Button } from '../types'
+  import type { Button } from '@/types/table'
   const props = withDefaults(
     defineProps<{
       btn: Button
@@ -41,7 +41,10 @@
       position?: string
       type?: string
     }>(),
-    {}
+    {
+      position: '',
+      type: ''
+    }
   )
   const emits = defineEmits<{
     (e: 'click'): void
@@ -59,11 +62,11 @@
     if (btn.disabled && typeof btn.disabled === 'function') {
       return btn.disabled(props.row)
     }
-    //上方需要勾选才可操作，没有勾选行时为禁用状态
+    // 上方需要勾选才可操作，没有勾选行时为禁用状态
     if (
-      props.position === 'top' &&
-      btn.key &&
-      ['edit', 'del'].includes(btn.key)
+      props.position === 'top'
+      && btn.key
+      && ['edit', 'del'].includes(btn.key)
     ) {
       return props.row?.length <= 0
     }

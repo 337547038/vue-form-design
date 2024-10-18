@@ -1,7 +1,7 @@
 const defaultData = JSON.stringify({
   list: [
     {
-      id: 'rect', //这个id不能改
+      id: 'rect', // 这个id不能改
       type: 'tempRect',
       position: {
         width: 200,

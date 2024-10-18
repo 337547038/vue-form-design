@@ -5,11 +5,21 @@
     class="export-dialog"
     width="80%"
   >
-    <div id="editJsonCopy"></div>
+    <div id="editJsonCopy" />
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="copyData"> 复制数据 </el-button>
-        <el-button type="primary" @click="dialogExport"> 导出代码 </el-button>
+        <el-button
+          type="primary"
+          @click="copyData"
+        >
+          复制数据
+        </el-button>
+        <el-button
+          type="primary"
+          @click="dialogExport"
+        >
+          导出代码
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -27,8 +37,7 @@
   const getObjHtml = (obj: any) => {
     let rulesMethods = ''
     const sourceFun = ''
-    obj &&
-      obj.list.forEach((item: any) => {
+     obj.list?.forEach((item: any) => {
         if (item.customRules?.length) {
           // 使用自定义校验方法
           item.customRules.forEach((c: any) => {

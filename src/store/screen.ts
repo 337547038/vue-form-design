@@ -7,8 +7,8 @@ export const useScreenStore = defineStore('screen', {
       controlAttr: {}, // 大屏设计时，选中的项
       activeId: '', // 大屏设计时，当前选中项id
       screenConfig: getStorage('screenConfig', true) || {}, // 大屏设计相关
-      controlTip: '', //设计左右角提示文案
-      tempActiveId: [] //临时选中的多个目标id
+      controlTip: '', // 设计左右角提示文案
+      tempActiveId: [] // 临时选中的多个目标id
     }
   },
   actions: {
@@ -16,7 +16,7 @@ export const useScreenStore = defineStore('screen', {
       if (typeof data === 'string' && data) {
         const index = this.tempActiveId.indexOf(data)
         if (index !== -1) {
-          //存在删除
+          // 存在删除
           this.tempActiveId.splice(index, 1)
         } else {
           this.tempActiveId.push(data)

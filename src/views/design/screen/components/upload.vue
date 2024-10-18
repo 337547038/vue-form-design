@@ -1,29 +1,47 @@
 <!-- Created by 337547038 选择上传图片 -->
 <template>
-  <el-dialog v-model="visible" width="800px" title="选择上传图片">
+  <el-dialog
+    v-model="visible"
+    width="800px"
+    title="选择上传图片"
+  >
     <el-upload
       :action="uploadUrl"
       :on-success="uploadSuccess"
       :show-file-list="false"
     >
-      <el-button type="primary">上传</el-button>
+      <el-button type="primary">
+        上传
+      </el-button>
     </el-upload>
     <el-tabs v-model="tabsName">
       <el-tab-pane
         v-for="item in tabsList"
+        :key="item"
         :label="item"
         :name="item"
-        :key="item"
       />
-      <el-tab-pane label="上传" name="upload" />
+      <el-tab-pane
+        label="上传"
+        name="upload"
+      />
     </el-tabs>
     <div class="img-list">
       <ul>
-        <li v-for="item in imgList" :key="item" @click="selectImg(item)">
-          <img :src="path + item" alt="" />
+        <li
+          v-for="item in imgList"
+          :key="item"
+          @click="selectImg(item)"
+        >
+          <img
+            :src="path + item"
+            alt=""
+          >
         </li>
       </ul>
-      <p v-if="!imgList?.length">暂无相关素材资源</p>
+      <p v-if="!imgList?.length">
+        暂无相关素材资源
+      </p>
     </div>
   </el-dialog>
 </template>

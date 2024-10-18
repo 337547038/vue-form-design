@@ -1,29 +1,41 @@
 <template>
-  <div v-for="(item, index) in tableDataNew" :key="index" class="flex-group">
+  <div
+    v-for="(item, index) in tableDataNew"
+    :key="index"
+    class="flex-group"
+  >
     <div class="flex-item">
-      <template v-for="(list, i) in data.list" :key="i">
+      <template
+        v-for="(list, i) in data.list"
+        :key="i"
+      >
         <form-item
-          :otherProp="`${data.name}.${index}.${list.name}`"
           v-model="item[list.name]"
+          :other-prop="`${data.name}.${index}.${list.name}`"
           :data="list"
         />
       </template>
     </div>
     <el-button
+      v-if="data.config?.delBtnText && ['add', 'edit'].includes(type as number)"
       class="flex-delete-btn"
-      @click="deleteRow(index as number)"
       type="primary"
       link
       size="small"
-      v-if="data.config?.delBtnText && ['add', 'edit'].includes(type as number)"
-      >{{ data.config.delBtnText }}</el-button
+      @click="deleteRow(index as number)"
     >
+      {{ data.config.delBtnText }}
+    </el-button>
   </div>
   <el-form-item
     v-if="data.config?.addBtnText && ['add', 'edit', 'design'].includes(type)"
   >
-    <el-button class="flex-add-btn" size="small" @click="addRow"
-      >{{ data.config.addBtnText }}
+    <el-button
+      class="flex-add-btn"
+      size="small"
+      @click="addRow"
+    >
+      {{ data.config.addBtnText }}
     </el-button>
   </el-form-item>
 </template>
@@ -53,7 +65,7 @@
     props.data.list.forEach((item: any) => {
       temp[item.name] = item.control.modelValue
     })
-    //console.log(temp)
+    // console.log(temp)
     return temp
   }
   const addRow = () => {

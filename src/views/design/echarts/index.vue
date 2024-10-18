@@ -1,12 +1,17 @@
 <!-- Created by 337547038 图表设计. -->
 <template>
-  <div class="design-container design-chart" v-loading="state.loading">
+  <div
+    v-loading="state.loading"
+    class="design-container design-chart"
+  >
     <div class="components-list">
-      <div class="title">图表类型</div>
+      <div class="title">
+        图表类型
+      </div>
       <draggable
-        itemKey="key"
-        tag="ul"
         v-model="navList"
+        item-key="key"
+        tag="ul"
         :group="{ name: 'form', pull: 'clone', put: false }"
         ghost-class="ghost"
         :sort="false"
@@ -14,50 +19,68 @@
       >
         <template #item="{ element }">
           <li :class="[element.type]">
-            <i :class="`icon-${element.icon}`"></i>
+            <i :class="`icon-${element.icon}`" />
             <span :title="element.label">{{ element.label }}</span>
           </li>
         </template>
       </draggable>
     </div>
     <div class="main-body">
-      <head-tools @click="headToolClick" type="2" />
+      <head-tools
+        type="2"
+        @click="headToolClick"
+      />
       <div class="main-form design-form">
         <echarts
+          ref="echartsEl"
           :type="1"
           @control-btn-click="controlBtnClick"
-          ref="echartsEl"
         />
       </div>
     </div>
     <div class="sidebar-tools">
       <el-form size="small">
-        <el-tabs modelValue="first">
-          <el-tab-pane label="图表属性" name="first">
+        <el-tabs model-value="first">
+          <el-tab-pane
+            label="图表属性"
+            name="first"
+          >
             <template v-if="Object.keys(current).length">
               <el-form-item label="自定义Class">
-                <el-input placeholder="自定义Class" v-model="current.class" />
+                <el-input
+                  v-model="current.class"
+                  placeholder="自定义Class"
+                />
               </el-form-item>
               <el-form-item label="字段标识">
-                <el-input placeholder="字段标识" v-model="current.name" />
+                <el-input
+                  v-model="current.name"
+                  placeholder="字段标识"
+                />
               </el-form-item>
               <el-form-item label="图表宽度">
                 <el-input
-                  placeholder="图表宽度，数字类型"
                   v-model.number="current.width"
+                  placeholder="图表宽度，数字类型"
                 />
               </el-form-item>
               <el-form-item label="图表高度">
                 <el-input
-                  placeholder="图表高度，数字类型"
                   v-model.number="current.height"
+                  placeholder="图表高度，数字类型"
                 />
               </el-form-item>
             </template>
           </el-tab-pane>
-          <el-tab-pane label="图表配置" name="two">
+          <el-tab-pane
+            label="图表配置"
+            name="two"
+          >
             <el-form-item label="保存名称">
-              <el-input placeholder="保存名称" v-model="state.name" />
+              <el-input
+                v-model="state.name"
+                placeholder="保存名称"
+              />
             </el-form-item>
             <!--            <h3>接口数据事件</h3>-->
             <!--            <el-form-item class="event-btn">-->
@@ -93,11 +116,18 @@
       :before-close="drawerBeforeClose"
     >
       <template #header>
-        <div v-html="state.dialogTitle"></div>
+        <div v-html="state.dialogTitle" />
       </template>
-      <div v-if="state.visible" id="editJson"></div>
+      <div
+        v-if="state.visible"
+        id="editJson"
+      />
       <div class="dialog-footer">
-        <el-button type="primary" size="small" @click="dialogConfirm">
+        <el-button
+          type="primary"
+          size="small"
+          @click="dialogConfirm"
+        >
           确定
         </el-button>
       </div>
@@ -120,7 +150,7 @@
     objToStringify,
     stringToObj
   } from '@/utils/design'
-  import {getDrawerContent} from '../components/aceTooptip'
+  import { getDrawerContent } from '../components/aceTooptip'
   import { ElMessage } from 'element-plus'
   import Draggable from 'vuedraggable-es'
 
@@ -320,13 +350,13 @@
     if (state.id) {
       state.loading = true
       getRequest('echartsList', { id: state.id })
-        .then(res => {
+        .then((res) => {
           state.loading = false
           const result = res.data
           state.name = result.name
           echartsEl.value.setDataList(result.list)
         })
-        .catch(res => {
+        .catch((res) => {
           ElMessage.error(res.data?.message || '操作异常')
           state.loading = false
         })

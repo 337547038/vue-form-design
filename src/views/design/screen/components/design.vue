@@ -1,5 +1,8 @@
 <template>
-  <div ref="designBoxEl" class="design-box">
+  <div
+    ref="designBoxEl"
+    class="design-box"
+  >
     <a-ruler
       :scale="state.scale"
       :show-ruler="state.ruler"
@@ -17,19 +20,33 @@
       class="design-canvas"
       @mousedown.left="canvasOnmousedown"
     >
-      <screen-group v-model="screenData.list" @itemClick="setShowRect" />
+      <screen-group
+        v-model="screenData.list"
+        @item-click="setShowRect"
+      />
     </div>
-    <div v-if="!screenData.list.length" class="no-date">
+    <div
+      v-if="!screenData.list.length"
+      class="no-date"
+    >
       请从左则组件栏拖动组件到设计区域
     </div>
   </div>
   <div class="design-footer">
-    <i class="icon-menu icon" @click="toggle('left')"></i>
-    <div class="control-tip">{{ controlTip }}</div>
+    <i
+      class="icon-menu icon"
+      @click="toggle('left')"
+    />
+    <div class="control-tip">
+      {{ controlTip }}
+    </div>
     <div class="center">
       <div class="item">
         <label class="label">标尺</label>
-        <el-switch v-model="state.ruler" size="small" />
+        <el-switch
+          v-model="state.ruler"
+          size="small"
+        />
       </div>
       <div class="item slider">
         <label class="label">缩放比例</label>
@@ -44,15 +61,26 @@
         />
       </div>
       <div class="item">
-        <el-button link type="primary" @click="defaultScaleClick('auto')"
-          >自适应
+        <el-button
+          link
+          type="primary"
+          @click="defaultScaleClick('auto')"
+        >
+          自适应
         </el-button>
-        <el-button link type="primary" @click="defaultScaleClick('100')"
-          >100%
+        <el-button
+          link
+          type="primary"
+          @click="defaultScaleClick('100')"
+        >
+          100%
         </el-button>
       </div>
     </div>
-    <i class="icon-menu icon" @click="toggle('right')"></i>
+    <i
+      class="icon-menu icon"
+      @click="toggle('right')"
+    />
   </div>
   <right-menu ref="rightMenuEl" />
 </template>
@@ -94,7 +122,7 @@
     ruler: true,
     offset: [0, 0],
     moveFlag: false,
-    ctrlPress: false //ctrl键是否按住
+    ctrlPress: false // ctrl键是否按住
   })
   provide('stateData', state)
   const canvasStyle = computed(() => {
@@ -115,7 +143,7 @@
     const y = evt.offsetY
     let width = 0
     let height = 0
-    let sx = 0 //矩形结束或开始位置
+    let sx = 0 // 矩形结束或开始位置
     let sy = 0
     document.onmousemove = (evt: MouseEvent) => {
       if (!state.moveFlag) {
@@ -144,7 +172,7 @@
       if (!state.moveFlag) {
         return
       }
-      //查找在矩形范围内的不包含type=div的元素
+      // 查找在矩形范围内的不包含type=div的元素
       if (width > 10 && height > 10) {
         findComponentsInRect({
           left: sx,
@@ -159,17 +187,17 @@
           screenStore.setControlTip(
             `当前选区选中 ${activeLen} 个组件目标，可使用键盘方向键调整位置`
           )
-          //重新计算矩形位置，并设置当前选中项为矩形
+          // 重新计算矩形位置，并设置当前选中项为矩形
           setShowRect()
           screenStore.setActiveId('rect')
         } else {
           // 选区中只有一个或没有组件时，隐藏
           setTempRectPosition({ display: true })
           if (activeLen === 1) {
-            //设置当前项为选中项
+            // 设置当前项为选中项
             const id = screenStore.tempActiveId[0]
             screenStore.setActiveId(id)
-            //设置右则属性
+            // 设置右则属性
             const obj = screenData.value.list.filter(
               (item: ScreenData) => item.id === id
             )
@@ -181,7 +209,7 @@
       document.onmousemove = null
     }
   }
-  //右键菜单
+  // 右键菜单
   const rightMenuEl = ref()
   const openRightMenuDialog = (obj: any) => {
     rightMenuEl.value.open(obj)
@@ -192,9 +220,9 @@
     screenStore.setActiveId('')
     screenStore.setTempActiveId([])
     screenStore.setControlTip('可按住Ctrl键选中多个')
-    //这里同时隐藏临时显示的矩形
+    // 这里同时隐藏临时显示的矩形
     setTempRectPosition({ display: true })
-    //关闭右键菜单
+    // 关闭右键菜单
     rightMenuEl.value.close()
   }
   /***
@@ -206,9 +234,9 @@
     screenData.value.list.forEach((item: ScreenData) => {
       // 已经组合的组件不能再次被选中，锁定隐藏的也不能选中
       if (
-        !cannotDragResize(item.position) &&
-        isRectOverlap(item.position, rect2) &&
-        canRectSelect(item)
+        !cannotDragResize(item.position)
+        && isRectOverlap(item.position, rect2)
+        && canRectSelect(item)
       ) {
         screenStore.setTempActiveId(item.id)
       }
@@ -231,7 +259,7 @@
     }
   }
 
-  //*****************底部工具栏相关****************//
+  //* ****************底部工具栏相关****************//
   const marks = ref({
     100: {
       style: {}
@@ -264,7 +292,7 @@
   const sliderChange = (val: number) => {
     screenStore.setScreenConfig('scale', val)
   }
-  //*****************底部工具栏相关****************//
+  //* ****************底部工具栏相关****************//
   /**
    * 键盘按下事件 支持键盘控制调整位置
    * @param event
@@ -272,7 +300,7 @@
   useEventListener(document, 'keydown', (event: KeyboardEvent) => {
     // 按住ctrl键
     if (event.key === 'Control') {
-      //先清空以前选中的，否则可能会出现原来选中的是合并组内的。这种选中时不能选中组内的单个元素
+      // 先清空以前选中的，否则可能会出现原来选中的是合并组内的。这种选中时不能选中组内的单个元素
       if (!state.ctrlPress) {
         screenStore.setTempActiveId([])
         screenStore.setActiveId('')
@@ -290,7 +318,7 @@
         keydownMove(current[0], event.key)
       }
       if (screenStore.activeId === 'rect') {
-        //移动的是临时矩形
+        // 移动的是临时矩形
         screenData.value.list.forEach((item: ScreenData) => {
           keydownMove(item, event.key)
         })
@@ -325,7 +353,7 @@
     state.ctrlPress = false
   })
 
-  //初始
+  // 初始
   const getInit = () => {
     nextTick(() => {
       const boxWidth = designBoxEl.value.offsetWidth
@@ -345,13 +373,13 @@
     const tempRect = screenData.value.list.filter(
       (item: ScreenData) => item.id === 'rect'
     )
-    //兼容下以前的，没有先添加
-    /*if (!tempRect?.length) {
+    // 兼容下以前的，没有先添加
+    /* if (!tempRect?.length) {
       screenData.value.list.push(rectList)
-    }*/
+    } */
     tempRect[0].position = position
   }
-  //显示临时选区并设置位置信息
+  // 显示临时选区并设置位置信息
   const setShowRect = () => {
     const autoRect = { left: 0, top: 0, ex: 0, ey: 0, zIndex: 1 }
     screenData.value.list.forEach((item: ScreenData) => {

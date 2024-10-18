@@ -10,8 +10,7 @@
       :dict="dict"
     >
       <template #name="{ row }">
-        <i :class="row.icon"></i
-        ><span style="padding-left: 5px">{{ row.name }}</span>
+        <i :class="row.icon" /><span style="padding-left: 5px">{{ row.name }}</span>
       </template>
     </ak-list>
     <el-dialog
@@ -28,8 +27,8 @@
         edit-url="menuEdit"
         :before-submit="beforeSubmit"
         :after-submit="afterSubmit"
-        @btn-click="btnClick"
         :dict="dict"
+        @btn-click="btnClick"
         @change="formValueChange"
       />
     </el-dialog>
@@ -45,7 +44,7 @@
     menuType: { 1: '菜单', 2: '按钮', 3: '设计内容' }
   }
   const refreshTable = ref(true)
-  /*const searchData = ref({
+  /* const searchData = ref({
   list: [
     {
       type: 'input',
@@ -80,7 +79,7 @@
   form: {
     size: 'default'
   }
-})*/
+}) */
   const tableData = ref({
     tableProps: {
       rowKey: 'id',
@@ -128,8 +127,8 @@
       {
         label: '展开折叠',
         click: () => {
-          tableData.value.tableProps.defaultExpandAll =
-            !tableData.value.tableProps.defaultExpandAll
+          tableData.value.tableProps.defaultExpandAll
+            = !tableData.value.tableProps.defaultExpandAll
           refreshTable.value = false
           nextTick(() => {
             refreshTable.value = true
@@ -165,7 +164,7 @@
       {
         label: '删除',
         key: 'del'
-        //visible: '$.children?.length>0' // 一级不让删
+        // visible: '$.children?.length>0' // 一级不让删
       }
     ],
     config: {
@@ -216,7 +215,7 @@
           value: 'id',
           hidden: '$.type!==3',
           debug: true,
-          beforeFetch: data => {
+          beforeFetch: (data) => {
             data.query = {
               type: 2
             }

@@ -1,8 +1,8 @@
 !-- Created by 337547038 用户选择扩展组件-->
 <template>
   <el-dialog
-    title="用户选择"
     v-model="visible"
+    title="用户选择"
     :append-to-body="true"
     width="800px"
   >
@@ -13,25 +13,51 @@
           :data="treeData"
           node-key="id"
           :props="{ label: 'name', value: 'id' }"
-          @node-click="handleNodeClick"
           highlight-current
+          @node-click="handleNodeClick"
         />
       </div>
       <div class="table-list">
         <div class="search">
-          <el-input placeholder="请输入用户名" v-model="userName" />
-          <el-button type="primary" @click="searchClick">查询</el-button>
-          <el-button @click="resetClick">重置</el-button>
+          <el-input
+            v-model="userName"
+            placeholder="请输入用户名"
+          />
+          <el-button
+            type="primary"
+            @click="searchClick"
+          >
+            查询
+          </el-button>
+          <el-button @click="resetClick">
+            重置
+          </el-button>
         </div>
         <div class="list">
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="userName" label="用户名" />
-            <el-table-column prop="nickName" label="昵称" />
-            <el-table-column label="操作" width="60px">
+          <el-table
+            :data="tableData"
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="userName"
+              label="用户名"
+            />
+            <el-table-column
+              prop="nickName"
+              label="昵称"
+            />
+            <el-table-column
+              label="操作"
+              width="60px"
+            >
               <template #default="{ row }">
-                <el-button circle size="small" @click="tableRowClick(row)"
-                  ><el-icon><ArrowRight /></el-icon
-                ></el-button>
+                <el-button
+                  circle
+                  size="small"
+                  @click="tableRowClick(row)"
+                >
+                  <el-icon><ArrowRight /></el-icon>
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -52,19 +78,32 @@
       <div class="has-select">
         <div class="total">
           <div>已选择：{{ checkData.length }}</div>
-          <el-button type="danger" @click="delAllClick" size="small"
-            >全部移除</el-button
+          <el-button
+            type="danger"
+            size="small"
+            @click="delAllClick"
           >
+            全部移除
+          </el-button>
         </div>
         <el-table :data="checkData">
           <el-table-column label="用户名">
-            <template #default="{ row }">{{ row }}</template>
-          </el-table-column>
-          <el-table-column label="操作" width="60px">
             <template #default="{ row }">
-              <el-button size="small" type="danger" @click="delRowClick(row)"
-                >移除</el-button
+              {{ row }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="60px"
+          >
+            <template #default="{ row }">
+              <el-button
+                size="small"
+                type="danger"
+                @click="delRowClick(row)"
               >
+                移除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -72,8 +111,15 @@
     </div>
     <template #footer>
       <div>
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="confirmClick"> 确定 </el-button>
+        <el-button @click="visible = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="confirmClick"
+        >
+          确定
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -88,7 +134,9 @@
     defineProps<{
       modelValue?: string
     }>(),
-    {}
+    {
+      modelValue: ''
+    }
   )
 
   const emits = defineEmits<{
@@ -184,8 +232,8 @@
   onMounted(() => {
     nextTick(() => {
       // 可根据实际情况放在点击打开弹窗后加载，会出现loading
-      //getTreeData()
-      //getUserList()
+      // getTreeData()
+      // getUserList()
     })
   })
 </script>

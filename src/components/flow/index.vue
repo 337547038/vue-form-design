@@ -1,6 +1,9 @@
 <!-- Created by 337547038 工作流程设计-->
 <template>
-  <div class="flow-container" :class="{ [direction]: true, 'type-show': type }">
+  <div
+    class="flow-container"
+    :class="{ [direction]: true, 'type-show': type }"
+  >
     <div class="flow-main">
       <flow-group
         v-for="(item, index) in nodeList"
@@ -8,9 +11,14 @@
         :data="item"
         @click-event="clickEvent"
       />
-      <div class="flow-end">结束</div>
+      <div class="flow-end">
+        结束
+      </div>
     </div>
-    <drawer ref="drawerEl" v-if="type === 0" />
+    <drawer
+      v-if="type === 0"
+      ref="drawerEl"
+    />
   </div>
 </template>
 
@@ -32,7 +40,7 @@
       type: 0 // 0设计模式，1显示查看模式
     }
   )
-  //const route = useRoute().query
+  // const route = useRoute().query
   const drawerEl = ref()
   const openDrawer = (data: NodeList, index: number, length: number) => {
     if (props.type === 1) {
@@ -162,9 +170,9 @@
     }
   }
   onMounted(() => {
-    /*if (route.id) {
+    /* if (route.id) {
       getData()
-    }*/
+    } */
   })
   defineExpose({ getValue, setValue })
 </script>

@@ -6,12 +6,18 @@
     :style="style"
     class="marquee-container"
   >
-    <div :style="innerStyle" class="inner-container">
-      <div ref="container1" :style="{ display: isLeftOrRight ? 'flex' : '' }">
-        <slot></slot>
+    <div
+      :style="innerStyle"
+      class="inner-container"
+    >
+      <div
+        ref="container1"
+        :style="{ display: isLeftOrRight ? 'flex' : '' }"
+      >
+        <slot />
       </div>
       <div :style="{ display: isLeftOrRight ? 'flex' : '' }">
-        <slot></slot>
+        <slot />
       </div>
     </div>
   </div>
@@ -24,12 +30,12 @@
     defineProps<{
       width: string
       height: string
-      speed?: number //每speed毫秒滚动step px，数字越大速度越慢
+      speed?: number // 每speed毫秒滚动step px，数字越大速度越慢
       direction?: 'left' | 'right' | 'top' | 'bottom'
       step?: number // 每个单位时间滚动的距离
     }>(),
     {
-      speed: 30, //每speed毫秒滚动1px，数字越大速度越慢
+      speed: 30, // 每speed毫秒滚动1px，数字越大速度越慢
       direction: 'top',
       step: 1
     }
@@ -58,13 +64,13 @@
         width: parseInt(props.width) * 2 + 'px',
         transform: `translateX(${state.left}px)`,
         transition
-        //transition: `transform ${state.transition}s`
+        // transition: `transform ${state.transition}s`
       }
     }
     return {
       transform: `translateY(${state.top}px)`,
       transition
-      //transition: `transform ${state.transition}s`
+      // transition: `transform ${state.transition}s`
     }
   })
   const container = ref()
@@ -116,10 +122,10 @@
     let myMar = setInterval(marquee, props.speed)
     tab.onmouseenter = function () {
       clearInterval(myMar)
-    } //鼠标移上时清除定时器达到滚动停止的目的
+    } // 鼠标移上时清除定时器达到滚动停止的目的
     tab.onmouseleave = function () {
       myMar = setInterval(marquee, props.speed)
-    } //鼠标移开时重设定时器
+    } // 鼠标移开时重设定时器
   }
   onMounted(() => {
     scroll()

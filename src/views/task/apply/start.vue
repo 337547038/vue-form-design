@@ -1,6 +1,9 @@
 <!-- Created by 337547038 发起流程 -->
 <template>
-  <div class="container-apply-start" v-loading="loading">
+  <div
+    v-loading="loading"
+    class="container-apply-start"
+  >
     <el-tabs>
       <el-tab-pane label="表单信息">
         <ak-form
@@ -15,20 +18,44 @@
           edit-url="editFormContent"
         />
       </el-tab-pane>
-      <el-tab-pane label="流程图" name="flow" class="flow-box">
+      <el-tab-pane
+        label="流程图"
+        name="flow"
+        class="flow-box"
+      >
         <div class="status">
           <ul>
-            <li class="s1">● 已完成</li>
-            <li class="s2">● 进行中</li>
-            <li class="s3">● 未进行</li>
-            <li class="s4">● 已拒绝</li>
-            <li class="s5">● 跳过</li>
+            <li class="s1">
+              ● 已完成
+            </li>
+            <li class="s2">
+              ● 进行中
+            </li>
+            <li class="s3">
+              ● 未进行
+            </li>
+            <li class="s4">
+              ● 已拒绝
+            </li>
+            <li class="s5">
+              ● 跳过
+            </li>
           </ul>
         </div>
-        <ak-flow :type="1" ref="flowEl" />
+        <ak-flow
+          ref="flowEl"
+          :type="1"
+        />
       </el-tab-pane>
-      <el-tab-pane label="流转记录" name="change" v-if="$route.query.id">
-        <ak-list ref="tableListEl" :data="changeTableData" />
+      <el-tab-pane
+        v-if="$route.query.id"
+        label="流转记录"
+        name="change"
+      >
+        <ak-list
+          ref="tableListEl"
+          :data="changeTableData"
+        />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -117,7 +144,7 @@
     }
   }
 
-  //流转记录
+  // 流转记录
   const changeTableData = ref({
     columns: [
       {

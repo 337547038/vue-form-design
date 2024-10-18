@@ -1,6 +1,9 @@
 <!-- Created by weiXin:337547038 -->
 <template>
-  <div :style="screenStyle" class="design-screen">
+  <div
+    :style="screenStyle"
+    class="design-screen"
+  >
     <a-screen
       v-for="(element, index) in screenData.list"
       :key="index"
@@ -36,9 +39,9 @@
         loading.value = false
         screenData.value = res.screenData
       })
-      .catch(res => {
+      .catch((res) => {
         if (res?.screenData) {
-          //一个请求成功进
+          // 一个请求成功进
           screenData.value = res.screenData
         }
         loading.value = false

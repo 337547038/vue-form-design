@@ -40,7 +40,7 @@ export const getGlobalData = (config: any, route?: any) => {
         type: 'get'
       })
         .then((res: any) => {
-          //将全局数据保存在window里，以方便调用
+          // 将全局数据保存在window里，以方便调用
           window.getScreenGlobal = res.data
           resolve(res.data)
         })

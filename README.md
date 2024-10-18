@@ -139,12 +139,26 @@ pnpm build
 ### 开发环境
 | 名称           | 版本      |
 |--------------|---------|
-| node         | 18.16.x |
-| pnpm         | 8.11.x  |
-| vite         | 5.3.x   |
-| vue          | 3.4.x   |
-| element-plus | 2.7.x   |
+| node         | 20.18.x |
+| pnpm         | 9.12.x  |
+| vite         | 5.4.x   |
+| vue          | 3.5.x   |
+| element-plus | 2.8.x   |
 
 ### 相关教程
 
 [如何在本地调演示效果](https://www.bilibili.com/video/BV1xCYeeEEMS/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+
+## `Star`
+
+非常感谢留下星星的好心人，感谢您的支持 :heart:
+
+[![Stargazers for vue-form-design](https://bytecrank.com/nastyox/reporoster/php/stargazersSVG.php?user=337547038&repo=vue-form-design)](https://github.com/337547038/vue-form-design/stargazers)
+
+
+## `Fork`
+
+瞧，那些 `小哥哥` 、`小姐姐` 认真 `学习` 的样子真滴是 `哎呦不错哦` :heart:
+
+[![Forkers repo roster for vue-form-design](https://reporoster.com/forks/337547038/vue-form-design)](https://github.com/337547038/vue-form-design/network/members)

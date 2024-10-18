@@ -1,31 +1,39 @@
 <template>
   <div>
     <div
-      class="design-container design-table"
-      v-loading="state.loading"
       ref="container"
+      v-loading="state.loading"
+      class="design-container design-table"
     >
       <div class="main-body">
         <div class="header">
           <div class="field">
-            <el-popover placement="bottom" :width="420" trigger="hover">
+            <el-popover
+              placement="bottom"
+              :width="420"
+              trigger="hover"
+            >
               <template #reference>
-                <el-button type="primary" plain size="small"
-                  >添加表格列字段
+                <el-button
+                  type="primary"
+                  plain
+                  size="small"
+                >
+                  添加表格列字段
                 </el-button>
               </template>
               <div class="table-field-list">
                 <div
-                  class="item"
                   v-for="(item, index) in fieldOptions"
                   :key="index"
+                  class="item"
                 >
                   <h3>{{ item.label }}</h3>
                   <div class="list">
                     <el-checkbox
-                      :label="li.label"
                       v-for="li in item.options"
                       :key="li.prop"
+                      :label="li.label"
                       @change="fieldSelectClick(li, $event)"
                     />
                   </div>
@@ -38,29 +46,34 @@
         <div class="main-form main-table">
           <div
             class="search-box"
-            @click="searchFormClick"
             title="条件查询搜索区域，单击可编辑"
+            @click="searchFormClick"
           >
             <ak-form
-              is-search
               v-if="state.searchData?.list?.length"
+              is-search
               :data="state.searchData"
               request-url=""
             />
-            <div class="tip" v-else>条件查询搜索区域，单击可编辑</div>
+            <div
+              v-else
+              class="tip"
+            >
+              条件查询搜索区域，单击可编辑
+            </div>
           </div>
           <el-divider border-style="dashed" />
           <div class="control-btn">
             <div
               class="btn-group"
-              @click="editOpenDrawer('controlBtn')"
               title="单击可编辑"
+              @click="editOpenDrawer('controlBtn')"
             >
               <div
-                class="tip"
                 v-if="
                   tableData?.controlBtn?.length === 0 || !tableData?.controlBtn
                 "
+                class="tip"
               >
                 操作按钮区域，点击可添加如新增、删除
               </div>
@@ -74,29 +87,32 @@
             <div class="control-other">
               <el-button-group>
                 <el-button
+                  v-if="tableData.config?.expand"
                   circle
                   icon="Search"
                   title="展开/收起筛选"
-                  v-if="tableData.config?.expand"
                 />
                 <el-button
+                  v-if="tableData.config?.columnsSetting !== false"
                   circle
                   icon="SetUp"
                   title="设置列显示隐藏"
-                  v-if="tableData.config?.columnsSetting !== false"
                 />
               </el-button-group>
             </div>
           </div>
-          <div class="tip" v-if="!tableData.columns?.length">
+          <div
+            v-if="!tableData.columns?.length"
+            class="tip"
+          >
             表格列设置区域，可从左上角 添加表格列字段
             选择已有列或直接从上方工具栏 生成脚本预览 编辑
           </div>
           <el-table
-            :data="[{}]"
+            v-if="state.refreshTable"
             v-bind="tableData.tableProps || {}"
             ref="tableEl"
-            v-if="state.refreshTable"
+            :data="[{}]"
           >
             <template
               v-for="item in tableData.columns"
@@ -105,17 +121,29 @@
               <el-table-column v-bind="item">
                 <template #header="scope">
                   {{ scope.column.label }}
-                  <i class="icon-close" @click="delCol(item)"></i>
-                  <el-tooltip placement="top" v-if="item.help">
+                  <i
+                    class="icon-close"
+                    @click="delCol(item)"
+                  />
+                  <el-tooltip
+                    v-if="item.help"
+                    placement="top"
+                  >
                     <template #content>
-                      <span v-html="item.help"></span>
+                      <span v-html="item.help" />
                     </template>
-                    <i class="icon-help"></i>
+                    <i class="icon-help" />
                   </el-tooltip>
                 </template>
-                <template #default v-if="item.type !== 'index'">
+                <template
+                  v-if="item.type !== 'index'"
+                  #default
+                >
                   <el-checkbox v-if="item.type === 'selection'" />
-                  <div @click.stop="rowClick(item)" v-else>
+                  <div
+                    v-else
+                    @click.stop="rowClick(item)"
+                  >
                     <el-switch v-if="item.render === 'switch'" />
                     <el-image
                       v-else-if="item.render === 'image'"
@@ -124,10 +152,12 @@
                         height: item.config.height
                       }"
                     />
-                    <el-tag v-else-if="item.render === 'tag'">设置</el-tag>
+                    <el-tag v-else-if="item.render === 'tag'">
+                      设置
+                    </el-tag>
                     <operate-btn
-                      class="btn-group"
                       v-else-if="item.render === 'buttons'"
+                      class="btn-group"
                       position="demo"
                       :buttons="mergeDefaultBtn(item.buttons, 'right')"
                       :row="{}"
@@ -139,18 +169,18 @@
             </template>
           </el-table>
           <div class="table-tip">
-            操作提示：<br />
-            *从数据列表配置中选择 所属表单<br />
-            *从左上角 添加表格字段 选择预设字段<br />
-            *可拖动表头字段移动调整表头字段排列顺序<br />
+            操作提示：<br>
+            *从数据列表配置中选择 所属表单<br>
+            *从左上角 添加表格字段 选择预设字段<br>
+            *可拖动表头字段移动调整表头字段排列顺序<br>
             *可通过顶部工具栏 生成脚本预览 查看或编辑添加自定义字段
           </div>
         </div>
       </div>
       <control-attr
-        @changeEvent="controlAttrChangeEvent"
-        v-model:tabsName="state.tabsName"
         ref="controlAttrEl"
+        v-model:tabs-name="state.tabsName"
+        @change-event="controlAttrChangeEvent"
       />
     </div>
     <ace-drawer
@@ -163,11 +193,15 @@
       @confirm="dialogConfirm"
     />
     <vue-file ref="vueFileEl" />
-    <el-dialog v-model="state.previewVisible" title="预览" :fullscreen="true">
+    <el-dialog
+      v-model="state.previewVisible"
+      title="预览"
+      :fullscreen="true"
+    >
       <ak-list
+        v-if="state.previewVisible"
         :data="tableData"
         :search-data="state.searchData"
-        v-if="state.previewVisible"
       />
     </el-dialog>
   </div>
@@ -184,7 +218,6 @@
   import {
     json2string,
     objToStringify,
-    string2json,
     stringToObj
   } from '@/utils/design'
   import { getRequest } from '@/api'
@@ -215,7 +248,7 @@
     refreshTable: true
   })
   const tableData = ref({
-    tableProps: {}, //表格所有参数
+    tableProps: {}, // 表格所有参数
     columns: [],
     config: {
       openType: 'page', // 页面打开方式
@@ -239,7 +272,7 @@
     type: ''
   })
 
-  //右侧边栏事件
+  // 右侧边栏事件
   const controlAttrChangeEvent = ({
     type,
     value
@@ -248,12 +281,12 @@
     value: any
   }) => {
     if (type === 'formId') {
-      //改变表单数据源时，重新加载可选表头信息
-      getFormColumns(value).then(data => {
+      // 改变表单数据源时，重新加载可选表头信息
+      getFormColumns(value).then((data) => {
         state.formFieldList = data
       })
     } else if (type === 'openDrawer') {
-      //打开编辑drawer
+      // 打开编辑drawer
       editOpenDrawer(value)
     }
   }
@@ -305,8 +338,8 @@
       let has = false
       tableData.value.columns.forEach((item: any) => {
         if (
-          (item.prop && item.prop === row.prop) ||
-          (item.type && item.type === row.type)
+          (item.prop && item.prop === row.prop)
+          || (item.type && item.type === row.type)
         ) {
           has = true
         }
@@ -373,7 +406,7 @@
         }
         break
       case 'treeProp':
-        // eslint-disable-next-line no-case-declarations
+
         editData = tableData.value.treeData || {}
         if (Object.keys(editData).length === 1) {
           editData = {
@@ -545,7 +578,7 @@
       Object.assign(params, { id: routeQuery.id })
       apiKey = 'designEdit'
     } else {
-      params.status = 1 //添加时默认启用
+      params.status = 1 // 添加时默认启用
     }
     state.loading = true
     getRequest(apiKey, params)
@@ -571,12 +604,12 @@
     })
     if (routeQuery.id) {
       getInitData(routeQuery.id).then(
-        ({ tableData: tableData2, searchData, dict, source }) => {
+        ({ tableData: tableData2, searchData, source }) => {
           tableData.value = tableData2 // 列表数据
           state.searchData = searchData // 搜索表单数据
           if (tableData2.config.formId) {
             // 根据选择的表单获取可供选择的表头
-            getFormColumns(source).then(data => {
+            getFormColumns(source).then((data) => {
               state.formFieldList = data
             })
           }
@@ -586,9 +619,9 @@
     // 从表单列表点创建列表，带有当前表单id，一键创建表单时
     if (routeQuery.form) {
       tableData.value.config.formId = routeQuery.form
-      getFormColumns(routeQuery.form).then(data => {
+      getFormColumns(routeQuery.form).then((data) => {
         tableData.value.columns = data
-        //todo 添加上方及右侧按钮
+        // todo 添加上方及右侧按钮
       })
     }
   })

@@ -14,11 +14,11 @@ export const download = (url, data, config = {}) => {
     getRequest(url, data, option)
       .then((res: any) => {
         const { data, headers } = res
-        const filename: string =
-          decodeURI(
+        const filename: string
+          = decodeURI(
             headers['content-disposition'].split(';')[1].split('=')[1]
-          ) ||
-          `${url.substr(1).replace(/\//g, '_')}_${new Date().getTime()}.xls`
+          )
+          || `${url.substr(1).replace(/\//g, '_')}_${new Date().getTime()}.xls`
         const downloadUrl: string = window.URL.createObjectURL(
           new Blob([data], { type: data.type })
         )
@@ -31,7 +31,7 @@ export const download = (url, data, config = {}) => {
         document.body.removeChild(link)
         resolve()
       })
-      .catch(error => {
+      .catch((error) => {
         reject(error)
       })
   })

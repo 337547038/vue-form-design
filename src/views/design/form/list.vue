@@ -2,17 +2,18 @@
   <div>
     <ak-list
       ref="tableListEl"
-      :apiKey="{ list: 'designList', del: 'designDelete' }"
+      :api-key="{ list: 'designList', del: 'designDelete' }"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 1 }"
     >
       <template #sourceName="{ row }">
         <router-link
-          :to="`/design/datasource?source=${row.source}`"
           v-if="row.source"
-          >{{ row.sourceName }}</router-link
+          :to="`/design/datasource?source=${row.source}`"
         >
+          {{ row.sourceName }}
+        </router-link>
       </template>
     </ak-list>
     <el-dialog

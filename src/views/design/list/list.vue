@@ -2,7 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      :apiKey="{ list: 'designList', del: 'designDelete' }"
+      :api-key="{ list: 'designList', del: 'designDelete' }"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 2 }"
@@ -10,7 +10,8 @@
       <template #sourceName="{ row, dict }">
         <router-link
           :to="`/design/form?id=${row.source}&redirect=/design/list/list`"
-          >{{ dict.formName && dict.formName[row.source] }}/{{ row.source }}
+        >
+          {{ dict.formName && dict.formName[row.source] }}/{{ row.source }}
         </router-link>
       </template>
     </ak-list>
@@ -35,7 +36,7 @@
 
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
-  import { ref, reactive, nextTick, provide } from 'vue'
+  import { ref, reactive, nextTick } from 'vue'
 
   const router = useRouter()
   const dialog = reactive({
@@ -254,9 +255,9 @@
       tableListEl.value.getListData() // 重新拉数据
     }
   }
-  /*const beforeSubmit = (params: any) => {
+  /* const beforeSubmit = (params: any) => {
     return params
-  }*/
+  } */
   const cancelClick = (type: string) => {
     if (type === 'reset') {
       dialog.visible = false

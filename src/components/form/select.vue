@@ -1,12 +1,16 @@
 <template>
   <el-select
     v-bind="data.control"
-    :disabled="disabled"
     v-model="value"
+    :disabled="disabled"
     :loading="state.loading"
-    :remoteMethod="getRemoteMethod"
+    :remote-method="getRemoteMethod"
   >
-    <el-option v-if="data.config?.addAll" value="" label="全部" />
+    <el-option
+      v-if="data.config?.addAll"
+      value=""
+      label="全部"
+    />
     <el-option
       v-for="item in optionsList"
       :key="item[valueKey]"
@@ -22,20 +26,24 @@
   import type { FormList } from '@/types/form'
   import { objectToArray } from '@/utils/design'
   import { getOptionsData } from './request'
+
   const props = withDefaults(
-    defineProps<{
-      data: FormList
-      modelValue?: null
-      disabled?: boolean
-      options?: { [key: string]: string | number }
-      remoteMethod?: (name: string, callback: () => void) => void
-      type?: 'slot' // 类型，可选slot
-    }>(),
-    {
-      options: () => {
-        return []
+      defineProps<{
+        data: FormList
+        modelValue?: null
+        disabled?: boolean
+        options?: { [key: string]: string | number }
+        remoteMethod?: (name: string, callback: () => void) => void
+        type?: 'slot' // 类型，可选slot
+      }>(),
+      {
+        options: () => {
+          return []
+        },
+        modelValue: '',
+        type: '',
+        remoteMethod: null
       }
-    }
   )
   const queryName = computed(() => {
     return props.data.config?.queryName || 'name'
@@ -63,10 +71,11 @@
     } else if (isRemote.value) {
       state.loading = true
       // 请求参数名，可使用config.queryName传进来
-      props.remoteMethod &&
+      if (props.remoteMethod) {
         props.remoteMethod(name, () => {
           state.loading = false
         })
+      }
       if (props.data.control.remoteMethod) {
         props.data.control.remoteMethod(name)
       }
@@ -93,20 +102,20 @@
     return props.data.config?.linkage
   })
   const unWatch1 = linkage.value
-    ? watch(
-        () => formProps.model[linkage.value],
-        val => {
-          getOptions({ [queryName.value]: val }, 'linkage')
-        }
+      ? watch(
+          () => formProps.model[linkage.value],
+          (val) => {
+            getOptions({ [queryName.value]: val }, 'linkage')
+          }
       )
-    : null
+      : null
   const unWatch2 = watch(
-    () => formProps.model,
-    val => {
-      if (props.type === 'slot') {
-        value.value = val[props.data.name]
+      () => formProps.model,
+      (val) => {
+        if (props.type === 'slot') {
+          value.value = val[props.data.name]
+        }
       }
-    }
   )
   const getSlotRemoteMethod = (name: string) => {
     if (isRemote.value) {
@@ -117,10 +126,10 @@
   const getOptions = (data = {}, type: string) => {
     if (props.type === 'slot') {
       getOptionsData(props.data.config, formProps.model, type, {}, data).then(
-        res => {
-          optionsSlot.value = res
-          state.loading = false
-        }
+          (res) => {
+            optionsSlot.value = res
+            state.loading = false
+          }
       )
     }
   }
@@ -165,6 +174,8 @@
   })
   onBeforeRouteLeave(() => {
     unWatch2()
-    unWatch1 && unWatch1()
+    if (unWatch1) {
+      unWatch1()
+    }
   })
 </script>

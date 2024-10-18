@@ -71,7 +71,7 @@
     operateBtn: [
       {
         label: '查看',
-        click: row => {
+        click: (row) => {
           router.push({
             path: '/task/apply/start',
             query: { flowId: row.flowId, id: row.formId }

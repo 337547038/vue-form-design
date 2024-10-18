@@ -1,4 +1,4 @@
-//数据处理
+// 数据处理
 import { beforeAfter, getRequestEvent } from '@/utils/beforeAfter'
 import { ElMessage } from 'element-plus'
 
@@ -75,7 +75,7 @@ const del = ({ idList, pk, props, state, route }) => {
         ElMessage.success(res.message || '删除成功')
         resolve()
       })
-      .catch((res: { message: string; code: string | number }) => {
+      .catch((res: { message: string, code: string | number }) => {
         state.loading = false
         ElMessage.error(res.message || '删除失败')
         reject()
@@ -95,7 +95,7 @@ const exportEvent = ({ params, props, state, route }) => {
     params: params,
     before: getRequestEvent(props, 'before'),
     after: getRequestEvent(props, 'after'),
-    route: route, //为方便需要从路由获取参数提供便利
+    route: route, // 为方便需要从路由获取参数提供便利
     type: 'export',
     options: { responseType: 'blob' }
   })
@@ -117,7 +117,7 @@ const exportEvent = ({ params, props, state, route }) => {
       document.body.removeChild(link)
       ElMessage.success(res.message || '导出成功')
     })
-    .catch((res: { message: string; code: string | number }) => {
+    .catch((res: { message: string, code: string | number }) => {
       state.loading = false
       ElMessage.error(res.message || '导出失败')
     })
@@ -131,11 +131,11 @@ const switchEvent = ({
   oldVal,
   params
 }) => {
-  //提交修改
+  // 提交修改
   const apiKey = props.data.apiKey?.edit || props.apiKey?.edit
   if (!apiKey) {
     console.warn('请先配置apiKey.edit')
-    params[rowProp] = oldVal //回退状态
+    params[rowProp] = oldVal // 回退状态
     return
   }
   switchLoading.value = true
@@ -149,15 +149,15 @@ const switchEvent = ({
   })
     .then((res: any) => {
       switchLoading.value = false
-      //修改成功，不刷新更新值
+      // 修改成功，不刷新更新值
       params[rowProp] = val
       ElMessage.success(res.message || '操作成功')
     })
     .catch(() => {
-      //修改失败，回退状态
-      params[rowProp] = oldVal //回退状态
+      // 修改失败，回退状态
+      params[rowProp] = oldVal // 回退状态
       switchLoading.value = false
-      //ElMessage.success(res.message || '操作失败')
+      // ElMessage.success(res.message || '操作失败')
     })
 }
 

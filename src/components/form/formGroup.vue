@@ -2,7 +2,7 @@
 <template>
   <draggable
     v-if="['design', 'search'].includes(formProps.operateType)"
-    itemKey="id"
+    item-key="id"
     :list="dataList"
     name="fade"
     class="drag"
@@ -18,33 +18,41 @@
       <group-control
         :key="getGroupName(element, index)"
         :element="element"
-        @group-click="groupClick"
         :active="activeKey"
+        @group-click="groupClick"
       >
         <div class="drag-control">
           <div class="item-control">
             <i
-              class="icon-plus"
-              @click.stop="click('gridAdd', index, element)"
               v-if="state.gridAdd"
+              class="icon-plus"
               title="添加列"
-            ></i>
+              @click.stop="click('gridAdd', index, element)"
+            />
             <i
-              class="icon-clone"
-              @click.stop="click('clone', index, element)"
               v-if="state.clone"
+              class="icon-clone"
               title="克隆"
-            ></i>
-            <i class="icon-del" @click.stop="click('del', index)"></i>
+              @click.stop="click('clone', index, element)"
+            />
+            <i
+              class="icon-del"
+              @click.stop="click('del', index)"
+            />
           </div>
-          <div class="drag-move icon-move"></div>
+          <div class="drag-move icon-move" />
         </div>
-        <div class="tooltip">{{ element.name }}</div>
+        <div class="tooltip">
+          {{ element.name }}
+        </div>
       </group-control>
     </template>
   </draggable>
   <template v-else>
-    <template v-for="(item, index) in dataList" :key="index">
+    <template
+      v-for="(item, index) in dataList"
+      :key="index"
+    >
       <group-control :element="item" />
     </template>
   </template>
@@ -176,7 +184,7 @@
     state.clone = !notNested(item.type)
   }
   onBeforeRouteLeave(() => {
-    //unWatch() //销毁监听器
+    // unWatch() //销毁监听器
   })
   onUnmounted(() => {
     store.setActiveKey('')

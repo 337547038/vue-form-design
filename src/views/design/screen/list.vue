@@ -2,8 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="designList"
-      delete-url="designDelete"
+      :api-key="{ list: 'designList', del: 'designDelete' }"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 4 }"
@@ -41,22 +40,28 @@
       { label: '勾选', type: 'selection' },
       { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '名称', width: '150px' },
-      { prop: 'category', label: '分类', config: { dictKey: 'sys-screen' } },
+      {
+        prop: 'category',
+        label: '分类',
+        render: 'tag',
+        replaceValue: 'sys-screen'
+      },
       {
         prop: 'status',
         label: '状态',
-        config: {
-          dictKey: 'sys-status',
-          tagList: {
-            0: 'info',
-            1: 'success'
-          }
+        replaceValue: 'sys-status',
+        render: 'tag',
+        custom: {
+          0: 'info',
+          1: 'success'
         }
       },
       {
         prop: 'creatUserId',
         label: '创建人',
-        config: { dictKey: 'creatUser' }
+        render: 'text',
+        replaceValue: 'creatUser',
+        config: {}
       },
       {
         prop: 'creatDate',
@@ -64,7 +69,56 @@
         width: 200,
         config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
       },
-      { label: '操作', prop: '__control', width: '200px', fixed: 'right' }
+      {
+        label: '操作', prop: 'control', width: '240px', fixed: 'right', render: 'buttons', buttons: [
+          {
+            label: '编辑',
+            type: 'primary',
+            click: (row: any) => {
+              // 跳转到表单设计编辑页
+              toDesign(row)
+            },
+            attr: {
+              text: true
+            }
+          },
+          {
+            label: '设置',
+            type: 'primary',
+            click: (row: any) => {
+              dialog.visible = true
+              nextTick(() => {
+                formEl.value.setValue(row)
+              })
+            },
+            attr: {
+              text: true
+            }
+          },
+          {
+            label: '查看',
+            type: 'primary',
+            click: (row: any) => {
+              const { href } = router.resolve({
+                path: '/design/screen/show/' + row.id
+              })
+              window.open(href)
+            },
+            attr: {
+              text: true
+            }
+          },
+          {
+            label: '删除',
+            key: 'del',
+            type: 'danger',
+            icon: '',
+            attr: {
+              text: true
+            }
+          }
+        ]
+      }
     ],
     controlBtn: [
       {
@@ -80,38 +134,6 @@
         key: 'del',
         type: 'danger',
         icon: 'delete'
-      }
-    ],
-    operateBtn: [
-      {
-        label: '编辑',
-        click: (row: any) => {
-          // 跳转到表单设计编辑页
-          toDesign(row)
-        }
-      },
-      {
-        label: '设置',
-        click: (row: any) => {
-          dialog.visible = true
-          nextTick(() => {
-            formEl.value.setValue(row)
-          })
-        }
-      },
-      {
-        label: '查看',
-        click: (row: any) => {
-          const { href } = router.resolve({
-            path: '/design/screen/show/' + row.id
-          })
-          window.open(href)
-        }
-      },
-      {
-        label: '删除',
-        key: 'del',
-        type: 'danger'
       }
     ],
     config: {}

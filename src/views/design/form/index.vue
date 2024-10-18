@@ -7,13 +7,19 @@
     />
     <div class="main-body">
       <head-tools @click="headToolClick" />
-      <div class="main-form" v-loading="state.loading">
-        <div class="empty-tips" v-if="formData.list?.length === 0">
+      <div
+        v-loading="state.loading"
+        class="main-form"
+      >
+        <div
+          v-if="formData.list?.length === 0"
+          class="empty-tips"
+        >
           从左侧拖拽来添加字段
         </div>
         <ak-form
           :data="formData"
-          :operateType="$route.query.type === 'search' ? 'search' : 'design'"
+          :operate-type="$route.query.type === 'search' ? 'search' : 'design'"
         />
       </div>
     </div>
@@ -30,19 +36,33 @@
       @before-close="drawerBeforeClose"
       @confirm="dialogConfirm"
     />
-    <vue-file ref="vueFileEl" v-if="!['search'].includes(state.designType)" />
-    <el-dialog v-model="state.previewVisible" title="预览" :fullscreen="true">
+    <vue-file
+      v-if="!['search'].includes(state.designType)"
+      ref="vueFileEl"
+    />
+    <el-dialog
+      v-model="state.previewVisible"
+      title="预览"
+      :fullscreen="true"
+    >
       <ak-form
-        :data="state.formDataPreview"
-        ref="previewForm"
         v-if="state.previewVisible"
+        ref="previewForm"
+        :data="state.formDataPreview"
       />
       <template #footer>
         <div class="dialog-footer">
-          <el-button size="small" type="primary" @click="previewSubmit">
+          <el-button
+            size="small"
+            type="primary"
+            @click="previewSubmit"
+          >
             提交
           </el-button>
-          <el-button size="small" @click="state.previewVisible = false">
+          <el-button
+            size="small"
+            @click="state.previewVisible = false"
+          >
             取消
           </el-button>
         </div>
@@ -70,7 +90,7 @@
   import { getDrawerTitle, getDrawerContent } from '../components/aceTooptip'
   import getOneFormCreation from './components/oneFormCreation'
 
-  defineOptions({ name: 'designFormIndex' })
+  defineOptions({ name: 'DesignFormIndex' })
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '系统工具' }, { label: '表单设计' }])
 
@@ -101,7 +121,7 @@
     type: '',
     title: '',
     codeType: '',
-    direction: undefined, //弹出方向rtl / ltr
+    direction: undefined, // 弹出方向rtl / ltr
     callback: ''
   })
   const vueFileEl = ref()
@@ -143,9 +163,9 @@
     // 添加校验，没有选择数据源时则必须要配置接口url
     const { submitUrl, editUrl, requestUrl } = formData.value.config
     if (
-      !formData.value.config.sourceId &&
-      (!submitUrl || !editUrl || !requestUrl) &&
-      state.designType !== 'search'
+      !formData.value.config.sourceId
+      && (!submitUrl || !editUrl || !requestUrl)
+      && state.designType !== 'search'
     ) {
       ElMessage.error('请选择数据源或配置接口url地址，否则表单无法提交保存')
       return
@@ -162,7 +182,7 @@
       Object.assign(params, { id: route.id })
       apiKey = 'designEdit'
     } else {
-      params.status = 1 //添加时默认启用
+      params.status = 1 // 添加时默认启用
     }
     // 列表搜索模式下只有修改
     if (state.designType === 'search') {
@@ -216,7 +236,7 @@
         state.previewVisible = true
         let stringPreview = objToStringify(formData.value) // 防止预览窗口数据修改影响
         const formName = formData.value.form.name
-        // eslint-disable-next-line no-case-declarations
+
         const reg = new RegExp(`get${formName}ControlByName`, 'g')
         stringPreview = stringPreview.replace(
           reg,
@@ -367,7 +387,7 @@
     getInitData()
     stringFormData.value = JSON.stringify(formData.value)
     if (route.source) {
-      //从数据源一键创建过来时带有source参数
+      // 从数据源一键创建过来时带有source参数
       formControlAttrEl.value.getFormFieldBySource(
         route.source,
         (list: any) => {

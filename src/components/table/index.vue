@@ -1,6 +1,10 @@
 <!-- Created by 337547038 on 通用数据表格页. -->
 <template>
-  <div ref="container" v-loading="state.loading" class="table-list-comm">
+  <div
+    ref="container"
+    v-loading="state.loading"
+    class="table-list-comm"
+  >
     <list-tree-side
       v-if="treeData.show"
       :current-node-key="state.currentNodeKey"
@@ -8,7 +12,10 @@
       @node-click="treeNodeClick"
     />
     <div class="table-list">
-      <div v-if="searchData?.list?.length" class="table-search">
+      <div
+        v-if="searchData?.list?.length"
+        class="table-search"
+      >
         <Transition name="autoHeight">
           <ak-form
             v-show="!state.searchFormDown"
@@ -20,11 +27,11 @@
             request-url=""
             @btn-click="formBtnClick"
           >
-            <slot name="searchForm"></slot>
+            <slot name="searchForm" />
           </ak-form>
         </Transition>
       </div>
-      <slot></slot>
+      <slot />
       <div class="control-btn">
         <div class="control-btn-group">
           <operate-button
@@ -34,7 +41,7 @@
             :buttons="mergeDefaultBtn(data.controlBtn)"
             @click="btnClick"
           />
-          <slot name="controlBtn"></slot>
+          <slot name="controlBtn" />
         </div>
         <div class="control-other">
           <el-button-group>
@@ -59,12 +66,17 @@
                     v-for="item in data.columns"
                     :key="item.prop || item.type"
                     :value="item.prop || item.type"
-                    >{{ item.label }}
+                  >
+                    {{ item.label }}
                   </el-checkbox>
                 </el-checkbox-group>
               </template>
               <template #reference>
-                <el-button circle icon="SetUp" title="设置列显示隐藏" />
+                <el-button
+                  circle
+                  icon="SetUp"
+                  title="设置列显示隐藏"
+                />
               </template>
             </el-popover>
           </el-button-group>
@@ -85,8 +97,14 @@
             v-for="item in columnsFilter"
             :key="item.prop || item.label"
           >
-            <el-table-column v-bind="item" config="">
-              <template v-if="item.help" #header="scope">
+            <el-table-column
+              v-bind="item"
+              config=""
+            >
+              <template
+                v-if="item.help"
+                #header="scope"
+              >
                 {{ scope.column.label }}
                 <tooltip :content="item.help" />
               </template>
@@ -98,8 +116,7 @@
                   :row="scope.row"
                   :dict="listDict"
                   :value="scope.row[item.prop]"
-                >
-                </slot>
+                />
                 <el-switch
                   v-if="item.prop && item.render === 'switch'"
                   v-bind="item.config"
@@ -110,8 +127,8 @@
                       getRenderFormatValue(scope.row, item)
                     )
                   "
-                  @change="switchChange($event, item, scope.row)"
                   :model-value="getRenderFormatValue(scope.row, item)"
+                  @change="switchChange($event, item, scope.row)"
                 />
                 <el-image
                   v-if="item.prop && item.render === 'image'"
@@ -126,27 +143,32 @@
                   :src="getImgSrc(scope.row, item)"
                 />
                 <el-tag
-                  v-if="item.prop && item.render === 'tag'"
+                  v-if="
+                    item.prop && item.render === 'tag' && scope.row[item.prop]
+                  "
                   v-bind="item.config"
                   :type="getTagType(scope.row, item)"
-                  >{{ getTagVal(scope.row, item) }}
+                >
+                  {{ getTagVal(scope.row, item) }}
                 </el-tag>
                 <el-text
                   v-if="item.prop && item.render === 'text'"
                   v-bind="item.config"
                   :type="getTagType(scope.row, item)"
-                  >{{ getTagVal(scope.row, item) }}
+                >
+                  {{ getTagVal(scope.row, item) }}
                 </el-text>
                 <el-link
                   v-if="item.prop && item.render === 'link'"
                   v-bind="item.config"
-                  >{{ getRenderFormatValue(scope.row, item) }}
+                >
+                  {{ getRenderFormatValue(scope.row, item) }}
                 </el-link>
                 <span
                   v-if="
                     item.prop &&
-                    item.render &&
-                    ['datetime', 'date'].includes(item.render)
+                      item.render &&
+                      ['datetime', 'date'].includes(item.render)
                   "
                 >
                   {{ getDateFormat(item, scope.row) }}
@@ -158,8 +180,8 @@
                     class="btn-group"
                     :row="scope.row"
                     :buttons="mergeDefaultBtn(item.buttons, 'right')"
-                    @click="tableBtnClick(scope.row, $event)"
                     :dropdown="item.config?.dropdown"
+                    @click="tableBtnClick(scope.row, $event)"
                   />
                 </template>
               </template>
@@ -173,7 +195,7 @@
         class="table-page"
       >
         <el-pagination
-          v-model:currentPage="state.currentPage"
+          v-model:current-page="state.currentPage"
           v-model:page-size="state.pageSize"
           :page-sizes="[20, 30, 40, 50] as any"
           :total="state.total"
@@ -185,7 +207,7 @@
       <div
         v-if="state.tableScrollMargin"
         :style="{ height: state.tableScrollMargin }"
-      ></div>
+      />
     </div>
   </div>
 </template>
@@ -219,7 +241,7 @@
       apiKey?: ApiKey
       before?: (type: EventType, params: any, rout: any) => boolean
       after?: (type: EventType, res: any, isSuccess?: boolean) => any
-      pagination?: { pageSize: number; current: number } | boolean
+      pagination?: { pageSize: number, current: number } | boolean
       dict?: { [key: string | number]: string | number }
       fixedBottomScroll?: boolean
       query?: { [key: string]: any } // 一些附加的请求参数
@@ -242,7 +264,7 @@
         return {}
       },
       pagination: () => {
-        //分页信息，false时不显示分页信息
+        // 分页信息，false时不显示分页信息
         return {
           pageSize: 20,
           current: 1
@@ -321,7 +343,7 @@
       state.treeValue
     )
   })
-  //数据处理开始
+  // 数据处理开始
   // 筛选查询列表数据
   const getListData = (page?: number) => {
     request
@@ -355,7 +377,7 @@
         getListData() // 不管什么情况都刷新下请求列表数据
       })
   }
-  //数据处理结束
+  // 数据处理结束
 
   // 仅清空筛选输入
   const searchClear = () => {
@@ -379,27 +401,27 @@
     return row[column.prop]
   }
 
-  //处理switch切换事件
+  // 处理switch切换事件
   const switchLoading = ref(false)
-  const oldVal = ref() //修改前的值
+  const oldVal = ref() // 修改前的值
   const switchBeforeChange = (val: number | string | boolean) => {
     oldVal.value = val
     return true
   }
   const switchChange = (val: string | number | boolean, obj: any, row: any) => {
-    //提交修改
+    // 提交修改
     request.switchEvent({
       props,
       switchLoading,
       val,
       rowProp: obj.prop,
       oldVal: oldVal.value,
-      params: row //这里使用当前行的所有数据，可根据实际如取pk
+      params: row // 这里使用当前行的所有数据，可根据实际如取pk
     })
   }
-  //处理switch切换事件结束
+  // 处理switch切换事件结束
 
-  //处理图片开始
+  // 处理图片开始
   const getImgSrc = (row: any, column: any, type?: string) => {
     const src = getRenderFormatValue(row, column)
     if (!src) {
@@ -411,7 +433,7 @@
       }
       return src
     } else {
-      //如果是数组则返回第一张
+      // 如果是数组则返回第一张
       if (typeof src === 'object') {
         return src[0]
       } else {
@@ -419,9 +441,9 @@
       }
     }
   }
-  //处理图片结束
+  // 处理图片结束
 
-  //处理tag
+  // 处理tag
   const getTagType = (row: any, column: any) => {
     if (!column.custom) {
       return
@@ -440,17 +462,17 @@
       return replaceValue[val] || val
     }
   }
-  //处理tag结束
+  // 处理tag结束
 
-  //处理时间
+  // 处理时间
   const getDateFormat = (obj: any, row: any) => {
     const val = getRenderFormatValue(row, obj)
     if (!obj) {
       return val
     }
-    let formatType = obj.timeFormat //指定格式时
+    let formatType = obj.timeFormat // 指定格式时
     if (!formatType) {
-      //没有指定格式时
+      // 没有指定格式时
       if (obj.render === 'date') {
         formatType = '{yyyy}-{mm}-{dd}'
       } else {
@@ -459,9 +481,9 @@
     }
     return dateFormatting(val, formatType)
   }
-  //处理时间结束
+  // 处理时间结束
 
-  //列表右侧按钮事件，处理预设key的内置事件
+  // 列表右侧按钮事件，处理预设key的内置事件
   const tableBtnClick = (row: any, key: string) => {
     if (key === 'del' && pk.value) {
       delClick([row[pk.value]])
@@ -469,20 +491,20 @@
       // todo 编辑或查看时请数据拉回来，或者是对外暴露拉取数据的方法
     }
   }
-  //表格上方操作按钮事件，处理预设key的内置事件
+  // 表格上方操作按钮事件，处理预设key的内置事件
   const btnClick = (key: string) => {
     if (key === 'del' && state.selectionChecked && pk.value) {
-      const ids = state.selectionChecked.map(item => item[pk.value])
+      const ids = state.selectionChecked.map((item) => item[pk.value])
       delClick(ids)
     } else if (key === 'export') {
-      const ids = state.selectionChecked.map(item => item[pk.value])
+      const ids = state.selectionChecked.map((item) => item[pk.value])
       request.exportEvent({ props, state, route, params: ids })
     } else {
       // todo 编辑或查看时请数据拉回来，或者是对外暴露拉取数据的方法
     }
   }
 
-  //处理操作按钮结束
+  // 处理操作按钮结束
 
   const selectionChange = (row: any) => {
     state.selectionChecked = row
@@ -494,7 +516,7 @@
       {},
       searchFormEl.value?.getValue(),
       state.treeValue
-    ) //这里需要获取到搜索表单全部的字段
+    ) // 这里需要获取到搜索表单全部的字段
 
     if (type === 'reset') {
       for (const key in searchFormVal) {
@@ -544,13 +566,13 @@
           return
         }
         const tableBodyDom = tableEl.querySelector('.el-table__body') // table
-        const { top: tableBodyDomTop } =
-          tableBodyWrapDom.getBoundingClientRect()
+        const { top: tableBodyDomTop }
+          = tableBodyWrapDom.getBoundingClientRect()
         const tableHeight = tableBodyDom.offsetHeight // 表格的高度
         const windowHeight = window.innerHeight
         if (
-          tableBodyDomTop > windowHeight ||
-          tableBodyWrapDom.classList.contains('is-scrolling-none')
+          tableBodyDomTop > windowHeight
+          || tableBodyWrapDom.classList.contains('is-scrolling-none')
         ) {
           // 此时列表在可视窗口的下侧不可见区域，因此不做任何修改
           tableBodyWrapDom.style.height = 'unset'
@@ -573,8 +595,8 @@
   const scrollBox = computed(() => {
     // 当前框架滚动区域，不包在layout框架时
     return (
-      document.querySelector('.overflow-scroll') ||
-      document.querySelector('body')
+      document.querySelector('.overflow-scroll')
+      || document.querySelector('body')
     )
   })
   // 显示隐藏列设置
@@ -635,7 +657,7 @@
   useEventListener(scrollBox.value, 'scroll', setFixedBottomScroll)
   useEventListener(window, 'resize', setFixedBottomScroll)
   onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+    unWatch() // 销毁监听器
   })
   onMounted(() => {
     setSearchValueFormQuery() // url带有参数时，先对搜索表单设置

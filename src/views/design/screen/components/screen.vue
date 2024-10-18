@@ -16,13 +16,16 @@
       @mousedown.left.stop="moveMousedown"
     >
       <span
-        v-show="activeId === data.id && data.type !== 'tempRect'"
         v-for="item in 8"
+        v-show="activeId === data.id && data.type !== 'tempRect'"
         :key="item"
         :class="`rs${item}`"
         @mousedown.stop="resizeDotMouseDown($event, item)"
-      ></span>
-      <div class="position" v-show="activeId === data.id">
+      />
+      <div
+        v-show="activeId === data.id"
+        class="position"
+      >
         {{ JSON.stringify(data.position) }}
       </div>
     </div>
@@ -30,8 +33,11 @@
       v-if="['text', 'border'].includes(data.type)"
       :style="getConfigStyle"
       v-html="getReplaceGlobal(newValue || config.text)"
-    ></div>
-    <div v-if="data.type === 'sText'" :style="getConfigStyle">
+    />
+    <div
+      v-if="data.type === 'sText'"
+      :style="getConfigStyle"
+    >
       <my-marquee
         :direction="config.direction"
         :height="`${data.position.height}px`"
@@ -48,7 +54,7 @@
       :style="getConfigStyle"
       alt="请选择或上传图片"
       class="default-img"
-    />
+    >
     <div
       v-if="data.type === 'background'"
       :style="getBackground"
@@ -56,7 +62,11 @@
     >
       <span v-if="!config.src">请选择或上传图片</span>
     </div>
-    <div v-if="data.type === 'table'" ref="tableEl" class="screen-table">
+    <div
+      v-if="data.type === 'table'"
+      ref="tableEl"
+      class="screen-table"
+    >
       <el-table
         v-bind="config.props"
         :data="tableData"
@@ -64,8 +74,8 @@
         style="width: 100%"
       >
         <el-table-column
-          v-bind="col"
           v-for="col in data.option?.columns"
+          v-bind="col"
           :key="col.prop"
         />
       </el-table>
@@ -78,9 +88,9 @@
     <component
       :is="config.component"
       v-bind="config"
+      v-if="['component'].includes(data.type)"
       :height="data.position.height"
       :width="data.position.width || '100%'"
-      v-if="['component'].includes(data.type)"
     />
     <echarts-init
       v-if="['line', 'bar', 'pie', 'echarts'].includes(data.type)"
@@ -92,7 +102,7 @@
       v-if="['div', 'group'].includes(data.type)"
       v-model="data.list"
       data-type="div"
-      :pId="data.id"
+      :p-id="data.id"
     />
   </div>
 </template>
@@ -113,7 +123,6 @@
   import MyMarquee from './marquee.vue'
   import EchartsInit from '../../components/echartsInt.vue'
   import type { ScreenData, UpdatePosition } from '../types'
-  import formatScreen from '@/utils/formatScreen'
   import { cannotDragResize, addUnit, removeUnit } from '../utils'
   import ScreenGroup from './screenGroup.vue'
   import { useScreenStore } from '@/store/screen'
@@ -143,7 +152,7 @@
     return screenStore.activeId
   })
   const state = reactive({
-    left: 0, //移动时实时位置，移动结束才更新
+    left: 0, // 移动时实时位置，移动结束才更新
     top: 0,
     width: 0,
     height: 0,
@@ -172,8 +181,8 @@
     if (!props.data.position) {
       return {}
     }
-    const { left, top, height, width, zIndex, display, right, bottom } =
-      props.data.position
+    const { left, top, height, width, zIndex, display, right, bottom }
+      = props.data.position
     // 设置了right时left为auto，设置了bottom时top为auto
     const right2 = addUnit(right)
     const bottom2 = addUnit(bottom)
@@ -191,7 +200,7 @@
 
   const getWidthHeight = (wh: string | number) => {
     if (wh.toString().indexOf('%') !== -1) {
-      return '100%' //如果是%单位时，这里是外层的单位，不用直接用
+      return '100%' // 如果是%单位时，这里是外层的单位，不用直接用
     } else {
       return wh
     }
@@ -203,9 +212,9 @@
       evt.stopPropagation()
     }
   }
-  //缩放
+  // 缩放
   const resizeDotMouseDown = (evt: MouseEvent, index: number) => {
-    //对组进行缩放，暂不处理了。都要转换成百分比才好处理
+    // 对组进行缩放，暂不处理了。都要转换成百分比才好处理
     if (props.data.type === 'group') {
       return
     }
@@ -303,7 +312,7 @@
     let mxd = 0 // 移动的距离
     let myd = 0
     if (cannotDragResize(props.data.position, true)) {
-      //不能拖动
+      // 不能拖动
       console.log('不能拖动')
       state.moveFlag = false
     } else {
@@ -331,9 +340,9 @@
       }
       emits('changeEvent', {
         type: 'move',
-        moveX: mxd, //移动的距离
+        moveX: mxd, // 移动的距离
         moveY: myd,
-        left: state.left, //移动的实时位置
+        left: state.left, // 移动的实时位置
         top: state.top
       })
       state.left = 0
@@ -355,9 +364,9 @@
   const tableEl = ref()
   const setTableCarousel = () => {
     if (
-      !config.value.carousel ||
-      !tableEl.value ||
-      props.data.type !== 'table'
+      !config.value.carousel
+      || !tableEl.value
+      || props.data.type !== 'table'
     ) {
       return
     }
@@ -406,9 +415,9 @@
   })
   const requestResult = ref()
   const newValue = computed(() => {
-    //const { afterFetch } = props.data.events || {}
+    // const { afterFetch } = props.data.events || {}
     const type = config.value.optionsType
-    //type1动态
+    // type1动态
     if (type === 1 && requestResult.value) {
       return requestResult.value
     }
@@ -416,7 +425,7 @@
   })
 
   const getUrlData = () => {
-    //console.log('getUrlData111')
+    // console.log('getUrlData111')
     if (['image', 'background', 'border', 'clock'].includes(props.data.type)) {
       return // 不支持动态数据获取的return
     }
@@ -432,9 +441,9 @@
         apiKey: requestUrl,
         params: {},
         before,
-        //afterFetch,这里不能传after事件，这个要特殊处理。回调的参数不一样
+        // afterFetch,这里不能传after事件，这个要特殊处理。回调的参数不一样
         options: { method: method },
-        //route,
+        // route,
         type: 'get'
       })
         .then((res: any) => {
@@ -443,11 +452,11 @@
             requestResult.value = after(resultData, getDataByType.value)
           } else {
             // 本地数据，需自定义开发
-            /*requestResult.value = formatScreen(
+            /* requestResult.value = formatScreen(
               after,
               resultData,
               getDataByType.value
-            )*/
+            ) */
           }
         })
         .catch((res: any) => {
@@ -457,9 +466,9 @@
   }
   // 获取动态数据相关结束
   const getReplaceGlobal = (data: any) => {
-    //转为字符串好替换预定的数据标识
-    //即将1. data:"{{getScreenGlobal.line.xAxis}}"转为data:getScreenGlobal.line.xAxis
-    //2. text:"标题{{getScreenGlobal.title}}"转为 text:"标题xxx"
+    // 转为字符串好替换预定的数据标识
+    // 即将1. data:"{{getScreenGlobal.line.xAxis}}"转为data:getScreenGlobal.line.xAxis
+    // 2. text:"标题{{getScreenGlobal.title}}"转为 text:"标题xxx"
     if (!data) {
       return data
     }
@@ -470,7 +479,7 @@
           return match.slice(3, -3)
         })
         .replace(/{{.*?}}/g, function (match) {
-          //2,-2即减去{{和}}，得到括号内的文本，作为函数执行
+          // 2,-2即减去{{和}}，得到括号内的文本，作为函数执行
           return new Function('return ' + match.slice(2, -2))()
         })
       return stringToObj(newStr)

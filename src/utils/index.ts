@@ -36,7 +36,6 @@ export const throttle = (func: Function, delay: number) => {
   return function (...args: any[]) {
     if (!timeoutId) {
       timeoutId = setTimeout(() => {
-        // @ts-ignore
         func.apply(this, args)
         timeoutId = null
       }, delay)
@@ -130,9 +129,9 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
   if (typeof data === 'object') {
     newData = JSON.stringify(data)
   }
-  /*if (!data) {
+  /* if (!data) {
     return
-  }*/
+  } */
   if (hour === 0) {
     window.localStorage.setItem(key, newData)
   } else if (hour && hour > 0) {
@@ -172,16 +171,17 @@ export const getStorage = (key: string, hour?: boolean) => {
           data = false
         }
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      /* empty */
       data = undefined
     }
   } else {
-    //保存时没传时间的，存在session里
+    // 保存时没传时间的，存在session里
     data = window.sessionStorage.getItem(key)
   }
   try {
     return JSON.parse(data)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return data
   }

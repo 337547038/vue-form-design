@@ -1,8 +1,14 @@
 <!--貌似这closable组件有问题，不能对指定项设置不显示关闭-->
 <template>
   <div class="tag-tabs">
-    <el-tabs v-model="activeName" @tab-change="handleClick">
-      <el-tab-pane label="首页" name="/" />
+    <el-tabs
+      v-model="activeName"
+      @tab-change="handleClick"
+    >
+      <el-tab-pane
+        label="首页"
+        name="/"
+      />
       <el-tab-pane
         v-for="(item, index) in tabsViews"
         :key="item.path"
@@ -12,20 +18,19 @@
         <template #label>
           <span class="tabs-label">
             <span>{{ item.title }}</span>
-            <el-icon @click="handleTabsRemove(item, index, $event)"
-              ><Close
-            /></el-icon>
+            <el-icon @click="handleTabsRemove(item, index, $event)"><Close /></el-icon>
           </span>
         </template>
       </el-tab-pane>
     </el-tabs>
     <el-icon
-      @click="clearTag"
+      v-if="tabsViews?.length > 0"
       class="clear-tag"
       title="清空全部"
-      v-if="tabsViews?.length > 0"
-      ><Close
-    /></el-icon>
+      @click="clearTag"
+    >
+      <Close />
+    </el-icon>
   </div>
 </template>
 
@@ -112,7 +117,7 @@
   watch(
     () => route.path,
     () => {
-      //console.log(route)
+      // console.log(route)
       setTabViews()
     }
   )

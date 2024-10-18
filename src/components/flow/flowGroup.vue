@@ -1,43 +1,69 @@
 <!-- Created by 337547038  -->
 <template>
-  <div class="flow-group" :class="{ 'flow-branch': isBranch }">
-    <div class="flow-branch-btn" v-if="isBranch && !type">
-      <el-button size="small" type="primary" plain round @click="addBranchClick"
-        >添加条件
+  <div
+    class="flow-group"
+    :class="{ 'flow-branch': isBranch }"
+  >
+    <div
+      v-if="isBranch && !type"
+      class="flow-branch-btn"
+    >
+      <el-button
+        size="small"
+        type="primary"
+        plain
+        round
+        @click="addBranchClick"
+      >
+        添加条件
       </el-button>
     </div>
     <div class="flow-row">
-      <div class="flow-col" v-for="(item, i) in flowBranch" :key="i">
-        <span class="mask-left" v-if="i === 0 && isBranch"></span>
+      <div
+        v-for="(item, i) in flowBranch"
+        :key="i"
+        class="flow-col"
+      >
         <span
-          class="mask-right"
+          v-if="i === 0 && isBranch"
+          class="mask-left"
+        />
+        <span
           v-if="i === flowBranch.length - 1 && isBranch"
-        ></span>
+          class="mask-right"
+        />
         <div
           class="flow-item"
           @click="itemClick(item, i as number, flowBranch.length)"
         >
-          <div class="title" :class="`bg-${item.nodeType}`">
-            <i :class="getIcon(item)"></i>
-            <span
-              >{{ nodeTypeName[item.nodeType]
-              }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span
-            >
+          <div
+            class="title"
+            :class="`bg-${item.nodeType}`"
+          >
+            <i :class="getIcon(item)" />
+            <span>{{ nodeTypeName[item.nodeType]
+            }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span>
             <i
-              class="icon-close close"
-              @click.stop="delClick(item)"
               v-if="
                 item.nodeType !== 1 &&
-                !type &&
-                !(i === flowBranch.length - 1 && isBranch)
+                  !type &&
+                  !(i === flowBranch.length - 1 && isBranch)
               "
-            ></i>
+              class="icon-close close"
+              @click.stop="delClick(item)"
+            />
           </div>
-          <div class="text" :title="getContent(item)">
+          <div
+            class="text"
+            :title="getContent(item)"
+          >
             <div>{{ getContent(item) }}</div>
           </div>
         </div>
-        <popover @click="addNodeClick($event, item)" v-if="!type" />
+        <popover
+          v-if="!type"
+          @click="addNodeClick($event, item)"
+        />
         <flow-group
           v-for="(group, j) in getChildrenNode(item)"
           :key="j"
@@ -48,7 +74,10 @@
         />
       </div>
     </div>
-    <popover v-if="isBranch && !type" @click="addNodeClick($event, data)" />
+    <popover
+      v-if="isBranch && !type"
+      @click="addNodeClick($event, data)"
+    />
   </div>
 </template>
 
@@ -153,13 +182,14 @@
   }
   const itemClick = (data: NodeList, index: number, length: number) => {
     if (
-      data.nodeType === 1 ||
-      (data.nodeType === 5 && index === flowBranch.value.length - 1)
+      data.nodeType === 1
+      || (data.nodeType === 5 && index === flowBranch.value.length - 1)
     ) {
       // 发起人节点和条件最后一个节点不能设置
     } else {
-      flowProps.value.openDrawer &&
+      if (flowProps.value.openDrawer) {
         flowProps.value.openDrawer(data, index, length)
+      }
     }
   }
   // const drawerConfirm = (obj: any) => {

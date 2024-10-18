@@ -2,10 +2,10 @@ import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import { removeStorage, getStorage, setStorage } from '@/utils'
 
-/*interface Breadcrumb {
+/* interface Breadcrumb {
   label: string
   to?: string
-}*/
+} */
 interface TabsViews {
   title: string
   path: string
@@ -19,7 +19,7 @@ export const useLayoutStore = defineStore('layout', {
       breadcrumb: [],
       tabs: tabs,
       reloadFlag: true, // 用于刷新路由
-      collapseMenu: getStorage('collapseMenu', true) || false //左侧菜单展开收起状态
+      collapseMenu: getStorage('collapseMenu', true) || false // 左侧菜单展开收起状态
     }
   },
   // 也可以定义为
@@ -54,7 +54,7 @@ export const useLayoutStore = defineStore('layout', {
     },
     // 保存登录的信息
     setLoginInfo(data: { [key: string]: string } = {}, saveUserInfo?: boolean) {
-      const expireTime = data.expire_time //有效时间
+      const expireTime = data.expire_time // 有效时间
       let time = 24
       if (expireTime) {
         time = parseInt(expireTime) / 1000 / 3600 // 将ms转为h

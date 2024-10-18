@@ -1,11 +1,14 @@
 <!-- Created by weiXin:337547038 -->
 <template>
-  <div v-loading="loading" class="container-screen">
+  <div
+    v-loading="loading"
+    class="container-screen"
+  >
     <i
       v-if="preview"
       class="icon-close close-preview"
       @click="preview = false"
-    ></i>
+    />
     <control-left :style="{ width: toolVisible('left') ? '' : '0px' }" />
     <div class="main-box">
       <head-tools @click="headToolsClick" />
@@ -155,8 +158,8 @@
     drawer.title = title || (getDrawerTitle as any)[type]
     drawer.visible = true
     drawer.callback = callback
-    let editData =
-      codeType === 'json'
+    let editData
+      = codeType === 'json'
         ? json2string(content, true)
         : objToStringify(content, true)
     switch (type) {
@@ -166,8 +169,6 @@
       case 'before':
       case 'after':
       case 'afterScreen':
-        console.log('caseafterScreen')
-        console.log(type)
         if (!content) {
           editData = getDrawerContent(type)
         }
@@ -184,7 +185,7 @@
     drawer.content = ''
   }
 
-  //****************数据相关****************//
+  //* ***************数据相关****************//
   const saveData = () => {
     const params: any = {
       data: objToStringify(screenData.value),
@@ -229,7 +230,7 @@
         loading.value = false
       })
   }
-  //****************数据相关****************//
+  //* ***************数据相关****************//
   onMounted(() => {
     getData()
   })

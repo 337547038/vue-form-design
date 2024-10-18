@@ -1,22 +1,27 @@
 <!-- Created by weiXin:337547038 -->
 <template>
   <div class="flow-add">
-    <el-popover placement="bottom-start" trigger="hover" width="400">
+    <el-popover
+      placement="bottom-start"
+      trigger="hover"
+      width="400"
+    >
       <template #reference>
-        <i class="icon-plus"></i>
+        <i class="icon-plus" />
       </template>
       <div class="flow-node-down">
         <h3>添加流程节点</h3>
         <div>
           <el-button
+            v-for="(item, index) in btnList"
+            :key="index"
             size="small"
             type="primary"
             plain
             @click="btnClick(item.key)"
-            v-for="(item, index) in btnList"
-            :key="index"
-            ><i :class="item.icon"></i> {{ item.label }}</el-button
           >
+            <i :class="item.icon" /> {{ item.label }}
+          </el-button>
         </div>
       </div>
     </el-popover>

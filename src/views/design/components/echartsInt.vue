@@ -1,9 +1,13 @@
 <template>
-  <div class="echarts" :style="style" ref="echartsEl"></div>
+  <div
+    ref="echartsEl"
+    class="echarts"
+    :style="style"
+  />
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, nextTick, watch, computed, watchEffect } from 'vue'
+  import { ref, onMounted, nextTick, watch, computed } from 'vue'
   import { debounce } from '@/utils'
   import { onBeforeRouteLeave } from 'vue-router'
   const props = withDefaults(

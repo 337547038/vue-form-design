@@ -12,44 +12,66 @@
       @clear="clearClick(-1)"
     >
       <template #append>
-        <el-button @click="open" :disabled="disabled">{{ btnText }} </el-button>
+        <el-button
+          :disabled="disabled"
+          @click="open"
+        >
+          {{ btnText }}
+        </el-button>
       </template>
     </el-input>
-    <div v-if="configShowType === 'img'" class="select-upload-img">
+    <div
+      v-if="configShowType === 'img'"
+      class="select-upload-img"
+    >
       <div class="select-upload-list">
         <div
-          class="upload-item"
           v-for="(item, index) in modelValueList"
           :key="item.fileUrl"
+          class="upload-item"
         >
-          <img :src="item.fileUrl" alt="" />
+          <img
+            :src="item.fileUrl"
+            alt=""
+          >
           <i
             v-show="!disabled"
             class="icon-close"
             @click.stop="clearClick(index as number)"
-          ></i>
+          />
         </div>
       </div>
-      <i class="icon-plus" @click="open" :class="{ disabled: disabled }"></i>
+      <i
+        class="icon-plus"
+        :class="{ disabled: disabled }"
+        @click="open"
+      />
     </div>
-    <div class="select-upload-btn" v-else-if="configShowType === 'btn'">
+    <div
+      v-else-if="configShowType === 'btn'"
+      class="select-upload-btn"
+    >
       <el-button
         :disabled="disabled"
         v-bind="control"
         icon="UploadFilled"
         type="primary"
         @click="open"
-        >{{ btnText }}
+      >
+        {{ btnText }}
       </el-button>
       <div class="select-upload-file">
         <ul>
-          <li v-for="(item, index) in modelValueList" :key="item">
+          <li
+            v-for="(item, index) in modelValueList"
+            :key="item"
+          >
             {{ item.fileUrl }}
             <i
               v-show="!disabled"
               class="icon-close"
               @click.stop="clearClick(index as number)"
-            ></i>
+            />
           </li>
         </ul>
       </div>

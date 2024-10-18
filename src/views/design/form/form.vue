@@ -1,10 +1,13 @@
 <!-- Created by weiXin:337547038 -->
 <template>
-  <div v-loading="state.loading" style="min-height: 300px">
+  <div
+    v-loading="state.loading"
+    style="min-height: 300px"
+  >
     <ak-form
       ref="formEl"
       :data="state.formData"
-      :operateType="formType"
+      :operate-type="formType"
       :api-key="{
         get: 'getFormContent',
         add: 'saveFormContent',
@@ -20,11 +23,11 @@
 {meta:{permissions:'none'}}
 </route>
 <script setup lang="ts">
-  import { ref, reactive, onMounted, computed, nextTick } from 'vue'
+  import { ref, reactive, onMounted, computed } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getRequest } from '@/api'
   import { ElMessage } from 'element-plus'
-  import { string2json, stringToObj } from '@/utils/design'
+  import { stringToObj } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
   const layoutStore = useLayoutStore()
   const route = useRoute()

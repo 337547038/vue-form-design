@@ -16,8 +16,8 @@
     />
     <el-dialog
       v-if="canOpenDialog"
-      destroy-on-close
       v-model="dialog.visible"
+      destroy-on-close
       :title="dialog.title"
       :width="dialog.width || '600px'"
       :before-close="beforeClose"
@@ -32,8 +32,8 @@
         edit-url="editFormContent"
         :after-submit="afterSubmit"
         :params="{ formId: state.source }"
-        @btn-click="dialogBtnClick"
         :query="{ formId: state.source, id: dialog.editId }"
+        @btn-click="dialogBtnClick"
       />
     </el-dialog>
   </div>
@@ -96,7 +96,7 @@
       initList()
     },
     {
-      //deep: true
+      // deep: true
     }
   )
   const beforeFetch = (params: any) => {
@@ -116,7 +116,7 @@
     }
     return params
   }
-  /*****弹窗口相关****/
+  /** ***弹窗口相关****/
   const formEl = ref()
   const dialog = reactive({
     visible: false,
@@ -182,7 +182,7 @@
           })
         }
       } else {
-        //跳转方式
+        // 跳转方式
         router.push({
           path: '/design/form/form/',
           query: { form: state.source, id: row?.id }
@@ -208,7 +208,9 @@
   }
   const beforeClose = (done: any) => {
     closeResetDialog()
-    done && done()
+    if (done) {
+      done()
+    }
   }
   // 关闭弹窗并重置表单
   const closeResetDialog = () => {
@@ -216,7 +218,7 @@
     dialog.editId = ''
     // formEl.value.resetFields() // 重置表单
   }
-  /*****弹窗口相关结束****/
+  /** ***弹窗口相关结束****/
   onMounted(() => {
     initList()
   })

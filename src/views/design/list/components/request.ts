@@ -1,10 +1,10 @@
-//数据处理
+// 数据处理
 import { getRequest } from '@/api'
 import { string2json, stringToObj } from '@/utils/design.ts'
 import type { FormList } from '@/types/form.ts'
-//根据id获取编辑数据
+// 根据id获取编辑数据
 export const getInitData = (id: string) => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     getRequest('designById', { id: id }).then((res: { data: any }) => {
       const result = res.data
       const tableData = stringToObj(result.listData) // 列表数据
@@ -16,7 +16,7 @@ export const getInitData = (id: string) => {
 }
 //  获取所有可用的表单数据源
 export const getFormSourceList = (name?: string) => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const params = {
       extend: {
         pageSize: 20
@@ -31,13 +31,13 @@ export const getFormSourceList = (name?: string) => {
     })
   })
 }
-//根据选择的表单数据源获取可用的表头信息
+// 根据选择的表单数据源获取可用的表头信息
 export const getFormColumns = (id: number) => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     getRequest('designById', { id: id }).then(
       (res: { data: { data: string } }) => {
         const content = stringToObj(res.data.data)
-        //filterFiled(content)
+        // filterFiled(content)
         resolve(filterFiled(content))
       }
     )
