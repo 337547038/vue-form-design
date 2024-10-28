@@ -97,6 +97,7 @@ export default tseslint.config(
       'no-console': 'off',
       '@stylistic/indent': ['off', 2],
       'vue/multi-word-component-names': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off', // 允许使用a&&a()这种简单写法
     },
   },
 )

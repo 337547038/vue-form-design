@@ -43,7 +43,9 @@ $mainColor: #66b1ff;
   }
 }
 
-.ak-form{}
+.ak-form{
+  .group-btn{display: flex;justify-content: center}
+}
 
 .ak-form-add {padding: 10px;box-sizing: border-box;
   // 格珊

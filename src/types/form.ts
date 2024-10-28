@@ -60,6 +60,5 @@ export interface FormData {
 
 export interface ApiKey {
   get?: string // 根据id获取编辑数据
-  edit?: string // 修改保存
-  add?: string // 新增保存
+  submit?: string // 新增修改保存
 }

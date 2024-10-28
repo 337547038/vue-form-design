@@ -16,9 +16,9 @@
       <ak-form
         ref="formEl"
         :data="dialogFormData"
-        :type="2"
-        edit-url="designEdit"
-        :after-submit="afterSubmit"
+        operate-type="edit"
+        submit-url="designEdit"
+        :after="afterSubmit"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -28,6 +28,7 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { ref, reactive, nextTick } from 'vue'
+  import AkForm from '@/components/form/index.vue'
 
   const router = useRouter()
   const dialog = reactive({
@@ -67,7 +68,8 @@
         prop: 'creatDate',
         label: '创建时间',
         width: 200,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        render: 'datetime',
+        config: {}
       },
       {
         label: '操作', prop: 'control', width: '240px', fixed: 'right', render: 'buttons', buttons: [
@@ -224,6 +226,7 @@
         options: [],
         config: {
           optionsType: 2,
+          transformData: 'string',
           optionsFun: 'sys-status'
         },
         name: 'status',
@@ -243,8 +246,8 @@
       submitCancel: true
     }
   })
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
+  const afterSubmit = (res: any, success: boolean) => {
+    if (success) {
       dialog.visible = false
       tableListEl.value.getListData() // 重新拉数据
     }

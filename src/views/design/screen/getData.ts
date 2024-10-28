@@ -10,13 +10,14 @@ export const getInitData = (id: string | number, route?: any) => {
     }
     // 获取初始表单数据
     getRequest('designById', { id: id })
-      .then((res: { data: any }) => {
+      .then(async (res: { data: any }) => {
         const result = res.data
         const resultData = stringToObj(result.data)
         if (resultData.config?.style) {
           appendOrRemoveStyle('screenStyle', resultData.config.style, true)
         }
-        getGlobalData(resultData.config, route).then()
+        window.getScreenGlobal = {}
+        await getGlobalData(resultData.config, route)
         resolve(resultData)
       })
       .catch((res: any) => {
@@ -47,6 +48,8 @@ export const getGlobalData = (config: any, route?: any) => {
         .catch((res: any) => {
           reject(res)
         })
+    } else {
+      resolve()
     }
   })
 }

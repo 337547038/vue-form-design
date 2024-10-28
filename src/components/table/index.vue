@@ -225,6 +225,7 @@
   import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
   import Tooltip from '@/components/tooltip/index.vue'
   import type { FormData } from '@/types/form'
+  import type { EventType } from '@/types/table'
   import { TableData, ApiKey } from '@/types/table'
   import { dateFormatting, getStorage } from '@/utils'
   import ListTreeSide from './treeSide.vue'
@@ -255,6 +256,9 @@
       searchData: () => {
         return { list: [], form: {} }
       },
+      apiKey: () => {
+        return {}
+      },
       dict: () => {
         return {}
       },
@@ -269,7 +273,8 @@
           pageSize: 20,
           current: 1
         }
-      }
+      },
+      pk: 'id'
     }
   )
   const emits = defineEmits<{

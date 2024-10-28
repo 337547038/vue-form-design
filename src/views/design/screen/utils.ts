@@ -7,6 +7,7 @@ import { ElMessage } from 'element-plus'
 const isNumber = (val: any): boolean => {
   try {
     return /^-?\d+(\.\d+)?$/.test(val.toString())
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return false
   }
@@ -16,7 +17,7 @@ const isNumber = (val: any): boolean => {
  * 移除单位方便作运算
  * @param value
  */
-export const removeUnit = value => {
+export const removeUnit = (value) => {
   if (Number.isFinite(value)) {
     return Math.round(value)
   }
@@ -30,7 +31,7 @@ export const removeUnit = value => {
  * 将数字去掉小数并添加单位
  * @param value
  */
-export const addUnit = value => {
+export const addUnit = (value) => {
   if (value === 0 || value === '0') {
     return 0
   }
@@ -66,9 +67,9 @@ export const cannotDragResize = (rect: any, tips?: boolean): boolean => {
   const top: boolean = !isNumberOrPx(rect.top)
   const width: boolean = !isNumberOrPx(rect.width)
   const height: boolean = !isNumberOrPx(rect.height)
-  //console.log(bottom, right, top, width, height, left, top)
-  const result: boolean =
-    bottom || right || top || width || height || left || top
+  // console.log(bottom, right, top, width, height, left, top)
+  const result: boolean
+    = bottom || right || top || width || height || left || top
   if (tips && result) {
     ElMessage.error('仅支持使用了left和top的px单位允许操作!')
   }
@@ -82,12 +83,12 @@ export const cannotDragResize = (rect: any, tips?: boolean): boolean => {
  */
 export const canRectSelect = (obj: any) => {
   const { type, config = {}, position = {} } = obj
-  //符合任一条件都不能选中
+  // 符合任一条件都不能选中
   return !(
-    type === 'div' ||
-    type === 'group' ||
-    type === 'tempRect' ||
-    config.lock ||
-    position.display
+    type === 'div'
+    || type === 'group'
+    || type === 'tempRect'
+    || config.lock
+    || position.display
   )
 }

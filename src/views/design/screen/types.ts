@@ -6,8 +6,8 @@ export interface Config {
   requestUrl?: string
   method?: string
   loopTime?: number
-  beforeFetch?: Function
-  afterFetch?: Function | string
+  before?: function
+  after?: function | string
 }
 export interface CSSProperties {
   width: number | string
@@ -30,23 +30,23 @@ export interface ScreenData {
   layerName?: string
 }
 export interface OpenDrawer {
-  //visible: boolean
+  // visible: boolean
   title?: string
   direction?: string
   content?: any
   codeType?: string
-  callback?: Function | string
+  callback?: () => void | string
   type: string
   tips?: string
 }
 
 export interface UpdatePosition {
-  type: string //事件类型
+  type: string // 事件类型
   left?: number
   top?: number
   width?: number
   height?: number
-  moveX?: number //移动的距离
+  moveX?: number // 移动的距离
   moveY?: number
   eventKey?: string
 }

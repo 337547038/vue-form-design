@@ -4,7 +4,7 @@
       <h3>后台管理系统</h3>
       <ak-form
         ref="formEl"
-        :api-key="{ add: 'loginSubmit' }"
+        submit-url="loginSubmit"
         :after="afterSubmit"
         :data="formData"
         :before="beforeSubmit"

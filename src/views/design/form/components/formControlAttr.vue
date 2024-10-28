@@ -415,19 +415,13 @@
             </div>
             <el-form-item label="新增数据保存url">
               <el-input
-                v-model="formData.apiKey.add"
+                v-model="formData.config.submitUrl"
                 placeholder="表单提交的url，通用提交时可不设置"
-              />
-            </el-form-item>
-            <el-form-item label="修改数据保存url">
-              <el-input
-                v-model="formData.apiKey.edit"
-                placeholder="修改提交的url，通用提交时可不设置"
               />
             </el-form-item>
             <el-form-item label="获取表单数据url">
               <el-input
-                v-model="formData.apiKey.get"
+                v-model="formData.config.requestUrl"
                 placeholder="获取表单数据url，通用提交时可不设置"
               />
             </el-form-item>

@@ -1,6 +1,9 @@
 <template>
   <div style="width: 100%">
-    <el-table :data="tableData" style="margin-bottom: 10px">
+    <el-table
+      :data="tableData"
+      style="margin-bottom: 10px"
+    >
       <el-table-column
         v-for="item in columns"
         :key="item.prop"
@@ -9,23 +12,42 @@
       />
       <el-table-column width="110px">
         <template #default="{ row, $index }">
-          <el-button type="primary" link @click="rowEditClick(row, $index)"
-            >编辑</el-button
-          >
           <el-button
             type="primary"
             link
-            @click="rowDelClick(row, $index)"
-            v-if="row.isNew"
-            >删除</el-button
+            @click="rowEditClick(row, $index)"
           >
+            编辑
+          </el-button>
+          <el-button
+            v-if="row.isNew"
+            type="primary"
+            link
+            @click="rowDelClick(row, $index)"
+          >
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-button @click="showFormClick" size="small">添加一行</el-button>
+    <el-button
+      size="small"
+      @click="showFormClick"
+    >
+      添加一行
+    </el-button>
     <div v-show="showForm">
-      <ak-form ref="formEl" :data="formData" :type="statusType">
-        <el-button @click="addRowSubmit" type="primary">保存</el-button>
+      <ak-form
+        ref="formEl"
+        :data="formData"
+        :type="statusType"
+      >
+        <el-button
+          type="primary"
+          @click="addRowSubmit"
+        >
+          保存
+        </el-button>
       </ak-form>
     </div>
   </div>
@@ -306,9 +328,9 @@
     statusType.value = props.type
   }
   const rowDelClick = (row: TableList, index: number) => {
-    showForm.value = false //如果已有展开添加行时，则收起
+    showForm.value = false // 如果已有展开添加行时，则收起
     if (props.type === 2) {
-      //编辑状态，在编辑状态下新添加的才允许删，以前的不能删
+      // 编辑状态，在编辑状态下新添加的才允许删，以前的不能删
       if (row.isNew !== 1) {
         ElMessage.error(`新添加的才能删除`)
         return
@@ -317,7 +339,7 @@
     tableData.value.splice(index, 1)
   }
   const showFormClick = () => {
-    formEl.value.resetFields() //先清空上一次的
+    formEl.value.resetFields() // 先清空上一次的
     showForm.value = true
     editRowIndex.value = undefined
     statusType.value = 1 // 点新增一行，表单都为增加模式
@@ -327,7 +349,7 @@
    */
   const addRowSubmit = () => {
     if (editRowIndex.value !== undefined) {
-      //修改后会直接更新到当前数据
+      // 修改后会直接更新到当前数据
       const newRow = formEl.value.getValue()
       tableData.value.splice(editRowIndex.value, 1, newRow)
       editRowIndex.value = undefined
@@ -335,17 +357,17 @@
     } else {
       formEl.value.validate((valid: boolean, fieldValue: TableList) => {
         if (valid) {
-          //判断表名字重复
+          // 判断表名字重复
           let hasFiled = false
           tableData.value.forEach((item: TableList) => {
             if (item.name === fieldValue.name) {
-              //重复了
+              // 重复了
               hasFiled = true
             }
           })
           if (
-            ['INT', 'VARCHAR'].includes(fieldValue.type) &&
-            !fieldValue.length
+            ['INT', 'VARCHAR'].includes(fieldValue.type)
+            && !fieldValue.length
           ) {
             ElMessage.error(`名字列${fieldValue.name}的长度值不能为空`)
             return

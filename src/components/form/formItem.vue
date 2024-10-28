@@ -414,7 +414,7 @@
       const { filterable, remote } = props.data.control
       if (optionsType === 2 && optionsFun) {
         // 从字典获取
-        const dictVal = formProps.value.dict
+        const dictVal = formProps.dict
         if (dictVal) {
           const opt = dictVal[optionsFun]
           if (opt !== undefined) {

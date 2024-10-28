@@ -15,7 +15,8 @@
 | data        | object                                                       | 设计的生成表单数据                                |
 | operateType | string                                                       | 表单展示模式，可选`add、edit、detail、design、search` |
 | disabled    | boolean/false                                                | 表单禁用模式，类似于表单模式查看                         |
-| apiKey      | {add:'',edit:'',get:''}                                      | 接口url                                    |
+| submitUrl   | string                                                       | 表单提交url                                  |
+| requestUrl  | string                                                       | 用于显示表单数据，请求url                           |
 | before      | string / ((params: any, obj: any) => any)                    | 表单接口请求前事件                                |
 | after       | string / ((res: any, success: Boolean, type: string) => any) | 表单接口请求事件                                 |
 | query       | object                                                       | 一些附加的请求参数。也可在`before`处添加                 |
@@ -134,13 +135,9 @@ formData = {
       submitCancel: true,
       name: "保存的表单名称",
       sourceId: 20,
-      transformData: true
-    },
-  apiKey:
-    {
-      add: "add",
-      edit: "edit",
-      get: "get"
+      transformData: true,
+      submitUrl: "", // 表单提交保存接口url
+      requestUrl: "" // 获取表单初始数据url
     },
   events:
     {

@@ -25,9 +25,9 @@
       <ak-form
         ref="formEl"
         :data="dialogFormData"
-        :type="2"
-        edit-url="designEdit"
-        :after-submit="afterSubmit"
+        operate-type="edit"
+        submit-url="designEdit"
+        :after="afterSubmit"
         :btn-click="btnClick"
       />
     </el-dialog>
@@ -61,7 +61,8 @@
         label: '分类',
         config: {},
         render: 'tag',
-        replaceValue: 'sys-form'
+        replaceValue: 'sys-form',
+        custom: { 1: 'success', 2: 'danger' }
       },
       {
         prop: 'status',
@@ -90,7 +91,8 @@
         label: '更新时间',
         width: 200,
         config: {},
-        timeFormat: '{yyyy}-{mm}-{dd}'
+        render: 'datetime',
+        // timeFormat: '{yyyy}-{mm}-{dd}'
       },
       {
         label: '操作',
@@ -191,7 +193,9 @@
         },
         config: {
           optionsType: 2,
-          optionsFun: 'sys-form'
+          optionsFun: 'sys-form',
+          span: 3,
+          transformData: 'string'
         },
         name: 'category',
         formItem: {

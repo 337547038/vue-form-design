@@ -27,7 +27,10 @@
         :params="{ id: dialog.id }"
         @btn-click="cancelClick"
       >
-        <child-table v-model="childTableData" :type="dialog.type" />
+        <child-table
+          v-model="childTableData"
+          :type="dialog.type"
+        />
       </ak-form>
       <div class="tips">
         提示：默认会添加id自增主键；其中标题作为表单的label值，组件类型仅用于一健创建表单；模糊搜索用于条件查询时
@@ -272,7 +275,7 @@
   })
   const afterFetch = (type: string, params: any) => {
     const tableData = JSON.parse(params.tableData)
-    //如果有isNew标识则删除
+    // 如果有isNew标识则删除
     tableData.forEach((item: any) => {
       if (item.isNew) {
         delete item.isNew
@@ -307,10 +310,12 @@
       beforeClose()
     }
   }
-  //关闭时清空
+  // 关闭时清空
   const beforeClose = (done?: any) => {
     childTableData.value = []
-    done && done()
+    if (done) {
+      done()
+    }
   }
   onMounted(() => {
     if (route.query.source) {

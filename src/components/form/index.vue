@@ -1,23 +1,27 @@
 <!-- Created by 337547038 on 2021/9/25. -->
 <template>
   <el-form
-    class="ak-form"
-    v-loading="loading"
     v-bind="data.form"
     ref="ruleForm"
+    v-loading="loading"
+    class="ak-form"
     :model="model as any"
     :disabled="disabled || operateType === 'detail'"
     :class="[`ak-form-${operateType}`]"
   >
     <form-group :data="data.list" />
-    <slot></slot>
-    <div class="group group-btn" v-if="defaultBtnList.length">
+    <slot />
+    <div
+      v-if="defaultBtnList.length"
+      class="group group-btn"
+    >
       <el-button
         v-for="item in defaultBtnList"
         :key="item.key"
         v-bind="item"
         @click="defaultBtnClick(item)"
-        >{{ item.label }}
+      >
+        {{ item.label }}
       </el-button>
     </div>
   </el-form>
@@ -42,7 +46,7 @@
   import { getStorage } from '@/utils'
   import { beforeAfter, getRequestEvent } from '@/utils/beforeAfter'
 
-  defineOptions({ name: 'akForm' })
+  defineOptions({ name: 'AkForm' })
   const props = withDefaults(
     defineProps<{
       data: FormData
@@ -51,7 +55,8 @@
       after?: string | ((res: any, obj: any) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
       query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
       params?: { [key: string]: any } // 提交表单一些附加参数
-      apiKey?: ApiKey
+      submitUrl?: string // 表单提交url
+      requestUrl?: string // 用于回显填充数据请求数据url
       operateType: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型
     }>(),
     {
@@ -59,8 +64,7 @@
         return {
           list: [],
           form: {},
-          config: {},
-          apiKey: {}
+          config: {}
         }
       },
       dict: () => {
@@ -72,7 +76,11 @@
       params: () => {
         return {}
       },
-      operateType: 'add'
+      operateType: 'add',
+      submitUrl: '',
+      requestUrl: '',
+      before: () => {},
+      after: () => {}
     }
   )
   const emits = defineEmits<{
@@ -98,8 +106,8 @@
   const defaultBtnList = computed(() => {
     const submitBtn = props.data.config?.submitCancel
     if (
-      submitBtn === true ||
-      (typeof submitBtn === 'object' && submitBtn?.length)
+      submitBtn === true
+      || (typeof submitBtn === 'object' && submitBtn?.length)
     ) {
       let submit = ''
       let cancel = ''
@@ -158,7 +166,7 @@
         resetFields() // 重置
         break
       case 'cancel': // 取消返回，
-        router.go(-1) //这个刷新后可能会失败
+        router.go(-1) // 这个刷新后可能会失败
         break
     }
   }
@@ -175,12 +183,10 @@
       getValueEvent = `get${formName}ValueByName`
       if (formName) {
         // 根据name获取当前数据项
-        // @ts-ignore
         window[eventName] = (name: string) => {
           return getNameForEach(props.data.list, name)
         }
         // 根据name获取当前项的值
-        // @ts-ignore
         window[getValueEvent] = (name: string) => {
           return model.value[name]
         }
@@ -342,7 +348,7 @@
   }
   provide('akGetControlByName', getControlByName)
 
-  //provide相关
+  // provide相关
   /**
    * 表单组件改变事件
    * @param name 当前组件的name，即form-item的prop值
@@ -382,7 +388,7 @@
    * @param params 一般情况下只需传一个id即可{id:xx}
    */
   const getData = (params = {}) => {
-    const requestUrl = props.data.apiKey?.get || props.apiKey.get
+    const requestUrl = props.data.requestUrl || props.requestUrl
     if (props.operateType === 'design' || !requestUrl || isSearch.value) {
       console.error('执行了获取数据方法，但配置有误！')
       return
@@ -402,7 +408,7 @@
         loading.value = false
         const result = res.data
         if (result) {
-          const formatRes: any = result.result || result || {} //兼容两种返回格式
+          const formatRes: any = result.result || result || {} // 兼容两种返回格式
           // 这里尝试将string转obj以恢复提交保存时的转换
           let temp: any = {}
           if (props.data.config?.transformData) {
@@ -434,9 +440,7 @@
    * @param params
    */
   const submit = (params = {}) => {
-    const { add = props.apiKey.add, edit = props.apiKey.edit } =
-      props.data.apiKey || {}
-    const apiUrl = props.operateType === 'add' ? add : edit
+    const apiUrl = props.submitUrl || props.data.submitUrl
     if (isSearch.value || !apiUrl || loading.value) {
       if (!isSearch.value && !apiUrl) {
         console.error(new Error('请配置表单提交url'))
@@ -474,9 +478,9 @@
             loading.value = false
             ElMessage.success(res.message || '保存成功！')
           })
-          .catch(res => {
-            //接口返回code!=1时已统一提示异常，这里不重复提示
-            //接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
+          .catch((res) => {
+            // 接口返回code!=1时已统一提示异常，这里不重复提示
+            // 接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
             if (res.code === undefined) {
               ElMessage.error(res.message || '处理异常！')
             }
@@ -499,7 +503,7 @@
   // 一些所需参数
   const akFormProps = reactive({
     operateType: props.operateType,
-    model: model.value,
+    model: model,
     hideField: props.data.config?.hideField as [],
     dict: dictForm.value
   })
@@ -509,13 +513,13 @@
     ruleForm.value.resetFields()
   }
   onBeforeRouteLeave(() => {
-    unWatchStyle() //销毁监听器
-    unWatchEvent() //销毁监听器
-    unWatch2() //销毁监听器
+    unWatchStyle() // 销毁监听器
+    unWatchEvent() // 销毁监听器
+    unWatch2() // 销毁监听器
   })
 
   onMounted(() => {
-    //getInitModel()
+    // getInitModel()
     nextTick(() => {
       appendRemoveStyle(true)
     })

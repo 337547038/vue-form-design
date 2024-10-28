@@ -57,17 +57,16 @@
 
 编写有样式时会在当前页面head中插入style脚本，作用范围为当前页面。相当于.vue文件中的style scoped中的样式。
 
-### - 新增数据保存url
-`apiKey.add`
+### - 新增修改数据保存url
+`config.submit`
 
 点击表单提交按钮后数据保存的url接口地址，如当前表单设定了数据源，提交时则保存到对应的数据库表中，此时可不设置
-### - 修改数据保存url
-`apiKey.edit`
+
 
 同add
 
 ### - 获取表单数据url
-`apiKey.get`
+`config.requestUrl`
 
 编辑时获取表单初始值接口url，用法同add
 
@@ -185,9 +184,7 @@ const opt={
     config:
       {
         submitCancel: false
-      },
-    apiKey:
-      {}
+      }
   });
 </script>
 ```
@@ -367,9 +364,7 @@ const formData = ref({
   config:
     {
       submitCancel: false
-    },
-  apiKey:
-    {}
+    }
 })
 </script>
 ```
@@ -455,9 +450,7 @@ const formData = ref({
     config:
       {
         submitCancel: true
-      },
-    apiKey:
-      {}
+      }
   })
 </script>
 ```

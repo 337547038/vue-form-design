@@ -37,13 +37,9 @@
     getInitData(route.params.id)
       .then((res: any) => {
         loading.value = false
-        screenData.value = res.screenData
+        screenData.value = res
       })
-      .catch((res) => {
-        if (res?.screenData) {
-          // 一个请求成功进
-          screenData.value = res.screenData
-        }
+      .catch(() => {
         loading.value = false
       })
   }
