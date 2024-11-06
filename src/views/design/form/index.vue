@@ -37,7 +37,7 @@
       @confirm="dialogConfirm"
     />
     <vue-file
-      v-if="!['search'].includes(state.designType)"
+      v-if="!['search'].includes(state.operateType)"
       ref="vueFileEl"
     />
     <el-dialog
@@ -145,7 +145,7 @@
           // 恢复表单名称
           formData.value.config.sourceId = result.source
           formData.value.config.name = result.name
-          if (result.source && state.designType !== 'search') {
+          if (result.source && state.operateType !== 'search') {
             // 加载属性侧边栏的字段标识，搜索时不需要请求
             formControlAttrEl.value.getFormFieldBySource(result.source)
           }
@@ -161,11 +161,12 @@
   // 将数据保存在服务端
   const saveData = () => {
     // 添加校验，没有选择数据源时则必须要配置接口url
-    const { submitUrl, editUrl, requestUrl } = formData.value.config
+    const { id, redirect } = route.query
+    const { submitUrl, requestUrl } = formData.value.config
     if (
       !formData.value.config.sourceId
-      && (!submitUrl || !editUrl || !requestUrl)
-      && state.designType !== 'search'
+      && (!submitUrl || !requestUrl)
+      && state.operateType !== 'search'
     ) {
       ElMessage.error('请选择数据源或配置接口url地址，否则表单无法提交保存')
       return
@@ -173,22 +174,22 @@
     let params: any = {
       data: objToStringify(formData.value),
       source: formData.value.config.sourceId, // 数据源允许在表单属性设置里修改的
-      name: formData.value.config.name, // 表单名称，用于在显示所有已创建的表单列表里显示
+      name: formData.value.config.name || '未命名', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1 // 1表单 2列表
     }
     let apiKey = 'designSave'
-    if (route.id) {
+    if (id) {
       // 编辑状态 当前记录id
-      Object.assign(params, { id: route.id })
+      Object.assign(params, { id: id })
       apiKey = 'designEdit'
     } else {
       params.status = 1 // 添加时默认启用
     }
     // 列表搜索模式下只有修改
-    if (state.designType === 'search') {
+    if (state.operateType === 'search') {
       params = {
         data: objToStringify(formData.value),
-        id: route.id
+        id: id
       }
     }
     state.loading = true
@@ -199,11 +200,11 @@
           type: 'success'
         })
         // 根据不同情况跳转到不同地址
-        const path = route.redirect || '/design/form/list'
+        const path = redirect || '/design/form/list'
         const query: any = {}
-        if (route.redirect && route.redirect.indexOf('?') !== -1) {
+        if (redirect && redirect.indexOf('?') !== -1) {
           // 带有问号参数时，放在path传是有问题的，将id=1转为{id:1}
-          const p = route.redirect.split('?')[1]
+          const p = redirect.split('?')[1]
           const pSplit = p.split('&')
           pSplit.forEach((item: string) => {
             const splitItem = item.split('=')
@@ -386,10 +387,12 @@
   onMounted(() => {
     getInitData()
     stringFormData.value = JSON.stringify(formData.value)
-    if (route.source) {
+    const source = route.query.source
+    if (source) {
       // 从数据源一键创建过来时带有source参数
+      formData.value.config.sourceId = source
       formControlAttrEl.value.getFormFieldBySource(
-        route.source,
+        source,
         (list: any) => {
           formData.value.list = getOneFormCreation(list)
         }

@@ -566,7 +566,8 @@
         value: formConfig.value.transformData,
         type: 'switch',
         path: 'config',
-        key: 'transformData'
+        key: 'transformData',
+        hide: isSearch.value,
       }
     ]
   })

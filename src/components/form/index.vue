@@ -38,7 +38,7 @@
     reactive
   } from 'vue'
   import FormGroup from './formGroup.vue'
-  import { FormData, FormList, ApiKey } from '@/types/form'
+  import { FormData, FormList } from '@/types/form'
   import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { appendOrRemoveStyle, jsonParseStringify } from '@/utils/design'
@@ -57,7 +57,7 @@
       params?: { [key: string]: any } // 提交表单一些附加参数
       submitUrl?: string // 表单提交url
       requestUrl?: string // 用于回显填充数据请求数据url
-      operateType: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型
+      operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型
     }>(),
     {
       data: () => {
@@ -87,7 +87,7 @@
     (e: 'btnClick', type: string): void
     (
       e: 'change',
-      { name: string, value: any, model: any, prop: string, options: any }
+      { name, value, model, prop, options }: { name: string, value: any, model: any, prop: string, options: any }
     ): void // 表单组件值发生变化时
   }>()
 
@@ -335,6 +335,7 @@
     try {
       const style = props.data.config?.style || ''
       appendOrRemoveStyle('formStyle', style, type)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       /* empty */
     }
@@ -415,6 +416,7 @@
             for (const key in formatRes) {
               try {
                 temp[key] = JSON.parse(formatRes[key])
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
               } catch (e) {
                 temp[key] = formatRes[key]
               }
@@ -527,7 +529,6 @@
   })
   onUnmounted(() => {
     if (eventName) {
-      // @ts-ignore
       window[eventName] = ''
     }
     appendRemoveStyle()

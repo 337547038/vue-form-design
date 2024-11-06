@@ -66,9 +66,8 @@
                     v-for="item in data.columns"
                     :key="item.prop || item.type"
                     :value="item.prop || item.type"
-                  >
-                    {{ item.label }}
-                  </el-checkbox>
+                    :label="item.label"
+                  />
                 </el-checkbox-group>
               </template>
               <template #reference>
@@ -180,7 +179,7 @@
                     class="btn-group"
                     :row="scope.row"
                     :buttons="mergeDefaultBtn(item.buttons, 'right')"
-                    :dropdown="item.config?.dropdown"
+                    :dropdown="props.data.config?.operateDropdown"
                     @click="tableBtnClick(scope.row, $event)"
                   />
                 </template>
@@ -472,7 +471,7 @@
   // 处理时间
   const getDateFormat = (obj: any, row: any) => {
     const val = getRenderFormatValue(row, obj)
-    if (!obj) {
+    if (!obj || !val) {
       return val
     }
     let formatType = obj.timeFormat // 指定格式时

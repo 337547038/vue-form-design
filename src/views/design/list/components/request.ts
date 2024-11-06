@@ -38,7 +38,8 @@ export const getFormColumns = (id: number) => {
       (res: { data: { data: string } }) => {
         const content = stringToObj(res.data.data)
         // filterFiled(content)
-        resolve(filterFiled(content))
+        const defaultSearch = content.list?.filter((item: any) => ['input', 'select'].includes(item.type))
+        resolve({ data: filterFiled(content), defaultSearch: defaultSearch })
       }
     )
   })

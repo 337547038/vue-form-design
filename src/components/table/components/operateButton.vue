@@ -65,12 +65,14 @@
       row: any // 表格右侧是当前行数据，表格上面按钮时为勾选中的行
       buttons: Button[]
       position?: string // 位置
-      dropdown?: number // 按钮最大显示个数，超出以下拉形式展示
+      dropdown?: number | string | undefined // 按钮最大显示个数，超出以下拉形式展示
     }>(),
     {
       row: () => {
         return {}
-      }
+      },
+      position: '',
+      dropdown: ''
     }
   )
   const emits = defineEmits<{
@@ -103,7 +105,7 @@
         message: title,
         confirmButtonText: confirmButtonText,
         cancelButtonText: cancelButtonText,
-        callback: (action: Action) => {
+        callback: (action: any) => {
           if (action === 'confirm') {
             btnClick(btn)
           }

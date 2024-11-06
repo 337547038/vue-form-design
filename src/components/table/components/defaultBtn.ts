@@ -64,7 +64,8 @@ export const mergeDefaultBtn = (buttons: any, position = 'top') => {
     // 同时返回有权限的
     if (permission(item.permission)) {
       if (item.key && includeBtn.includes(item.key)) {
-        if (item.key === 'del') {
+        if (item.key === 'del' && !item.render) {
+          item.render = 'confirm' // 自动添加popConfirm相关代码
           item.popConfirm = Object.assign(
             defaultBtn[item.key].popConfirm,
             item.popConfirm || {}

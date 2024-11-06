@@ -43,11 +43,11 @@ $mainColor: #66b1ff;
   }
 }
 
-.ak-form{
-  .group-btn{display: flex;justify-content: center}
+.ak-form {
+  .group-btn {display: flex;justify-content: center}
 }
 
-.ak-form-add {padding: 10px;box-sizing: border-box;
+.ak-form-add,.ak-form-edit {padding: 10px;box-sizing: border-box;
   // 格珊
   .form-row {
     .form-col {
@@ -149,7 +149,7 @@ $mainColor: #66b1ff;
   }
 }
 
-.ak-form-design {min-height: calc(100vh - 126px);
+.ak-form-design, .ak-form-search {min-height: calc(100vh - 126px);
 
   > div {height: 100%}
 
@@ -265,9 +265,11 @@ $mainColor: #66b1ff;
 
       &:after {content: '';width: 100%;height: 100%;position: absolute;left: 0;right: 0;bottom: 0;top: 0;z-index: 2;cursor: pointer;}
 
-      .group {width: auto;margin-right: 10px}
+      .group {margin-right: 10px}
 
-      .add-form .group-btn {width: auto !important;}
+      .ak-form-add {display: flex}
+
+      /*  .ak-form-add .group-btn {width: auto !important;}*/
     }
 
     .control-btn {padding: 10px 0;
@@ -367,7 +369,8 @@ $mainColor: #66b1ff;
   }
 
   .control-btn {margin-bottom: 10px;display: flex;justify-content: space-between;align-items: center;
-    .control-btn-group{display: flex}
+
+    .control-btn-group {display: flex}
   }
 }
 

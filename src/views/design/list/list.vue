@@ -2,7 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      :api-key="{ list: 'designList', del: 'designDelete' }"
+      :api-key="{ list: 'designList', del: 'designDelete',edit:'designEdit' }"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 2 }"
@@ -24,10 +24,10 @@
       <ak-form
         ref="formEl"
         :data="dialogFormData"
-        :type="2"
+        operate-type="edit"
         :params="{ id: dialog.id }"
-        edit-url="designEdit"
-        :after-submit="afterSubmit"
+        submit-url="designEdit"
+        :after="afterSubmit"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -55,13 +55,17 @@
         prop: 'category',
         label: '分类',
         render: 'tag',
-        replaceValue: 'sys-list'
+        replaceValue: 'sys-list',
+        custom: { 1: 'success', 2: 'danger' }
       },
       {
         prop: 'status',
         label: '状态',
         render: 'switch',
         config: {
+          inlinePrompt: true,
+          activeText: '启用',
+          inactiveText: '禁用',
           activeValue: 1,
           inactiveValue: 0
         }
@@ -81,14 +85,54 @@
       {
         label: '操作',
         render: 'buttons',
-        width: '110px',
+        width: '300px',
         fixed: 'right',
         buttons: [
           {
-            key: 'edit'
+            key: 'edit',
+            label: '编辑',
+            click: (row: any) => {
+              // 跳转到表单设计编辑页
+              toFormDesign(row)
+            },
+            icon: ''
           },
           {
-            key: 'del'
+            label: '设置',
+            click: (row: any) => {
+              dialog.visible = true
+              nextTick(() => {
+                dialog.id = row.id
+                formEl.value.setValue(row, true)
+              })
+            }
+          },
+          {
+            label: '搜索设置',
+            click: (row: any) => {
+              router.push({
+                path: '/design/form',
+                query: {
+                  type: 'search',
+                  id: row.id,
+                  redirect: `/design/list/list`
+                }
+              })
+            }
+          },
+          {
+            label: '查看',
+            click: (row: any) => {
+              router.push({
+                path: '/design/list/content/' + row.id
+              })
+            },
+            icon: ''
+          },
+          {
+            key: 'del',
+            label: '删除',
+            icon: ''
           }
         ]
       }
@@ -108,49 +152,10 @@
         size: 'small'
       }
     ],
-    operateBtn: [
-      {
-        label: '编辑',
-        click: (row: any) => {
-          // 跳转到表单设计编辑页
-          toFormDesign(row)
-        }
-      },
-      {
-        label: '设置',
-        click: (row: any) => {
-          dialog.visible = true
-          nextTick(() => {
-            dialog.id = row.id
-            formEl.value.setValue(row, true)
-          })
-        }
-      },
-      {
-        label: '搜索设置',
-        click: (row: any) => {
-          router.push({
-            path: '/design/form',
-            query: {
-              type: 'search',
-              id: row.id,
-              redirect: `/design/list/list`
-            }
-          })
-        }
-      },
-      {
-        label: '查看',
-        click: (row: any) => {
-          router.push({
-            path: '/design/list/content/' + row.id
-          })
-        }
-      },
-      { label: '删除', key: 'del' }
-    ],
     config: {
-      operateDropdown: 1
+      fixedBottomScroll: true,
+      columnsSetting: true,
+      expand: true
     }
   })
   const toFormDesign = (row: any) => {
@@ -215,7 +220,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-list'
+          optionsFun: 'sys-list',
+          transformData: 'string'
         },
         name: 'category',
         formItem: {
@@ -231,7 +237,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-status'
+          optionsFun: 'sys-status',
+          transformData: 'string'
         },
         name: 'status',
         formItem: {
@@ -249,11 +256,9 @@
       submitCancel: true
     }
   })
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
-      dialog.visible = false
-      tableListEl.value.getListData() // 重新拉数据
-    }
+  const afterSubmit = () => {
+    dialog.visible = false
+    tableListEl.value.getListData() // 重新拉数据
   }
   /* const beforeSubmit = (params: any) => {
     return params

@@ -2,7 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      :api-key="{ list: 'designList', del: 'designDelete' }"
+      :api-key="{ list: 'designList', del: 'designDelete' ,edit: 'designEdit'}"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 1 }"
@@ -28,7 +28,7 @@
         operate-type="edit"
         submit-url="designEdit"
         :after="afterSubmit"
-        :btn-click="btnClick"
+        @btn-click="btnClick"
       />
     </el-dialog>
   </div>
@@ -72,11 +72,12 @@
           inlinePrompt: true,
           activeText: '启用',
           inactiveText: '禁用',
-          activeValue: '1',
-          inactiveValue: '0'
+          activeValue: 1,
+          inactiveValue: 0
         },
         renderFormatter: (val: any) => {
-          return val && val.toString()
+         // return val && val.toString()
+          return val
         }
       },
       {
@@ -239,7 +240,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-form'
+          optionsFun: 'sys-form',
+          transformData: 'string'
         },
         name: 'category',
         formItem: {
@@ -255,7 +257,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-status'
+          optionsFun: 'sys-status',
+          transformData: 'string'
         },
         name: 'status',
         formItem: {
@@ -271,11 +274,9 @@
     },
     config: { submitCancel: true }
   })
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
-      dialog.visible = false
-      tableListEl.value.getListData() // 重新拉数据
-    }
+  const afterSubmit = () => {
+    dialog.visible = false
+    tableListEl.value.getListData() // 重新拉数据
   }
   const btnClick = (type: string) => {
     if (type === 'reset') {

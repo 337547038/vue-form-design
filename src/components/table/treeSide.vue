@@ -35,7 +35,6 @@
     defineProps<{
       data: any
       currentNodeKey: string | number
-      listProps: any
     }>(),
     {
       data: () => {

@@ -228,7 +228,7 @@
   import ControlAttr from './components/controlAttr.vue'
   import { getFormColumns, getInitData } from './components/request'
   import OperateBtn from '@/components/table/components/operateButton.vue'
-  import { mergeDefaultBtn } from '@/components/table/components/defaultBtn.ts'
+  import { mergeDefaultBtn } from '@/components/table/components/defaultBtn'
 
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '列表页设计' }])
@@ -274,15 +274,15 @@
 
   // 右侧边栏事件
   const controlAttrChangeEvent = ({
-    type,
-    value
-  }: {
+                                    type,
+                                    value
+                                  }: {
     type: string
     value: any
   }) => {
     if (type === 'formId') {
       // 改变表单数据源时，重新加载可选表头信息
-      getFormColumns(value).then((data) => {
+      getFormColumns(value).then(({ data }) => {
         state.formFieldList = data
       })
     } else if (type === 'openDrawer') {
@@ -338,8 +338,8 @@
       let has = false
       tableData.value.columns.forEach((item: any) => {
         if (
-          (item.prop && item.prop === row.prop)
-          || (item.type && item.type === row.type)
+            (item.prop && item.prop === row.prop)
+            || (item.type && item.type === row.type)
         ) {
           has = true
         }
@@ -536,7 +536,7 @@
   }
   const columnDrop = () => {
     const wrapperTr = container.value.querySelector(
-      '.el-table__header-wrapper tr'
+        '.el-table__header-wrapper tr'
     )
     Sortable.create(wrapperTr, {
       animation: 180,
@@ -567,7 +567,7 @@
     }
     const params = {
       listData: objToStringify(tableData.value), // 列表数据
-      data: '{}', // 搜索表单数据，搜索设置不在这里修改
+      data: objToStringify(state.searchData) || '{}', // 搜索表单数据，搜索设置不在这里修改
       source: formId,
       name: name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 2 // 1表单 2列表
@@ -582,18 +582,18 @@
     }
     state.loading = true
     getRequest(apiKey, params)
-      .then(() => {
-        ElMessage({
-          message: '保存成功！',
-          type: 'success'
+        .then(() => {
+          ElMessage({
+            message: '保存成功！',
+            type: 'success'
+          })
+          router.push({ path: '/design/list/list' })
+          state.loading = false
         })
-        router.push({ path: '/design/list/list' })
-        state.loading = false
-      })
-      .catch((res: any) => {
-        ElMessage.error(res.message || '保存异常')
-        state.loading = false
-      })
+        .catch((res: any) => {
+          ElMessage.error(res.message || '保存异常')
+          state.loading = false
+        })
   }
 
   // 数据相关结束
@@ -604,24 +604,54 @@
     })
     if (routeQuery.id) {
       getInitData(routeQuery.id).then(
-        ({ tableData: tableData2, searchData, source }) => {
-          tableData.value = tableData2 // 列表数据
-          state.searchData = searchData // 搜索表单数据
-          if (tableData2.config.formId) {
-            // 根据选择的表单获取可供选择的表头
-            getFormColumns(source).then((data) => {
-              state.formFieldList = data
-            })
+          ({ tableData: tableData2, searchData, source }) => {
+            tableData.value = tableData2 // 列表数据
+            state.searchData = searchData // 搜索表单数据
+            if (tableData2.config.formId) {
+              // 根据选择的表单获取可供选择的表头
+              getFormColumns(source as number).then(({ data }) => {
+                state.formFieldList = data
+              })
+            }
           }
-        }
       )
     }
     // 从表单列表点创建列表，带有当前表单id，一键创建表单时
     if (routeQuery.form) {
       tableData.value.config.formId = routeQuery.form
-      getFormColumns(routeQuery.form).then((data) => {
+      getFormColumns(routeQuery.form).then(({ data, defaultSearch }) => {
         tableData.value.columns = data
-        // todo 添加上方及右侧按钮
+        // 根据选择的表单获取可供选择的表头
+        state.formFieldList = JSON.parse(JSON.stringify(data))
+        // 添加上方及右侧按钮
+        tableData.value.controlBtn = [{ key: 'edit' }, { key: 'del' }]
+        // 列表右侧操作按钮
+        tableData.value.columns.push({
+          label: '操作',
+          render: 'buttons',
+          config: {},
+          buttons: [
+            {
+              key: 'edit'
+            },
+            {
+              key: 'del',
+              render: 'confirm',
+              popConfirm:
+                  {
+                    title: '确认删除该记录吗？',
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    confirmButtonType: 'danger'
+                  }
+            }]
+        })
+        // 默认条件查询
+        state.searchData = {
+          list: defaultSearch,
+          form: { size: 'default' },
+          config: { submitCancel: true }
+        }
       })
     }
   })
