@@ -40,7 +40,7 @@
       <ak-form
         ref="formEl"
         :data="formData"
-        :type="statusType"
+        :operate-type="statusType"
       >
         <el-button
           type="primary"
@@ -71,12 +71,13 @@
   const props = withDefaults(
     defineProps<{
       modelValue?: TableList[] // 当前数据
-      type?: number
+      type?: string
     }>(),
     {
       modelValue: () => {
         return []
-      }
+      },
+      type: 'add'
     }
   )
   const emits = defineEmits<{
