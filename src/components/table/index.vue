@@ -143,7 +143,7 @@
                 />
                 <el-tag
                   v-if="
-                    item.prop && item.render === 'tag' && scope.row[item.prop]
+                    item.prop && item.render === 'tag' && scope.row[item.prop]!==undefined
                   "
                   v-bind="item.config"
                   :type="getTagType(scope.row, item)"
@@ -233,14 +233,14 @@
   import OperateButton from './components/operateButton.vue'
   import * as request from './components/request'
   import { mergeDefaultBtn } from './components/defaultBtn'
-
+  defineOptions({ name: 'AkList' })
   const props = withDefaults(
     defineProps<{
       data: TableData
       searchData?: FormData
       apiKey?: ApiKey
-      before?: (type: EventType, params: any, rout: any) => boolean
-      after?: (type: EventType, res: any, isSuccess?: boolean) => any
+      before?: (params: any, type: EventType, obj: any) => boolean
+      after?: (res: any, success?: boolean, type?: EventType) => any
       pagination?: { pageSize: number, current: number } | boolean
       dict?: { [key: string | number]: string | number }
       fixedBottomScroll?: boolean
@@ -273,12 +273,14 @@
           current: 1
         }
       },
-      pk: 'id'
+      pk: 'id',
+      before: () => {},
+      after: () => {}
     }
   )
   const emits = defineEmits<{
     (e: 'selectionChange', row: any): void
-    (e: 'btnClick', btn: any, row?: any): void // 列表上面及表格列表里添加删除按钮事件
+    (e: 'btnClick', key: string, row?: any): void // 列表上面及表格列表里添加删除按钮事件
   }>()
   const designStore = useDesignStore()
   const route = useRoute()
@@ -350,6 +352,7 @@
   // 数据处理开始
   // 筛选查询列表数据
   const getListData = (page?: number) => {
+    state.loading = true
     request
       .getData({
         props,
@@ -362,7 +365,6 @@
         tableDataList.value = data?.list || data
         setTimeout(() => {
           setFixedBottomScroll()
-          state.loading = false
           state.loading = false
         }, 200)
       })
@@ -492,7 +494,8 @@
     if (key === 'del' && pk.value) {
       delClick([row[pk.value]])
     } else {
-      // todo 编辑或查看时请数据拉回来，或者是对外暴露拉取数据的方法
+      // todo 这里目前先对外提示点击事件
+      emits('btnClick', key, row)
     }
   }
   // 表格上方操作按钮事件，处理预设key的内置事件
@@ -504,6 +507,7 @@
       const ids = state.selectionChecked.map((item) => item[pk.value])
       request.exportEvent({ props, state, route, params: ids })
     } else {
+      emits('btnClick', key)
       // todo 编辑或查看时请数据拉回来，或者是对外暴露拉取数据的方法
     }
   }

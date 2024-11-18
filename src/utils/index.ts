@@ -31,11 +31,13 @@ export function debounce<T extends (...args: any[]) => void>(
   } as T
 }
 
-export const throttle = (func: Function, delay: number) => {
+export const throttle = (func: any, delay: number) => {
   let timeoutId: ReturnType<typeof setTimeout> | null
   return function (...args: any[]) {
     if (!timeoutId) {
       timeoutId = setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         func.apply(this, args)
         timeoutId = null
       }, delay)

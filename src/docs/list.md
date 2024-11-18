@@ -8,24 +8,32 @@
 
 ### Props
 
-| 参数                | 类型                          | 说明                                |
-|-------------------|-----------------------------|-----------------------------------|
-| data              | object                      | 通过设计器拖拽生成的表格配置数据                  |
-| data.columns      | array                       | 用于渲染el-columns-table列，所有参数绑定于当前组件 |
-| data.tableProps   | object                      | el-table所有props                   |
-| data.apiKey       | object                      | 同props.apiKey，此处优先级更高             |
-| data.events       | object                      | 事件                                |
-| data.controlBtn   | array                       | 表格上方按钮组设置，见如何设置一个btn              |
-| searchData        | object                      | 列表页条件筛选表单数据，同表单的`formData`        |
-| apiKey            | object                      | 数据请求交互api                         |
-| before            | function(params,obj)/string | 请求列表前参数处理方法，可对请求参数处理              |
-| after             | function(res,obj)/string    | 请求完成后列表数据处理方法                     |
-| dict              | object                      | 用于匹配的字典数据，一般不设置，从接口获取             |
-| fixedBottomScroll | boolean                     | 横向滚动条固定在浏览器底部 ，默认为true            |
-| autoLoad          | boolean                     | 初始时是否自动请求加载数据，默认为true             |
-| treeData          | object                      | 列表左侧栏树数据                          |
-| pk                | string                      | 主键                                |
-| query             | object                      | 一些附加的请求参数。也可在`before`处处理          |
+| 参数                | 类型                                | 说明                                                                                 |
+|-------------------|-----------------------------------|------------------------------------------------------------------------------------|
+| data              | object                            | 通过设计器拖拽生成的表格配置数据                                                                   |
+| data.columns      | array                             | 用于渲染el-columns-table列，所有参数绑定于当前组件                                                  |
+| data.tableProps   | object                            | el-table所有props                                                                    |
+| data.apiKey       | object                            | 同props.apiKey，此处优先级更高                                                              |
+| data.events       | object                            | 事件                                                                                 |
+| data.controlBtn   | array                             | 表格上方按钮组设置，见如何设置一个btn                                                               |
+| searchData        | object                            | 列表页条件筛选表单数据，同表单的`formData`                                                         |
+| apiKey            | object                            | 数据请求交互api                                                                          |
+| before            | function(params,type,obj)/string  | 请求列表前参数处理方法，可对请求参数处理，type操作类型，可fetch(获取列表数据)/del(删除)/submit(修改提交switch)/export(导出) |
+| after             | function(res,success,type)/string | 请求完成后列表数据处理方法                                                                      |
+| dict              | object                            | 用于匹配的字典数据，一般不设置，从接口获取                                                              |
+| fixedBottomScroll | boolean                           | 横向滚动条固定在浏览器底部 ，默认为true                                                             |
+| autoLoad          | boolean                           | 初始时是否自动请求加载数据，默认为true                                                              |
+| treeData          | object                            | 列表左侧栏树数据                                                                           |
+| pk                | string                            | 主键                                                                                 |
+| query             | object                            | 一些附加的请求参数。也可在`before`处处理                                                           |
+
+
+### event
+
+
+| 事件       | 说明                                          |
+|----------|---------------------------------------------|
+| btnClick | 列表上方及右侧按钮点击事件，function(key:string,row?:any) |
 
 ### props.data.columns
 
@@ -74,15 +82,15 @@
 
 ### tree
 
-| 参数         | 类型                     | 说明                      |
-|------------|------------------------|-------------------------|
-| show       | boolean                | 是否显示                    |
-| name       | string                 | 唯一标识，查询条件参数值            |
-| method     | string                 | 数据接口请求方式，get/post默认post |
-| requestUrl | string                 | 数据接口请求地址，必填             |
-| before     | Function(params,route) | 接口请求前数据参数处理方式           |
-| after      | Function(res)/string   | 接口请求后数据参数处理方式           |
-| treeProps  | object                 | 组件tree对应props           |
+| 参数         | 类型                                | 说明                      |
+|------------|-----------------------------------|-------------------------|
+| show       | boolean                           | 是否显示                    |
+| name       | string                            | 唯一标识，查询条件参数值            |
+| method     | string                            | 数据接口请求方式，get/post默认post |
+| requestUrl | string                            | 数据接口请求地址，必填             |
+| before     | Function(params,type,obj)         | 接口请求前数据参数处理方式           |
+| after      | Function(res,success,type)/string | 接口请求后数据参数处理方式           |
+| treeProps  | object                            | 组件tree对应props           |
 
 ### 自定义表格行右侧边及列表上方按钮
 
@@ -278,7 +286,7 @@ const opt = {
   treeData://侧栏树相关配置
   {
     show: true,
-    before: (params, { type, route, model }) =>
+    before: (params, type, obj) =>
     {
       // params请求的参数，可根据type作判断，对params作修改后return回去
       // 需要将params参数return
@@ -286,7 +294,7 @@ const opt = {
     },
     name: "name",
     requestUrl: "gettree",
-    after: (res, { type, success }) =>
+    after: (res, success, type) =>
     {
       // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
       console.log(type, res)
@@ -294,14 +302,14 @@ const opt = {
     }
   },
   events:// 事件
-  { //type 事件类型； route 当前路由信息； model 当前表单信息，根据不同类型。表单相关的事件才会有值
-    before: (params, { type, route, model }) =>
+  { //type 事件类型； 
+    before: (params, type, obj) =>
     {
       // params请求的参数，可根据type作判断，对params作修改后return回去
       // 需要将params参数return
       return params
     },
-    after: (res, { type, success }) =>
+    after: (res, success, type ) =>
     {
       // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
       console.log(type, res)

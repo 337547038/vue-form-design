@@ -113,6 +113,8 @@ export function json2string(obj: any, isBeautify?: boolean) {
 export const aceEdit = (data: any, id?: string, type?: string) => {
   type = type ? type : 'javascript'
   id = id ? id : 'editJson'
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const editor = ace.edit(id)
   editor.setOptions({
     enableBasicAutocompletion: true,
@@ -156,13 +158,13 @@ export const formatToString = (val: any): string | undefined => {
  * 将{key:value}转[{label:'key',value:'value'}]
  * @param obj
  */
-export const objectToArray = (obj: any): { [key: string]: any } => {
+export const objectToArray = (obj: any): { [key: string | number]: any } => {
   if (Object.prototype.toString.call(obj) === '[object Object]') {
     const temp: any = []
     for (const key in obj) {
       temp.push({
         label: obj[key],
-        value: key
+        value: formatNumber(key) // {1:'a'}转换后这个key会变成字符串，这里尝试恢复为数字
       })
     }
     return temp

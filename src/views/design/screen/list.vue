@@ -226,7 +226,7 @@
         options: [],
         config: {
           optionsType: 2,
-          transformData: 'string',
+          // transformData: 'string',
           optionsFun: 'sys-status'
         },
         name: 'status',

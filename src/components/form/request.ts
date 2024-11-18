@@ -42,7 +42,7 @@ export const getOptionsData = (
           .then((res: any) => {
             const result = res.data.list || res.data
             resolve(result)
-            if (typeof formatRes === 'object') {
+            if (typeof result === 'object') {
               designStore.setFormAjaxCache(key, result) // 缓存，例如子表添加时不用每添加一行就请求一次
             }
           })

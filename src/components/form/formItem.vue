@@ -112,13 +112,19 @@
         :disabled="disabledEdit"
         :config="config as any"
       />
-      <component
-        :is="currentComponent"
-        v-if="['cascader', 'treeSelect'].includes(data.type)"
+      <el-cascader
+        v-if="data.type==='cascader'"
         v-bind="control"
         v-model="value"
         :disabled="disabledEdit"
-        :options="options"
+        :data="options"
+      />
+      <el-tree-select
+        v-if="data.type==='treeSelect'"
+        v-bind="control"
+        v-model="value"
+        :disabled="disabledEdit"
+        :data="options"
       />
       <component
         :is="currentComponent"
@@ -143,7 +149,7 @@
         <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
         <tinymce-edit
           v-if="
-            ['add', 'edit', 'detail'].includes(formProps.operateType as number)
+            ['add', 'edit', 'detail'].includes(formProps.operateType)
           "
           v-bind="control"
           v-model="value"
@@ -364,20 +370,21 @@
   }
 
   // option选项动态数据
-  const optionsList = ref(props.options)
+  const optionsList = ref(props.data.options)
   const formOptions = inject('akFormSetOptions', {}) as any
   const options = computed(() => {
     // 使用了setOptions时，从set方法里取
     if (formOptions.value[props.data.name]) {
       return objectToArray(formOptions.value[props.data.name])
     } else {
-      return optionsList.value
+      // 判断下option的类型，为对象时转换下
+      return objectToArray(optionsList.value)
     }
   })
   const queryName = computed(() => {
     return props.data.config?.queryName || 'name'
   })
-  const getOptions = (data = {}, type: string, callback?: any) => {
+  const getOptions = (data = {}, type: any, callback?: any) => {
     getOptionsData(config.value, formProps.model, type, route, data).then(
         (res) => {
           if (props.data.type === 'treeSelect') {

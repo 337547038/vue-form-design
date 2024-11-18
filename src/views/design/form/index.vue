@@ -282,7 +282,11 @@
         if (beforeData[type]) {
           editData = objToStringify(beforeData[type], true)
         } else {
-          editData = getDrawerContent(type)
+          let eventType = type
+          if (type !== 'change') {
+            eventType = type + 'Type'
+          }
+          editData = getDrawerContent(eventType, 'form')
         }
         break
       case 'beforeOption':

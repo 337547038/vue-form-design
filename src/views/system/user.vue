@@ -2,8 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="userList"
-      delete-url="userDelete"
+      :api-key="{list:'userList',del:'userDelete'}"
       :search-data="searchData"
       :data="tableData"
       :auto-load="false"
@@ -83,13 +82,13 @@
         type: 'select',
         control: {
           modelValue: '',
-          appendToBody: true
+          style: { width: '100px' }
         },
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-status',
-          transformData: 'string'
+          optionsFun: 'sys-status'
+          // transformData: 'string'
         },
         name: 'status',
         formItem: {
@@ -100,7 +99,7 @@
         type: 'select',
         control: {
           modelValue: [],
-          appendToBody: true
+          style: { width: '100px' }
         },
         options: [],
         config: {
@@ -132,22 +131,21 @@
       {
         label: '状态',
         prop: 'status',
-        config: { dictKey: 'sys-status', tagList: { 1: 'success', 0: 'info' } }
+        render: 'tag',
+        custom: { 1: 'success', 0: 'info' },
+        replaceValue: 'sys-status'
       },
       {
         prop: 'dateTime',
         label: '创建时间',
-        config: {
-          formatter: '{y}-{m}-{d} {h}:{i}:{s}'
-        }
+        render: 'datetime'
       },
-      { label: '操作', prop: '__control' }
+      { label: '操作', prop: '__control', render: 'buttons', buttons: [
+          { label: '编辑', key: 'edit' },
+          { label: '删除', key: 'del' }
+        ] }
     ],
     config: { openType: 'dialog', searchJump: true },
-    operateBtn: [
-      { label: '编辑', key: 'edit' },
-      { label: '删除', key: 'del' }
-    ],
     controlBtn: [
       {
         label: '新增',
@@ -175,7 +173,7 @@
       name: 'department',
       method: 'post',
       requestUrl: 'deptList',
-      afterFetch: afterFetch
+      after: afterFetch
     }
   })
   const formEl = ref()
@@ -242,6 +240,7 @@
             {
               validator: (rule, value, callback) => {
                 // 获取密码的值
+                // eslint-disable-next-line no-undef
                 const val = getuserFormValueByName('password')
                 console.log(val)
                 if (value === '') {
@@ -298,7 +297,7 @@
           optionsType: 1,
           optionsFun: 'deptList',
           method: 'post',
-          afterFetch: afterFetch
+          after: afterFetch
         },
         name: 'department',
         formItem: {
@@ -349,7 +348,7 @@
           method: 'post',
           label: 'name', // 指定name为label的值
           value: 'id', // 指定id为value的值
-          transformData: 'string'
+          // transformData: 'string'
         },
         name: 'role',
         formItem: {
@@ -385,17 +384,17 @@
     dict: {},
     editId: ''
   })
-  const listBtnClick = (btn, row) => {
+  const listBtnClick = (key, row) => {
     // 使用弹窗方式打开新增编辑
-    if (btn.key === 'add' || btn.key === 'edit') {
+    if (key === 'add' || key === 'edit') {
       // 打开弹窗
       const newRow = jsonParseStringify(row)
       dialog.visible = true
-      dialog.title = btn.key === 'add' ? '新增' : '编辑'
-      dialog.formType = btn.key === 'add' ? 1 : 2
+      dialog.title = key === 'add' ? '新增' : '编辑'
+      dialog.formType = key
       dialog.editId = newRow && newRow.id
       // 编辑，根据id加载
-      if (btn.key === 'edit') {
+      if (key === 'edit') {
         nextTick(() => {
           console.log(newRow)
           // 将角色数据转换下
@@ -426,8 +425,8 @@
     return params
   }
   // 提交表单后事件
-  const afterSubmit = (type) => {
-    if (type === 'success') {
+  const afterSubmit = (res, success, type) => {
+    if (success) {
       // 添加成功，刷新列表数据
       closeResetDialog()
       tableListEl.value.getListData()

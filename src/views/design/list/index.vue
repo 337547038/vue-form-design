@@ -273,10 +273,7 @@
   })
 
   // 右侧边栏事件
-  const controlAttrChangeEvent = ({
-                                    type,
-                                    value
-                                  }: {
+  const controlAttrChangeEvent = ({ type, value }: {
     type: string
     value: any
   }) => {
@@ -401,7 +398,7 @@
         const newData: any = tableData.value.events || {}
         editData = newData[type]
         if (!editData) {
-          editData = getDrawerContent(type)
+          editData = getDrawerContent(type + 'Type', 'list')
           isString = true
         }
         break
@@ -422,7 +419,7 @@
         editData = tableData.value.treeData?.before
         title = getDrawerTitle.before
         if (!editData) {
-          editData = getDrawerContent('before')
+          editData = getDrawerContent('beforeType', 'tree')
           isString = true
         }
         break
@@ -430,7 +427,7 @@
         editData = tableData.value.treeData?.after
         title = getDrawerTitle.after
         if (!editData) {
-          editData = getDrawerContent('after')
+          editData = getDrawerContent('afterType', 'tree')
           isString = true
         }
         break

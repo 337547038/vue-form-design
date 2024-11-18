@@ -273,7 +273,7 @@
       const {requestUrl,method} = screenData.value.config
   getRequest(requestUrl,{},{method:method})
   .then((res: any) => {
-      // 这里处理数据，直接对screenData设置值即可，无须使用全局或afterFetch之类的方法设值
+      // 这里处理数据，直接对screenData设置值即可，无须使用全局或after之类的方法设值
       //
    })`
     }

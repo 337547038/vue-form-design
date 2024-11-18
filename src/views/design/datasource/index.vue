@@ -220,6 +220,7 @@
         },
         options: [],
         config: {
+          // transformData: 'string',
           optionsType: 2,
           optionsFun: 'sys-source' // 使用字典选项，字典key为source
         },
@@ -277,7 +278,7 @@
     }
   })
   const afterFetchSubmit = (res: any, success: boolean, type: string) => {
-    if (type === 'get') {
+    if (type === 'fetch') {
       const tableData = JSON.parse(res.tableData)
       // 如果有isNew标识则删除
       tableData.forEach((item: any) => {
@@ -297,8 +298,8 @@
     }
   }
   // 提交表单前校验
-  const beforeSubmit = (params: any, obj: any) => {
-    if (['add', 'edit'].includes(obj.type)) {
+  const beforeSubmit = (params: any, type: string) => {
+    if (type === 'submit') {
       if (dialog.type === 'add') {
         if (!childTableData.value.length) {
           ElMessage.error('数据库表字段内容不能为空')

@@ -21,7 +21,9 @@
     defineProps<{
       modelValue?: string
     }>(),
-    {}
+    {
+      modelValue: ''
+    }
   )
   const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void

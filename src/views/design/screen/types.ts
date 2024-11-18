@@ -1,3 +1,5 @@
+import { EventType } from '@/types/table.ts'
+
 export interface Config {
   width: string
   height: string
@@ -6,8 +8,8 @@ export interface Config {
   requestUrl?: string
   method?: string
   loopTime?: number
-  before?: function
-  after?: function | string
+  before?: string | ((type: EventType, params: any, rout: any) => boolean)
+  after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
 }
 export interface CSSProperties {
   width: number | string

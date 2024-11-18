@@ -6,7 +6,7 @@ import { getRequest } from '@/api'
  * @param data
  * @param config
  */
-export const download = (url, data, config = {}) => {
+export const download = (url: any, data: any, config = {}) => {
   return new Promise((resolve, reject) => {
     const option = Object.assign({}, config, {
       responseType: 'blob'
@@ -29,9 +29,9 @@ export const download = (url, data, config = {}) => {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-        resolve()
+        resolve(res)
       })
-      .catch((error) => {
+      .catch((error: any) => {
         reject(error)
       })
   })

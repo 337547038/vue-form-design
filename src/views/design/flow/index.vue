@@ -93,9 +93,9 @@
           debug: true,
           label: 'name',
           value: 'id',
-          beforeFetch: (data: any) => {
+          before: (data: any) => {
             // data经过处理后返回
-            // console.log('beforeFetch', data)
+            // console.log('before', data)
             data.query = {}
             data.query.type = 1
             return data

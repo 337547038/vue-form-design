@@ -2,18 +2,18 @@
 import { beforeAfter, getRequestEvent } from '@/utils/beforeAfter'
 import { ElMessage } from 'element-plus'
 
-const getData = ({ props, state, page, searchFormValue, route }) => {
+const getData = ({ props, state, page, searchFormValue, route }: { props: any, state: any, page: any, searchFormValue: any, route: any }) => {
   return new Promise((resolve, reject) => {
     // 优先使用config配置的
     const getUrl = props.data.apiKey?.list || props.apiKey?.list
     if (!getUrl) {
       console.warn(new Error('请先设置请求apiKey.list'))
+      state.loading = false
       return
     }
     if (page) {
       state.currentPage = page
     }
-    state.loading = true
     // 筛选查询一般不存在校验，这里直接取值
     const formValue = searchFormValue || {}
     const params = {
@@ -30,7 +30,7 @@ const getData = ({ props, state, page, searchFormValue, route }) => {
       before: getRequestEvent(props, 'before'),
       after: getRequestEvent(props, 'after'),
       route: route,
-      type: 'getData'
+      type: 'fetch'
     })
       .then((res: any) => {
         const data = res.data
@@ -47,7 +47,7 @@ const getData = ({ props, state, page, searchFormValue, route }) => {
   })
 }
 
-const del = ({ idList, pk, props, state, route }) => {
+const del = ({ idList, pk, props, state, route }: { idList: any, pk: any, props: any, state: any, route: any }) => {
   return new Promise((resolve, reject) => {
     state.loading = true
     const delUrl = props.data.apiKey?.del || props.apiKey?.del
@@ -73,7 +73,7 @@ const del = ({ idList, pk, props, state, route }) => {
       .then((res: any) => {
         state.loading = false
         ElMessage.success(res.message || '删除成功')
-        resolve()
+        resolve(res)
       })
       .catch((res: { message: string, code: string | number }) => {
         state.loading = false
@@ -83,7 +83,7 @@ const del = ({ idList, pk, props, state, route }) => {
   })
 }
 
-const exportEvent = ({ params, props, state, route }) => {
+const exportEvent = ({ params, props, state, route }: { params: any, props: any, state: any, route: any }) => {
   state.loading = true
   const exportUrl = props.data.apiKey?.export || props.apiKey?.export
   if (!exportUrl) {
@@ -130,7 +130,7 @@ const switchEvent = ({
   rowProp,
   oldVal,
   params
-}) => {
+}: { props: any, switchLoading: any, val: any, rowProp: any, oldVal: any, params: any }) => {
   // 提交修改
   const apiKey = props.data.apiKey?.edit || props.apiKey?.edit
   if (!apiKey) {
@@ -145,7 +145,7 @@ const switchEvent = ({
     params: data,
     before: getRequestEvent(props, 'before'),
     after: getRequestEvent(props, 'after'),
-    type: 'switchChange'
+    type: 'submit'
   })
     .then((res: any) => {
       switchLoading.value = false

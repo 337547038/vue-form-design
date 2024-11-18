@@ -3,7 +3,7 @@ import { stringToObj, appendOrRemoveStyle } from '@/utils/design'
 import { ElMessage } from 'element-plus'
 import { beforeAfter } from '@/utils/beforeAfter'
 
-export const getInitData = (id: string | number, route?: any) => {
+export const getInitData = (id: string | number) => {
   return new Promise((resolve, reject) => {
     if (!id) {
       return reject()
@@ -16,8 +16,10 @@ export const getInitData = (id: string | number, route?: any) => {
         if (resultData.config?.style) {
           appendOrRemoveStyle('screenStyle', resultData.config.style, true)
         }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         window.getScreenGlobal = {}
-        await getGlobalData(resultData.config, route)
+        await getGlobalData(resultData.config)
         resolve(resultData)
       })
       .catch((res: any) => {
@@ -27,7 +29,7 @@ export const getInitData = (id: string | number, route?: any) => {
       })
   })
 }
-export const getGlobalData = (config: any, route?: any) => {
+export const getGlobalData = (config: any) => {
   return new Promise((resolve, reject) => {
     const { requestUrl, before, after, method }: any = config
     if (requestUrl) {
@@ -35,13 +37,14 @@ export const getGlobalData = (config: any, route?: any) => {
         apiKey: requestUrl,
         before: before,
         after: after,
-        route,
         params: {},
         options: { method: method },
-        type: 'get'
+        type: 'none'
       })
         .then((res: any) => {
           // 将全局数据保存在window里，以方便调用
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           window.getScreenGlobal = res.data
           resolve(res.data)
         })
@@ -49,7 +52,7 @@ export const getGlobalData = (config: any, route?: any) => {
           reject(res)
         })
     } else {
-      resolve()
+      resolve({})
     }
   })
 }

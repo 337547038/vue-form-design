@@ -57,7 +57,7 @@
       params?: { [key: string]: any } // 提交表单一些附加参数
       submitUrl?: string // 表单提交url
       requestUrl?: string // 用于回显填充数据请求数据url
-      operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型
+      operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型，正常使用下只有add/edit/detail
     }>(),
     {
       data: () => {
@@ -66,9 +66,6 @@
           form: {},
           config: {}
         }
-      },
-      dict: () => {
-        return {}
       },
       query: () => {
         return {}
@@ -403,7 +400,7 @@
       before: getRequestEvent(props, 'before'),
       after: getRequestEvent(props, 'after'),
       route: route,
-      type: 'get'
+      type: 'fetch'
     })
       .then((res: any) => {
         loading.value = false
@@ -472,7 +469,7 @@
           params: Object.assign({}, temp, params, props.params),
           before: getRequestEvent(props, 'before'),
           after: getRequestEvent(props, 'after'),
-          type: props.operateType,
+          type: 'submit',
           route: route,
           formModel: model.value
         })

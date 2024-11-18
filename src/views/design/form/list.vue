@@ -195,8 +195,8 @@
         config: {
           optionsType: 2,
           optionsFun: 'sys-form',
-          span: 3,
-          transformData: 'string'
+          span: 3
+          // transformData: 'string'
         },
         name: 'category',
         formItem: {
@@ -240,8 +240,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-form',
-          transformData: 'string'
+          optionsFun: 'sys-form'
+          // transformData: 'string'
         },
         name: 'category',
         formItem: {
@@ -257,8 +257,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-status',
-          transformData: 'string'
+          optionsFun: 'sys-status'
+          // transformData: 'string'
         },
         name: 'status',
         formItem: {

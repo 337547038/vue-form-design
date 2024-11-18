@@ -220,8 +220,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-list',
-          transformData: 'string'
+          optionsFun: 'sys-list'
+          // transformData: 'string'
         },
         name: 'category',
         formItem: {
@@ -237,8 +237,8 @@
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-status',
-          transformData: 'string'
+          optionsFun: 'sys-status'
+          // transformData: 'string'
         },
         name: 'status',
         formItem: {

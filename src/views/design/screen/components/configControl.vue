@@ -692,7 +692,6 @@
     let codeType: string = ''
     let editData
     let title: string = ''
-    let paramsEventType = eventType
     switch (eventType) {
       case 'editCss':
         codeType = 'css'
@@ -701,7 +700,6 @@
       case 'after':
         if (isGlobal) {
           editData = config.value && (config.value as any)[eventType]
-          paramsEventType = 'afterScreen'
         } else {
           title = '获取数据响应处理之后事件，可对请求返回数据进行处理'
           editData = current.value.config && current.value.config[eventType]
@@ -739,8 +737,9 @@
     const emitsParams = {
       content: editData,
       codeType: codeType,
-      type: paramsEventType,
+      type: eventType,
       title: title,
+      isGlobal: isGlobal,
       callback: (result: any) => {
         switch (eventType) {
           case 'before':

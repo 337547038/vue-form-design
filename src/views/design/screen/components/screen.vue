@@ -415,7 +415,6 @@
   })
   const requestResult = ref()
   const newValue = computed(() => {
-    // const { afterFetch } = props.data.events || {}
     const type = config.value.optionsType
     // type1动态
     if (type === 1 && requestResult.value) {
@@ -441,10 +440,9 @@
         apiKey: requestUrl,
         params: {},
         before,
-        // afterFetch,这里不能传after事件，这个要特殊处理。回调的参数不一样
+        // after,这里不能传after事件，这个要特殊处理。回调的参数不一样
         options: { method: method },
-        // route,
-        type: 'get'
+        type: 'none'
       })
         .then((res: any) => {
           const resultData = res.data

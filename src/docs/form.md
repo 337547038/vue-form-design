@@ -17,8 +17,8 @@
 | disabled    | boolean/false                                                | 表单禁用模式，类似于表单模式查看                               |
 | submitUrl   | string                                                       | 表单提交url                                        |
 | requestUrl  | string                                                       | 用于显示表单数据，请求url                                 |
-| before      | string / ((params: any, obj: any) => any)                    | 表单接口请求前事件                                      |
-| after       | string / ((res: any, success: Boolean, type: string) => any) | 表单接口请求事件                                       |
+| before      | string / ((params: any, type: string, obj: any) => any)      | 表单接口请求前事件,type当前操作事件类型，可选fetch/submit获取和提交数据   |
+| after       | string / ((res: any, success: Boolean, type: string) => any) | 表单接口请求事件，success=false即catch事件                 |
 | query       | object                                                       | 一些附加的请求参数。也可在`before`处添加                       |
 | params      | object                                                       | 提交表单一些附加参数，如在提交修改时可添加id等信息。而不需要在提交前拦截处理        |
 
@@ -100,13 +100,14 @@ formData = {
           optionsFun: "demo/option",
           method: "get",
           cache: true,
-          before: (params, obj) =>
+          before: (params, type, obj) =>
           {
             // params请求的参数，可根据type作判断，对params作修改后return回去
+            // type可选'linkage' | 'remote' | 'edit' | 'default'，触发事件类型不同都是获取数据，即fetch
             // 需要将params参数return
             return params;
           },
-          after: (res, success, type) =>
+          after: (res, type, success) =>
           {
             // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
             console.log(type, res);
@@ -141,13 +142,13 @@ formData = {
     },
   events:
     {
-      before: (params,obj) =>
+      before: (params,type,obj) =>
       {
         // params请求的参数，可根据type作判断，对params作修改后return回去
         // 需要将params参数return
         return params;
       },
-      after: (res, success, type) =>
+      after: (res, type, success) =>
       {
         // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回
         console.log(type, res);

@@ -53,6 +53,7 @@ export default tseslint.config(
         tinymce: true,
         AMap: true,
         echarts: true,
+        getScreenGlobal: true,
       },
     },
   },

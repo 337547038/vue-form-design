@@ -13,30 +13,30 @@
 ### 全局数据
 
 当可视化大屏引用组件比较多时，若每个组件都单独从接口获取数据，这种做法明显不合理，后端同学可能也不会这么提供。
-因此引入全局数据请求接口，将数据接口处理好提供给每个组件调用。如可在`afterFetch`中对接口返回数据处理。
+因此引入全局数据请求接口，将数据接口处理好提供给每个组件调用。如可在`after`中对接口返回数据处理。
 这里return的res可在每个组件的全局或动态数据方法中获取
 
-#### beforeFetch
+#### before
 
 获取数据发送接口请求前方法，可用于对请求的数据进行处理转换等操作，以提交符合接口的数据要求
 
 ```javascript
-opt=(data, route) => {
-  // data请求参数，route当前路由信息
-  console.log('beforeFetch',data)
+opt=(data) => {
+  // data请求参数
+  console.log('before',data)
   return data // 这里需将处理后请求数据返回
 }
 ```
 
-#### afterFetch
+#### after
 
 发送数据请求响应事件，这里可对接收到的数据进行处理，以符合使用需要
 
 ```javascript
-opt=(type, res) => {
-// 请求响应结果 这里返回的数据在当前页面可使用getScreenGlobal获取
-    console.log('afterFetch',res)
-    return res // 这里返回的数据在当前页面可使用getScreenGlobal获取
+opt=(res,success) => {
+  // res响应数据，保存在window.getScreenGlobal
+  console.log(res)
+  return res // 返回需要保存的数据
 }
 ```
 
@@ -75,9 +75,9 @@ config:{
   data: "{{getScreenGlobal.xxxx}}"
 }
 ```
-- 2.动态：从`url`获取，同时在当前`afterFetch`事件中也可取到全局的数据
+- 2.动态：从`url`获取，同时在当前`after`事件中也可取到全局的数据
 
-#### afterFetch
+#### after
 
 数据请求结果完成事件，需要此事件对数据进行处理。
 使用此方法对组件设置，可满足各种图表数据展示，而无需对`echarts`进行层层封装，可直接从`echarts`官网将图表配置好，
@@ -87,7 +87,7 @@ config:{
 opt=(res, data) => {
     // res响应数据, 当前组件数据data
     // 这里可直接使用getScreenGlobal取得全局的数据
-    console.log('afterFetchScreen',data)
+    console.log('afterScreen',data)
   　//如对当前组件进行赋值
   　//data.xAxis.data = res.line.xAxis
   　//data.series[0].data = res.line.data

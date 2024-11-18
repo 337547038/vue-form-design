@@ -8,15 +8,14 @@ interface RequestParams {
   route?: { [key: string]: any } // 路由参数
   formModel?: { [key: string]: any } // 当前表单所有值
   before?: (
-    params: any,
-    { type, route, model }: { type: string, route?: any, model?: any }
+    params: any, type?: string, obj?: { route?: any, model?: any }
   ) => boolean
-  after?: (res: any, success?: boolean, type: string) => any
-  type: string
+  after?: (res: any, success?: boolean, type?: string,) => any
+  type: string | undefined
 }
 
 /**
- * 统一处理beforeFetch和afterFetch提交数据接口请求
+ * 统一处理before和after提交数据接口请求
  * @param apiKey 请求url或apiKey
  * @param params 请求参数
  * @param options 请求其他附加参数
@@ -42,20 +41,23 @@ export const beforeAfter = ({
     }
     let beforeResult: any = params
     if (typeof before === 'function') {
-      // 要求beforeFetch一定要有return，否则不起作用。
+      // 要求before一定要有return，否则不起作用。
       // 这里修改下不让直接修改params的值也能生效，防止如表单拦截修改时页面会显示被修改后的值
-      beforeResult = before(jsonParseStringify(params), {
-        type: type,
-        route: route,
-        model: jsonParseStringify(formModel)
-      })
+      if (type === 'none') {
+        beforeResult = before(jsonParseStringify(params))
+      } else {
+        beforeResult = before(jsonParseStringify(params), type, {
+          route: route,
+          model: jsonParseStringify(formModel)
+        })
+      }
     } else if (before) {
       console.log('返回字符串处理：' + beforeResult)
       // todo 返回字符串时，这里可根据返回的自定义字符串标识处理各种复杂的情况
       // beforeParams = xx
     }
     if (beforeResult === false) {
-      // 拦截方式beforeFetch返回false阻止发送请求
+      // 拦截方式before返回false阻止发送请求
       reject({ message: '用户终止操作' })
       return
     }

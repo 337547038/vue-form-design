@@ -13,21 +13,55 @@ export const getDrawerTitle = {
   creatJson: '可编辑修改或将已生成的脚本粘贴进来',
   button: '可添加当前组件所有prop属性及事件方法'
 }
-export const getDrawerContent = (key: string) => {
+
+const beforeTip: any = {
+  form: '可选fetch/submit。使用时需对type作判断',
+  list: '可选fetch/submit/del/export。使用时需对type作判断',
+  tree: '可选del'
+}
+export const getDrawerContent = (key: string, tips = 'form') => {
   switch (key) {
     case 'before':
-      return (
-        'opt=(params, obj) => {\n'
-        + '  // params请求的参数，需对params作修改后return回去。obj其他参数\n'
+      return ('opt=(params) => {\n'
+        + '  // params请求的参数，需对params作修改后return回去。\n'
+        + `  console.log(params)\n`
         + '  return params\n'
-        + '}'
-      )
+        + '}')
+    case 'beforeType':
+      return ('opt=(params, type, obj) => {\n'
+        + '  // params请求的参数，需对params作修改后return回去。\n'
+        + '  // type当前操作类型。' + beforeTip[tips] + '\n'
+        + '  return params\n'
+        + '}')
     case 'after':
+      return ('opt=(res, success) => {\n'
+        + '  // res接口返回结果，success是否成功；对结果修改后返回\n'
+        + `  console.log(res, success)\n`
+        + '  return res\n'
+        + '}')
+    case 'afterType':
       return (
         'opt=(res, success, type) => {\n'
-        + '  // res接口返回结果，type当前事件类型，success是否成功；对结果修改后返回\n'
+        + '  // res接口返回结果，type当前操作事件类型，success是否成功；对结果修改后返回\n'
+        + '  // ' + beforeTip[tips] + '\n'
         + `  console.log(type, res)\n`
         + '  return res\n'
+        + '}'
+      )
+    case 'afterScreen':
+      return (
+        'opt=(res, data) => {\n'
+        + '  // res响应数据, 当前组件数据data\n'
+        + '  // 这里可直接使用getScreenGlobal取得全局的数据\n'
+        + '  console.log(res, data)\n'
+        + '  return data //返回新的图表数据\n'
+        + '}'
+      )
+    case 'afterScreenGlobal':
+      return (
+        'opt=(res,success) => {\n'
+        + '  // res响应数据，保存在window.getScreenGlobal\n'
+        + '  return res //返回处理后的数据\n'
         + '}'
       )
     case 'change':
@@ -43,15 +77,6 @@ export const getDrawerContent = (key: string) => {
         'opt=(val,row) => {\n'
         + '  // 渲染前对字段值的预处理方法，需返回新值\n'
         + '  return val\n'
-        + '}'
-      )
-    case 'afterScreen':
-      return (
-        'opt=(res, data) => {\n'
-        + '  // res响应数据, 当前组件数据data\n'
-        + '  // 这里可直接使用getScreenGlobal取得全局的数据\n'
-        + '  console.log(\'afterFetchScreen\',data)\n'
-        + '  return data //返回新的图表数据\n'
         + '}'
       )
   }
