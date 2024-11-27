@@ -42,7 +42,7 @@
               <el-radio
                 v-for="(item, key) in userTypeList"
                 :key="key"
-                :label="key"
+                :value="key"
               >
                 {{ item }}
               </el-radio>
@@ -71,14 +71,23 @@
           </template>
           <el-form-item label="审批方式">
             <el-radio-group v-model="state.flowType">
-              <el-radio label="1">
-                多人审批，采用依次审批
+              <el-radio
+                value="1"
+                disabled
+              >
+                多人审批，一个通过或拒绝
               </el-radio>
-              <el-radio label="2">
+              <el-radio
+                value="2"
+                disabled
+              >
                 多人审批，通过只需一个，拒绝需全员
               </el-radio>
-              <el-radio label="3">
-                多人审批，一个通过或拒绝
+              <el-radio
+                value="3"
+                disabled
+              >
+                多人审批，采用依次审批
               </el-radio>
             </el-radio-group>
           </el-form-item>
@@ -104,7 +113,8 @@
   </el-drawer>
   <user-dialog
     ref="userDialogEl"
-    v-model="state.content"
+    v-model="state.checkedUserId"
+    v-model:user-name="state.content"
   />
 </template>
 
@@ -118,10 +128,11 @@
   const userDialogEl = ref()
   const visible = ref(false)
   const state = reactive({
-    userType: '',
+    userType: '', // 1 指定成员 2 上级主管 3 发起人自选
     flowType: '', // 审批方式
-    content: '',
-    priority: 1
+    content: '', // 显示的内容名称
+    priority: 1,
+    checkedUserId: '' // 当前审批人id
   })
   const nodeData = ref({})
   // const branchIndex = ref(0) // 条件分支时，当前为第几个
@@ -148,7 +159,8 @@
       userType: state.userType,
       flowType: state.flowType,
       content: state.content,
-      priority: state.priority
+      priority: state.priority,
+      checkedUserId: state.checkedUserId
     }
     Object.assign(nodeData.value, newObj)
   }

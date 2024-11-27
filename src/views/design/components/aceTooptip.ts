@@ -66,10 +66,11 @@ export const getDrawerContent = (key: string, tips = 'form') => {
       )
     case 'change':
       return (
-        'opt=(key,model) => {\n'
-        + '  // key当前改变组件的name值,model表单的值，可修改后返回新值\n'
-        + '  console.log(\'change\',key)\n'
-        + '  return model\n'
+        'opt=(obj) => {\n'
+        + '  // 表单组件改变事件，可修改后返回新值\n'
+        + '  // name:当前组件名称, value:当前值, model：当前表单值, prop:当前组件名称, options：选项数据\n'
+        + '  console.log(\'change\',obj)\n'
+        + '  return obj.model\n'
         + '}'
       )
     case 'renderFormatter':

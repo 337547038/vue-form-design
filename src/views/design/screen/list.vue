@@ -184,8 +184,7 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
@@ -200,8 +199,7 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
@@ -220,8 +218,7 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {

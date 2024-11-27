@@ -1,6 +1,6 @@
 // 数据处理
 import { getRequest } from '@/api'
-import { string2json, stringToObj } from '@/utils/design.ts'
+import { jsonParseStringify, string2json, stringToObj } from '@/utils/design.ts'
 import type { FormList } from '@/types/form.ts'
 // 根据id获取编辑数据
 export const getInitData = (id: string) => {
@@ -10,7 +10,7 @@ export const getInitData = (id: string) => {
       const tableData = stringToObj(result.listData) // 列表数据
       const searchData = stringToObj(result.data) // 搜索表单数据
       const dict = string2json(result.dict)
-      resolve({ tableData, searchData, dict, source: result.source })
+      resolve({ tableData, searchData, dict, source: result.source, name: result.name })
     })
   })
 }
@@ -38,7 +38,15 @@ export const getFormColumns = (id: number) => {
       (res: { data: { data: string } }) => {
         const content = stringToObj(res.data.data)
         // filterFiled(content)
-        const defaultSearch = content.list?.filter((item: any) => ['input', 'select'].includes(item.type))
+        // const defaultSearch = content.list?.filter((item: any) => ['input', 'select'].includes(item.type))
+         const defaultSearch: any = []
+        content.list.forEach((item: any) => {
+          if (['input', 'select'].includes(item.type)) {
+            const newItem = jsonParseStringify(item)
+             delete newItem.customRules // 删除校验
+            defaultSearch.push(newItem)
+          }
+        })
         resolve({ data: filterFiled(content), defaultSearch: defaultSearch })
       }
     )

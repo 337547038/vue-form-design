@@ -9,13 +9,12 @@
         <ak-form
           ref="formEl"
           :data="formData"
-          :before-submit="beforeSubmit"
-          :after-submit="afterSubmit"
-          :type="formType"
-          :disabled="!!route.query.id"
+          :before="beforeSubmit"
+          :after="afterSubmit"
+          :operate-type="formType"
+          :disabled="disabledEdit"
           request-url="getFormContent"
-          submit-url="flowSave"
-          edit-url="editFormContent"
+          :submit-url="formType==='add'?'flowSave':'editFormContent'"
         />
       </el-tab-pane>
       <el-tab-pane
@@ -85,19 +84,29 @@
   const formEl = ref()
   const formData = ref({
     list: [],
-    form: {}
+    form: {},
+    config: {}
   })
   const loading = ref(true)
   const formId = ref()
   const flowName = ref()
   const formType = computed(() => {
     if (route.query.id) {
-      return 2 // 编辑
+      return 'edit' // 编辑
     }
-    return 1
+    return 'add'
   })
   const userInfo = computed(() => {
     return getStorage('userInfo', true)
+  })
+  // 待审核状态允许编辑
+  const disabledEdit = computed(() => {
+    const { status, id } = route.query
+    if (id) {
+      // 编辑查看状态
+      return status != '0'
+    }
+    return false
   })
   const getInitData = () => {
     const params = {
@@ -118,29 +127,39 @@
       }
     })
   }
-  const beforeSubmit = (params: any) => {
-    const newParams = {
-      form: params,
-      flow: {
-        flowId: route.query.flowId,
-        formId: formId.value,
-        id: route.query.id,
-        userId: userInfo.value.id, // 当前登录用户id
-        title: `${userInfo.value.userName}提交的${flowName.value}申请审批`,
-        creatTime: new Date()
+  const beforeSubmit = (params: any, type: string) => {
+    if (type === 'submit') {
+      let newParams: any = {
+        form: params,
+        flow: {
+          flowId: route.query.flowId,
+          formId: formId.value,
+          // id: route.query.formId,
+          userId: userInfo.value.id, // 当前登录用户id
+          title: `${userInfo.value.userName}提交的${flowName.value}申请审批`,
+          creatTime: new Date(),
+          status: 0
+        }
       }
+      // 编辑时
+      if (route.query.id) {
+        newParams = params
+        newParams.formId = formId.value
+      }
+      const eventBefore = formData.value.events?.before
+      if (typeof eventBefore === 'function') {
+        return eventBefore(newParams)
+      }
+      return newParams
     }
-    const eventBefore = formData.value.events?.beforeSubmit
-    if (typeof eventBefore === 'function') {
-      return eventBefore(newParams)
-    }
-    return newParams
   }
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
-      router.push({ path: '/task/applyed' })
-    } else {
-      console.log('提交失败')
+  const afterSubmit = (res: any, success: boolean, type: string) => {
+    if (type === 'submit') {
+      if (success) {
+        router.push({ path: '/task/applyed' })
+      } else {
+        console.log('提交失败')
+      }
     }
   }
 
@@ -188,32 +207,39 @@
   })
 </script>
 <style lang="scss">
-  .container-apply-start {
-    .flow-box {
-      position: relative;
+.container-apply-start {
+  .flow-box {
+    position: relative;
+  }
+
+  .status {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    li {
+      padding: 5px;
     }
-    .status {
-      position: absolute;
-      left: 0;
-      top: 0;
-      li {
-        padding: 5px;
-      }
-      .s1 {
-        color: #20b2aa;
-      }
-      .s2 {
-        color: #1890ff;
-      }
-      .s3 {
-        color: #909399;
-      }
-      .s4 {
-        color: #fc653f;
-      }
-      .s5 {
-        color: #d9db9b;
-      }
+
+    .s1 {
+      color: #20b2aa;
+    }
+
+    .s2 {
+      color: #1890ff;
+    }
+
+    .s3 {
+      color: #909399;
+    }
+
+    .s4 {
+      color: #fc653f;
+    }
+
+    .s5 {
+      color: #d9db9b;
     }
   }
+}
 </style>

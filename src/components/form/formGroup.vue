@@ -1,7 +1,7 @@
 <!-- Created by 337547038 on 2021/9/8. -->
 <template>
   <draggable
-    v-if="['design', 'search'].includes(formProps.operateType)"
+    v-if="['design', 'designSearch'].includes(formProps.operateType)"
     item-key="id"
     :list="dataList"
     name="fade"
@@ -92,7 +92,7 @@
    * @param item
    */
   const click = (action: string, index: number, item?: any) => {
-    if (!['design', 'search'].includes(formProps.operateType)) {
+    if (!['design', 'designSearch'].includes(formProps.operateType)) {
       return // 非设计模式
     }
     if (action === 'clone') {

@@ -13,7 +13,6 @@ const getInitList = (list: any) => {
       case 'select':
         custom = {
           control: {
-            appendToBody: true
           },
           options: [],
           config: {

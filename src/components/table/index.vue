@@ -23,7 +23,7 @@
             :data="searchData"
             :dict="listDict"
             :disabled="state.loading"
-            is-search
+            operate-type="search"
             request-url=""
             @btn-click="formBtnClick"
           >
@@ -233,6 +233,7 @@
   import OperateButton from './components/operateButton.vue'
   import * as request from './components/request'
   import { mergeDefaultBtn } from './components/defaultBtn'
+  import { ElMessage } from 'element-plus'
   defineOptions({ name: 'AkList' })
   const props = withDefaults(
     defineProps<{
@@ -332,7 +333,7 @@
   })
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
-    const storage = getStorage('akAllDict', true)
+    const storage = getStorage('akAllDict')
     return Object.assign(storage || {}, props.dict, state.dict) || {}
   })
   const isFixedBottomScroll = computed(() => {
@@ -401,7 +402,7 @@
 
   // 使用了 render 属性时,渲染前对字段值的预处理方法，需返回新值
   const getRenderFormatValue = (row: any, column: any) => {
-    if (typeof column.renderFormatter === 'function') {
+     if (typeof column.renderFormatter === 'function') {
       return column.renderFormatter(row[column.prop], row)
     }
     return row[column.prop]
@@ -409,13 +410,20 @@
 
   // 处理switch切换事件
   const switchLoading = ref(false)
-  const oldVal = ref() // 修改前的值
+  const oldVal = ref(undefined) // 修改前的值
   const switchBeforeChange = (val: number | string | boolean) => {
     oldVal.value = val
     return true
   }
   const switchChange = (val: string | number | boolean, obj: any, row: any) => {
-    // 提交修改
+    // 提交修改，这里通过请求数据再使用v-bind绑定参数，初始时也会触发change,但没有触发beforeChange
+    console.log('switchChange')
+    console.log(val)
+    console.log(obj)
+    console.log(row)
+    if (oldVal.value === undefined) {
+      return
+    }
     request.switchEvent({
       props,
       switchLoading,
@@ -463,7 +471,7 @@
       return val
     } else if (typeof replaceValue === 'string') {
       // 字符串时为字典
-      return listDict.value[replaceValue][val] || val
+      return listDict.value[replaceValue]?.[val] || val
     } else {
       return replaceValue[val] || val
     }
@@ -500,15 +508,22 @@
   }
   // 表格上方操作按钮事件，处理预设key的内置事件
   const btnClick = (key: string) => {
+    const ids = state.selectionChecked.map((item) => item[pk.value])
     if (key === 'del' && state.selectionChecked && pk.value) {
-      const ids = state.selectionChecked.map((item) => item[pk.value])
       delClick(ids)
     } else if (key === 'export') {
-      const ids = state.selectionChecked.map((item) => item[pk.value])
       request.exportEvent({ props, state, route, params: ids })
-    } else {
-      emits('btnClick', key)
+    } else if (key === 'edit') {
       // todo 编辑或查看时请数据拉回来，或者是对外暴露拉取数据的方法
+      if (ids?.length > 1) {
+        return ElMessage({
+          message: '每次只能编辑一条数据',
+          type: 'warning'
+        })
+      }
+      emits('btnClick', key, { [pk.value]: ids[0] })
+    } else {
+      emits('btnClick', key, ids)
     }
   }
 
@@ -532,18 +547,18 @@
       }
     }
     const params = Object.assign({}, route.query, searchFormVal)
-    router.push({ path: route.path, query: params })
+    // router.push({ path: route.path, query: params })
+     router.replace({ query: params })
   }
   const formBtnClick = (type: string) => {
     if (searchJump.value) {
-      // 带参数跳转
+      // 将参数拼接到url上
       getParamsJump(type)
-    } else {
-      if (type === 'submit') {
-        getListData(1)
-      } else if (type === 'reset') {
-        searchClear()
-      }
+    }
+    if (type === 'submit') {
+      getListData(1)
+    } else if (type === 'reset') {
+      searchClear()
     }
   }
   // 侧栏树点击事件
@@ -653,9 +668,12 @@
   const unWatch = watch(
     () => route.query,
     () => {
-      state.currentPage = 1
-      setSearchValueFormQuery()
-      getListData(1)
+      if (props.autoLoad) {
+        // todo 这里要区分跳转根据url查询，不自动加载跳转也需加载
+        state.currentPage = 1
+        setSearchValueFormQuery()
+        getListData(1)
+      }
     },
     {
       deep: true
@@ -674,12 +692,17 @@
       getListData(1)
     }
   })
+  // 重置列表
+  const resetList = () => {
+    tableDataList.value = []
+  }
   onBeforeUnmount(() => {})
   defineExpose({
     getListData,
     delClick,
     table,
     setSearchFormValue,
-    getSearchFormValue
+    getSearchFormValue,
+    resetList
   })
 </script>

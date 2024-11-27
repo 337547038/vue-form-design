@@ -220,6 +220,9 @@
 
   // 选择数据转换，默认尝试转数字
   const transformOption = (val: string | number) => {
+    if (typeof val === 'object') {
+      return val
+    }
     switch (config.value.transformData) {
       case 'none':
         return val
@@ -387,11 +390,7 @@
   const getOptions = (data = {}, type: any, callback?: any) => {
     getOptionsData(config.value, formProps.model, type, route, data).then(
         (res) => {
-          if (props.data.type === 'treeSelect') {
-            control.value.data = res // todo
-          } else {
-            optionsList.value = res
-          }
+          optionsList.value = res
           if (callback) {
             callback()
           }
@@ -416,7 +415,7 @@
       : null
   // 初始化下拉选项
   const initGetOptions = () => {
-    if (['select', 'radio', 'checkbox'].includes(props.data.type)) {
+    if (['select', 'radio', 'checkbox', 'treeSelect'].includes(props.data.type)) {
       const { optionsType, optionsFun } = props.data.config
       const { filterable, remote } = props.data.control
       if (optionsType === 2 && optionsFun) {

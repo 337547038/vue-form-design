@@ -7,7 +7,7 @@
     class="ak-form"
     :model="model as any"
     :disabled="disabled || operateType === 'detail'"
-    :class="[`ak-form-${operateType}`]"
+    :class="getFormCls"
   >
     <form-group :data="data.list" />
     <slot />
@@ -57,7 +57,8 @@
       params?: { [key: string]: any } // 提交表单一些附加参数
       submitUrl?: string // 表单提交url
       requestUrl?: string // 用于回显填充数据请求数据url
-      operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' // 当前表单操作类型，正常使用下只有add/edit/detail
+      // add/edit用于根据当前类型显示或禁用相关组件操作。design/designSearch设计模式。detail用于详情页查看。search用于列表上方条件筛选
+      operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' | 'designSearch'
     }>(),
     {
       data: () => {
@@ -88,10 +89,6 @@
     ): void // 表单组件值发生变化时
   }>()
 
-  const isSearch = computed(() => {
-    return props.operateType === 'search'
-  })
-
   const route = useRoute()
   const router = useRouter()
 
@@ -114,7 +111,7 @@
           cancel = submitBtn[1]
         }
       }
-      if (isSearch.value) {
+      if (['designSearch', 'search'].includes(props.operateType)) {
         return [
           {
             label: submit || '查询',
@@ -152,7 +149,7 @@
    */
   const defaultBtnClick = (obj: any) => {
     emits('btnClick', obj.key)
-    if (['detail', 'design'].includes(props.operateType)) {
+    if (!['add', 'edit', 'search'].includes(props.operateType)) {
       return ElMessage.error('当前模式不能提交表单')
     }
     switch (obj.key) {
@@ -167,6 +164,19 @@
         break
     }
   }
+
+  // 添加表单类名
+  const getFormCls = computed(() => {
+    switch (props.operateType) {
+      case 'design':
+      case 'designSearch':
+        return 'ak-form-design'
+      case 'detail':
+        return 'ak-form-detail'
+      default:
+        return ''
+    }
+  })
 
   // 注册window事件
   const setWindowEvent = () => {
@@ -242,7 +252,7 @@
   )
 
   const dictForm = computed(() => {
-    const storage = getStorage('akAllDict', true)
+    const storage = getStorage('akAllDict')
     // 全局的、当前表单配置的以及接口返回的
     return Object.assign({}, storage || {}, resultDict.value)
   })
@@ -387,8 +397,12 @@
    */
   const getData = (params = {}) => {
     const requestUrl = props.data.requestUrl || props.requestUrl
-    if (props.operateType === 'design' || !requestUrl || isSearch.value) {
-      console.error('执行了获取数据方法，但配置有误！')
+    if (['design', 'designSearch'].includes(props.operateType)) {
+      console.error('设计模式不能提交表单！')
+      return
+    }
+    if (!requestUrl) {
+      console.error('请配置获取表单数据接口！')
       return
     }
     loading.value = true
@@ -440,12 +454,11 @@
    */
   const submit = (params = {}) => {
     const apiUrl = props.submitUrl || props.data.submitUrl
-    if (isSearch.value || !apiUrl || loading.value) {
-      if (!isSearch.value && !apiUrl) {
-        console.error(new Error('请配置表单提交url'))
-      }
-      // isSearch列表里作为筛选时，不提交表单
-      return
+    if (!['add', 'edit'].includes(props.operateType) || loading.value) {
+      return // 只有add/edit允许提交表单，不提交表单
+    }
+    if (!apiUrl) {
+      console.error(new Error('请配置表单提交url'))
     }
     validate((valid: boolean, fields: any) => {
       if (valid) {

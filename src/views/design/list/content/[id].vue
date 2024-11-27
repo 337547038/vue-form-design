@@ -7,10 +7,8 @@
       :search-data="state.searchData"
       :data="state.tableData"
       :dict="state.dict"
-      request-url="getContentList"
-      delete-url="delFormContent"
-      :before-fetch="beforeFetch"
-      :before-delete="beforeDelete"
+      :api-key="{list:'getContentList',del:'delFormContent',export:'exportContent',edit:'editFormContent'}"
+      :before="beforeFetch"
       :auto-load="false"
       @btn-click="listBtnClick"
     />
@@ -26,11 +24,10 @@
         ref="formEl"
         :data="dialog.formData"
         :dict="dialog.dict"
-        :type="dialog.formType"
+        :operate-type="dialog.formType"
         request-url="getFormContent"
-        submit-url="saveFormContent"
-        edit-url="editFormContent"
-        :after-submit="afterSubmit"
+        :submit-url="dialog.formType==='add'?'saveFormContent':'editFormContent'"
+        :after="afterSubmit"
         :params="{ formId: state.source }"
         :query="{ formId: state.source, id: dialog.editId }"
         @btn-click="dialogBtnClick"
@@ -63,6 +60,8 @@
   })
   // 根据当前设计的表单id获取使用了此id设计的列表
   const initList = () => {
+    state.tableData = []
+     listEl.value.resetList()
     if (!listId.value) {
       ElMessage.error('非法操作...')
       return false
@@ -79,7 +78,7 @@
         state.source = result.source
         // 获取列表数据
         nextTick(() => {
-          listEl.value.getListData()
+           listEl.value.getListData()
           loading.value = false
         })
         getFormInit()
@@ -91,28 +90,31 @@
   })
   // 路由改变时需要重新加数据
   const unwatch = watch(
-    () => route.params.id,
-    () => {
-      initList()
-    },
-    {
-      // deep: true
-    }
+      () => route.params.id,
+      () => {
+        initList()
+      },
+      {
+        // deep: true
+      }
   )
-  const beforeFetch = (params: any) => {
+  const beforeFetch = (params: any, type: string) => {
     // props.beforeFetch事件存在时，events.beforeFetch会无效，此处在加上
-    params.extend.formId = state.source
-    const eventBefore = state.tableData.events?.beforeFetch
-    if (typeof eventBefore === 'function') {
-      return eventBefore(params, route)
-    }
-    return params
-  }
-  const beforeDelete = (params: any) => {
-    params.formId = state.source
-    const eventBefore = state.tableData.events?.beforeDelete
-    if (typeof eventBefore === 'function') {
-      return eventBefore(params, route)
+    if (type === 'fetch') {
+      params.extend.formId = state.source
+      const eventBefore = state.tableData.events?.before
+      if (typeof eventBefore === 'function') {
+        return eventBefore(params, route)
+      }
+    } else if (type === 'del') {
+      params.formId = state.source
+      const eventBefore = state.tableData.events?.before
+      if (typeof eventBefore === 'function') {
+        return eventBefore(params, route)
+      }
+    } else if (type === 'submit') {
+      // 列表中switch修改时
+      params.formId = state.source
     }
     return params
   }
@@ -121,7 +123,7 @@
   const dialog = reactive({
     visible: false,
     title: '',
-    formType: 1,
+    formType: 'add',
     formData: {},
     width: '',
     dict: {},
@@ -136,47 +138,47 @@
     if (canOpenDialog.value) {
       dialog.width = state.tableData.config?.dialogWidth // 弹口宽
       getRequest('designById', { id: state.source })
-        .then((res: any) => {
-          const result = res.data
-          if (result && Object.keys(result).length) {
-            dialog.formData = stringToObj(result.data)
-            dialog.dict = string2json(result.dict)
-          }
-        })
-        .catch((res: any) => {
-          ElMessage.error(res.message || '非法操作.')
-        })
+          .then((res: any) => {
+            const result = res.data
+            if (result && Object.keys(result).length) {
+              dialog.formData = stringToObj(result.data)
+              dialog.dict = string2json(result.dict)
+            }
+          })
+          .catch((res: any) => {
+            ElMessage.error(res.message || '非法操作.')
+          })
     }
   }
-  const listBtnClick = (btn: any, row: any) => {
+  const listBtnClick = (key: string, row: any) => {
     // 选择了数据源和设置了弹窗方式打开时
-    if (btn.key === 'import') {
+    if (key === 'export') {
       // 使用查询表单的值及当前列表的id
       const params = Object.assign({}, listEl.value.getSearchFormValue(), {
         listId: listId.value
       })
       download('importExcel', params)
-        .then(() => {
-          ElMessage.success('正在导出..')
-        })
-        .catch((res: any) => {
-          ElMessage.error(res.message)
-        })
-    } else if (btn.key === 'add' || btn.key === 'edit') {
+          .then(() => {
+            ElMessage.success('正在导出..')
+          })
+          .catch((res: any) => {
+            ElMessage.error(res.message)
+          })
+    } else if (key === 'add' || key === 'edit') {
       if (canOpenDialog.value) {
         // 打开弹窗
         dialog.visible = true
-        dialog.title = btn.key === 'add' ? '新增' : '编辑'
-        dialog.formType = btn.key === 'add' ? 1 : 2
+        dialog.title = key === 'add' ? '新增' : '编辑'
+        dialog.formType = key
         dialog.editId = row && row.id
-        if (btn.key === 'add' && dialog.formData.config?.addLoad) {
+        if (key === 'add' && dialog.formData.config?.addLoad) {
           // 添加时需要加载数据
           nextTick(() => {
             formEl.value.getData()
           })
         }
         // 编辑，根据id加载
-        if (btn.key === 'edit') {
+        if (key === 'edit') {
           nextTick(() => {
             formEl.value.getData()
           })
@@ -190,15 +192,17 @@
       }
     }
   }
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
-      // 添加成功，刷新列表数据
-      closeResetDialog()
-      listEl.value.getListData()
-    }
-    const eventBefore = dialog.formData.events?.afterSubmit
-    if (typeof eventBefore === 'function') {
-      return eventBefore(type)
+  const afterSubmit = (res: any, success: boolean, type: string) => {
+    if (type === 'submit') {
+      if (success) {
+        // 添加成功，刷新列表数据
+        closeResetDialog()
+        listEl.value.getListData()
+      }
+      const eventBefore = dialog.formData.events?.after
+      if (typeof eventBefore === 'function') {
+        return eventBefore(type)
+      }
     }
   }
   const dialogBtnClick = (type: string) => {

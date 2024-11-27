@@ -413,7 +413,7 @@
             <div class="h3">
               <h3>接口数据事件</h3>
             </div>
-            <el-form-item label="新增数据保存url">
+            <el-form-item label="提交保存url">
               <el-input
                 v-model="formData.config.submitUrl"
                 placeholder="表单提交的url，通用提交时可不设置"

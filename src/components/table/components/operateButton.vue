@@ -135,8 +135,8 @@
 <style scoped lang="scss">
   .operate-button {
     display: flex;
-    :deep(.el-button),
-    div {
+    :deep(.el-button)
+   {
       margin-right: 10px;
       margin-left: 0;
     }

@@ -18,11 +18,10 @@
         ref="formEl"
         :data="formData"
         :dict="dialog.dict"
-        :type="dialog.formType"
-        submit-url="userSave"
-        edit-url="userEdit"
-        :before-submit="beforeSubmit"
-        :after-submit="afterSubmit"
+        :operate-type="dialog.formType"
+        :submit-url="dialog.formType==='add'?'userSave':'userEdit'"
+        :before="beforeSubmit"
+        :after="afterSubmit"
         @btn-click="dialogBtnClick"
       />
     </el-dialog>
@@ -37,7 +36,7 @@
 
   const route = useRoute()
   const tableListEl = ref()
-  const afterFetch = (type, result) => {
+  const afterFetch = (result) => {
     return flatToTree(result.list || result)
   }
   const searchData = ref({
@@ -109,7 +108,7 @@
           label: 'name', // 指定name为label的值
           value: 'id' // 指定id为value的值
         },
-        name: 'role',
+        name: 'roleId',
         formItem: {
           label: '角色'
         }
@@ -127,7 +126,7 @@
       { label: '登录名称', prop: 'userName' },
       { label: '昵称', prop: 'nickName' },
       { label: '手机号码', prop: 'phone' },
-      { label: '角色', prop: 'role' },
+      /* { label: '角色', prop: 'roleId' }, */
       {
         label: '状态',
         prop: 'status',
@@ -136,14 +135,16 @@
         replaceValue: 'sys-status'
       },
       {
-        prop: 'dateTime',
+        prop: 'creatTime',
         label: '创建时间',
         render: 'datetime'
       },
-      { label: '操作', prop: '__control', render: 'buttons', buttons: [
+      {
+        label: '操作', prop: '__control', render: 'buttons', buttons: [
           { label: '编辑', key: 'edit' },
           { label: '删除', key: 'del' }
-        ] }
+        ]
+      }
     ],
     config: { openType: 'dialog', searchJump: true },
     controlBtn: [
@@ -299,7 +300,7 @@
           method: 'post',
           after: afterFetch
         },
-        name: 'department',
+        name: 'departmentId',
         formItem: {
           label: '归属部门'
         }
@@ -307,8 +308,7 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
@@ -338,7 +338,6 @@
         type: 'select',
         control: {
           modelValue: [],
-          appendToBody: true,
           multiple: true
         },
         options: [],
@@ -350,7 +349,7 @@
           value: 'id', // 指定id为value的值
           // transformData: 'string'
         },
-        name: 'role',
+        name: 'roleId',
         formItem: {
           label: '角色'
         }
@@ -380,7 +379,7 @@
   const dialog = reactive({
     visible: false,
     title: '',
-    formType: 1,
+    formType: 'add',
     dict: {},
     editId: ''
   })
@@ -398,10 +397,10 @@
         nextTick(() => {
           console.log(newRow)
           // 将角色数据转换下
-          if (typeof newRow.role === 'string') {
-            newRow.role = newRow.role.split(',')
+          if (newRow.roleId) {
+            newRow.roleId = newRow.roleId.split(',').map(Number)
           } else {
-            newRow.role = []
+            newRow.roleId = []
           }
           // 将密码值设给确认密码框
           newRow.password2 = newRow.password
@@ -414,10 +413,10 @@
   // 提交表单前事件
   const beforeSubmit = (params) => {
     // 将角色转字符串传
-    if (params.role) {
-      params.role = params.role.join(',')
+    if (params.roleId) {
+      params.roleId = params.roleId.join(',')
     }
-    if (dialog.formType === 2) {
+    if (dialog.formType === 'edit') {
       // 编辑模式下添加参数
       params.id = dialog.editId
     }
@@ -425,7 +424,7 @@
     return params
   }
   // 提交表单后事件
-  const afterSubmit = (res, success, type) => {
+  const afterSubmit = (res, success) => {
     if (success) {
       // 添加成功，刷新列表数据
       closeResetDialog()
@@ -445,9 +444,9 @@
     }
   }
   onMounted(() => {
-    if (route.query.role) {
+    if (route.query.roleId) {
       // 根据url参数设置查询表单初始值
-      tableListEl.value.setSearchFormValue({ role: parseInt(route.query.role) })
+      tableListEl.value.setSearchFormValue({ roleId: parseInt(route.query.roleId) })
     }
     // 等查询表单设值完整后，再加载列表数据，这样便可获取到查询条件
     nextTick(() => {

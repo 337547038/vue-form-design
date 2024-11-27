@@ -44,10 +44,9 @@ $mainColor: #66b1ff;
 }
 
 .ak-form {
-  .group-btn {display: flex;justify-content: center}
-}
+  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px;margin-bottom: 22px}
 
-.ak-form-add,.ak-form-edit {padding: 10px;box-sizing: border-box;
+  padding: 10px;box-sizing: border-box;
   // 格珊
   .form-row {
     .form-col {
@@ -59,8 +58,6 @@ $mainColor: #66b1ff;
       }
     }
   }
-
-  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px;margin-bottom: 22px}
 
   .form-tabs {
     .drag {min-height: 80px;}
@@ -149,7 +146,7 @@ $mainColor: #66b1ff;
   }
 }
 
-.ak-form-design, .ak-form-search {min-height: calc(100vh - 126px);
+.ak-form-design {min-height: calc(100vh - 126px);
 
   > div {height: 100%}
 

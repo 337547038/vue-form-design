@@ -8,11 +8,8 @@
       ref="formEl"
       :data="state.formData"
       :operate-type="formType"
-      :api-key="{
-        get: 'getFormContent',
-        add: 'saveFormContent',
-        edit: 'editFormContent'
-      }"
+      request-url="getFormContent"
+      :submit-url="formType==='add'?'saveFormContent':'editFormContent'"
       :before="before"
       :params="{ formId: formId.value }"
       :after="after"
@@ -74,7 +71,7 @@
           }
           // 编辑时加载表单初始数据。或设置了添加时获取请求
           if (id.value) {
-            formEl.value.getData({ formId: formId.value, id: id.value })
+             formEl.value.getData({ formId: formId.value, id: id.value })
           }
           layoutStore.changeBreadcrumb([
             { label: '内容管理' },
@@ -92,8 +89,8 @@
     params.formId = formId.value
     return params
   }
-  const after = (type: string) => {
-    if (type === 'success') {
+  const after = (res: any, success: boolean, type: string) => {
+    if (success && type === 'submit') {
       router.go(-1)
     }
   }

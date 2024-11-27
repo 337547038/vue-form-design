@@ -186,7 +186,7 @@
   import { getGroupName } from '@/utils/design'
   const formProps = inject('akFormProps', {}) as any
   const isDesignType = computed(() => {
-    return formProps.operateType === 'design'
+    return formProps.operateType === 'design' || formProps.operateType === 'designSearch'
   })
   // 按钮点击事件
   const injectBtnEvent = inject('akFormButtonEvent')

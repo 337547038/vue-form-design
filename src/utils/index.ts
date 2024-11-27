@@ -151,7 +151,7 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
 /**
  * 获取storage
  * @param key 保存时的key
- * @param hour 如果保存时使用了时间，则需要传true
+ * @param hour 如果保存时使用了时间，则需要传true。false在sessionStorage里取
  * @return 返回保存的值，过期后返回false,其他异常或不存在返回undefined
  */
 export const getStorage = (key: string, hour?: boolean) => {

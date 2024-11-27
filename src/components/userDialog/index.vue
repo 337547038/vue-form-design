@@ -20,7 +20,7 @@
       <div class="table-list">
         <div class="search">
           <el-input
-            v-model="userName"
+            v-model="searchUserName"
             placeholder="请输入用户名"
           />
           <el-button
@@ -89,18 +89,18 @@
         <el-table :data="checkData">
           <el-table-column label="用户名">
             <template #default="{ row }">
-              {{ row }}
+              {{ row.userName }}
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
             width="60px"
           >
-            <template #default="{ row }">
+            <template #default="{ $index }">
               <el-button
                 size="small"
                 type="danger"
-                @click="delRowClick(row)"
+                @click="delRowClick($index)"
               >
                 移除
               </el-button>
@@ -132,15 +132,19 @@
 
   const props = withDefaults(
     defineProps<{
-      modelValue?: string
+      modelValue?: string // 用户id
+      userName?: string // 用户名称
     }>(),
     {
-      modelValue: ''
+      modelValue: '',
+      userName: ''
     }
   )
 
   const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void
+    (e: 'userName', value: string): void
+    (e: 'update:change', obj: any): void
   }>()
   const visible = ref(false)
   // 侧栏处理
@@ -160,7 +164,7 @@
   }
   // 侧栏处理结束
   // table
-  const userName = ref()
+  const searchUserName = ref()
   const tableData = ref([])
   const page = reactive({
     total: 0,
@@ -171,7 +175,7 @@
     getUserList()
   }
   const resetClick = () => {
-    userName.value = ''
+    searchUserName.value = ''
     department.value = ''
     treeEl.value.setCurrentKey(null)
     getUserList()
@@ -183,7 +187,7 @@
         pageSize: page.pageSize
       },
       query: {
-        name: userName.value,
+        name: searchUserName.value,
         department: department.value
       }
     }
@@ -196,18 +200,16 @@
     getUserList()
   }
   const tableRowClick = (row: any) => {
-    if (!checkData.value.includes(row.userName)) {
-      checkData.value.push(row.userName)
+    const has = checkData.value.filter((item: any) => item.id === row.id)
+    if (has?.length === 0) {
+      // 没有数据
+      checkData.value.push(row)
     }
   }
   // 已选
   const checkData = ref([])
-  const delRowClick = (row: any) => {
-    checkData.value.forEach((item: any, index: number) => {
-      if (item === row) {
-        checkData.value.splice(index, 1)
-      }
-    })
+  const delRowClick = (index: number) => {
+    checkData.value.splice(index, 1)
   }
   const delAllClick = () => {
     checkData.value = []
@@ -215,17 +217,35 @@
   // 弹窗处理
   const open = () => {
     visible.value = true
-    if (props.modelValue) {
-      checkData.value = props.modelValue.split(',')
+    if (props.modelValue && props.userName) {
+      const userName = props.userName.split(',')
+      const userId = props.modelValue.split(',')
+      if (userName?.length === userId?.length) {
+        for (let i = 0; i < userId.length; i++) {
+          checkData.value.push({ id: userId[i], userName: userName[i] })
+        }
+      } else {
+        getUserListById()
+      }
+    } else if (props.modelValue) {
+      // 只有id时
+      getUserListById()
     } else {
       checkData.value = []
     }
     getTreeData()
     getUserList()
   }
+  const getUserListById = () => {
+    // 这里要根据id恢复用户名，从接口获取 todo
+  }
   // 关闭弹窗
   const confirmClick = () => {
-    emits('update:modelValue', checkData.value.join(','))
+    const userName = checkData.value.map((item) => item.userName).join(',')
+    const userId = checkData.value.map((item) => item.id).join(',')
+    emits('update:modelValue', userId)
+    emits('update:userName', userName)
+    emits('change', checkData.value)
     visible.value = false
   }
   defineExpose({ open })

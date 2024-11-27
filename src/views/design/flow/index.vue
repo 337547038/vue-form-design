@@ -22,13 +22,11 @@
         <ak-form
           ref="formEl"
           :data="formData"
-          :type="formType"
-          submit-url="designSave"
-          edit-url="designEdit"
+          :operate-type="formType"
+          :submit-url="formType==='add'?'designSave':'designEdit'"
           request-url="designById"
-          :before-submit="beforeSubmit"
-          :after-submit="afterSubmit"
-          :after-fetch="afterFetch"
+          :before="beforeSubmit"
+          :after="afterFetch"
         />
       </el-tab-pane>
       <el-tab-pane
@@ -82,8 +80,7 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
@@ -98,6 +95,8 @@
             // console.log('before', data)
             data.query = {}
             data.query.type = 1
+            data.query.status = 1
+            data.query.category = 2
             return data
           }
         },
@@ -147,8 +146,7 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
@@ -163,8 +161,7 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
@@ -199,13 +196,14 @@
       class: 'form-row-2',
       labelWidth: '110px',
       size: 'default'
-    }
+    },
+    config: {}
   })
   const id = computed(() => {
     return routeQuery.query.id
   })
   const formType = computed(() => {
-    return id.value ? 2 : 1
+    return id.value ? 'edit' : 'add'
   })
   const tabsClick = (pane: any) => {
     if (pane.paneName === 'info') {
@@ -215,23 +213,22 @@
   const saveClick = () => {
     formEl.value.submit()
   }
-  const beforeSubmit = (params: any) => {
-    if (id.value) {
-      params.id = id.value
-    }
-    params.type = 3
-    if (flowEl.value?.getValue) {
-      params.data = objToStringify(flowEl.value?.getValue())
+  const beforeSubmit = (params: any, type: string) => {
+    if (type === 'submit') {
+      if (id.value) {
+        params.id = id.value
+      }
+      params.type = 3
+      if (flowEl.value?.getValue) {
+        params.data = objToStringify(flowEl.value?.getValue())
+      }
     }
     return params
   }
-  const afterFetch = (type: string, res: any) => {
+  const afterFetch = (res: any, success: boolean, type: string) => {
+    if (type === 'fetch') {
     flowEl.value.setValue(stringToObj(res.data))
-    return res
-  }
-  const afterSubmit = (type: string, res: any) => {
-    // 保存成功后，当前为基础信息时，带id跳转到审批流程
-    if (type === 'success') {
+    } else if (type === 'submit') {
       if (tabName.value === 'info') {
         tabName.value = 'flow'
         if (!id.value) {
@@ -247,8 +244,7 @@
         // 到所有流程列表
         router.push({ path: '/design/flow/list' })
       }
-    }
-    if (type === 'validate' && tabName.value === 'flow') {
+    } else if (type === 'validate' && tabName.value === 'flow') {
       // 校验没通过
       let message
       try {
@@ -260,8 +256,10 @@
         }
         ElMessage.error(message)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) { /* empty */ }
+      } catch (e) { /* empty */
+      }
     }
+    return res
   }
   const getInitData = () => {
     if (id.value) {

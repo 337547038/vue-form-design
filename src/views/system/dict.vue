@@ -308,7 +308,6 @@
         type: 'select',
         control: {
           modelValue: '',
-          appendToBody: true,
           style: { width: '100px' }
         },
         options: [

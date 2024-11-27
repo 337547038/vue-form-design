@@ -157,7 +157,6 @@
         type: 'select',
         control: {
           modelValue: '',
-          appendToBody: true,
           placeholder: '请选择常用审批意见'
         },
         options: [

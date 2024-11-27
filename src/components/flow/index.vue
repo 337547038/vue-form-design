@@ -29,7 +29,7 @@
   import FlowGroup from './flowGroup.vue'
   import Drawer from './drawer.vue'
   // import { useRoute } from 'vue-router'
-
+  defineOptions({ name: 'AKFlow' })
   const props = withDefaults(
     defineProps<{
       direction?: 'horizontal' | 'vertical'
@@ -55,6 +55,7 @@
       openDrawer: openDrawer
     }
   })
+  // nodeType 1:发起人，2审批人，3抄送人，4条件分支节点，5条件分支子级
   provide('flowProps', flowProps)
   const nodeData = ref([
     { id: 'start', nodeType: 1, parentId: '', content: '发起人' }
@@ -87,15 +88,16 @@
       }
     })
     nodeData.value.splice(lastNodeIndex, 0, {
-      id: randomString(8),
+      id: randomString(12),
       nodeType: 5,
       parentId: id,
-      priority: 1
+      priority: 1,
+      status: 0 // 当前节点状态 0待处理 1同意 2拒绝 3跳过
     })
   }
   // 添加节点
   const addNodeClick = (obj: EmitsEvent) => {
-    const id = randomString(8)
+    const id = randomString(12)
     // 添加节点, 当前点击的节点为普通节点时，则添加同级。当前为条件时则添加子级
     const parentId = obj.nodeType === 5 ? obj.id : obj.parentId
     // 查找当前数据的位置，在当前数据的下面添加一条以保证顺序
@@ -104,24 +106,27 @@
         nodeData.value.splice(index + 1, 0, {
           id: id,
           nodeType: obj.addType,
-          parentId: parentId
+          parentId: parentId,
+          status: 0 // 当前节点状态 0待处理 1同意 2拒绝 3跳过
         })
       }
     })
     if (obj.addType === 4) {
       // 添加两个默认条件
       nodeData.value.push({
-        id: randomString(8),
+        id: randomString(12),
         nodeType: 5,
         parentId: id,
-        priority: 1
+        priority: 1,
+        status: 0 // 当前节点状态 0待处理 1同意 2拒绝 3跳过
       })
       nodeData.value.push({
-        id: randomString(8),
+        id: randomString(12),
         nodeType: 5,
         parentId: id,
         content: '其他条件进入此流程',
-        priority: 0
+        priority: 0,
+        status: 0 // 当前节点状态 0待处理 1同意 2拒绝 3跳过
       })
     }
   }

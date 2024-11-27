@@ -19,7 +19,7 @@
         </div>
         <ak-form
           :data="formData"
-          :operate-type="$route.query.type === 'search' ? 'search' : 'design'"
+          :operate-type="$route.query.type === 'search' ? 'designSearch' : 'design'"
         />
       </div>
     </div>
@@ -104,8 +104,7 @@
     },
     config: {
       submitCancel: true
-    },
-    apiKey: {}
+    }
   })
   const stringFormData = ref() // 用于恢复初始值
   provide('formData', formData)

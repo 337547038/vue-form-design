@@ -85,9 +85,9 @@
       },
       { label: '操作', prop: '__control', render: 'buttons', buttons: [
           {
-            label: '分配用户',
+            label: '已分配用户',
             click: (row: any) => {
-              router.push({ path: '/system/user', query: { role: row.id } })
+              router.push({ path: '/system/user', query: { roleId: row.id } })
             }
           },
           {

@@ -2,8 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="designList"
-      delete-url="designDelete"
+      :api-key="{list:'designList',del:'designDelete'}"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 3 }"
@@ -42,7 +41,7 @@
         type: 'select',
         control: {
           modelValue: '',
-          appendToBody: true
+          style: { width: '100px' }
         },
         options: [],
         config: {
@@ -64,26 +63,33 @@
     columns: [
       { label: '多选', type: 'selection' },
       { label: '流程名称', prop: 'name' },
-      { label: '流程表单', prop: 'source', config: { dictKey: 'formName' } },
+      { label: '流程表单', prop: 'source' },
       {
         label: '分类',
         prop: 'category',
-        config: {
-          dictKey: 'sys-flow'
-        }
+        render: 'tag',
+        replaceValue: 'sys-flow'
       },
       {
         label: '状态',
         prop: 'status',
-        config: {
-          dictKey: 'sys-status',
-          tagList: {
-            0: 'info',
-            1: 'success'
-          }
+        render: 'tag',
+        replaceValue: 'sys-status',
+        custom: {
+          0: 'info',
+          1: 'success'
         }
       },
-      { label: '操作', prop: '__control' }
+      { label: '操作', prop: '__control', render: 'buttons', buttons: [
+          {
+            key: 'edit',
+            label: '编辑',
+            click: (row: any) => {
+              router.push({ path: '/design/flow', query: { id: row.id } })
+            }
+          },
+          { label: '删除', key: 'del' }
+        ] },
     ],
     config: {},
     controlBtn: [
@@ -103,15 +109,6 @@
         size: 'small',
         icon: 'delete'
       }
-    ],
-    operateBtn: [
-      {
-        label: '编辑',
-        click: (row: any) => {
-          router.push({ path: '/design/flow', query: { id: row.id } })
-        }
-      },
-      { label: '删除', key: 'del' }
     ]
   })
 </script>

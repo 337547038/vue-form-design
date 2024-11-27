@@ -601,7 +601,7 @@
     })
     if (routeQuery.id) {
       getInitData(routeQuery.id).then(
-          ({ tableData: tableData2, searchData, source }) => {
+          ({ tableData: tableData2, searchData, source, name }) => {
             tableData.value = tableData2 // 列表数据
             state.searchData = searchData // 搜索表单数据
             if (tableData2.config.formId) {
@@ -610,6 +610,7 @@
                 state.formFieldList = data
               })
             }
+            tableData.value.config.name = name
           }
       )
     }
@@ -621,7 +622,7 @@
         // 根据选择的表单获取可供选择的表头
         state.formFieldList = JSON.parse(JSON.stringify(data))
         // 添加上方及右侧按钮
-        tableData.value.controlBtn = [{ key: 'edit' }, { key: 'del' }]
+        tableData.value.controlBtn = [{ key: 'add' }, { key: 'del' }]
         // 列表右侧操作按钮
         tableData.value.columns.push({
           label: '操作',
