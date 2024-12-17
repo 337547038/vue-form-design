@@ -312,7 +312,11 @@
         },
         options: [],
         config: {
-          optionsType: 0
+          optionsType: 1,
+          optionsFun: 'postList', // 可以为url也可以为api中的key
+          method: 'post',
+          label: 'name', // 指定name为label的值
+          value: 'id', // 指定id为value的值
         },
         name: 'post',
         formItem: {
@@ -363,7 +367,7 @@
           span: 24
         },
         name: 'remark',
-        item: {
+        formItem: {
           label: '备注'
         }
       }

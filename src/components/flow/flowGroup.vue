@@ -33,6 +33,7 @@
           class="mask-right"
         />
         <div
+          :class="getStatusCls(item)"
           class="flow-item"
           @click="itemClick(item, i as number, flowBranch.length)"
         >
@@ -41,7 +42,8 @@
             :class="`bg-${item.nodeType}`"
           >
             <i :class="getIcon(item)" />
-            <span>{{ nodeTypeName[item.nodeType]
+            <span>{{
+              nodeTypeName[item.nodeType]
             }}<span v-if="item.nodeType === 5">{{ i + 1 }}</span></span>
             <i
               v-if="
@@ -88,14 +90,14 @@
   import { nodeTypeName, userTypeList } from './dict'
 
   const props = withDefaults(
-    defineProps<{
-      data: any // 当前数据
-    }>(),
-    {
-      data: () => {
-        return []
+      defineProps<{
+        data: any // 当前数据
+      }>(),
+      {
+        data: () => {
+          return []
+        }
       }
-    }
   )
   const emits = defineEmits<{
     (e: 'clickEvent', data: EmitsEvent): void
@@ -117,33 +119,62 @@
     }
     return ''
   }
+  const nodeApprover = computed(() => {
+    return flowProps.value.nodeApprover || {}
+  })
   const getContent = (obj: NodeList) => {
-    let userType = ''
+    switch (obj.nodeType) {
+      case 1: // 发起人
+        return obj.content
+      case 2: // 审批人
+      case 3: // 抄送人
+          const type = obj.nodeType === 2 ? '审批人' : '抄送人'
+        if (obj.content) {
+          if (obj.userType === '1') {
+            return '指定成员：' + obj.content
+          } else if (obj.userType === '3') {
+            // 发起人自选时,没有选择具体人员时显示和选择了人员时d
+            const userObj = nodeApprover.value[obj.id]
+            if (userObj && Object.keys(userObj).length) {
+              return `自选${type}：${userObj.name}`
+            }
+            return obj.content
+          } else {
+            return obj.content
+          }
+        } else {
+          return `请设置${type}`
+        }
+      case 5: // 条件
+        return obj.content || '请设置审批条件'
+    }
+
+    /* let userType = ''
     if (obj.userType) {
       userType = (userTypeList as any)[obj.userType] + ':'
     }
     // 不是选了具体人员时
     if (['2', '3', '4'].includes(obj.userType as string)) {
-      return userType
+      // return userType
     }
     if (obj.content) {
       return userType + obj.content
-    }
-    if (obj.nodeType === 5) {
+    } */
+    /* if (obj.nodeType === 5) {
       return '修改审批条件'
     } else if (obj.nodeType === 3) {
       return '指定抄送人'
     } else {
       return '指定审批人'
-    }
+    } */
   }
   const flowBranch = computed(() => {
     if (isBranch.value) {
       return dataList.value
-        .filter((i: NodeList) => i.parentId === props.data.id)
-        .sort((a: any, b: any) => {
-          return b.priority - a.priority
-        })
+          .filter((i: NodeList) => i.parentId === props.data.id)
+          .sort((a: any, b: any) => {
+            return b.priority - a.priority
+          })
     } else {
       return [props.data]
     }
@@ -182,8 +213,8 @@
   }
   const itemClick = (data: NodeList, index: number, length: number) => {
     if (
-      data.nodeType === 1
-      || (data.nodeType === 5 && index === flowBranch.value.length - 1)
+        data.nodeType === 1
+        || (data.nodeType === 5 && index === flowBranch.value.length - 1)
     ) {
       // 发起人节点和条件最后一个节点不能设置
     } else {
@@ -191,6 +222,39 @@
         flowProps.value.openDrawer(data, index, length)
       }
     }
+  }
+
+  const getStatusCls = (node: NodeList) => {
+    if (!flowProps.value.nodeStatus || Object.keys(flowProps.value.nodeStatus).length === 0) {
+      return ''
+    }
+    const status = flowProps.value.nodeStatus[node.id]
+    if (node.nodeType === 1) {
+      // 发起人节点，标记为
+      return 'status-pass'
+    } else if ([2, 3].includes(node.nodeType)) {
+      // 抄送人，审批人节点
+      if (node.id === flowProps.value.currentNode) {
+        // 当前节点
+        return 'status-active'
+      }
+      if (status === 0) {
+        // 拒绝
+        return 'status-refuse'
+      } else if (status === 1) {
+        // 通过
+        return 'status-pass'
+      } else {
+        // 待处理
+        return 'status-wait'
+      }
+    } else if (node.nodeType === 5) {
+      // 条件分支，符合条件的在nodeStatus有记录，并且值为4
+      if (status === 4) {
+        return 'status-pass'
+      }
+    }
+    return ''
   }
   // const drawerConfirm = (obj: any) => {
   //   console.log(obj.userType)

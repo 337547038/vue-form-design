@@ -65,7 +65,6 @@
             <el-pagination
               background
               layout="prev, pager, next"
-              small
               hide-on-single-page
               :current-page="page.current"
               :total="page.total"
@@ -143,8 +142,8 @@
 
   const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void
-    (e: 'userName', value: string): void
-    (e: 'update:change', obj: any): void
+    (e: 'update:userName', value: string): void
+    (e: 'change', obj: any): void
   }>()
   const visible = ref(false)
   // 侧栏处理
@@ -217,6 +216,7 @@
   // 弹窗处理
   const open = () => {
     visible.value = true
+    checkData.value = []
     if (props.modelValue && props.userName) {
       const userName = props.userName.split(',')
       const userId = props.modelValue.split(',')
@@ -230,8 +230,6 @@
     } else if (props.modelValue) {
       // 只有id时
       getUserListById()
-    } else {
-      checkData.value = []
     }
     getTreeData()
     getUserList()

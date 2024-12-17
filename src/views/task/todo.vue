@@ -1,38 +1,29 @@
-<!-- Created by 337547038 待办任务 -->
+<!-- Created by 337547038 我发起的 -->
 <template>
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="flowList"
+      :api-key="{list:'flowList'}"
       :search-data="searchData"
       :data="tableData"
-    >
-      <template #status="{ row }">
-        <el-tag v-if="row.status">
-          {{ row.status }}
-        </el-tag>
-      </template>
-      <template #title="{ row }">
-        <el-button
-          link
-          type="primary"
-          @click="openDrawer(row)"
-        >
-          {{
-            row.title
-          }}
-        </el-button>
-      </template>
-    </ak-list>
-    <drawer-com ref="drawerEl" />
+      :before="beforeFetch"
+    />
   </div>
+  <drawer-todo ref="drawerEl" />
 </template>
 
-<script setup lang="ts">
+<script setup>
   import { ref } from 'vue'
-  import DrawerCom from './components/drawerCom.vue'
+  import DrawerTodo from './components/drawerTodo.vue'
 
   const tableListEl = ref()
+  const drawerEl = ref()
+
+  const beforeFetch = (params) => {
+    params.task = 'todo'
+    return params
+  }
+
   const searchData = ref({
     list: [
       {
@@ -62,24 +53,33 @@
       {
         prop: 'creatTime',
         label: '发起时间',
-        config: {
-          formatter: '{y}-{m}-{d} {h}:{i}:{s}'
-        }
-      },
-      {
-        prop: 'a',
-        label: '流程节点'
+        render: 'datetime',
+        config: {}
       },
       {
         prop: 'status',
-        label: '流程状态'
+        label: '流程状态',
+        render: 'tag',
+        replaceValue: 'sys-flow-status',
+        // 0待审批 1已撤回 2审批中 3同意 4拒绝
+        custom: { 0: 'primary', 1: 'info', 2: 'warning', 3: 'success', 4: 'danger' }
+      },
+      {
+        prop: '__control',
+        label: '操作',
+        render: 'buttons',
+        buttons: [
+          {
+            type: 'primary',
+            label: '审批',
+            click: (row) => {
+              const callback = tableListEl.value.getListData
+              drawerEl.value.open(row, callback)
+            }
+          }
+        ]
       }
     ],
-    config: { requestUrl: 'flowList', expand: true }
+    config: { expand: true }
   })
-
-  const drawerEl = ref()
-  const openDrawer = (row: any) => {
-    drawerEl.value.open(row)
-  }
 </script>

@@ -66,7 +66,16 @@
     if (path.indexOf('api/swagger') !== -1) {
       window.location.href = path
     } else {
-      router.push({ path: path })
+      const paramsObject = {}
+      if (path?.indexOf('?') !== -1) {
+        // 有参数时
+        const queryString = path.split('?')[1]
+        const params = new URLSearchParams(queryString)
+        for (const [key, value] of params.entries()) {
+          paramsObject[key] = value
+        }
+      }
+       router.push({ path: path, query: paramsObject })
     }
   }
 </script>

@@ -43,7 +43,19 @@
 
 - 类型：boolean/string[]
 
-快速添加表单提交和取消按钮。为数组时可指定显示的名称，如['保存','取消']
+快速添加表单提交和取消按钮。设置为`true`可快速显示`确定`和`取消`两个按钮，如其他可自定义，格式为
+```javascript
+const submitCancel = [
+  {
+    label:'确定',
+    key: 'submit', // 添加此属性相当于快速设置的确定，可选submit/reset/cancel
+    // 其他属性详见el-button
+  },
+  {
+    label:'取消'
+  }
+]
+```
 
 ### - 将object转string提交
 `config.transformData`
@@ -90,7 +102,7 @@
 
 ### - change事件
 `events.change`
-- 类型：change?: string | ((key: string, model: any) => any)
+- 类型：change?: string | ({ name, value, prop, options }) => any)
 
 表单组件改变事件，可修改model后返回。即可实现当组件a改变时，修改b组件的值
 
@@ -101,7 +113,7 @@
 ```javascript
 const opt={
   events:{
-    change:(key,model)=>{
+    change:({ name, value, prop, options })=>{
       // 当名为name1的组件值改变时，设置表单xxx的值
       if(key==='name1'){
         model.xxxx='xx'

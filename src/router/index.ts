@@ -169,6 +169,7 @@ const getBreadcrumb = (path: string): void => {
   if (menuList?.length) {
     const list: any = getTreeNodeById(menuList, path, { id: 'path' })
     const layoutStore = useLayoutStore()
+    console.log('change', menuList, path)
     layoutStore.changeBreadcrumb(list)
   }
 }

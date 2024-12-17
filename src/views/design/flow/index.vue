@@ -211,7 +211,11 @@
     }
   }
   const saveClick = () => {
-    formEl.value.submit()
+    if (flowEl.value.flowValidate(0)) {
+      formEl.value.submit()
+    } else {
+      ElMessage.error('请为审批和抄送节点设置审批人')
+    }
   }
   const beforeSubmit = (params: any, type: string) => {
     if (type === 'submit') {
@@ -227,7 +231,7 @@
   }
   const afterFetch = (res: any, success: boolean, type: string) => {
     if (type === 'fetch') {
-    flowEl.value.setValue(stringToObj(res.data))
+      flowEl.value.setValue(stringToObj(res.data))
     } else if (type === 'submit') {
       if (tabName.value === 'info') {
         tabName.value = 'flow'

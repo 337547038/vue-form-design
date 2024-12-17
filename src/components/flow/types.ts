@@ -6,6 +6,7 @@ export interface NodeList {
   userType?: string
   flowType?: string
   priority?: number
+  checkedUserId?: string
   // rules?: string // 条件规则
 }
 export interface EmitsEvent {

@@ -8,6 +8,7 @@
     :model="model as any"
     :disabled="disabled || operateType === 'detail'"
     :class="getFormCls"
+    :hide-required-asterisk="operateType === 'detail'"
   >
     <form-group :data="data.list" />
     <slot />
@@ -48,44 +49,46 @@
 
   defineOptions({ name: 'AkForm' })
   const props = withDefaults(
-    defineProps<{
-      data: FormData
-      disabled?: boolean // 禁用表单提交
-      before?: string | ((params: any, obj: any) => any) // 请求编辑数据前参数处理方法，可对请求参数处理
-      after?: string | ((res: any, obj: any) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
-      query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
-      params?: { [key: string]: any } // 提交表单一些附加参数
-      submitUrl?: string // 表单提交url
-      requestUrl?: string // 用于回显填充数据请求数据url
-      // add/edit用于根据当前类型显示或禁用相关组件操作。design/designSearch设计模式。detail用于详情页查看。search用于列表上方条件筛选
-      operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' | 'designSearch'
-    }>(),
-    {
-      data: () => {
-        return {
-          list: [],
-          form: {},
-          config: {}
+      defineProps<{
+        data: FormData
+        disabled?: boolean // 禁用表单提交
+        before?: string | ((params: any, obj: any) => any) // 请求编辑数据前参数处理方法，可对请求参数处理
+        after?: string | ((res: any, obj: any) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
+        query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
+        params?: { [key: string]: any } // 提交表单一些附加参数
+        submitUrl?: string // 表单提交url
+        requestUrl?: string // 用于回显填充数据请求数据url
+        // add/edit用于根据当前类型显示或禁用相关组件操作。design/designSearch设计模式。detail用于详情页查看。search用于列表上方条件筛选
+        operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' | 'designSearch'
+      }>(),
+      {
+        data: () => {
+          return {
+            list: [],
+            form: {},
+            config: {}
+          }
+        },
+        query: () => {
+          return {}
+        },
+        params: () => {
+          return {}
+        },
+        operateType: 'add',
+        submitUrl: '',
+        requestUrl: '',
+        before: () => {
+        },
+        after: () => {
         }
-      },
-      query: () => {
-        return {}
-      },
-      params: () => {
-        return {}
-      },
-      operateType: 'add',
-      submitUrl: '',
-      requestUrl: '',
-      before: () => {},
-      after: () => {}
-    }
+      }
   )
   const emits = defineEmits<{
     (e: 'btnClick', type: string): void
     (
-      e: 'change',
-      { name, value, model, prop, options }: { name: string, value: any, model: any, prop: string, options: any }
+        e: 'change',
+        { name, value, model, prop, options }: { name: string, value: any, model: any, prop: string, options: any }
     ): void // 表单组件值发生变化时
   }>()
 
@@ -99,46 +102,35 @@
   // 快速添加的提交按钮
   const defaultBtnList = computed(() => {
     const submitBtn = props.data.config?.submitCancel
-    if (
-      submitBtn === true
-      || (typeof submitBtn === 'object' && submitBtn?.length)
-    ) {
-      let submit = ''
-      let cancel = ''
-      if (typeof submitBtn === 'object') {
-        submit = submitBtn[0]
-        if (submitBtn.length > 1) {
-          cancel = submitBtn[1]
-        }
-      }
+    if (typeof submitBtn === 'boolean' && submitBtn) {
       if (['designSearch', 'search'].includes(props.operateType)) {
         return [
           {
-            label: submit || '查询',
+            label: '查询',
             type: 'primary',
             key: 'submit',
             icon: 'Search'
           },
           {
-            label: cancel || '清空',
+            label: '清空',
             key: 'reset',
             icon: 'RefreshLeft'
           }
         ]
+      } else if (['add', 'edit', 'design'].includes(props.operateType)) {
+        return [
+          {
+            label: '确定',
+            type: 'primary',
+            key: 'submit'
+          },
+          { label: '取消', key: 'reset' }
+        ]
       } else {
-        if (['add', 'edit', 'design'].includes(props.operateType)) {
-          return [
-            { label: cancel || '取消', key: 'reset' },
-            {
-              label: submit || '确定',
-              type: 'primary',
-              key: 'submit'
-            }
-          ]
-        } else {
-          return [{ label: submit || '取消返回', key: 'cancel' }]
-        }
+        return [{ label: '取消返回', key: 'cancel' }]
       }
+    } else if (typeof submitBtn === 'object' && submitBtn?.length) {
+      return submitBtn
     } else {
       return []
     }
@@ -201,16 +193,16 @@
     }
   }
   const unWatchEvent = watch(
-    () => props.data.form!.name,
-    () => {
-      setWindowEvent()
-    }
+      () => props.data.form!.name,
+      () => {
+        setWindowEvent()
+      }
   )
   const unWatchStyle = watch(
-    () => props.data.config!.style,
-    () => {
-      appendRemoveStyle(true) // 更新样式
-    }
+      () => props.data.config!.style,
+      () => {
+        appendRemoveStyle(true) // 更新样式
+      }
   )
   // 设置全局事件结束
 
@@ -243,12 +235,12 @@
     model.value = obj
   }
   const unWatch2 = watch(
-    () => props.data.list,
-    () => {
-      // data从接口获取时
-      getInitModel()
-    },
-    { immediate: true }
+      () => props.data.list,
+      () => {
+        // data从接口获取时
+        getInitModel()
+      },
+      { immediate: true }
   )
 
   const dictForm = computed(() => {
@@ -416,37 +408,37 @@
       route: route,
       type: 'fetch'
     })
-      .then((res: any) => {
-        loading.value = false
-        const result = res.data
-        if (result) {
-          const formatRes: any = result.result || result || {} // 兼容两种返回格式
-          // 这里尝试将string转obj以恢复提交保存时的转换
-          let temp: any = {}
-          if (props.data.config?.transformData) {
-            for (const key in formatRes) {
-              try {
-                temp[key] = JSON.parse(formatRes[key])
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              } catch (e) {
-                temp[key] = formatRes[key]
+        .then((res: any) => {
+          loading.value = false
+          const result = res.data
+          if (result) {
+            const formatRes: any = result.result || result || {} // 兼容两种返回格式
+            // 这里尝试将string转obj以恢复提交保存时的转换
+            let temp: any = {}
+            if (props.data.config?.transformData) {
+              for (const key in formatRes) {
+                try {
+                  temp[key] = JSON.parse(formatRes[key])
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                } catch (e) {
+                  temp[key] = formatRes[key]
+                }
               }
+            } else {
+              temp = formatRes
             }
-          } else {
-            temp = formatRes
+            setValue(temp)
+            nextTick(() => {
+              // 将dict保存，可用于从接口中设置表单组件options。
+              if (formatRes.dict && Object.keys(formatRes.dict).length) {
+                resultDict.value = formatRes.dict
+              }
+            })
           }
-          setValue(temp)
-          nextTick(() => {
-            // 将dict保存，可用于从接口中设置表单组件options。
-            if (formatRes.dict && Object.keys(formatRes.dict).length) {
-              resultDict.value = formatRes.dict
-            }
-          })
-        }
-      })
-      .catch(() => {
-        loading.value = false
-      })
+        })
+        .catch(() => {
+          loading.value = false
+        })
   }
   /**
    * 表单添加和编辑提交
@@ -486,18 +478,18 @@
           route: route,
           formModel: model.value
         })
-          .then((res: any) => {
-            loading.value = false
-            ElMessage.success(res.message || '保存成功！')
-          })
-          .catch((res) => {
-            // 接口返回code!=1时已统一提示异常，这里不重复提示
-            // 接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
-            if (res.code === undefined) {
-              ElMessage.error(res.message || '处理异常！')
-            }
-            loading.value = false
-          })
+            .then((res: any) => {
+              loading.value = false
+              ElMessage.success(res.message || '保存成功！')
+            })
+            .catch((res) => {
+              // 接口返回code!=1时已统一提示异常，这里不重复提示
+              // 接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
+              if (res.code === undefined) {
+               // ElMessage.error(res.message || '处理异常！')
+              }
+              loading.value = false
+            })
       } else {
         // 没通过校验，这里单独处理，返回校验结果通知
         loading.value = false
