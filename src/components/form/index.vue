@@ -486,6 +486,7 @@
               // 接口返回code!=1时已统一提示异常，这里不重复提示
               // 接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
               if (res.code === undefined) {
+                console.error(res.message)
                // ElMessage.error(res.message || '处理异常！')
               }
               loading.value = false

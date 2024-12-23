@@ -129,6 +129,7 @@ export const flatToTree = (data: Data, props?: PropsKey): Data[] => {
   const nodeMap: { [key: number]: Data } = {}
   const tree: Data[] = []
   const { id = 'id', parentId = 'parentId' } = props || {}
+  // @ts-ignore
   for (const n: any of data) {
     nodeMap[n[id]] = { ...n }
   }

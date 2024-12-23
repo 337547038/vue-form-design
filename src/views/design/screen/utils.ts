@@ -17,7 +17,7 @@ const isNumber = (val: any): boolean => {
  * 移除单位方便作运算
  * @param value
  */
-export const removeUnit = (value) => {
+export const removeUnit = (value: any) => {
   if (Number.isFinite(value)) {
     return Math.round(value)
   }
@@ -31,12 +31,12 @@ export const removeUnit = (value) => {
  * 将数字去掉小数并添加单位
  * @param value
  */
-export const addUnit = (value) => {
+export const addUnit = (value: string | number) => {
   if (value === 0 || value === '0') {
     return 0
   }
   if (isNumber(value)) {
-    return Math.round(value) + 'px'
+    return Math.round(value as number) + 'px'
   }
   return value
 }
@@ -44,7 +44,7 @@ export const addUnit = (value) => {
  * 判断值是为数字或者是带有px单位的
  * @param val
  */
-const isNumberOrPx = (val: any): boolean => {
+const isNumberOrPx = (val: number | string): boolean => {
   if (isNumber(val)) {
     return true
   } else if (val && typeof val === 'string') {

@@ -2,7 +2,7 @@
 <template>
   <div
     class="flow-container"
-    :class="{ [direction]: true, 'type-show': type }"
+    :class="{ [direction]: true,'type-show':type }"
   >
     <div class="flow-main">
       <flow-group

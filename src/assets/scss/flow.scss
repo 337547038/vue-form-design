@@ -98,15 +98,10 @@
 
   &.type-show {
     // 展示模式
-    .flow-branch {padding-top: 28px}
 
-    .flow-item {margin-bottom: 20px}
+    .flow-branch {padding-top: 28px;
 
-    .flow-branch:before {bottom: 0;top: 0}
-
-    .flow-end {position: relative;margin-top: 20px;
-
-      &:before {content: '';width: 1px;background: $borderColor;position: absolute;left: 50%;top: -20px;height: 20px;}
+      &:before {bottom: 16px;top: 0;}
     }
   }
 
@@ -154,26 +149,15 @@
     .mask-left {top: -8px;}
 
     .mask-right {bottom: -9px;top: auto}
-
-    .flow-col {
-
-    }
   }
 
   .flow-end {margin: 0}
 
   &.type-show {
-    .flow-branch {margin-left: 20px}
+    .flow-branch {padding-left: 28px;
 
-    .flow-item {margin-right: 20px;margin-bottom: 0}
-
-    .flow-branch .flow-col:before {left: -20px}
-
-    .flow-branch:before {left: -20px;right: -1px}
-
-    .flow-end {position: relative;margin-left: 20px;
-
-      &:before {content: '';height: 1px;background: $borderColor;position: absolute;top: 50%;left: -20px;width: 20px;}
+      &:before {left: 0;right: 15px}
+      .flow-add{}
     }
   }
 }

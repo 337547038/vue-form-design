@@ -66,6 +66,10 @@
           v-if="!type"
           @click="addNodeClick($event, item)"
         />
+        <div
+          v-else
+          class="flow-add"
+        />
         <flow-group
           v-for="(group, j) in getChildrenNode(item)"
           :key="j"
@@ -78,7 +82,12 @@
     </div>
     <popover
       v-if="isBranch && !type"
+      class="flow-where"
       @click="addNodeClick($event, data)"
+    />
+    <div
+      v-if="isBranch&&type"
+      class="flow-add"
     />
   </div>
 </template>
@@ -87,7 +96,7 @@
   import { computed, inject } from 'vue'
   import type { NodeList, EmitsEvent } from './types'
   import Popover from './popover.vue'
-  import { nodeTypeName, userTypeList } from './dict'
+  import { nodeTypeName } from './dict'
 
   const props = withDefaults(
       defineProps<{

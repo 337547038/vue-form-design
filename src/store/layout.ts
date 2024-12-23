@@ -27,19 +27,29 @@ export const useLayoutStore = defineStore('layout', {
   // state: () => ({ count: 0 })
   actions: {
     changeBreadcrumb(data: any) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.breadcrumb = data
     },
     setTabsViews(obj: TabsViews[]) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.tabs = obj
       setStorage('tagViews', obj)
     },
     setReloadRouter() {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.reloadFlag = false
       nextTick(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         this.reloadFlag = true
       })
     },
     setCollapseMenu(status: boolean): void {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.collapseMenu = status
       setStorage('collapseMenu', status, 0)
     },

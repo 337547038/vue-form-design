@@ -29,6 +29,7 @@
 <script setup lang="ts">
   import { ref, reactive, nextTick } from 'vue'
   import { flatToTree } from '@/utils/flatTree'
+  import { getRequest } from '@/api'
 
   const tableListEl = ref()
   const formNameEl = ref()
@@ -115,6 +116,16 @@
                 row.parentId = ''
               }
               nextTick(() => {
+                // 有负责人id时，恢复下拉选项
+                if (row.userId) {
+                  getRequest('userById', { id: row.userId })
+                      .then((res) => {
+                        const userName = res.data?.userName
+                        if (userName) {
+                          formNameEl.value.setOptions({ userId: [{ userName: userName, id: row.userId }] })
+                        }
+                      })
+                }
                 formNameEl.value.setValue(row)
               })
               setParentIdData()
@@ -182,6 +193,31 @@
         customRules: [
           { type: 'required', message: '部门名称不能为空', trigger: 'blur' }
         ]
+      },
+      {
+        type: 'select',
+        control: {
+          modelValue: '',
+          placeholder: '请输入负责人',
+          teleported: true,
+          filterable: true,
+          remote: true
+        },
+        config: {
+          optionsType: 1,
+          optionsFun: 'userList',
+          method: 'post',
+          label: 'userName',
+          value: 'id',
+          cache: false,
+          // transformData: 'string',
+          queryName: 'userName',
+          before: (params: any) => {
+            return { extend: { pageSize: 20, pageNum: 1 }, query: params }
+          }
+        },
+        name: 'userId',
+        formItem: { label: '负责人' }
       },
       {
         type: 'inputNumber',

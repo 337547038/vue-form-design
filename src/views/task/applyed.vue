@@ -69,7 +69,7 @@
       },
       {
         prop: 'endTime',
-        label: '完成时间',
+        label: '审批时间',
         render: 'datetime'
       },
       {
@@ -82,7 +82,7 @@
         render: 'tag',
         replaceValue: 'sys-flow-status',
         // 0待审批 1已撤回 2审批中 3同意 4拒绝
-        custom: { 0: 'primary', 1: 'info', 2: 'warning', 3: 'success', 4: 'danger' }
+        custom: { 0: 'primary', 1: 'info', 2: 'warning', 3: 'success', 4: 'danger', 5: 'danger' }
       },
       {
         prop: '__control',

@@ -18,6 +18,7 @@ export default {
   userSave: 'system/user/save',
   userEdit: 'system/user/edit',
   userList: 'system/user/list',
+  userById: 'system/user/get',
   userDelete: 'system/user/delete',
   userMenuList: 'system/menu/list', // 当前登陆用户的菜单权限列表
   getCaptcha: 'captcha/get', // 获取图片验证码
