@@ -1,4 +1,4 @@
-//Created by 337547038 weixin:337547038
+// Created by 337547038 weixin:337547038
 import request from '../utils/request'
 import form from './form'
 import system from './system'
@@ -36,7 +36,7 @@ export const getRequest = (
     method = url.split('|')[0]
     url = url.replace(/.*\|/, '')
   }
-  //不是以/和http开头的，添加全局前缀
+  // 不是以/和http开头的，添加全局前缀
   if (!(url.startsWith('/') || url.startsWith('http'))) {
     url = 'api/' + url
   }
@@ -56,11 +56,12 @@ export const getRequest = (
     let params: string = (query.type || '') + id + (extend.formId || '')
     let suffix = '.json'
     if (
-      url.includes('/get') ||
-      url.includes('/list') ||
-      url.includes('/login') ||
-      url.includes('/flow/form') ||
-      url.includes('/demo/')
+      url.includes('/get')
+      || url.includes('/list')
+      || url.includes('/login')
+      || url.includes('/flow/form')
+      || url.includes('/demo/')
+      || url.includes('/done')
     ) {
       /* empty */
     } else if (url.includes('static/')) {
