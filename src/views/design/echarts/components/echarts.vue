@@ -1,6 +1,6 @@
 <template>
   <draggable
-    itemKey="id"
+    item-key="id"
     :list="dataList.list"
     name="fade"
     class="drag"
@@ -27,21 +27,26 @@
           :width="element.width"
           :height="element.height"
         />
-        <div class="drag-control" v-if="type === 1">
+        <div
+          v-if="type === 1"
+          class="drag-control"
+        >
           <div class="item-control">
             <i
               class="icon-clone"
-              @click.stop="controlBtnClick('clone', index, element)"
               title="克隆"
-            ></i>
+              @click.stop="controlBtnClick('clone', index, element)"
+            />
             <i
               class="icon-del"
               @click.stop="controlBtnClick('del', index, element)"
-            ></i>
+            />
           </div>
-          <div class="drag-move icon-move"></div>
+          <div class="drag-move icon-move" />
         </div>
-        <div class="tooltip">{{ element.name }}</div>
+        <div class="tooltip">
+          {{ element.name }}
+        </div>
       </div>
     </template>
   </draggable>

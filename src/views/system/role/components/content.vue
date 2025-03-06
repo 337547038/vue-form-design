@@ -21,7 +21,9 @@
     defineProps<{
       modelValue?: string
     }>(),
-    {}
+    {
+      modelValue: ''
+    }
   )
   const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void
@@ -50,7 +52,7 @@
     }
   )
   onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+    unWatch() // 销毁监听器
   })
   onMounted(() => {
     init()

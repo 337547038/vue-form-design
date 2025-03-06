@@ -1,8 +1,8 @@
 !-- Created by 337547038 用户选择扩展组件-->
 <template>
   <el-dialog
-    title="用户选择"
     v-model="visible"
+    title="用户选择"
     :append-to-body="true"
     width="800px"
   >
@@ -13,25 +13,51 @@
           :data="treeData"
           node-key="id"
           :props="{ label: 'name', value: 'id' }"
-          @node-click="handleNodeClick"
           highlight-current
+          @node-click="handleNodeClick"
         />
       </div>
       <div class="table-list">
         <div class="search">
-          <el-input placeholder="请输入用户名" v-model="userName" />
-          <el-button type="primary" @click="searchClick">查询</el-button>
-          <el-button @click="resetClick">重置</el-button>
+          <el-input
+            v-model="searchUserName"
+            placeholder="请输入用户名"
+          />
+          <el-button
+            type="primary"
+            @click="searchClick"
+          >
+            查询
+          </el-button>
+          <el-button @click="resetClick">
+            重置
+          </el-button>
         </div>
         <div class="list">
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="userName" label="用户名" />
-            <el-table-column prop="nickName" label="昵称" />
-            <el-table-column label="操作" width="60px">
+          <el-table
+            :data="tableData"
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="userName"
+              label="用户名"
+            />
+            <el-table-column
+              prop="nickName"
+              label="昵称"
+            />
+            <el-table-column
+              label="操作"
+              width="60px"
+            >
               <template #default="{ row }">
-                <el-button circle size="small" @click="tableRowClick(row)"
-                  ><el-icon><ArrowRight /></el-icon
-                ></el-button>
+                <el-button
+                  circle
+                  size="small"
+                  @click="tableRowClick(row)"
+                >
+                  <el-icon><ArrowRight /></el-icon>
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -39,7 +65,6 @@
             <el-pagination
               background
               layout="prev, pager, next"
-              small
               hide-on-single-page
               :current-page="page.current"
               :total="page.total"
@@ -52,19 +77,32 @@
       <div class="has-select">
         <div class="total">
           <div>已选择：{{ checkData.length }}</div>
-          <el-button type="danger" @click="delAllClick" size="small"
-            >全部移除</el-button
+          <el-button
+            type="danger"
+            size="small"
+            @click="delAllClick"
           >
+            全部移除
+          </el-button>
         </div>
         <el-table :data="checkData">
           <el-table-column label="用户名">
-            <template #default="{ row }">{{ row }}</template>
-          </el-table-column>
-          <el-table-column label="操作" width="60px">
             <template #default="{ row }">
-              <el-button size="small" type="danger" @click="delRowClick(row)"
-                >移除</el-button
+              {{ row.userName }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="60px"
+          >
+            <template #default="{ $index }">
+              <el-button
+                size="small"
+                type="danger"
+                @click="delRowClick($index)"
               >
+                移除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -72,8 +110,15 @@
     </div>
     <template #footer>
       <div>
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="confirmClick"> 确定 </el-button>
+        <el-button @click="visible = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="confirmClick"
+        >
+          确定
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -86,13 +131,19 @@
 
   const props = withDefaults(
     defineProps<{
-      modelValue?: string
+      modelValue?: string // 用户id
+      userName?: string // 用户名称
     }>(),
-    {}
+    {
+      modelValue: '',
+      userName: ''
+    }
   )
 
   const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void
+    (e: 'update:userName', value: string): void
+    (e: 'change', obj: any): void
   }>()
   const visible = ref(false)
   // 侧栏处理
@@ -112,7 +163,7 @@
   }
   // 侧栏处理结束
   // table
-  const userName = ref()
+  const searchUserName = ref()
   const tableData = ref([])
   const page = reactive({
     total: 0,
@@ -123,7 +174,7 @@
     getUserList()
   }
   const resetClick = () => {
-    userName.value = ''
+    searchUserName.value = ''
     department.value = ''
     treeEl.value.setCurrentKey(null)
     getUserList()
@@ -135,7 +186,7 @@
         pageSize: page.pageSize
       },
       query: {
-        name: userName.value,
+        name: searchUserName.value,
         department: department.value
       }
     }
@@ -148,18 +199,16 @@
     getUserList()
   }
   const tableRowClick = (row: any) => {
-    if (!checkData.value.includes(row.userName)) {
-      checkData.value.push(row.userName)
+    const has = checkData.value.filter((item: any) => item.id === row.id)
+    if (has?.length === 0) {
+      // 没有数据
+      checkData.value.push(row)
     }
   }
   // 已选
   const checkData = ref([])
-  const delRowClick = (row: any) => {
-    checkData.value.forEach((item: any, index: number) => {
-      if (item === row) {
-        checkData.value.splice(index, 1)
-      }
-    })
+  const delRowClick = (index: number) => {
+    checkData.value.splice(index, 1)
   }
   const delAllClick = () => {
     checkData.value = []
@@ -167,25 +216,42 @@
   // 弹窗处理
   const open = () => {
     visible.value = true
-    if (props.modelValue) {
-      checkData.value = props.modelValue.split(',')
-    } else {
-      checkData.value = []
+    checkData.value = []
+    if (props.modelValue && props.userName) {
+      const userName = props.userName.split(',')
+      const userId = props.modelValue.split(',')
+      if (userName?.length === userId?.length) {
+        for (let i = 0; i < userId.length; i++) {
+          checkData.value.push({ id: userId[i], userName: userName[i] })
+        }
+      } else {
+        getUserListById()
+      }
+    } else if (props.modelValue) {
+      // 只有id时
+      getUserListById()
     }
     getTreeData()
     getUserList()
   }
+  const getUserListById = () => {
+    // 这里要根据id恢复用户名，从接口获取 todo
+  }
   // 关闭弹窗
   const confirmClick = () => {
-    emits('update:modelValue', checkData.value.join(','))
+    const userName = checkData.value.map((item) => item.userName).join(',')
+    const userId = checkData.value.map((item) => item.id).join(',')
+    emits('update:modelValue', userId)
+    emits('update:userName', userName)
+    emits('change', checkData.value)
     visible.value = false
   }
   defineExpose({ open })
   onMounted(() => {
     nextTick(() => {
       // 可根据实际情况放在点击打开弹窗后加载，会出现loading
-      //getTreeData()
-      //getUserList()
+      // getTreeData()
+      // getUserList()
     })
   })
 </script>

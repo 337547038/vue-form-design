@@ -1,19 +1,33 @@
 <template>
   <div
-    class="use-template"
     v-if="state.visible"
+    class="use-template"
     :class="{ active: state.visible }"
   >
-    <span class="close icon-close" @click="state.visible = false"></span>
-    <div class="no-date" v-if="state.list.length === 0">暂无可用模板</div>
-    <div class="list" v-else>
+    <span
+      class="close icon-close"
+      @click="state.visible = false"
+    />
+    <div
+      v-if="state.list.length === 0"
+      class="no-date"
+    >
+      暂无可用模板
+    </div>
+    <div
+      v-else
+      class="list"
+    >
       <div
-        class="item"
         v-for="(item, index) in state.list"
         :key="index"
+        class="item"
         @click="selectClick(item)"
       >
-        <img :src="item.imgPath" alt="" />{{ item.title }}
+        <img
+          :src="item.imgPath"
+          alt=""
+        >{{ item.title }}
       </div>
     </div>
   </div>

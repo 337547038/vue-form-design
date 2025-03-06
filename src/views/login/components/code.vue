@@ -1,8 +1,17 @@
 <!-- Created by weiXin:337547038 -->
 <template>
   <div>
-    <el-input :placeholder="placeholder" v-model="value" @focus="focusInput" />
-    <img :src="src" class="img" alt="" @click="getCaptcha" />
+    <el-input
+      v-model="value"
+      :placeholder="placeholder"
+      @focus="focusInput"
+    />
+    <img
+      :src="src"
+      class="img"
+      alt=""
+      @click="getCaptcha"
+    >
   </div>
 </template>
 
@@ -34,7 +43,7 @@
   }
   const getCaptcha = () => {
     getRequest('getCaptcha', {})
-      .then((res: { data: { base64: any; codeId: any } }) => {
+      .then((res: { data: { base64: any, codeId: any } }) => {
         const { base64, codeId: a } = res.data
         src.value = 'data:image/png;base64,' + base64
         codeId.value = a

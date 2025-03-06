@@ -1,5 +1,9 @@
 <template>
-  <div class="echarts" :style="style" ref="echartsEl"></div>
+  <div
+    ref="echartsEl"
+    class="echarts"
+    :style="style"
+  />
 </template>
 
 <script setup lang="ts">

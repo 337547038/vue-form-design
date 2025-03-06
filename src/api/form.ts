@@ -20,6 +20,6 @@ export default {
   chunkUploadEditGroup: 'upload/group/edit',
   chunkUploadDelGroup: 'upload/group/del',
   chunkUploadGroupList: 'upload/group/list',
-  chunkUploadFileList: 'upload/files/list', //上传文件列表
-  chunkUpload: 'upload/batchSplit' //批量分片上传
+  chunkUploadFileList: 'upload/files/list', // 上传文件列表
+  chunkUpload: 'upload/batchSplit' // 批量分片上传
 }

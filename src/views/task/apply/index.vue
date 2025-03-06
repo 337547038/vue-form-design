@@ -1,16 +1,24 @@
 <!-- Created by 337547038 发起流程 -->
 <template>
   <div class="task-apply">
-    <div class="item" v-for="(item, key) in list" :key="key">
+    <div
+      v-for="(item, key) in list"
+      :key="key"
+      class="item"
+    >
       <h3>{{ category[key] || '未分组' }}</h3>
       <div class="list">
-        <div v-for="li in item" :key="li.id" @click="click(li)">
+        <div
+          v-for="li in item"
+          :key="li.id"
+          @click="click(li)"
+        >
           <i
             v-if="getIcon(li.icon, 0)"
             class="icon"
             :class="getIcon(li.icon, 0)"
             :style="{ background: getIcon(li.icon, 1) }"
-          ></i>
+          />
           <span>{{ li.name }}</span>
         </div>
       </div>
@@ -32,6 +40,7 @@
     if (icon) {
       try {
         return JSON.parse(icon)[index]
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         const temp = icon.split(',')
         return temp[index]
@@ -40,7 +49,7 @@
     return ''
   }
   const category = computed(() => {
-    const storage = getStorage('akAllDict', true)
+    const storage = getStorage('akAllDict')
     return storage['sys-flow'] || {}
   })
   const getListData = () => {

@@ -1,4 +1,4 @@
-//Created by 337547038 weixin:337547038
+// Created by 337547038 weixin:337547038
 import request from '../utils/request'
 import form from './form'
 import system from './system'
@@ -36,7 +36,7 @@ export const getRequest = (
     method = url.split('|')[0]
     url = url.replace(/.*\|/, '')
   }
-  //不是以/和http开头的，添加全局前缀
+  // 不是以/和http开头的，添加全局前缀
   if (!(url.startsWith('/') || url.startsWith('http'))) {
     url = 'api/' + url
   }
@@ -54,16 +54,18 @@ export const getRequest = (
   if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
     const { query = {}, id = '', extend = {} } = data
     let params: string = (query.type || '') + id + (extend.formId || '')
+    let suffix = '.json'
     if (
-      url.includes('/get') ||
-      url.includes('/list') ||
-      url.includes('/login') ||
-      url.includes('/flow/form') ||
-      url.includes('/demo/')
+      url.includes('/get')
+      || url.includes('/list')
+      || url.includes('/login')
+      || url.includes('/flow/form')
+      || url.includes('/demo/')
+      || url.includes('/done')
     ) {
       /* empty */
     } else if (url.includes('static/')) {
-      url = url.replace('.json', '')
+      suffix = '' // 这情况不需要加后缀
     } else {
       url = 'mock/ok'
       params = ''
@@ -74,9 +76,9 @@ export const getRequest = (
     url = url.replace('api/', 'mock/')
     obj = Object.assign(
       {
-        url: `${url}${params}.json`,
-        method: 'GET'
-        //params: data
+        url: `${url}${params}${suffix}`,
+        method: 'get', // json演示时统一使用get
+        data: data
       },
       options
     )

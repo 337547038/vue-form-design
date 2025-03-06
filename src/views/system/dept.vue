@@ -2,11 +2,10 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="deptList"
-      delete-url="deptDelete"
+      :api-key="{list:'deptList',del:'deptDelete'}"
       :search-data="searchData"
       :data="tableData"
-      :after-fetch="afterFetch"
+      :after="afterFetch"
     />
     <el-dialog
       v-model="dialog.visible"
@@ -18,10 +17,9 @@
         ref="formNameEl"
         :type="dialog.formType"
         :data="formData"
-        submit-url="deptSave"
-        edit-url="deptEdit"
-        :before-submit="beforeSubmit"
-        :after-submit="afterSubmit"
+        :submit-url="dialog.formType==='add'?'deptSave':'deptEdit'"
+        :before="beforeSubmit"
+        :after="afterSubmit"
         @btn-click="btnClick"
       />
     </el-dialog>
@@ -31,6 +29,7 @@
 <script setup lang="ts">
   import { ref, reactive, nextTick } from 'vue'
   import { flatToTree } from '@/utils/flatTree'
+  import { getRequest } from '@/api'
 
   const tableListEl = ref()
   const formNameEl = ref()
@@ -52,7 +51,8 @@
       {
         type: 'select',
         control: {
-          modelValue: ''
+          modelValue: '',
+          style: { width: '100px' }
         },
         options: [],
         config: {
@@ -85,9 +85,58 @@
       {
         label: '状态',
         prop: 'status',
-        config: { dictKey: 'sys-status', tagList: { 1: 'success', 2: 'info' } }
+        render: 'tag',
+        custom: { 1: 'success', 2: 'info' },
+        replaceValue: 'sys-status',
+        config: {}
       },
-      { label: '操作', prop: '__control' }
+      {
+        label: '操作', prop: '__control', render: 'buttons', buttons: [
+          {
+            label: '新增',
+            click: (row: any) => {
+              dialog.visible = true
+              dialog.title = '新增部门'
+              dialog.formType = 'add'
+              nextTick(() => {
+                formNameEl.value.setValue({ parentId: row.id })
+              })
+              setParentIdData()
+            }
+          },
+          {
+            label: '编辑',
+            click: (row: any) => {
+              dialog.visible = true
+              dialog.title = '编辑部门'
+              dialog.formType = 'edit'
+              dialog.editId = row.id
+              // 这里有个问题parentId默认treeSelect显示有异常
+              if (row.parentId === 0) {
+                row.parentId = ''
+              }
+              nextTick(() => {
+                // 有负责人id时，恢复下拉选项
+                if (row.userId) {
+                  getRequest('userById', { id: row.userId })
+                      .then((res) => {
+                        const userName = res.data?.userName
+                        if (userName) {
+                          formNameEl.value.setOptions({ userId: [{ userName: userName, id: row.userId }] })
+                        }
+                      })
+                }
+                formNameEl.value.setValue(row)
+              })
+              setParentIdData()
+            }
+          },
+          {
+            label: '删除',
+            key: 'del'
+          }
+        ]
+      }
     ],
     controlBtn: [
       {
@@ -98,44 +147,9 @@
         click: () => {
           dialog.visible = true
           dialog.title = '新增部门'
-          dialog.formType = 1
+          dialog.formType = 'add'
           setParentIdData()
         }
-      }
-    ],
-    operateBtn: [
-      {
-        label: '新增',
-        click: (row: any) => {
-          dialog.visible = true
-          dialog.title = '新增部门'
-          dialog.formType = 1
-          nextTick(() => {
-            formNameEl.value.setValue({ parentId: row.id })
-          })
-          setParentIdData()
-        }
-      },
-      {
-        label: '编辑',
-        click: (row: any) => {
-          dialog.visible = true
-          dialog.title = '编辑部门'
-          dialog.formType = 2
-          dialog.editId = row.id
-          // 这里有个问题parentId默认treeSelect显示有异常
-          if (row.parentId === 0) {
-            row.parentId = ''
-          }
-          nextTick(() => {
-            formNameEl.value.setValue(row)
-          })
-          setParentIdData()
-        }
-      },
-      {
-        label: '删除',
-        key: 'del'
       }
     ],
     config: {
@@ -146,7 +160,7 @@
   const dialog = reactive({
     visible: false,
     title: '',
-    formType: 1,
+    formType: 'add',
     editId: ''
   })
   const formData = ref({
@@ -181,6 +195,31 @@
         ]
       },
       {
+        type: 'select',
+        control: {
+          modelValue: '',
+          placeholder: '请输入负责人',
+          teleported: true,
+          filterable: true,
+          remote: true
+        },
+        config: {
+          optionsType: 1,
+          optionsFun: 'userList',
+          method: 'post',
+          label: 'userName',
+          value: 'id',
+          cache: false,
+          // transformData: 'string',
+          queryName: 'userName',
+          before: (params: any) => {
+            return { extend: { pageSize: 20, pageNum: 1 }, query: params }
+          }
+        },
+        name: 'userId',
+        formItem: { label: '负责人' }
+      },
+      {
         type: 'inputNumber',
         control: { modelValue: 0, controlsPosition: 'right' },
         config: {},
@@ -194,6 +233,7 @@
         config: {
           optionsType: 2,
           optionsFun: 'sys-status'
+          // transformData: 'string'
         },
         name: 'status',
         formItem: { label: '状态' }
@@ -218,16 +258,16 @@
   })
   const beforeSubmit = (params: any) => {
     // 如编辑时添加参数
-    if (dialog.formType === 2) {
+    if (dialog.formType === 'edit') {
       params.id = dialog.editId
       delete params.children
     }
     return params
   }
   // 表单提交完成事件
-  const afterSubmit = (type: string) => {
+  const afterSubmit = (res: any, success: boolean) => {
     dialog.visible = false
-    if (type === 'success') {
+    if (success) {
       // 操作成功才刷新列表数据
       tableListEl.value.getListData()
     }
@@ -239,11 +279,13 @@
     }
   }
   // 处理表格数据，转换为可折叠表格
-  const afterFetch = (type: string, result: any) => {
-    const list = result.list
-    const treeList = flatToTree(list)
-    departmentTree.value = treeList
-    return flatToTree(treeList)
+  const afterFetch = (result: any, success: boolean, type: string) => {
+    if (type === 'fetch') {
+      const list = result.list
+      const treeList = flatToTree(list)
+      departmentTree.value = treeList
+      return flatToTree(treeList)
+    }
   }
   // 设置部门下拉选择
   const setParentIdData = () => {

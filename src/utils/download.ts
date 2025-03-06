@@ -6,7 +6,7 @@ import { getRequest } from '@/api'
  * @param data
  * @param config
  */
-export const download = (url, data, config = {}) => {
+export const download = (url: any, data: any, config = {}) => {
   return new Promise((resolve, reject) => {
     const option = Object.assign({}, config, {
       responseType: 'blob'
@@ -14,12 +14,14 @@ export const download = (url, data, config = {}) => {
     getRequest(url, data, option)
       .then((res: any) => {
         const { data, headers } = res
-        const filename: string =
-          decodeURI(
+        const filename: string
+          = decodeURI(
             headers['content-disposition'].split(';')[1].split('=')[1]
-          ) ||
-          `${url.substr(1).replace(/\//g, '_')}_${new Date().getTime()}.xls`
-        const downloadUrl: string = window.URL.createObjectURL(new Blob([data]))
+          )
+          || `${url.substr(1).replace(/\//g, '_')}_${new Date().getTime()}.xls`
+        const downloadUrl: string = window.URL.createObjectURL(
+          new Blob([data], { type: data.type })
+        )
         const link = document.createElement('a')
         link.style.display = 'none'
         link.href = downloadUrl
@@ -27,9 +29,9 @@ export const download = (url, data, config = {}) => {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-        resolve()
+        resolve(res)
       })
-      .catch(error => {
+      .catch((error: any) => {
         reject(error)
       })
   })

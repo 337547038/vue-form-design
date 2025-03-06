@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import { removeStorage, getStorage, setStorage } from '@/utils'
+import { getRequest } from '@/api'
 
-/*interface Breadcrumb {
+/* interface Breadcrumb {
   label: string
   to?: string
-}*/
+} */
 interface TabsViews {
   title: string
   path: string
@@ -19,26 +20,36 @@ export const useLayoutStore = defineStore('layout', {
       breadcrumb: [],
       tabs: tabs,
       reloadFlag: true, // 用于刷新路由
-      collapseMenu: getStorage('collapseMenu', true) || false //左侧菜单展开收起状态
+      collapseMenu: getStorage('collapseMenu', true) || false // 左侧菜单展开收起状态
     }
   },
   // 也可以定义为
   // state: () => ({ count: 0 })
   actions: {
     changeBreadcrumb(data: any) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.breadcrumb = data
     },
     setTabsViews(obj: TabsViews[]) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.tabs = obj
       setStorage('tagViews', obj)
     },
     setReloadRouter() {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.reloadFlag = false
       nextTick(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         this.reloadFlag = true
       })
     },
     setCollapseMenu(status: boolean): void {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.collapseMenu = status
       setStorage('collapseMenu', status, 0)
     },
@@ -48,13 +59,15 @@ export const useLayoutStore = defineStore('layout', {
       removeStorage('formMenuList', true)
       removeStorage('refreshToken', true)
       removeStorage('token', true)
+      removeStorage('akAllDict')
+      removeStorage('userInfo', true)
       if (router) {
         router.push({ path: '/login' })
       }
     },
     // 保存登录的信息
     setLoginInfo(data: { [key: string]: string } = {}, saveUserInfo?: boolean) {
-      const expireTime = data.expire_time //有效时间
+      const expireTime = data.expire_time // 有效时间
       let time = 24
       if (expireTime) {
         time = parseInt(expireTime) / 1000 / 3600 // 将ms转为h
@@ -62,6 +75,29 @@ export const useLayoutStore = defineStore('layout', {
       setStorage('token', data.token, time)
       setStorage('refreshToken', data.refreshToken, time * 2)
       saveUserInfo && setStorage('userInfo', data, 0)
+    },
+    getDict() {
+      const storageDict = getStorage('akAllDict')
+      if (!storageDict) {
+        getRequest('dictList', { query: { status: 1 } }).then((res: any) => {
+          const result = res.data?.list
+          const temp: any = {}
+          if (result?.length) {
+            result.forEach((item: any) => {
+              const children = item.children
+              if (children) {
+                const childJson = JSON.parse(children)
+                const list: any = {}
+                childJson.forEach((ch: any) => {
+                  list[ch.value] = ch.label
+                })
+                temp[item.type] = list
+              }
+            })
+            setStorage('akAllDict', temp)
+          }
+        })
+      }
     }
   }
 })

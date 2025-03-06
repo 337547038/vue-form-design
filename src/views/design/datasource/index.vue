@@ -2,8 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="sourceList"
-      delete-url="sourceDelete"
+      :api-key="{list:'sourceList',del:'sourceDelete'}"
       :search-data="searchData"
       :data="tableData"
     />
@@ -17,17 +16,18 @@
       <ak-form
         ref="formEl"
         :data="formData"
-        :type="dialog.type"
-        submit-url="sourceCreat"
-        edit-url="sourceEdit"
+        :operate-type="dialog.type"
+        :submit-url="dialog.type==='add'?'sourceCreat':'sourceEdit'"
         request-url="sourceById"
-        :before-submit="beforeSubmit"
-        :after-submit="afterSubmit"
-        :after-fetch="afterFetch"
+        :before="beforeSubmit"
+        :after="afterFetchSubmit"
         :params="{ id: dialog.id }"
         @btn-click="cancelClick"
       >
-        <child-table v-model="childTableData" :type="dialog.type" />
+        <child-table
+          v-model="childTableData"
+          :type="dialog.type"
+        />
       </ak-form>
       <div class="tips">
         提示：默认会添加id自增主键；其中标题作为表单的label值，组件类型仅用于一健创建表单；模糊搜索用于条件查询时
@@ -50,13 +50,13 @@
   const dialog = reactive({
     visible: false,
     title: '',
-    type: 1,
+    type: 'add',
     id: ''
   })
   const openEdit = (id: number) => {
     dialog.visible = true
     dialog.title = '修改数据源'
-    dialog.type = 2
+    dialog.type = 'edit'
     dialog.id = id
     nextTick(() => {
       formEl.value.getData({ id: id })
@@ -65,38 +65,61 @@
   const tableData = ref({
     columns: [
       { label: '勾选', type: 'selection', prop: 'selection' },
-      { prop: 'id', label: '编号' },
+      { prop: 'id', label: '编号', width: 80 },
       { prop: 'name', label: '名称', width: 150 },
       { prop: 'tableName', label: '数据表名', width: 150 },
       {
         prop: 'category',
         label: '分类',
-        config: {
-          tagList: {
-            0: 'success'
-          },
-          dictKey: 'sys-source' // 匹配字典
-        }
+        render: 'tag',
+        replaceValue: 'sys-source',
+        custom: { 1: 'success', 2: 'danger' },
+        config: {}
       },
       {
         prop: 'status',
         label: '状态',
-        config: {
-          tagList: {
-            0: 'info',
-            1: 'success'
-          },
-          dictKey: 'sys-status'
-        }
+        render: 'tag',
+        replaceValue: 'sys-status',
+        custom: { 0: 'info', 1: 'success' }
       },
       { prop: 'creatUser', label: '创建人' },
       {
         prop: 'updateDate',
         label: '修改时间',
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' },
+        render: 'datetime',
+        config: {},
         width: 170
       },
-      { label: '操作', prop: '__control', width: '200px' }
+      {
+        label: '操作', prop: '__control', width: '250px', render: 'buttons', buttons: [
+          {
+            type: 'primary',
+            label: '编辑',
+            click: (row: any) => {
+              openEdit(row.id)
+            },
+            attr: {
+              text: true
+            }
+          },
+          {
+            label: '删除', key: 'del', type: 'danger', attr: {
+              text: true
+            }
+          },
+          {
+            type: 'primary',
+            label: '一键创建表单',
+            click: (row: any) => {
+              router.push({ path: '/design/form', query: { source: row.id } })
+            },
+            attr: {
+              text: true
+            }
+          }
+        ]
+      },
     ],
     controlBtn: [
       {
@@ -105,26 +128,11 @@
         click: () => {
           dialog.visible = true
           dialog.title = '创建数据源'
-          dialog.type = 1
+          dialog.type = 'add'
           dialog.id = ''
         }
       },
       { label: '删除', key: 'del', type: 'danger' }
-    ],
-    operateBtn: [
-      {
-        label: '编辑',
-        click: (row: any) => {
-          openEdit(row.id)
-        }
-      },
-      { label: '删除', key: 'del' },
-      {
-        label: '一键创建表单',
-        click: (row: any) => {
-          router.push({ path: '/design/form', query: { source: row.id } })
-        }
-      }
     ],
     config: {
       expand: true,
@@ -159,7 +167,8 @@
     ],
     config: {
       submitCancel: true
-    }
+    },
+    form: {}
   })
   const formData = ref({
     list: [
@@ -206,11 +215,11 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
+          // transformData: 'string',
           optionsType: 2,
           optionsFun: 'sys-source' // 使用字典选项，字典key为source
         },
@@ -264,40 +273,40 @@
       name: 'source'
     },
     config: {
-      submitCancel: true,
-      submitUrl: 'sourceCreat',
-      editUrl: 'sourceEdit',
-      requestUrl: 'sourceById'
+      submitCancel: true
     }
   })
-  const afterFetch = (type: string, params: any) => {
-    const tableData = JSON.parse(params.tableData)
-    //如果有isNew标识则删除
-    tableData.forEach((item: any) => {
-      if (item.isNew) {
-        delete item.isNew
-      }
-    })
-    childTableData.value = tableData
-    return params
-  }
-  // 提交表单前校验
-  const beforeSubmit = (params: any) => {
-    if (dialog.type === 1) {
-      if (!childTableData.value.length) {
-        ElMessage.error('数据库表字段内容不能为空')
-        return false
+  const afterFetchSubmit = (res: any, success: boolean, type: string) => {
+    if (type === 'fetch') {
+      const tableData = JSON.parse(res.tableData)
+      // 如果有isNew标识则删除
+      tableData.forEach((item: any) => {
+        if (item.isNew) {
+          delete item.isNew
+        }
+      })
+      childTableData.value = tableData
+      return res
+    } else {
+      // 提交完成事件
+      if (success) {
+        dialog.visible = false
+        tableListEl.value.getListData()
+        beforeClose()
       }
     }
-    params.tableData = JSON.stringify(childTableData.value)
-    return params
   }
-  // 提交完成事件
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
-      dialog.visible = false
-      tableListEl.value.getListData()
-      beforeClose()
+  // 提交表单前校验
+  const beforeSubmit = (params: any, type: string) => {
+    if (type === 'submit') {
+      if (dialog.type === 'add') {
+        if (!childTableData.value.length) {
+          ElMessage.error('数据库表字段内容不能为空')
+          return false
+        }
+      }
+      params.tableData = JSON.stringify(childTableData.value)
+      return params
     }
   }
   // 添加编辑窗口取消
@@ -307,10 +316,12 @@
       beforeClose()
     }
   }
-  //关闭时清空
+  // 关闭时清空
   const beforeClose = (done?: any) => {
     childTableData.value = []
-    done && done()
+    if (done) {
+      done()
+    }
   }
   onMounted(() => {
     if (route.query.source) {

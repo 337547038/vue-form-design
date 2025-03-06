@@ -31,12 +31,13 @@ export function debounce<T extends (...args: any[]) => void>(
   } as T
 }
 
-export const throttle = (func: Function, delay: number) => {
+export const throttle = (func: any, delay: number) => {
   let timeoutId: ReturnType<typeof setTimeout> | null
   return function (...args: any[]) {
     if (!timeoutId) {
       timeoutId = setTimeout(() => {
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         func.apply(this, args)
         timeoutId = null
       }, delay)
@@ -130,9 +131,9 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
   if (typeof data === 'object') {
     newData = JSON.stringify(data)
   }
-  /*if (!data) {
+  /* if (!data) {
     return
-  }*/
+  } */
   if (hour === 0) {
     window.localStorage.setItem(key, newData)
   } else if (hour && hour > 0) {
@@ -150,7 +151,7 @@ export function setStorage(key: string, data: any, hour?: number | null): void {
 /**
  * 获取storage
  * @param key 保存时的key
- * @param hour 如果保存时使用了时间，则需要传true
+ * @param hour 如果保存时使用了时间，则需要传true。false在sessionStorage里取
  * @return 返回保存的值，过期后返回false,其他异常或不存在返回undefined
  */
 export const getStorage = (key: string, hour?: boolean) => {
@@ -172,16 +173,17 @@ export const getStorage = (key: string, hour?: boolean) => {
           data = false
         }
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      /* empty */
       data = undefined
     }
   } else {
-    //保存时没传时间的，存在session里
+    // 保存时没传时间的，存在session里
     data = window.sessionStorage.getItem(key)
   }
   try {
     return JSON.parse(data)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return data
   }

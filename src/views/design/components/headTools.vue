@@ -1,15 +1,15 @@
 <!-- Created by weiXin:337547038 -->
 <template>
   <div class="main-tools">
-    <slot></slot>
+    <slot />
     <el-button
+      v-for="item in btnList"
+      :key="item.icon"
       link
       type="primary"
       @click="btnClick(item.icon)"
-      v-for="item in btnList"
-      :key="item.icon"
     >
-      <i :class="['icon-' + item.icon]"></i>{{ item.label }}
+      <i :class="['icon-' + item.icon]" />{{ item.label }}
     </el-button>
   </div>
 </template>

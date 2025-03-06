@@ -1,6 +1,10 @@
 <!-- Created by 337547038 on 通用数据表格页. -->
 <template>
-  <div ref="container" v-loading="state.loading" class="table-list-comm">
+  <div
+    ref="container"
+    v-loading="state.loading"
+    class="table-list-comm"
+  >
     <list-tree-side
       v-if="treeData.show"
       :current-node-key="state.currentNodeKey"
@@ -8,7 +12,10 @@
       @node-click="treeNodeClick"
     />
     <div class="table-list">
-      <div v-if="searchData?.list?.length" class="table-search">
+      <div
+        v-if="searchData?.list?.length"
+        class="table-search"
+      >
         <Transition name="autoHeight">
           <ak-form
             v-show="!state.searchFormDown"
@@ -16,64 +23,62 @@
             :data="searchData"
             :dict="listDict"
             :disabled="state.loading"
-            is-search
+            operate-type="search"
             request-url=""
             @btn-click="formBtnClick"
           >
-            <slot name="searchForm"></slot>
+            <slot name="searchForm" />
           </ak-form>
         </Transition>
       </div>
-      <slot></slot>
+      <slot />
       <div class="control-btn">
-        <div class="btn-group">
-          <el-button
-            v-permission="item.permission"
-            v-bind="item"
-            v-for="item in data.controlBtn"
-            :key="item.key"
-            @click="controlBtnClick(item)"
-          >
-            {{ item.label }}
-          </el-button>
-          <slot name="controlBtn"></slot>
+        <div class="control-btn-group">
+          <operate-button
+            v-if="data.controlBtn?.length"
+            position="top"
+            :row="state.selectionChecked"
+            :buttons="mergeDefaultBtn(data.controlBtn)"
+            @click="btnClick"
+          />
+          <slot name="controlBtn" />
         </div>
         <div class="control-other">
-          <el-button
-            v-if="searchFormExpand"
-            circle
-            icon="Search"
-            size="small"
-            title="展开/收起筛选"
-            @click="state.searchFormDown = !state.searchFormDown"
-          />
-          <el-popover
-            v-if="columnsSetting"
-            :width="80"
-            placement="bottom-end"
-            trigger="click"
-            @hide="popoverHideClick"
-            @show="popoverShowClick"
-          >
-            <template #default>
-              <el-checkbox-group v-model="state.columnsCheck">
-                <el-checkbox
-                  v-for="item in data.columns"
-                  :key="item.prop || item.type"
-                  :label="item.prop || item.type"
-                  >{{ item.label }}
-                </el-checkbox>
-              </el-checkbox-group>
-            </template>
-            <template #reference>
-              <el-button
-                circle
-                icon="SetUp"
-                title="设置列显示隐藏"
-                size="small"
-              />
-            </template>
-          </el-popover>
+          <el-button-group>
+            <el-button
+              v-if="searchFormExpand"
+              circle
+              icon="Search"
+              title="展开/收起筛选"
+              @click="state.searchFormDown = !state.searchFormDown"
+            />
+            <el-popover
+              v-if="columnsSetting"
+              :width="80"
+              placement="bottom-end"
+              trigger="click"
+              @hide="popoverHideClick"
+              @show="popoverShowClick"
+            >
+              <template #default>
+                <el-checkbox-group v-model="state.columnsCheck">
+                  <el-checkbox
+                    v-for="item in data.columns"
+                    :key="item.prop || item.type"
+                    :value="item.prop || item.type"
+                    :label="item.label"
+                  />
+                </el-checkbox-group>
+              </template>
+              <template #reference>
+                <el-button
+                  circle
+                  icon="SetUp"
+                  title="设置列显示隐藏"
+                />
+              </template>
+            </el-popover>
+          </el-button-group>
         </div>
       </div>
       <div
@@ -91,121 +96,105 @@
             v-for="item in columnsFilter"
             :key="item.prop || item.label"
           >
-            <el-table-column v-bind="item" config="">
-              <template v-if="item.help" #header="scope">
+            <el-table-column
+              v-bind="item"
+              config=""
+            >
+              <template
+                v-if="item.help"
+                #header="scope"
+              >
                 {{ scope.column.label }}
                 <tooltip :content="item.help" />
               </template>
-              <template v-if="$slots[item.prop]" #default="scope">
+              <template #default="scope">
                 <slot
+                  v-if="$slots[item.prop]"
                   :index="scope.$index"
                   :name="item.prop"
                   :row="scope.row"
                   :dict="listDict"
-                >
-                </slot>
-              </template>
-              <template v-else-if="item.config?.imgWidth" #default="scope">
-                <img
-                  :width="item.config.imgWidth"
-                  :src="scope.row[item.prop]"
-                  alt=""
+                  :value="scope.row[item.prop]"
                 />
-              </template>
-              <template
-                v-else-if="
-                  item.config?.tagList &&
-                  Object.keys(item.config?.tagList).length
-                "
-                #default="scope"
-              >
+                <el-switch
+                  v-if="item.prop && item.render === 'switch'"
+                  v-bind="item.config"
+                  :loading="switchLoading"
+                  :before-change="
+                    switchBeforeChange.bind(
+                      this,
+                      getRenderFormatValue(scope.row, item)
+                    )
+                  "
+                  :model-value="getRenderFormatValue(scope.row, item)"
+                  @change="switchChange($event, item, scope.row)"
+                />
+                <el-image
+                  v-if="item.prop && item.render === 'image'"
+                  v-bind="item.config"
+                  :style="{
+                    width: (item.config?.width || 100) + 'px',
+                    height: (item.config?.height || 100) + 'px'
+                  }"
+                  :preview-teleported="true"
+                  :z-index="99"
+                  :preview-src-list="getImgSrc(scope.row, item, 'preview')"
+                  :src="getImgSrc(scope.row, item)"
+                />
                 <el-tag
-                  v-if="scope.row[item.prop] || scope.row[item.prop] === 0"
-                  :type="item.config?.tagList[scope.row[item.prop]]"
-                  effect="light"
+                  v-if="
+                    item.prop && item.render === 'tag' && scope.row[item.prop]!==undefined
+                  "
+                  v-bind="item.config"
+                  :type="getTagType(scope.row, item)"
                 >
-                  {{ getDictLabel(scope, item) }}
+                  {{ getTagVal(scope.row, item) }}
                 </el-tag>
-              </template>
-              <template v-else-if="item.config?.dictKey" #default="scope">
-                {{ getDictLabel(scope, item) }}
-              </template>
-              <template v-else-if="item.config?.formatter" #default="scope">
-                {{ getDictLabel(scope, item, 'formatter') }}
-              </template>
-              <template v-else-if="item.prop === '__control'" #default="scope">
-                <div class="table-operate-btn">
-                  <template
-                    v-for="(btn, index) in operateBtnList('prev')"
-                    :key="btn.key || index"
-                  >
-                    <template v-if="btn.key === 'del'">
-                      <el-popconfirm
-                        v-if="getOperateVisible(btn, scope.row)"
-                        :title="btn.tip || '确定删除该记录?'"
-                        cancel-button-text="取消"
-                        confirm-button-text="确认"
-                        @confirm="operateBtnClick(btn, scope.row)"
-                      >
-                        <template #reference>
-                          <el-button
-                            v-bind="btn"
-                            text
-                            size="small"
-                            type="primary"
-                            >{{ btn.label }}
-                          </el-button>
-                        </template>
-                      </el-popconfirm>
-                    </template>
-                    <template v-else>
-                      <el-button
-                        v-bind="btn"
-                        v-if="getOperateVisible(btn, scope.row)"
-                        text
-                        size="small"
-                        type="primary"
-                        @click="operateBtnClick(btn, scope.row)"
-                        >{{ btn.label }}
-                      </el-button>
-                    </template>
-                  </template>
-                  <el-dropdown v-if="operateBtnList('len')">
-                    <el-button
-                      size="small"
-                      type="primary"
-                      text
-                      style="outline: none"
-                    >
-                      更多
-                      <el-icon class="el-icon--right">
-                        <arrow-down />
-                      </el-icon>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <template
-                          v-for="(m, index) in operateBtnList()"
-                          :key="index"
-                        >
-                          <el-dropdown-item
-                            v-if="getOperateVisible(m, scope.row)"
-                            @click="operateBtnClick(m, scope.row, 'down')"
-                            >{{ m.label }}
-                          </el-dropdown-item>
-                        </template>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                </div>
+                <el-text
+                  v-if="item.prop && item.render === 'text'"
+                  v-bind="item.config"
+                  :type="getTagType(scope.row, item)"
+                >
+                  {{ getTagVal(scope.row, item) }}
+                </el-text>
+                <el-link
+                  v-if="item.prop && item.render === 'link'"
+                  v-bind="item.config"
+                >
+                  {{ getRenderFormatValue(scope.row, item) }}
+                </el-link>
+                <span
+                  v-if="
+                    item.prop &&
+                      item.render &&
+                      ['datetime', 'date'].includes(item.render)
+                  "
+                >
+                  {{ getDateFormat(item, scope.row) }}
+                </span>
+                <template
+                  v-if="item.render === 'buttons' && item.buttons?.length"
+                >
+                  <operate-button
+                    class="btn-group"
+                    :row="scope.row"
+                    :buttons="mergeDefaultBtn(item.buttons, 'right')"
+                    :dropdown="props.data.config?.operateDropdown"
+                    @click="tableBtnClick(scope.row, $event)"
+                  />
+                </template>
               </template>
             </el-table-column>
           </template>
         </el-table>
       </div>
-      <div v-if="showPage && state.total > state.pageSize" class="table-page">
+      <div
+        v-if="props.pagination"
+        v-show="state.total > state.pageSize"
+        class="table-page"
+      >
         <el-pagination
-          v-model:currentPage="state.currentPage"
+          v-model:current-page="state.currentPage"
           v-model:page-size="state.pageSize"
           :page-sizes="[20, 30, 40, 50] as any"
           :total="state.total"
@@ -217,7 +206,7 @@
       <div
         v-if="state.tableScrollMargin"
         :style="{ height: state.tableScrollMargin }"
-      ></div>
+      />
     </div>
   </div>
 </template>
@@ -234,55 +223,65 @@
   } from 'vue'
   import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
   import Tooltip from '@/components/tooltip/index.vue'
-  import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormData } from '@/types/form'
-  import type { TableData } from '@/types/table'
+  import type { EventType } from '@/types/table'
+  import { TableData, ApiKey } from '@/types/table'
   import { dateFormatting, getStorage } from '@/utils'
   import ListTreeSide from './treeSide.vue'
   import { useDesignStore } from '@/store/design'
-  import { permission } from '@/directive/permissions'
-  import { getRequestEvent, requestResponse } from '@/utils/requestResponse'
   import { useEventListener } from '@/utils/useEvent'
-
+  import OperateButton from './components/operateButton.vue'
+  import * as request from './components/request'
+  import { mergeDefaultBtn } from './components/defaultBtn'
+  import { ElMessage } from 'element-plus'
+  defineOptions({ name: 'AkList' })
   const props = withDefaults(
     defineProps<{
       data: TableData
       searchData?: FormData
-      beforeFetch?: (params: any, rout: any) => any
-      afterFetch?: (result: any) => any | string
-      beforeDelete?: (params: any, route: any) => any
-      afterDelete?: (result: any) => any | string
-      showPage?: boolean
-      requestUrl?: string // 请求的api
-      deleteUrl?: string // 删除的api
+      apiKey?: ApiKey
+      before?: (params: any, type: EventType, obj: any) => boolean
+      after?: (res: any, success?: boolean, type?: EventType) => any
+      pagination?: { pageSize: number, current: number } | boolean
       dict?: { [key: string | number]: string | number }
       fixedBottomScroll?: boolean
       query?: { [key: string]: any } // 一些附加的请求参数
       autoLoad?: boolean // 初始时自动请求加载数据
-      delKey?: string // 删除标识
+      pk?: string // 主键
     }>(),
     {
-      showPage: true,
       data: () => {
         return { columns: {} }
       },
       searchData: () => {
         return { list: [], form: {} }
       },
+      apiKey: () => {
+        return {}
+      },
       dict: () => {
         return {}
       },
       fixedBottomScroll: true,
       autoLoad: true,
-      delKey: 'id',
       query: () => {
         return {}
-      }
+      },
+      pagination: () => {
+        // 分页信息，false时不显示分页信息
+        return {
+          pageSize: 20,
+          current: 1
+        }
+      },
+      pk: 'id',
+      before: () => {},
+      after: () => {}
     }
   )
   const emits = defineEmits<{
     (e: 'selectionChange', row: any): void
-    (e: 'btnClick', btn: any, row?: any): void // 列表上面及表格列表里添加删除按钮事件
+    (e: 'btnClick', key: string, row?: any): void // 列表上面及表格列表里添加删除按钮事件
   }>()
   const designStore = useDesignStore()
   const route = useRoute()
@@ -294,7 +293,8 @@
   const state = reactive({
     loading: false,
     currentPage: 1,
-    pageSize: parseInt(props.data.config?.pageSize) || 20,
+    pageSize:
+      parseInt(props.data.config?.pageSize) || props.pagination?.pageSize,
     total: 0,
     selectionChecked: [],
     dict: {}, // 接口返回的
@@ -303,6 +303,9 @@
     tableScrollMargin: 0,
     columnsCheck: designStore.getColumnsCheck(route.path),
     currentNodeKey: ''
+  })
+  const pk = computed(() => {
+    return props.data.pk || props.pk
   })
   const treeData = computed(() => {
     return props.data.treeData || {}
@@ -330,7 +333,7 @@
   })
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
-    const storage = getStorage('akAllDict', true)
+    const storage = getStorage('akAllDict')
     return Object.assign(storage || {}, props.dict, state.dict) || {}
   })
   const isFixedBottomScroll = computed(() => {
@@ -347,104 +350,42 @@
       state.treeValue
     )
   })
-
-  /**
-   * 根据设置的下拉按钮数，返回显示的和下拉的
-   * @param type pre前面的，否则后面的
-   */
-  const operateBtnList = (type?: string) => {
-    const downLen = props.data.config?.operateDropdown // 大于多少个时显示
-    const btn = props.data.operateBtn || []
-    if ((downLen && isNaN(Number(downLen))) || !btn.length) {
-      return btn // 不是数字时，0长度
-    }
-    // 过滤掉没有权限的
-    const filterBtn = btn.filter((item: { permission: string }) => {
-      if (item.permission) {
-        return permission(item.permission)
-      } else {
-        return true
-      }
-    })
-    if (type === 'len') {
-      return downLen < filterBtn.length // 返回需要下拉
-    }
-    if (downLen < filterBtn.length) {
-      // 满足下拉条件
-      if (type === 'prev') {
-        return filterBtn.slice(0, downLen)
-      } else {
-        return filterBtn.slice(downLen)
-      }
-    }
-    return filterBtn
-  }
-  // 根据条件显示操作按钮
-  const getOperateVisible = (btn: any, row: any) => {
-    if (Object.keys(row).length === 0) {
-      return true
-    }
-    if (btn.visible && typeof btn.visible === 'string') {
-      const Fn = new Function('$', `return (${btn.visible})`)
-      return Fn(row)
-    }
-    return btn.visible !== false
-  }
-  //删除标识
-  const delKey = computed(() => {
-    return props.data.config?.delKey || props.delKey
-  })
-
+  // 数据处理开始
   // 筛选查询列表数据
   const getListData = (page?: number) => {
-    // 优先使用config配置的
-    const getUrl = props.data.config?.requestUrl || props.requestUrl
-    if (!getUrl) {
-      console.error(new Error('请先设置请求requestUrl'))
-      return
-    }
-    if (page) {
-      state.currentPage = page
-    }
     state.loading = true
-    // 筛选查询一般不存在校验，这里直接取值
-    const formValue = searchFormValue.value || {}
-    const params = {
-      extend: {
-        sort: props.data.config?.sort,
-        pageSize: state.pageSize,
-        pageNum: state.currentPage
-      },
-      query: Object.assign({}, formValue, props.query)
-    }
-    requestResponse({
-      requestUrl: getUrl,
-      params: params,
-      beforeFetch: getRequestEvent(props, 'beforeFetch'),
-      afterFetch: getRequestEvent(props, 'afterFetch'),
-      route: route
-    })
-      .then((res: any) => {
-        // console.log('res', res)
-        const data = res.data
-        tableDataList.value = data?.list || data // 兼容下可以不返回list
+    request
+      .getData({
+        props,
+        state,
+        page,
+        searchFormValue: searchFormValue.value,
+        route
+      })
+      .then((data: any) => {
+        tableDataList.value = data?.list || data
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false
-        }, 200) // 加个延时主要是等待列表渲染完，即列表查询区域等，计算才准确。
-        state.dict = data.dict || {}
-        state.total = data.total || 0
+        }, 200)
       })
-      .catch((res: any) => {
-        //beforeFetch返回了false时，只拦截请求，不用重置
-        if (res.code !== 'return false') {
-          tableDataList.value = []
-          state.total = 0
-          state.dict = {}
-        }
-        state.loading = false
+      .catch(() => {
+        tableDataList.value = []
       })
   }
+  // 删除 idList支持多个 ,params为附近参数
+  const delClick = (idList: string | number | string[]) => {
+    request
+      .del({ idList, pk: pk.value, props, state, route })
+      .then(() => {
+        getListData() // 请求列表数据
+      })
+      .catch(() => {
+        getListData() // 不管什么情况都刷新下请求列表数据
+      })
+  }
+  // 数据处理结束
+
   // 仅清空筛选输入
   const searchClear = () => {
     searchFormEl.value.resetFields() // 这个只是清空了model的值
@@ -458,115 +399,139 @@
   const handleCurrentChange = (page: number) => {
     getListData(page)
   }
-  // 删除 idList支持多个 ,params为附近参数
-  const delClick = (idList: string | number | string[]) => {
-    state.loading = true
-    const delUrl = props.data.config?.deleteUrl || props.deleteUrl
-    const delParams = {
-      id: idList.toString() // 多个时转字符串
+
+  // 使用了 render 属性时,渲染前对字段值的预处理方法，需返回新值
+  const getRenderFormatValue = (row: any, column: any) => {
+     if (typeof column.renderFormatter === 'function') {
+      return column.renderFormatter(row[column.prop], row)
     }
-    requestResponse({
-      requestUrl: delUrl,
-      params: delParams,
-      beforeFetch: getRequestEvent(props, 'beforeDelete'),
-      afterFetch: getRequestEvent(props, 'afterDelete'),
-      route: route
-    })
-      .then((res: any) => {
-        state.loading = false
-        ElMessage.success(res.message || '删除成功')
-        getListData() // 请求列表数据
-      })
-      .catch((res: { message: string; code: string | number }) => {
-        state.loading = false
-        if (res.code !== 'return false') {
-          ElMessage.error(res.message || '删除失败')
-        }
-        //给个提示方便方便操作异常时不知错在哪里
-        if (res.code === 'return false') {
-          console.error(new Error('拦截事件返回阻止事件处理'))
-          return
-        }
-        getListData() // 不管什么情况都刷新下请求列表数据
-      })
+    return row[column.prop]
   }
 
-  /**
-   * 列表左上方控制按钮事件
-   * @param row
-   */
-  const controlBtnClick = (row: any) => {
-    // 对外抛个事件，方便添加了其他按钮时，同时添加回调事件，
-    emits('btnClick', row)
-    if (row.click) {
-      const result = row.click(row)
-      if (result === false) {
-        return // 回调事件里处理
-      }
+  // 处理switch切换事件
+  const switchLoading = ref(false)
+  const oldVal = ref(undefined) // 修改前的值
+  const switchBeforeChange = (val: number | string | boolean) => {
+    oldVal.value = val
+    return true
+  }
+  const switchChange = (val: string | number | boolean, obj: any, row: any) => {
+    // 提交修改，这里通过请求数据再使用v-bind绑定参数，初始时也会触发change,但没有触发beforeChange
+    console.log('switchChange')
+    console.log(val)
+    console.log(obj)
+    console.log(row)
+    if (oldVal.value === undefined) {
+      return
     }
-    if (row.key === 'del') {
-      // 批量删除
-      if (state.selectionChecked.length) {
-        const idList: any = []
-        state.selectionChecked.forEach((item: any) => {
-          idList.push(item[delKey.value])
-        })
-        delClick(idList)
+    request.switchEvent({
+      props,
+      switchLoading,
+      val,
+      rowProp: obj.prop,
+      oldVal: oldVal.value,
+      params: row // 这里使用当前行的所有数据，可根据实际如取pk
+    })
+  }
+  // 处理switch切换事件结束
+
+  // 处理图片开始
+  const getImgSrc = (row: any, column: any, type?: string) => {
+    const src = getRenderFormatValue(row, column)
+    if (!src) {
+      return
+    }
+    if (type === 'preview') {
+      if (typeof src !== 'object') {
+        return src.split(',')
+      }
+      return src
+    } else {
+      // 如果是数组则返回第一张
+      if (typeof src === 'object') {
+        return src[0]
       } else {
-        ElMessage.error('请选择需要删除的选项！')
+        return src.split(',')[0]
       }
     }
   }
-  /**
-   * 表格每行的操作按钮点击事件
-   * @param btn
-   * @param row
-   * @param type
-   */
-  const operateBtnClick = (btn: any, row: any, type?: string) => {
-    emits('btnClick', btn, row)
-    if (btn.click) {
-      const result = btn.click(row)
-      if (result === false) {
-        return // 回调事件里处理
+  // 处理图片结束
+
+  // 处理tag
+  const getTagType = (row: any, column: any) => {
+    if (!column.custom) {
+      return
+    }
+    return column.custom[getRenderFormatValue(row, column)]
+  }
+  const getTagVal = (row: any, column: any) => {
+    const val = getRenderFormatValue(row, column)
+    const replaceValue = column.replaceValue
+    if (!replaceValue) {
+      return val
+    } else if (typeof replaceValue === 'string') {
+      // 字符串时为字典
+      return listDict.value[replaceValue]?.[val] || val
+    } else {
+      return replaceValue[val] || val
+    }
+  }
+  // 处理tag结束
+
+  // 处理时间
+  const getDateFormat = (obj: any, row: any) => {
+    const val = getRenderFormatValue(row, obj)
+    if (!obj || !val) {
+      return val
+    }
+    let formatType = obj.timeFormat // 指定格式时
+    if (!formatType) {
+      // 没有指定格式时
+      if (obj.render === 'date') {
+        formatType = '{yyyy}-{mm}-{dd}'
+      } else {
+        formatType = ''
       }
     }
-    if (btn.key === 'del') {
-      if (type === 'down') {
-        // 下拉菜单删除时警告
-        ElMessageBox.confirm(btn.tip || '确定删除该记录?', '温馨提示', {
-          confirmButtonText: '删除',
-          cancelButtonText: '取消',
+    return dateFormatting(val, formatType)
+  }
+  // 处理时间结束
+
+  // 列表右侧按钮事件，处理预设key的内置事件
+  const tableBtnClick = (row: any, key: string) => {
+    if (key === 'del' && pk.value) {
+      delClick([row[pk.value]])
+    } else {
+      // todo 这里目前先对外提示点击事件
+      emits('btnClick', key, row)
+    }
+  }
+  // 表格上方操作按钮事件，处理预设key的内置事件
+  const btnClick = (key: string) => {
+    const ids = state.selectionChecked.map((item) => item[pk.value])
+    if (key === 'del' && state.selectionChecked && pk.value) {
+      delClick(ids)
+    } else if (key === 'export') {
+      request.exportEvent({ props, state, route, params: ids })
+    } else if (key === 'edit') {
+      // todo 编辑或查看时请数据拉回来，或者是对外暴露拉取数据的方法
+      if (ids?.length > 1) {
+        return ElMessage({
+          message: '每次只能编辑一条数据',
           type: 'warning'
-        }).then(() => {
-          delClick(row[delKey.value])
         })
-      } else {
-        delClick(row[delKey.value])
       }
+      emits('btnClick', key, { [pk.value]: ids[0] })
+    } else {
+      emits('btnClick', key, ids)
     }
   }
+
+  // 处理操作按钮结束
+
   const selectionChange = (row: any) => {
     state.selectionChecked = row
     emits('selectionChange', row)
-  }
-  // 个性化设置
-  const getDictLabel = (scope: any, item: any, type?: string) => {
-    if (scope.row.$index !== -1) {
-      // 表格没数据时也会引用，此时$index=-1，应该是组件ui问题
-      const val = scope.row[item.prop]
-      if (type === 'formatter' && val) {
-        // 时间日期类格式化
-        return dateFormatting(val, item.config?.formatter)
-      } else {
-        const key = (listDict.value as any)[item.config?.dictKey]
-        if (Object.keys(listDict.value).length && key) {
-          return key[val]
-        } else {
-          return val
-        }
-      }
-    }
   }
 
   const getParamsJump = (type?: string) => {
@@ -574,7 +539,7 @@
       {},
       searchFormEl.value?.getValue(),
       state.treeValue
-    ) //这里需要获取到搜索表单全部的字段
+    ) // 这里需要获取到搜索表单全部的字段
 
     if (type === 'reset') {
       for (const key in searchFormVal) {
@@ -582,18 +547,18 @@
       }
     }
     const params = Object.assign({}, route.query, searchFormVal)
-    router.push({ path: route.path, query: params })
+    // router.push({ path: route.path, query: params })
+     router.replace({ query: params })
   }
   const formBtnClick = (type: string) => {
     if (searchJump.value) {
-      // 带参数跳转
+      // 将参数拼接到url上
       getParamsJump(type)
-    } else {
-      if (type === 'submit') {
-        getListData(1)
-      } else if (type === 'reset') {
-        searchClear()
-      }
+    }
+    if (type === 'submit') {
+      getListData(1)
+    } else if (type === 'reset') {
+      searchClear()
     }
   }
   // 侧栏树点击事件
@@ -624,13 +589,13 @@
           return
         }
         const tableBodyDom = tableEl.querySelector('.el-table__body') // table
-        const { top: tableBodyDomTop } =
-          tableBodyWrapDom.getBoundingClientRect()
+        const { top: tableBodyDomTop }
+          = tableBodyWrapDom.getBoundingClientRect()
         const tableHeight = tableBodyDom.offsetHeight // 表格的高度
         const windowHeight = window.innerHeight
         if (
-          tableBodyDomTop > windowHeight ||
-          tableBodyWrapDom.classList.contains('is-scrolling-none')
+          tableBodyDomTop > windowHeight
+          || tableBodyWrapDom.classList.contains('is-scrolling-none')
         ) {
           // 此时列表在可视窗口的下侧不可见区域，因此不做任何修改
           tableBodyWrapDom.style.height = 'unset'
@@ -653,8 +618,8 @@
   const scrollBox = computed(() => {
     // 当前框架滚动区域，不包在layout框架时
     return (
-      document.querySelector('.overflow-scroll') ||
-      document.querySelector('body')
+      document.querySelector('.overflow-scroll')
+      || document.querySelector('body')
     )
   })
   // 显示隐藏列设置
@@ -703,9 +668,12 @@
   const unWatch = watch(
     () => route.query,
     () => {
-      state.currentPage = 1
-      setSearchValueFormQuery()
-      getListData(1)
+      if (props.autoLoad) {
+        // todo 这里要区分跳转根据url查询，不自动加载跳转也需加载
+        state.currentPage = 1
+        setSearchValueFormQuery()
+        getListData(1)
+      }
     },
     {
       deep: true
@@ -715,7 +683,7 @@
   useEventListener(scrollBox.value, 'scroll', setFixedBottomScroll)
   useEventListener(window, 'resize', setFixedBottomScroll)
   onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+    unWatch() // 销毁监听器
   })
   onMounted(() => {
     setSearchValueFormQuery() // url带有参数时，先对搜索表单设置
@@ -724,12 +692,17 @@
       getListData(1)
     }
   })
+  // 重置列表
+  const resetList = () => {
+    tableDataList.value = []
+  }
   onBeforeUnmount(() => {})
   defineExpose({
     getListData,
     delClick,
     table,
     setSearchFormValue,
-    getSearchFormValue
+    getSearchFormValue,
+    resetList
   })
 </script>

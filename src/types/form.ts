@@ -1,3 +1,5 @@
+import type { FormProps } from 'element-plus/es'
+
 export interface Options {
   label: string
   value: string
@@ -28,25 +30,35 @@ export interface FormList {
   options?: Options[] // radio,checkbox,select选项
   list?: any
 }
-
+// export type EventType = 'get' | 'edit' | 'add'
 export interface FormData {
   list: FormList[]
-  form: any // form所有props
+  form: FormProps // form所有props
   config?: {
     style?: string // 表单css样式，相当于scope
     hideField?: string[] // 使用v-if隐藏的字段，用于交互
-    requestUrl?: string // 表单数据请求url
-    submitUrl?: string // 提交表单
-    editUrl?: string // 编辑保存
     addLoad?: boolean
-    expand?: boolean // 用于设置筛选条件默认展开/收起状态
     submitCancel?: boolean | string[]
   }
+  operateType?: 'add' | 'edit' | 'detail' | 'design' | 'search' // 当前表单操作类型
+  pk?: string // 主键，用于判断当前表单是新增或为修改，判断方式为当前提交的表单内容中存在主键值，则认为是编辑状态
+  apiKey?: ApiKey
   events?: {
-    beforeFetch?: Function | string
-    afterFetch?: Function | string
-    beforeSubmit?: Function | string
-    afterSubmit?: Function | string
-    change?: Function | string
+    before?: string | ((params: any, obj: any) => any)
+    after?: string | ((res: any, success: boolean, type?: string) => any)
+    change?:
+      | string
+      | ((
+          prop: string,
+          value: any,
+          model: any,
+          name: string,
+          options: any
+        ) => any)
   }
+}
+
+export interface ApiKey {
+  get?: string // 根据id获取编辑数据
+  submit?: string // 新增修改保存
 }

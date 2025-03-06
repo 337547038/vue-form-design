@@ -1,6 +1,10 @@
 <!--自定义地图组件-->
 <template>
-  <echartsInt :option="option" :width="width" :height="height" />
+  <echartsInt
+    :option="option"
+    :width="width"
+    :height="height"
+  />
 </template>
 <script setup lang="ts">
   import { onMounted, ref } from 'vue'
@@ -419,11 +423,11 @@
   const getMapJson = () => {
     const path = props.mapType === 'gd' ? 'guangdong' : 'china'
     getRequest(`/static/demo1/${path}.json`)
-      .then(res => {})
-      .catch(res => {
+      .then(() => {})
+      .catch((res) => {
         echarts.registerMap(path, res)
-        option.value =
-          props.mapType === 'gd' ? optionGd.value : optionChina.value
+        option.value
+          = props.mapType === 'gd' ? optionGd.value : optionChina.value
       })
   }
 

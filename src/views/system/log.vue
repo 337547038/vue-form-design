@@ -2,15 +2,10 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="loginLogList"
-      delete-url="loginLogDelete"
+      :api-key="{list:'loginLogList',del:'loginLogDelete'}"
       :search-data="searchData"
       :data="tableData"
       :dict="dict"
-      :beforeDelete="beforeDelete"
-      :afterDelete="afterDelete"
-      :beforeFetch="beforeFetch"
-      :afterFetch="afterFetch"
     />
   </div>
 </template>
@@ -76,32 +71,31 @@
       {
         label: '登录状态',
         prop: 'status',
-        config: {
-          dictKey: 'status',
-          tagList: { 1: 'success', 0: 'warning' }
-        }
+        render: 'tag',
+        replaceValue: 'status',
+        custom: { 1: 'success', 0: 'warning' }
       },
       {
         label: '登录时间',
         prop: 'dateTime',
         width: '170px',
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        render: 'datetime',
+        config: { }
       },
       { label: '操作信息', prop: 'remark' },
       {
         label: '操作',
-        prop: '__control'
+        prop: 'control',
+        buttons: [{
+          label: '删除',
+          key: 'del'
+        }],
+        render: 'buttons'
       }
     ],
     config: {
       // columnsSetting: false
     },
-    operateBtn: [
-      {
-        label: '删除',
-        key: 'del'
-      }
-    ],
     controlBtn: [
       {
         label: '批量删除',

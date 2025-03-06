@@ -22,13 +22,13 @@ function obj2string(o: any) {
   }
   if (typeof o === 'string') {
     return (
-      '"' +
-      o
+      '"'
+      + o
         .replace(/([\\'\\"\\])/g, '\\$1')
         .replace(/(\n)/g, '\\n')
         .replace(/(\r)/g, '\\r')
-        .replace(/(\t)/g, '\\t') +
-      '"'
+        .replace(/(\t)/g, '\\t')
+        + '"'
     )
   }
   if (typeof o === 'object') {
@@ -38,16 +38,16 @@ function obj2string(o: any) {
         if (i.indexOf('-') !== -1) {
           iii = `"${i}"`
         }
-        //r.push(iii + ':' + obj2string(o[i]))
+        // r.push(iii + ':' + obj2string(o[i]))
         r.push(`${iii}:${obj2string(o[i])}`)
       }
       if (
-        !!document.all &&
-        !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(
+        !!document.all
+        && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(
           o.toString
         )
       ) {
-        //r.push('toString:' + o.toString.toString())
+        // r.push('toString:' + o.toString.toString())
         r.push(`toString:${o.toString.toString()}`)
       }
       // r = '{' + r.join() + '}'
@@ -113,7 +113,8 @@ export function json2string(obj: any, isBeautify?: boolean) {
 export const aceEdit = (data: any, id?: string, type?: string) => {
   type = type ? type : 'javascript'
   id = id ? id : 'editJson'
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const editor = ace.edit(id)
   editor.setOptions({
     enableBasicAutocompletion: true,
@@ -157,13 +158,13 @@ export const formatToString = (val: any): string | undefined => {
  * 将{key:value}转[{label:'key',value:'value'}]
  * @param obj
  */
-export const objectToArray = (obj: any): { [key: string]: any } => {
+export const objectToArray = (obj: any): { [key: string | number]: any } => {
   if (Object.prototype.toString.call(obj) === '[object Object]') {
     const temp: any = []
     for (const key in obj) {
       temp.push({
         label: obj[key],
-        value: key
+        value: formatNumber(key) // {1:'a'}转换后这个key会变成字符串，这里尝试恢复为数字
       })
     }
     return temp
@@ -196,7 +197,9 @@ export const appendOrRemoveStyle = (
   }
   if (!append || !cssContent) {
     // 移除
-    styleId && styleId.parentNode.removeChild(styleId)
+    if (styleId) {
+      styleId.parentNode.removeChild(styleId)
+    }
   }
 }
 /**
@@ -224,11 +227,3 @@ export const jsonParseStringify = (val: any) => {
     return val
   }
 }
-
-// provide 方法定义的key
-const prefix: string = 'AK'
-export const constControlChange: string = prefix + 'ControlChange' // 表单组件改变事件
-export const constSetFormOptions: string = prefix + 'SetFormOptions' // 使用setOptions设置下拉值
-export const constGetControlByName: string = prefix + 'GetControlByName' // 根据name从formData.list查找数据
-export const constFormBtnEvent: string = prefix + 'FormBtnEvent' // 按钮组件事件
-export const constFormProps: string = prefix + 'FormProps' // 按钮组件事件

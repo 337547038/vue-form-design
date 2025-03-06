@@ -2,25 +2,23 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="dictList"
-      delete-url="dictDelete"
+      :api-key="{list:'dictList',del:'dictDelete'}"
       :search-data="searchData"
       :data="tableData"
     />
     <el-dialog
       v-model="dialog.visible"
-      title="添加字典"
+      :title="dialog.type==='add'?'添加字典':'修改'"
       width="400px"
       destroy-on-close
     >
       <ak-form
         ref="formEl"
         :data="dialog.formData"
-        :type="dialog.type"
-        submit-url="dictSave"
-        edit-url="dictEdit"
-        :before-submit="beforeSubmit"
-        :after-submit="afterSubmit"
+        :operate-type="dialog.type"
+        :submit-url="dialog.type==='add'?'dictSave':'dictEdit'"
+        :before="beforeSubmit"
+        :after="afterSubmit"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -33,10 +31,10 @@
       <ak-form
         ref="formEl2"
         :data="dialog2.formData"
-        :type="2"
-        edit-url="dictEdit"
-        :before-submit="beforeSubmit2"
-        :after-submit="afterSubmit"
+        operate-type="edit"
+        submit-url="dictEdit"
+        :before="beforeSubmit2"
+        :after="afterSubmit"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -51,7 +49,7 @@
   const formEl2 = ref()
   const dialog = reactive({
     visible: false,
-    type: 1,
+    type: 'add',
     editId: '',
     formData: {
       list: [
@@ -196,6 +194,7 @@
         size: 'default'
       },
       config: {
+        transformData: true,
         submitCancel: true,
         style:
           '.flex-item{display:flex}\n.flex-item .el-form-item{ margin-right:10px}'
@@ -211,22 +210,57 @@
       {
         label: '状态',
         prop: 'status',
+        render: 'tag',
+        replaceValue: 'sys-status',
+        custom: {
+          0: 'info',
+          1: 'success'
+        },
         config: {
-          tagList: {
-            0: 'info',
-            1: 'success'
-          },
-          dictKey: 'sys-status'
         }
       },
-      // { label: '说明', prop: 'remark' },
       {
         label: '更新时间',
         prop: 'updateTime',
         width: 170,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        render: 'datetime',
+        config: {}
       },
-      { label: '操作', prop: '__control', width: 200 }
+      { label: '操作', prop: '__control', width: 200, render: 'buttons', buttons: [
+          {
+            label: '设置',
+            type: 'primary',
+            click: (row: any) => {
+              dialog2.visible = true
+              dialog2.editId = row.id
+              nextTick(() => {
+                formEl2.value.setValue({
+                  name: row.name,
+                  children: row.children ? JSON.parse(row.children) : []
+                })
+              })
+            }
+          },
+          {
+            label: '编辑',
+            icon: 'edit',
+            type: 'primary',
+            click: (row: any) => {
+              dialog.visible = true
+              dialog.type = 'edit'
+              dialog.editId = row.id
+              nextTick(() => {
+                formEl.value.setValue(row, true)
+              })
+            }
+          },
+          {
+            label: '删除',
+            key: 'del',
+            icon: 'delete',
+            visible: '$.isSystem!==1'
+          }
+        ] }
     ],
     controlBtn: [
       {
@@ -236,7 +270,7 @@
         icon: 'plus',
         click: () => {
           dialog.visible = true
-          dialog.type = 1
+          dialog.type = 'add'
           dialog.editId = ''
           nextTick(() => {
             // formEl.value.resetFields()
@@ -249,40 +283,6 @@
         size: 'small',
         icon: 'delete',
         key: 'del'
-      }
-    ],
-    operateBtn: [
-      {
-        label: '设置',
-        click: (row: any) => {
-          dialog2.visible = true
-          dialog2.type = 1
-          dialog2.editId = row.id
-          nextTick(() => {
-            formEl2.value.setValue({
-              name: row.name,
-              children: row.children ? JSON.parse(row.children) : []
-            })
-          })
-        }
-      },
-      {
-        label: '编辑',
-        icon: 'edit',
-        click: (row: any) => {
-          dialog.visible = true
-          dialog.type = 2
-          dialog.editId = row.id
-          nextTick(() => {
-            formEl.value.setValue(row, true)
-          })
-        }
-      },
-      {
-        label: '删除',
-        key: 'del',
-        icon: 'delete',
-        visible: '$.isSystem!==1'
       }
     ],
     config: {
@@ -308,7 +308,7 @@
         type: 'select',
         control: {
           modelValue: '',
-          appendToBody: true
+          style: { width: '100px' }
         },
         options: [
           {
@@ -322,8 +322,8 @@
         ],
         name: 'status',
         config: {
-          optionsType: 0,
-          transformData: 'string'
+          optionsType: 0
+          // transformData: 'string'
         },
         formItem: {
           label: '状态'

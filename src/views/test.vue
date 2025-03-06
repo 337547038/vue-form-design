@@ -1,15 +1,15 @@
 <template>
   <div>
-    <ak-form
-      ref="formNameEl"
-      :type="formType"
-      :data="formData"
-      request-url=""
-      submit-url=""
-      edit-url=""
-      :before-submit="beforeSubmit"
-    />
+    <ak-form :data="formData" ref="akFormEl" operateType="add" />
   </div>
+  <div>
+    <el-button @click="setOptions">setOption</el-button>
+  </div>
+  <!--  <el-form>
+    <el-form-item label="input">
+      <el-input />
+    </el-form-item>
+  </el-form>-->
 </template>
 <route>
 {meta:{
@@ -17,48 +17,111 @@ layout:'hidden'}}
 </route>
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
-  const formNameEl = ref()
   const formData = ref({
     list: [
       {
-        type: 'upload',
+        type: 'input',
         control: {
           modelValue: ''
         },
         config: {},
-        name: 'upload1696846841462',
+        name: 'input1',
         formItem: {
-          label: '图片/文件'
+          label: '单行文本'
         }
       },
       {
-        type: 'chunkUpload',
-        control: { modelValue: '', disabled: false },
-        config: {
-          showType: 'input',
-          btnText: '',
-          limit: 2,
-          auto: true
+        type: 'table',
+        list: [
+          {
+            type: 'input',
+            control: {
+              modelValue: ''
+            },
+            config: {},
+            name: 'input1724721645324',
+            formItem: {
+              label: '单行文本'
+            }
+          },
+          {
+            type: 'select',
+            control: {
+              modelValue: '',
+              teleported: true
+            },
+            options: [],
+            config: {
+              optionsType: 0
+            },
+            name: 'select1724721656104',
+            formItem: {
+              label: '下拉选择框'
+            }
+          }
+        ],
+        tableData: [],
+        control: {
+          border: true
         },
-        name: 'selectUpload1',
-        formItem: { label: '选择上传' }
+        config: {
+          delBtnText: '删除',
+          addBtnText: '添加一行'
+        },
+        name: 'table1724721641645'
+      },
+      {
+        type: 'input',
+        control: {
+          modelValue: ''
+        },
+        config: {},
+        name: 'input1',
+        formItem: {
+          label: '单行文本'
+        }
+      },
+      {
+        type: 'flex',
+        list: [
+          {
+            type: 'input',
+            control: {
+              modelValue: ''
+            },
+            config: {},
+            name: 'input1724909802492',
+            formItem: {
+              label: '单行文本'
+            }
+          }
+        ],
+        tableData: [],
+        control: {},
+        config: {
+          addBtnText: '添加一行'
+        },
+        name: 'flex1724909800153'
       }
     ],
-    form: { size: 'default' },
-    config: {}
-  })
-  // todo 存在编辑时，可根据路由等参数设置当前表单模式 1新增 2编辑
-  const formType = computed(() => {
-    return 1
+    form: {
+      size: 'default'
+    },
+    config: {
+      submitCancel: true
+    },
+    apiKey: {},
+    events: {
+      change: obj => {
+        console.log(obj)
+      }
+    }
   })
 
-  // 表单提交时参数处理
-  const beforeSubmit = params => {
-    // 如编辑时添加参数
-    //  params.id='xxx'
-    return params
+  const akFormEl = ref()
+  const setOptions = () => {
+    akFormEl.value.setOptions({
+      select1: [{ label: '1', value: '1' }]
+    })
   }
-  onMounted(() => {
-    formNameEl.value.setValue({ selectUpload1: '456.jpg,http://www.jpg' })
-  })
 </script>

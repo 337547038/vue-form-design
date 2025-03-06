@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-// @ts-ignore
 import routesPage from '~pages'
 import { useLayoutStore } from '@/store/layout'
 import NProgress from 'nprogress'
@@ -63,7 +62,7 @@ const routesList = [...routes, ...hiddenLayout]
 console.log('routesList', routesList)
 // 配置路由
 const router = createRouter({
-  //history: createWebHistory(),
+  // history: createWebHistory(),
   history: createWebHashHistory(),
   routes: routesList
 })
@@ -95,7 +94,7 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
     // 除白名单其他页面需要登录，判断登录
     // 如没有token过期刷新的需求，这里获取token为空或过期时，直接跳转即可。
     // 存在刷新refreshToken操作时，token过期也不能跳到登录页，否则直接跳转没办法换
-    //const token: any = getStorage('token', true)
+    // const token: any = getStorage('token', true)
     const refreshToken: any = getStorage('refreshToken', true)
     // menuList为接口返回的当前用户可用路由或按钮
     const menuList: string[] = getStorage('resources', true) || []
@@ -103,7 +102,7 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
       path: '/login',
       query: { redirect: encodeURI(to.fullPath) }
     }
-    //判断refreshToken即可，当token过期还能继续执行刷新token操作
+    // 判断refreshToken即可，当token过期还能继续执行刷新token操作
     if (refreshToken) {
       // 根据菜单权限接口判断有没对应页面的权限
       if (permissions !== 'none') {
@@ -125,7 +124,7 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
               message: '没有权限查看该页面',
               type: 'error'
             })
-            //返回来源页
+            // 返回来源页
             nextQuery = {
               path: _from.fullPath
             }
@@ -138,7 +137,7 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
       }
       // 动态路由，可根据实际需求修改
       if (!hasRoute) {
-        const routeList = filterRoutePage('addRoute') //所有设为动态的路由
+        const routeList = filterRoutePage('addRoute') // 所有设为动态的路由
         routeList.forEach((item: any) => {
           if (menuList.includes(item.path)) {
             // 过滤掉没有权限的
@@ -170,6 +169,7 @@ const getBreadcrumb = (path: string): void => {
   if (menuList?.length) {
     const list: any = getTreeNodeById(menuList, path, { id: 'path' })
     const layoutStore = useLayoutStore()
+    console.log('change', menuList, path)
     layoutStore.changeBreadcrumb(list)
   }
 }

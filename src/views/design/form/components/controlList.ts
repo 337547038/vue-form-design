@@ -51,7 +51,7 @@ export default [
         icon: 'select',
         control: {
           modelValue: '',
-          appendToBody: true
+          teleported: true
         },
         options: selectOption,
         config: config
@@ -196,8 +196,8 @@ export default [
           modelValue: ''
         },
         config: {}
-        /*template: '', // 组件模板名称
-                component: '' // 根据template注入的组件*/
+        /* template: '', // 组件模板名称
+                component: '' // 根据template注入的组件 */
       },
       {
         type: 'upload',

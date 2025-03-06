@@ -4,11 +4,11 @@ AK-Design 是一个纯前端的`拖拽式`、`可视化`、`低代码`数据可�
 
 使用基于 Vue 3.x 的桌面端组件库 Elemnet-Plus ，使用广泛，扩展方便
 
-通过可视化的操作，可轻松快速完成表单设计、列表页设计、流程管理设计、数据可视化屏设计、数据统计设计等页面的创建
+通过可视化的操作，可轻松快速完成表单设计、列表页设计、流程管理设计、数据可视化大屏设计、数据统计设计等页面的创建
 
 提供功能强大的各类组件，可适用在各种复杂的场景中
 
-代码简洁、易于二次开发
+**代码简洁、大众化写法、完整的注释、轻量易上手**
 
 用于学习研究，欢迎交流，微信：**337547038**
 
@@ -16,8 +16,7 @@ AK-Design 是一个纯前端的`拖拽式`、`可视化`、`低代码`数据可�
 
 如果你对该项目感兴趣，欢迎加入项目建设中来
 
-如果你有任何建议，请联系我或在评论区留言.
-
+如果你有任何建议，请联系我或在评论区留言
 
 ### 接受需求功能定制(微信:337547038)
 
@@ -31,13 +30,9 @@ https://github.com/337547038/ak-design-manage
 
 ### 微信交流群
 
-二维码过期可加微信
+群人数超出限制无法扫码加入，需入群请加微信 *337547038*
 
 <img src="https://gitee.com/q337547038/vue-form-design/raw/main/qrcode.jpg" width ="200" alt=""/>
-
-### 福利：使用支付宝扫码领取红包
-
-<img src="https://gitee.com/q337547038/vue-form-design/raw/main/alipay.jpg" width ="300" alt=""/>
 
 ## 表单设计
 
@@ -125,13 +120,12 @@ git clone https://github.com/337547038/vue-form-design.git
 pnpm install
 
 # 运行项目
-pnpm dev //开发环境
-pnpm preview  // 预览模式
-
+pnpm dev
 
 # 使用json模拟数据
 
-默认下github示例和localhost访问时使用json模拟数据
+默认下github示例和localhost访问时使用json模拟数据。
+
 
 # 使用后端接口数据
 
@@ -145,12 +139,26 @@ pnpm build
 ### 开发环境
 | 名称           | 版本      |
 |--------------|---------|
-| node         | 16.15.x |
-| pnpm         | 8.6.x   |
-| vite         | 4.4.x   |
-| vue          | 3.3.x   |
-| element-plus | 2.3.x   |
+| node         | 20.18.x |
+| pnpm         | 9.12.x  |
+| vite         | 5.4.x   |
+| vue          | 3.5.x   |
+| element-plus | 2.8.x   |
 
 ### 相关教程
 
 [如何在本地调演示效果](https://www.bilibili.com/video/BV1xCYeeEEMS/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+
+## `Star`
+
+非常感谢留下星星的好心人，感谢您的支持 :heart:
+
+[![Stargazers for vue-form-design](https://bytecrank.com/nastyox/reporoster/php/stargazersSVG.php?user=337547038&repo=vue-form-design)](https://github.com/337547038/vue-form-design/stargazers)
+
+
+## `Fork`
+
+瞧，那些 `小哥哥` 、`小姐姐` 认真 `学习` 的样子真滴是 `哎呦不错哦` :heart:
+
+[![Forkers repo roster for vue-form-design](https://reporoster.com/forks/337547038/vue-form-design)](https://github.com/337547038/vue-form-design/network/members)

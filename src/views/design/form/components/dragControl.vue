@@ -2,7 +2,9 @@
 <template>
   <div class="components-list">
     <div v-if="isSearch && formDataList?.length">
-      <div class="title">快速选择表单字段</div>
+      <div class="title">
+        快速选择表单字段
+      </div>
       <div class="content">
         <el-checkbox
           v-for="item in formDataList"
@@ -13,21 +15,24 @@
         </el-checkbox>
       </div>
     </div>
-    <div v-for="(list, index) in controlList" :key="index">
+    <div
+      v-for="(list, index) in controlList"
+      :key="index"
+    >
       <div class="title">
         {{ list.title }}
         <div
-          class="template"
           v-if="index === 0 && !isSearch"
+          class="template"
           @click="useTemplateClick"
         >
           使用模板
         </div>
       </div>
       <draggable
-        itemKey="key123"
-        tag="ul"
         v-model="list.children"
+        item-key="key123"
+        tag="ul"
         :group="{ name: 'form', pull: 'clone', put: false }"
         ghost-class="ghost"
         :sort="false"
@@ -35,40 +40,34 @@
       >
         <template #item="{ element }">
           <li :class="[element.type]">
-            <i :class="`icon-${element.icon}`"></i>
+            <i :class="`icon-${element.icon}`" />
             <span :title="element.label">{{ element.label }}</span>
           </li>
         </template>
       </draggable>
     </div>
     <use-template
+      v-if="!isSearch"
       ref="useTemplateEl"
       @click="useTemplateSelect"
-      v-if="!isSearch"
     />
   </div>
 </template>
 <script lang="ts" setup>
   import controlListData from './controlList'
   import Draggable from 'vuedraggable-es'
-  import { computed, ref, watch, inject } from 'vue'
-  import { onBeforeRouteLeave } from 'vue-router'
+  import { computed, ref, onMounted } from 'vue'
+  import { useRoute } from 'vue-router'
   import { FormData, FormList } from '@/types/form'
   import UseTemplate from './template.vue'
   import { getRequest } from '@/api'
   import { stringToObj, jsonParseStringify } from '@/utils/design'
 
-  const props = withDefaults(
-    defineProps<{
-      formId?: number | string
-    }>(),
-    {}
-  )
+  const route = useRoute()
   const emits = defineEmits<{
     (e: 'clickCheck', value: FormList): void
     (e: 'click', value: FormData): void
   }>()
-  const designType = inject('formDesignType') as string
   const formDataList = ref([])
   // 默认搜索允许显示的字段
   const searchField = [
@@ -84,10 +83,10 @@
     'button'
   ]
   const isSearch = computed(() => {
-    return designType === 'search'
+    return route.query.type === 'search'
   })
   const controlList = computed(() => {
-    if (designType === 'search') {
+    if (isSearch.value) {
       // 只返回基础字段
       const temp: any = []
       controlListData.forEach((item: any) => {
@@ -108,14 +107,7 @@
   const clone = (origin: any) => {
     return jsonParseStringify(origin)
   }
-  const unWatch = watch(
-    () => props.formId,
-    (val: number) => {
-      if (val && isSearch.value) {
-        getFormField(val)
-      }
-    }
-  )
+
   // 加载当前列表所属的表单，从表单中提取可用于搜索的字段
   const getFormField = (formId: number) => {
     getRequest('designById', { id: formId }).then((res: any) => {
@@ -126,15 +118,6 @@
     })
   }
   // 筛选设计时左则勾选已有表单字段
-  const selectChange = (obj: FormList, val: boolean) => {
-    if (val) {
-      // 勾选时追加
-      const newObj = jsonParseStringify(obj)
-      delete newObj.rules
-      delete newObj.customRules
-      emits('clickCheck', newObj)
-    }
-  }
   const forEachGetData = (data: FormList[]) => {
     data.forEach((item: any) => {
       if (item.type === 'grid' || item.type === 'tabs') {
@@ -148,6 +131,15 @@
       }
     })
   }
+  const selectChange = (obj: FormList, val: boolean) => {
+    if (val) {
+      // 勾选时追加
+      const newObj = jsonParseStringify(obj)
+      delete newObj.rules
+      delete newObj.customRules
+      emits('clickCheck', newObj)
+    }
+  }
   // 使用模板
   const useTemplateEl = ref()
   const useTemplateClick = () => {
@@ -156,7 +148,11 @@
   const useTemplateSelect = (data: FormData) => {
     emits('click', data)
   }
-  onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+  onMounted(() => {
+    // 设计搜索表单时加载
+    const { type, id } = route.query
+    if (type === 'search' && id) {
+      getFormField(id)
+    }
   })
 </script>

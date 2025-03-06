@@ -2,9 +2,9 @@
 <template>
   <el-tooltip placement="top">
     <template #content>
-      <span v-html="content"></span>
+      <span v-html="content" />
     </template>
-    <i class="icon-help"></i>
+    <i class="icon-help" />
   </el-tooltip>
 </template>
 

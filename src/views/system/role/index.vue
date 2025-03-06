@@ -2,15 +2,14 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="roleList"
-      delete-url="roleDelete"
+      :api-key="{list:'roleList',del:'delete-url'}"
       :search-data="searchData"
       :data="tableData"
       @btn-click="listBtnClick"
     />
     <el-dialog
-      destroy-on-close
       v-model="dialog.visible"
+      destroy-on-close
       :title="dialog.title"
       width="420px"
     >
@@ -18,11 +17,10 @@
         ref="formEl"
         :data="formData"
         :dict="dialog.dict"
-        :type="dialog.formType"
-        submit-url="roleSave"
-        edit-url="roleEdit"
-        :before-submit="beforeSubmit"
-        :after-submit="afterSubmit"
+        :operate-type="dialog.formType"
+        :submit-url="dialog.formType==='add'?'roleSave':'roleEdit'"
+        :before="beforeSubmit"
+        :after="afterSubmit"
         @btn-click="dialogBtnClick"
       />
     </el-dialog>
@@ -54,7 +52,7 @@
         type: 'select',
         control: {
           modelValue: '',
-          appendToBody: true
+          style: { width: '100px' }
         },
         options: [],
         config: {
@@ -81,30 +79,31 @@
       {
         label: '状态',
         prop: 'status',
-        config: { dictKey: 'sys-status', tagList: { 1: 'success', 0: 'info' } }
+        render: 'tag',
+        custom: { 1: 'success', 0: 'info' },
+        replaceValue: 'sys-status'
       },
-      { label: '操作', prop: '__control' }
+      { label: '操作', prop: '__control', render: 'buttons', buttons: [
+          {
+            label: '已分配用户',
+            click: (row: any) => {
+              router.push({ path: '/system/user', query: { roleId: row.id } })
+            }
+          },
+          {
+            label: '编辑',
+            key: 'edit',
+            click: (row: any) => {
+              nextTick(() => {
+                console.log(row)
+                // formEl.value.setValue(row) // 可以这里使用click处理，也可以放listBtnClick里处理
+              })
+            }
+          },
+          { label: '删除', key: 'del' }
+        ] }
     ],
     config: { expand: true, openType: 'dialog' },
-    operateBtn: [
-      {
-        label: '分配用户',
-        click: (row: any) => {
-          router.push({ path: '/system/user', query: { role: row.id } })
-        }
-      },
-      {
-        label: '编辑',
-        key: 'edit',
-        click: (row: any) => {
-          nextTick(() => {
-            console.log(row)
-            //formEl.value.setValue(row) // 可以这里使用click处理，也可以放listBtnClick里处理
-          })
-        }
-      },
-      { label: '删除', key: 'del' }
-    ],
     controlBtn: [
       {
         label: '新增',
@@ -127,7 +126,8 @@
       {
         type: 'input',
         control: {
-          modelValue: ''
+          modelValue: '',
+          placeholder: '请输入角色名称'
         },
         config: {},
         name: 'name',
@@ -191,44 +191,44 @@
   const dialog = reactive({
     visible: false,
     title: '',
-    formType: 1,
+    formType: 'add',
     dict: {},
     editId: ''
   })
-  const listBtnClick = (btn: any, row: any) => {
+  const listBtnClick = (key: string, row: any) => {
     // 使用弹窗方式打开新增编辑
-    if (btn.key === 'add' || btn.key === 'edit') {
+    if (key === 'add' || key === 'edit') {
       // 打开弹窗
       dialog.visible = true
-      dialog.title = btn.key === 'add' ? '新增' : '编辑'
-      dialog.formType = btn.key === 'add' ? 1 : 2
+      dialog.title = key === 'add' ? '新增' : '编辑'
+      dialog.formType = key
       dialog.editId = row && row.id
-      if (btn.key === 'add' && formData.value.config?.addLoad) {
+      if (key === 'add' && formData.value.config?.addLoad) {
         // 添加时需要加载数据
         nextTick(() => {
           formEl.value.getData()
         })
       }
       // 编辑，根据id加载
-      if (btn.key === 'edit') {
+      if (key === 'edit') {
         nextTick(() => {
           formEl.value.setValue(row)
-          //formEl.value.getData({ id: row.id })
+          // formEl.value.getData({ id: row.id })
         })
       }
     }
   }
   // 提交表单前事件
   const beforeSubmit = (params: any) => {
-    if (dialog.formType === 2) {
+    if (dialog.formType === 'edit') {
       // 编辑模式下添加参数
       params.id = dialog.editId
     }
     return params
   }
   // 提交表单后事件
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
+  const afterSubmit = (res: any, success: boolean, type: string) => {
+    if (success) {
       // 添加成功，刷新列表数据
       closeResetDialog()
       tableListEl.value.getListData()
@@ -238,7 +238,7 @@
   const closeResetDialog = () => {
     dialog.visible = false
     dialog.editId = ''
-    //formEl.value.resetFields() // 重置表单
+    // formEl.value.resetFields() // 重置表单
   }
   // 点击弹窗取消按钮时
   const dialogBtnClick = (type: string) => {

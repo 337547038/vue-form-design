@@ -1,27 +1,34 @@
 <!-- Created by 337547038  -->
 <template>
   <el-popover
+    v-model:visible="visible"
     placement="bottom"
     :width="500"
     trigger="click"
-    v-model:visible="visible"
   >
     <div class="iconfont-list">
       <ul>
         <li
           v-for="item in iconList"
           :key="item"
-          @click="iconClick(item)"
           :style="{ color: item === value ? color : '' }"
+          @click="iconClick(item)"
         >
-          <i :class="item"></i>
+          <i :class="item" />
         </li>
       </ul>
     </div>
     <template #reference>
       <div class="iconfont-input">
-        <el-input v-model="value" placeholder="输入或选择iconfont图标" />
-        <div @click.stop="" class="color-input" v-if="colorPicker">
+        <el-input
+          v-model="value"
+          placeholder="输入或选择iconfont图标"
+        />
+        <div
+          v-if="colorPicker"
+          class="color-input"
+          @click.stop=""
+        >
           <el-color-picker v-model="color" />
         </div>
       </div>
@@ -32,14 +39,16 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue'
   // 直接从public目录导入会报错Assets in public cannot be imported from JavaScript
-  //import iconfontJson from '../../public/static/iconfont/iconfont.json'
+  // import iconfontJson from '../../public/static/iconfont/iconfont.json'
   import iconfontJson from './iconfont.json'
   const props = withDefaults(
     defineProps<{
       modelValue?: string | string[]
       colorPicker?: boolean // 是否可选颜色，可选颜色时value为数组
     }>(),
-    {}
+    {
+      modelValue: ''
+    }
   )
 
   const emits = defineEmits<{

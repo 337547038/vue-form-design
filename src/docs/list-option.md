@@ -1,242 +1,246 @@
 # ak-list 配置手册
 
-配置数据由列表设计器通过拖拽添加相应组件及填写对应字段配置自动生成。脱离列表设计器时可按此数据格式要求，直接使用`ak-list`列表，即`ak-list`列表组件可不依懒于列表设计器工作
+## 数据列表配置
 
-## columns
+### -pk
+`data.pk`
+- 类型：string|number
 
-`table-column`所有参数。
+当前列表数据主键，用于删除和编辑等相关操作
 
-### label
 
-列头名称
+### -当前对应表单id
+`data.config.formId`
 
-### prop
+当前列表对应的表单id，设计列表时可从该表单获取可供选择的表头字段名称。获取列表数据时也是从对应的表单数据中获取。
 
-字段名称对应列内容的字段名。
+### -设计列表保存的名称
+`data.config.name`
 
-其中，约定操作栏`prop="__control"`以展示操作相关内置按钮及功能
+显示于列表页数据管理页面，数据的名称
 
-prop值
+### -新增编辑显示方式
+`data.config.openType`
+可选dialog/page。设计列表页里点击新增或编辑按钮时，对应表单的显示方式，可以为弹窗和新标签页打开两种方式。
 
-### help
+### -表单窗口宽度
+`data.config.dialogWidth`
+打开弹窗的宽度，仅当`data.config.openType=dialog`时有效
 
-问题帮助提示信息
+### -固定列表横向滚动条
+`data.config.fixedBottomScroll`
+- 类型：boolean，默认true。
 
-### config
+当列表出现横向滚动条时，设置为true可固定在浏览器底部。方便在翻页查看列表最右边信息时，无需先滚动纵向滚动条到底部，再滚动横向滚动条到右边才能查看
 
-#### formatter
+### -列显示隐藏设置
+`data.config.columnsSetting`
+- 类型：boolean，默认true。
 
-预设的个性化快速设置，可对列进行时间格式化。常见格式如`{y}-{m}-{d} {h}:{i}:{s}`、`{y}-{m}-{d}`
-。更多使用方式可查看`@/utils/index`中的`dateFormatting`格式化方法
+用于设置表头列的显示与隐藏，即可个性化设置当前列表需要显示或隐藏哪些表头，以方便查看
 
-#### dictKey
+### -显示与隐藏查询表单
+`data.config.expand`
+类型：boolean，默认true。有条件查询表单时，可设置展开可收起查询表单。
 
-string
+### -条件查询是否跳转页面
+`data.config.searchJump`
+类型：boolean，默认false。即列表查询时，点击查询按钮是否带参数跳转页面。此方式有利于分享当前url
 
-预设快速设置功能：可匹配字典输出对应值，如列表返回的值为0,1这种格式。即可根据字典输出男或女
+### -列表操作按钮下拉设置
+`data.config.operateDropdown`
+类型：number。一般为列表右侧的编辑删除等操作按钮，当按钮个大于当前设定时，其余的侧以下拉菜单的形式展示。如设置`operateDropdown=2`，当操作按钮个数大于2个时，其余的侧以下拉菜单展示。
+
+### -列表分页设置
+`data.config.pageSize`
+当前列表每页显示多少条
+
+### -排序设置
+`data.config.orderSort`
+作为扩展参数传接口，用于对列表数据进行排序
+
+## 表格prop
+
+### -el-table的prop设置
+`data.tableProps`
+支持el-table所有prop参数设置，如：
 
 ```javascript
-const dict = {sex: {0: '男', 1: '女'}, ...}
-
-```
-
-#### tagList
-
-预设快速设置功能：可对展示数据使用`tag`的形式展示，如列表数据返回0或1格式，或者是成功失败这类标识，可使用`tag`组件区分
-
-```javascript
-const tagList = {1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}
-```
-
-### imgWidth
-
-设置此值时列表将以图片的形式展示
-
-## config
-
-### openType
-
-string
-
-点击列表页新增或编辑时的找开方法，可选`dialog`和新页面打开(默认)`page`
-
-注意：此参数作用于通用数据列表页，不是`ak-list`组件本身的属性。当导出vue文件形式使用时，可在当前页面集成编辑功能，然后根据此参数展示编辑弹窗
-
-### dialogWidth
-
-string
-
-打开新增或编辑时弹窗的宽度，`openType='dialog'`时有效
-
-### fixedBottomScroll
-
-boolean
-
-列表横向滚动条是否固定在底部，即当列表列数比较多出现横向滚动条时，滚动条会固定在浏览底部
-
-### columnsSetting
-
-boolean
-
-是否展示列表列字段设置，可根据使用习惯显示所设置的表头列。
-
-选择改变时，根据`url`为标识保存在`local Storage`。可根据实际情况保持于服务端。
-
-注意：使用该功能时，需确保表头数据存在`prop`唯一值
-
-### expand
-
-boolean
-
-列表上方搜索查询条件是否可折叠
-
-### searchJump
-
-boolean
-
-列表条件搜索查询时，是否通过url跳转形式
-
-### operateDropdown
-
-number
-
-表格列表右侧操作栏按钮过多时是否以下拉形式展示，大于设定个数的以下拉形式显示
-
-### deleteUrl
-
-string
-
-列表数据删除接口url
-
-### delKey
-
-string
-删除时的标识，默认为`id`。将根据配置的标识从数据列表中提取所需删除的数据提交删除接口
-
-## treeData
-
-列表侧栏树配置相关，树所需的数据通过配置`requestUrl`单独从接口获取
-
-### show
-
-boolean
-
-是否显示侧栏搜索树组件
-
-### treeProps
-
-object
-
-绑定在侧栏`tree`组件的参数，具体参数见ui
-
-### name
-
-string
-
-侧栏树的标识名称
-
-### method
-
-string
-
-接口数据请求方法，`get`和`post`两种
-
-### requestUrl
-
-string
-
-接口数据请求url
-
-## tableProps
-
-object
-
-绑定在`table`组件的`props`参数，具体参数见ui
-
-## controlBtn
-
-列表左上方控制按钮，如新增、批量删除等，支持`button` ui的所有参数。
-
-约定`key="add"`、`key="del"`、`key="import"`为组件内置特殊值，根据配置的信息执行添加或删除等操作。`add、import`不适用于导出vue形式
-
-## operateBtn
-
-类似于`controlBtn`，两个是一样的，只是显示位置不一样
-
-约定`key="edit"`和`key="del"`。其中当为`del`可支持`tip`指定点击删除后的删除警告提示信息。`edit`不适用于导出vue形式
-
-```javascript
-const operateBtn = {
-  key: 'del',
-  tip: '确定删除吗',
-  visible: '$.status====1', // 根据条件是否显示当前行按钮，即行数据status=1时可显示查看
-  click: (row) => {
-    // 点击事件，row为当前行数据
-  },
-  permission: '权限标识'　//　可通过在菜单中添加btn类型权限
-  // 其他button所有props
-}
-```
-
-### visible
-
-表格列表操作按钮是否显示逻辑判断，适用于根据当前行数据状态判断是否展示该按钮。如当前设置为禁用时不显示编辑操作按钮。支持运算表达式，其中`$`
-为当前行数据
-
-```javascript
-{
-  visible:'$.status===1'
-}
-```
-
-### permission
-
-string
-
-权限标识，将根据接口菜单中的权限标识判断是否展示，可为菜单和按钮类型权限
-
-## event
-
-## beforeFetch
-
-function(params, route)
-
-获取数据发送接口请求前方法，可用于对请求的数据进行处理转换等操作，以提交符合接口的数据要求
-
-```javascript
-const beforeFetch = (params, route) => {
-  // 此处可对请求参数params进行修改处理后返回，route为当前路由信息
-  // 如当路由参数name为true时，添加id参数
-  if (route.query.name) {
-    params.id = route.query.name
+const data={
+  tableProps:{
+    height:500,
+    border:true,
+    rowKey:"id",
+    emptyText:""
   }
-  return params　//　return false时将发不请求
 }
 ```
 
-### afterFetch
+## 表格columns
+同时支持el-table-columns所有属性
 
-function(result)|string
+### -help
+`data.columns.help`
+显示在表头的帮助信息，鼠标滑过时提示
 
-获取数据接口请求数据返回后方法，可用于对请求回来的数据进行处理转换等操作，以满足使用。
+### -render
+`data.columns.render`
+当前列表渲染模式，支持`switch | image | tag | url | datetime | date | buttons`
 
-如果将表单生成数据保存于服务端时，当需要处理的数据比较复杂时，可使用字符串。如`afterFetch="afterFetch"`
-。此时可在`@/utils/requestResponse.ts`中进行自定义处理。
+### -attr
+`data.columns.attr`
+附加属性，设置将绑定到对应组件，当`render=switch、image、tag、button`组件的属性。
 
+### -replaceValue
+`data.columns.replaceValue`
+类型:{ [key: string | number]: string }
+
+仅当`render=tag/text`时,用于根据值替换成其他内容，常见于接口返回如status=0/1之类的，需要将0/1显示为对应的文案，则可使用设置`{ '1': '启用', '0': '禁用' }`
+
+### -custom
+`data.columns.custom`
+
+类型：custom?: { [key: string | number]: string }
+
+仅当`render=tag/text`时,tag的显示类型属性，如{ '1': 'success', '0': 'danger' }
+
+### -timeFormat
+`data.columns.timeFormat`
+
+类型：timeFormat?: string
+
+仅当`render=datetime、date`时，对日期格式化，如YYYY年MM月dd日
+
+### -buttons
+`data.columns.buttons`
+
+类型：buttons?: Button[]
+
+见下方操作按钮配置
+
+### -renderFormatter
+`data.columns.renderFormatter`
+
+- 类型：renderFormatter?: (val: any, row: any) => any
+
+  使用了 `render` 属性时,渲染前对字段的值进行预处理方法，需返回新值
+
+### -prop
+`data.cloumns.prop`
+
+类型：prop?: string
+
+el-table-column的其他所有属性，如prop、label等
+
+## ApiKey
+### -列表数据请求接口
+`data.apiKey.list`
+### -删除数据请求接口
+`data.apiKey.del`
+### -编辑接口数据请求接口
+`data.apiKey.edit`
+### -导出数据请求接口
+`data.apiKey.export`
+
+## Event事件
+### -before
+`data.events.before`
+类型：before?: string | ((type: EventType, params: any, rout: any) => boolean)
+
+请求列表数据，编辑和删除等接口事件发送请求前，这里可对发送的数据进行拦截处理。
+* type支持的类型`switchChange | getData | del | search | export`，用于表示的同的接口事件类型
+* params请求的参数，可对此参数进行修改，然后return回去
+* route当前页面路由信息
+
+同时支持string字符串类型，这个需要自定义开发，适用于处理一些比较复杂的逻辑处理时，根据设置的字符将处理逻辑写入本地文件
+
+### -after
+`data.events.after`
+类型：after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
+
+类似于前面的`before`。最后需要将处理后的结果 return res
+
+## 按钮
+### -操作按钮配置
+适用于表格左上方及表格列表内右侧按钮
+
+`data.controlBtn` 为表格左上方，`data.columns`下`render=buttons`为列表右侧按钮，如：
 ```javascript
-const afterFetch = (result) => {
-  //　这里是处理逻辑
-  return result // return false时不处理请求结果
+const data={
+  controlBtn:[], //为表格左上方按钮配置
+  columns:[{
+    render:'buttons', //为列表右侧按钮
+    buttons:[]
+  }]
 }
 ```
-
-### beforeDelete
-
-数据列表删除记录请求前方法，可对请求参数进行处理
-
+详细配置如：
 ```javascript
-const beforeDelete = (params, route) => {
-  // 此处可对请求参数params进行修改处理后返回，route为当前路由信息
-  return params　//　return false时将阻止发送请求
-}
+const buttons=[
+  {
+    //我们内置了常见的add、edit、detail、del、export按钮，只需按约定的key值设置即可快速设置
+    key:'add'
+  },
+  {
+    // 渲染方式:tooltip=带tip的按钮,confirm=带确认框的按钮，空为正常的按钮
+    render: "tooltip",
+    name: "", // 按钮名称
+    title: "", // 鼠标放置时的 title 提示
+    label: "", // 直接在按钮内显示的文字，title 有值时可为空
+    class: "",
+    type: "primary", // 按钮类型，请参考 element plus 的按钮类型
+    icon: "", // 按钮 icon
+    popConfirm: {}, //自定popConfirm属性，当render=confirm
+    // 自定义点击事件
+    click: (row: { [key: string]: any }) => {
+
+    },
+    // 按钮是否显示，true显示
+    display: (row: { [key: string]: any }) =>{
+      return true;
+    },
+    // 按钮是否禁用，true禁用
+    disabled: (row: { [key: string]: any }) => {
+      return false;
+    },
+    // 自定义el-button属性
+    attr: {},
+    permission: 'string' //权限校验标识，也可通过display操作
+  }
+]
 ```
+
+
+
+## 侧边栏树
+
+### -show
+`data.treeData.show`
+类型: boolean。是否开启树
+
+### -before
+`data.treeData.before`
+类型：before?: Function | string
+
+同`event.before`
+
+### -after
+类型：after?: Function | string
+同`event.after`
+
+### -method
+`data.treeData.method`
+类型: string
+
+树列表数据的请求方式
+
+### -requestUrl
+`data.treeData.requestUrl`
+类型: string
+
+树列表数据的请求接口地址
+
+### -name
+`data.treeData.name`
+类型: string
+

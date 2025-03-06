@@ -1,8 +1,8 @@
 <!-- Created by 337547038 on 2021/9/8. -->
 <template>
   <draggable
-    v-if="type === 5"
-    itemKey="id"
+    v-if="['design', 'designSearch'].includes(formProps.operateType)"
+    item-key="id"
     :list="dataList"
     name="fade"
     class="drag"
@@ -18,78 +18,64 @@
       <group-control
         :key="getGroupName(element, index)"
         :element="element"
-        @group-click="groupClick"
         :active="activeKey"
+        @group-click="groupClick"
       >
         <div class="drag-control">
           <div class="item-control">
             <i
-              class="icon-plus"
-              @click.stop="click('gridAdd', index, element)"
               v-if="state.gridAdd"
+              class="icon-plus"
               title="添加列"
-            ></i>
+              @click.stop="click('gridAdd', index, element)"
+            />
             <i
-              class="icon-clone"
-              @click.stop="click('clone', index, element)"
               v-if="state.clone"
+              class="icon-clone"
               title="克隆"
-            ></i>
-            <i class="icon-del" @click.stop="click('del', index)"></i>
+              @click.stop="click('clone', index, element)"
+            />
+            <i
+              class="icon-del"
+              @click.stop="click('del', index)"
+            />
           </div>
-          <div class="drag-move icon-move"></div>
+          <div class="drag-move icon-move" />
         </div>
-        <div class="tooltip">{{ element.name }}</div>
+        <div class="tooltip">
+          {{ element.name }}
+        </div>
       </group-control>
     </template>
   </draggable>
   <template v-else>
-    <template v-for="(item, index) in dataList" :key="index">
+    <template
+      v-for="(item, index) in dataList"
+      :key="index"
+    >
       <group-control :element="item" />
     </template>
   </template>
 </template>
 
 <script lang="ts" setup>
-  import { reactive, computed, ref, watch, inject, onUnmounted } from 'vue'
+  import { reactive, computed, inject, onUnmounted } from 'vue'
   import { onBeforeRouteLeave } from 'vue-router'
   import Draggable from 'vuedraggable-es'
   import GroupControl from './groupControl.vue'
   import { useDesignStore } from '@/store/design'
   import type { FormList } from '@/types/form'
-  import {
-    constFormProps,
-    getGroupName,
-    jsonParseStringify
-  } from '@/utils/design'
-  const props = withDefaults(
-    defineProps<{
-      data: FormList[]
-      dataType?: String
-    }>(),
-    {
-      data: () => {
-        return []
-      }
-    }
-  )
-  const store = useDesignStore() as any
-  const formProps = inject(constFormProps, {}) as any
+  import { getGroupName, jsonParseStringify } from '@/utils/design'
 
-  const type = computed(() => {
-    return formProps.value.type
-  })
+  const dataList = defineModel<FormList>('data')
+  const store = useDesignStore() as any
+  const formProps = inject('akFormProps', {}) as any
+
   const state = reactive({
     clone: true, // 允许clone
     gridAdd: false
   })
-  const dataList = ref(props.data)
-  const unWatch = watch(
-    () => props.data,
-    (v: FormList[]) => {
-      dataList.value = v
-    }
-  )
+
   const activeKey = computed(() => {
     return store.activeKey
   })
@@ -106,7 +92,7 @@
    * @param item
    */
   const click = (action: string, index: number, item?: any) => {
-    if (type.value !== 5) {
+    if (!['design', 'designSearch'].includes(formProps.operateType)) {
       return // 非设计模式
     }
     if (action === 'clone') {
@@ -198,11 +184,9 @@
     state.clone = !notNested(item.type)
   }
   onBeforeRouteLeave(() => {
-    unWatch() //销毁监听器
+    // unWatch() //销毁监听器
   })
   onUnmounted(() => {
-    // console.log('onUnmounted')
-    dataList.value = {}
     store.setActiveKey('')
     store.setControlAttr({})
   })

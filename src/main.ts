@@ -4,7 +4,6 @@ import router from './router'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 
-// @ts-ignore
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
 import './assets/scss/element-var.scss'
@@ -25,7 +24,6 @@ app
   .use(Directive)
   .mount('#app')
 // 全局注册icon
-// @ts-ignore
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -35,6 +33,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册一个全局组件用于自定义组件测试
 import componentTest from '@/docs/components/componentTest.vue'
 app.component('ComponentTest', componentTest)
-//大屏自定义组件
+// 大屏自定义组件
 import ScreenDemoComponent from './views/design/screen/demo/map.vue'
-app.component('echartsMap', ScreenDemoComponent)
+app.component('EchartsMap', ScreenDemoComponent)

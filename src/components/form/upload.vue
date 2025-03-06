@@ -2,6 +2,7 @@
   <el-upload
     class="upload-style"
     :action="uploadUrl"
+    :http-request="httpRequest"
     v-bind="control"
     :file-list="fileList"
     :name="control.file || 'file'"
@@ -12,12 +13,22 @@
     :on-error="uploadError"
     :on-success="uploadSuccess"
     :on-remove="uploadRemove"
+    :headers="headers"
   >
-    <el-button type="primary" v-if="config?.btnText"
-      >{{ config?.btnText }}
+    <el-button
+      v-if="config?.btnText"
+      type="primary"
+    >
+      {{ config?.btnText }}
     </el-button>
-    <i class="icon-plus" v-else></i>
-    <template #tip v-if="config?.tip">
+    <i
+      v-else
+      class="icon-plus"
+    />
+    <template
+      v-if="config?.tip"
+      #tip
+    >
       <div class="el-upload__tip">
         {{ config?.tip }}
       </div>
@@ -26,8 +37,8 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
-  import { uploadUrl } from '@/api'
+  import { computed, ref } from 'vue'
+  import { getRequest, uploadUrl } from '@/api'
   import { ElMessage } from 'element-plus'
   const props = withDefaults(
     defineProps<{
@@ -36,14 +47,24 @@
       config: any
       modelValue: any
     }>(),
-    {}
+    {
+      control: () => {
+        return {}
+      }
+    }
   )
   const emits = defineEmits<{
     (e: 'update:modelValue', val: any): void
   }>()
 
+  const httpRequest = (file: any) => {
+    const params = new FormData()
+    params.append(props.control.file || 'file', file.file)
+    return getRequest('upload', params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+  }
+  const headers = ref({})
   const fileList = computed(() => {
-    //const imgVal = formProps.value.model[props.data.name]
+    // const imgVal = formProps.value.model[props.data.name]
     const imgVal = props.modelValue
     if (imgVal && typeof imgVal === 'string') {
       const temp: any = []
@@ -63,7 +84,7 @@
   const uploadError = (err: any, file: any, fileList: any) => {
     // console.log('uploadError')
     ElMessage.error(file.name + '上传失败')
-    props.control.onError && props.control.onError(err, file, fileList)
+    props.control?.onError(err, file, fileList)
   }
   const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
     const oldList = []
@@ -72,8 +93,8 @@
     })
     oldList.push(response.path)
     updateModel(oldList.join(','))
-    props.control.onSuccess &&
-      props.control.onSuccess(response, uploadFile, uploadFiles)
+    props.control.onSuccess
+    && props.control.onSuccess(response, uploadFile, uploadFiles)
   }
   // 从列表移除
   const uploadRemove = (uploadFile: any, uploadFiles: any) => {
@@ -84,6 +105,7 @@
       }
     })
     updateModel(oldList.join(','))
+
     props.control.onRemove && props.control.onRemove(uploadFile, uploadFiles)
     // todo 需从服务端删除已上传图片时，这里需要发删除请求接口
   }

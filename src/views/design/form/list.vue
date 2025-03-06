@@ -2,18 +2,18 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="designList"
-      delete-url="designDelete"
+      :api-key="{ list: 'designList', del: 'designDelete' ,edit: 'designEdit'}"
       :search-data="searchData"
       :data="tableData"
       :query="{ type: 1 }"
     >
       <template #sourceName="{ row }">
         <router-link
-          :to="`/design/datasource?source=${row.source}`"
           v-if="row.source"
-          >{{ row.sourceName }}</router-link
+          :to="`/design/datasource?source=${row.source}`"
         >
+          {{ row.sourceName }}
+        </router-link>
       </template>
     </ak-list>
     <el-dialog
@@ -25,10 +25,10 @@
       <ak-form
         ref="formEl"
         :data="dialogFormData"
-        :type="2"
-        edit-url="designEdit"
-        :after-submit="afterSubmit"
-        :btn-click="btnClick"
+        operate-type="edit"
+        submit-url="designEdit"
+        :after="afterSubmit"
+        @btn-click="btnClick"
       />
     </el-dialog>
   </div>
@@ -48,37 +48,96 @@
       { label: '勾选', type: 'selection' },
       { prop: 'id', label: 'ID', width: '60px' },
       { prop: 'name', label: '表单名称', width: '150px' },
-      /*{ prop: 'source', label: '数据源ID', width: '90px' },*/
       {
         prop: 'source',
         label: '数据源名称',
         width: '150px',
-        config: { dictKey: 'source' }
+        render: 'text',
+        replaceValue: 'source',
+        config: {}
       },
-      { prop: 'category', label: '分类', config: { dictKey: 'sys-form' } },
+      {
+        prop: 'category',
+        label: '分类',
+        config: {},
+        render: 'tag',
+        replaceValue: 'sys-form',
+        custom: { 1: 'success', 2: 'danger' }
+      },
       {
         prop: 'status',
         label: '状态',
+        render: 'switch',
         config: {
-          dictKey: 'sys-status',
-          tagList: {
-            0: 'info',
-            1: 'success'
-          }
+          inlinePrompt: true,
+          activeText: '启用',
+          inactiveText: '禁用',
+          activeValue: 1,
+          inactiveValue: 0
+        },
+        renderFormatter: (val: any) => {
+         // return val && val.toString()
+          return val
         }
       },
       {
         prop: 'creatUserId',
         label: '创建人',
-        config: { dictKey: 'creatUser' }
+        render: 'text',
+        replaceValue: 'creatUser',
+        config: {}
       },
       {
         prop: 'updateDate',
         label: '更新时间',
         width: 200,
-        config: { formatter: '{y}-{m}-{d} {h}:{i}:{s}' }
+        config: {},
+        render: 'datetime',
+        // timeFormat: '{yyyy}-{mm}-{dd}'
       },
-      { label: '操作', prop: '__control', width: '250px', fixed: 'right' }
+      {
+        label: '操作',
+        prop: 'control',
+        width: '320px',
+        fixed: 'right',
+        render: 'buttons',
+        buttons: [
+          {
+            label: '设置',
+            type: 'primary',
+            click: (row: any) => {
+              dialog.visible = true
+              nextTick(() => {
+                formEl.value.setValue({
+                  name: row.name,
+                  id: row.id,
+                  category: row.category,
+                  status: row.status
+                })
+              })
+            }
+          },
+          {
+            label: '编辑',
+            key: 'edit',
+            click: (row: any) => {
+              // 跳转到表单设计编辑页
+              toFormDesign(row)
+            }
+          },
+          {
+            label: '删除',
+            key: 'del'
+          },
+          {
+            label: '一键创建列表',
+            type: 'primary',
+            click: (row: any) => {
+              router.push({ path: '/design/list', query: { form: row.id } })
+            }
+          }
+        ]
+      }
     ],
     controlBtn: [
       {
@@ -90,40 +149,6 @@
         }
       },
       { label: '删除', key: 'del', size: 'small' }
-    ],
-    operateBtn: [
-      {
-        label: '设置',
-        key: 'set',
-        click: (row: any) => {
-          dialog.visible = true
-          nextTick(() => {
-            formEl.value.setValue({
-              name: row.name,
-              id: row.id,
-              category: row.category,
-              status: row.status
-            })
-          })
-        }
-      },
-      {
-        label: '编辑',
-        click: (row: any) => {
-          // 跳转到表单设计编辑页
-          toFormDesign(row)
-        }
-      },
-      {
-        label: '删除',
-        key: 'del'
-      },
-      {
-        label: '一键创建列表',
-        click: (row: any) => {
-          router.push({ path: '/design/list', query: { form: row.id } })
-        }
-      }
     ],
     config: {
       expand: true
@@ -169,7 +194,9 @@
         },
         config: {
           optionsType: 2,
-          optionsFun: 'sys-form'
+          optionsFun: 'sys-form',
+          span: 3
+          // transformData: 'string'
         },
         name: 'category',
         formItem: {
@@ -207,13 +234,13 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
           optionsType: 2,
           optionsFun: 'sys-form'
+          // transformData: 'string'
         },
         name: 'category',
         formItem: {
@@ -223,13 +250,13 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
           optionsType: 2,
           optionsFun: 'sys-status'
+          // transformData: 'string'
         },
         name: 'status',
         formItem: {
@@ -245,11 +272,9 @@
     },
     config: { submitCancel: true }
   })
-  const afterSubmit = (type: string) => {
-    if (type === 'success') {
-      dialog.visible = false
-      tableListEl.value.getListData() // 重新拉数据
-    }
+  const afterSubmit = () => {
+    dialog.visible = false
+    tableListEl.value.getListData() // 重新拉数据
   }
   const btnClick = (type: string) => {
     if (type === 'reset') {

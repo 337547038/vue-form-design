@@ -4,10 +4,10 @@
       <h3>后台管理系统</h3>
       <ak-form
         ref="formEl"
-        :after-submit="afterSubmit"
-        :data="formData"
         submit-url="loginSubmit"
-        :before-submit="beforeSubmit"
+        :after="afterSubmit"
+        :data="formData"
+        :before="beforeSubmit"
       />
     </div>
   </div>
@@ -16,10 +16,10 @@
 { meta:{title:'登录',layout:'hidden',permissions:false} }
 </route>
 <script lang="ts" setup>
-  import { ref, markRaw, nextTick } from 'vue'
+  import { ref, markRaw, nextTick, onMounted } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import CodeCom from './components/code.vue'
-  //import { ElMessage } from 'element-plus'
+  // import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
   import { setStorage } from '@/utils'
   import { getRequest } from '@/api'
@@ -87,11 +87,11 @@
     config: {}
   })
   const beforeSubmit = (params: any) => {
-    params.codeId = codeId.value //添加验证码加密id
+    params.codeId = codeId.value // 添加验证码加密id
     return params
   }
-  const afterSubmit = (type: string, data: any) => {
-    if (type === 'success') {
+  const afterSubmit = (data: any, success: boolean) => {
+    if (success) {
       // 统一方法保存token
       useStore.setLoginInfo(data, true)
       // 获取权限菜单信息
@@ -103,12 +103,12 @@
         })
       })
     } else {
-      //刷新验证码，执行获取焦点时提供的方法用于刷新验证码
+      // 刷新验证码，执行获取焦点时提供的方法用于刷新验证码
       refreshKey.value && refreshKey.value()
     }
   }
   const getNavList = () => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       getRequest('userMenuList', {
         query: { status: 1, navShow: 1 },
         extend: { sort: 'sort asc' }
@@ -132,6 +132,30 @@
       })
     })
   }
+
+  // 调试 todo
+  onMounted(() => {
+    /* const data = {
+      nickName: '管理员',
+      roleId: '1',
+      departmentId: 2,
+      ip: '0:0:0:0:0:0:0:1',
+      loginTimer: 85,
+      remark: '',
+      postId: 0,
+      userName: 'admin',
+      lastLoginTime: '2024-07-14 12:01:48',
+      phone: '13800138000',
+      id: 1,
+      status: 1,
+      token:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNzIxMDQzNTM3fQ.zEux8csj_2VeDqVeOCUHwufERucjSuln31IMGQ8-o88',
+      refreshToken:
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNzIxMDcyMzM3fQ.TbTSkFHTx08cbfTKGLtpBVPaHsgjF4wXkJNRdcwgm8o',
+      expire_time: 28800000
+    }
+    afterSubmit('success', data) */
+  })
 </script>
 
 <style lang="scss" scoped>

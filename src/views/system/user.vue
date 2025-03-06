@@ -2,16 +2,15 @@
   <div>
     <ak-list
       ref="tableListEl"
-      request-url="userList"
-      delete-url="userDelete"
+      :api-key="{list:'userList',del:'userDelete'}"
       :search-data="searchData"
       :data="tableData"
-      @btn-click="listBtnClick"
       :auto-load="false"
+      @btn-click="listBtnClick"
     />
     <el-dialog
-      destroy-on-close
       v-model="dialog.visible"
+      destroy-on-close
       :title="dialog.title"
       width="600px"
     >
@@ -19,11 +18,10 @@
         ref="formEl"
         :data="formData"
         :dict="dialog.dict"
-        :type="dialog.formType"
-        submit-url="userSave"
-        edit-url="userEdit"
-        :before-submit="beforeSubmit"
-        :after-submit="afterSubmit"
+        :operate-type="dialog.formType"
+        :submit-url="dialog.formType==='add'?'userSave':'userEdit'"
+        :before="beforeSubmit"
+        :after="afterSubmit"
         @btn-click="dialogBtnClick"
       />
     </el-dialog>
@@ -38,7 +36,7 @@
 
   const route = useRoute()
   const tableListEl = ref()
-  const afterFetch = (type, result) => {
+  const afterFetch = (result) => {
     return flatToTree(result.list || result)
   }
   const searchData = ref({
@@ -83,13 +81,13 @@
         type: 'select',
         control: {
           modelValue: '',
-          appendToBody: true
+          style: { width: '100px' }
         },
         options: [],
         config: {
           optionsType: 2,
-          optionsFun: 'sys-status',
-          transformData: 'string'
+          optionsFun: 'sys-status'
+          // transformData: 'string'
         },
         name: 'status',
         formItem: {
@@ -100,7 +98,7 @@
         type: 'select',
         control: {
           modelValue: [],
-          appendToBody: true
+          style: { width: '100px' }
         },
         options: [],
         config: {
@@ -110,7 +108,7 @@
           label: 'name', // 指定name为label的值
           value: 'id' // 指定id为value的值
         },
-        name: 'role',
+        name: 'roleId',
         formItem: {
           label: '角色'
         }
@@ -128,26 +126,27 @@
       { label: '登录名称', prop: 'userName' },
       { label: '昵称', prop: 'nickName' },
       { label: '手机号码', prop: 'phone' },
-      { label: '角色', prop: 'role' },
+      /* { label: '角色', prop: 'roleId' }, */
       {
         label: '状态',
         prop: 'status',
-        config: { dictKey: 'sys-status', tagList: { 1: 'success', 0: 'info' } }
+        render: 'tag',
+        custom: { 1: 'success', 0: 'info' },
+        replaceValue: 'sys-status'
       },
       {
-        prop: 'dateTime',
+        prop: 'creatTime',
         label: '创建时间',
-        config: {
-          formatter: '{y}-{m}-{d} {h}:{i}:{s}'
-        }
+        render: 'datetime'
       },
-      { label: '操作', prop: '__control' }
+      {
+        label: '操作', prop: '__control', render: 'buttons', buttons: [
+          { label: '编辑', key: 'edit' },
+          { label: '删除', key: 'del' }
+        ]
+      }
     ],
     config: { openType: 'dialog', searchJump: true },
-    operateBtn: [
-      { label: '编辑', key: 'edit' },
-      { label: '删除', key: 'del' }
-    ],
     controlBtn: [
       {
         label: '新增',
@@ -175,7 +174,7 @@
       name: 'department',
       method: 'post',
       requestUrl: 'deptList',
-      afterFetch: afterFetch
+      after: afterFetch
     }
   })
   const formEl = ref()
@@ -242,6 +241,7 @@
             {
               validator: (rule, value, callback) => {
                 // 获取密码的值
+                // eslint-disable-next-line no-undef
                 const val = getuserFormValueByName('password')
                 console.log(val)
                 if (value === '') {
@@ -298,9 +298,9 @@
           optionsType: 1,
           optionsFun: 'deptList',
           method: 'post',
-          afterFetch: afterFetch
+          after: afterFetch
         },
-        name: 'department',
+        name: 'departmentId',
         formItem: {
           label: '归属部门'
         }
@@ -308,12 +308,15 @@
       {
         type: 'select',
         control: {
-          modelValue: '',
-          appendToBody: true
+          modelValue: ''
         },
         options: [],
         config: {
-          optionsType: 0
+          optionsType: 1,
+          optionsFun: 'postList', // 可以为url也可以为api中的key
+          method: 'post',
+          label: 'name', // 指定name为label的值
+          value: 'id', // 指定id为value的值
         },
         name: 'post',
         formItem: {
@@ -339,7 +342,6 @@
         type: 'select',
         control: {
           modelValue: [],
-          appendToBody: true,
           multiple: true
         },
         options: [],
@@ -349,9 +351,9 @@
           method: 'post',
           label: 'name', // 指定name为label的值
           value: 'id', // 指定id为value的值
-          transformData: 'string'
+          // transformData: 'string'
         },
-        name: 'role',
+        name: 'roleId',
         formItem: {
           label: '角色'
         }
@@ -365,7 +367,7 @@
           span: 24
         },
         name: 'remark',
-        item: {
+        formItem: {
           label: '备注'
         }
       }
@@ -381,44 +383,44 @@
   const dialog = reactive({
     visible: false,
     title: '',
-    formType: 1,
+    formType: 'add',
     dict: {},
     editId: ''
   })
-  const listBtnClick = (btn, row) => {
+  const listBtnClick = (key, row) => {
     // 使用弹窗方式打开新增编辑
-    if (btn.key === 'add' || btn.key === 'edit') {
+    if (key === 'add' || key === 'edit') {
       // 打开弹窗
       const newRow = jsonParseStringify(row)
       dialog.visible = true
-      dialog.title = btn.key === 'add' ? '新增' : '编辑'
-      dialog.formType = btn.key === 'add' ? 1 : 2
+      dialog.title = key === 'add' ? '新增' : '编辑'
+      dialog.formType = key
       dialog.editId = newRow && newRow.id
       // 编辑，根据id加载
-      if (btn.key === 'edit') {
+      if (key === 'edit') {
         nextTick(() => {
           console.log(newRow)
           // 将角色数据转换下
-          if (typeof newRow.role === 'string') {
-            newRow.role = newRow.role.split(',')
+          if (newRow.roleId) {
+            newRow.roleId = newRow.roleId.split(',').map(Number)
           } else {
-            newRow.role = []
+            newRow.roleId = []
           }
           // 将密码值设给确认密码框
           newRow.password2 = newRow.password
           formEl.value.setValue(newRow)
-          //formEl.value.getData({ id: row.id })
+          // formEl.value.getData({ id: row.id })
         })
       }
     }
   }
   // 提交表单前事件
-  const beforeSubmit = params => {
+  const beforeSubmit = (params) => {
     // 将角色转字符串传
-    if (params.role) {
-      params.role = params.role.join(',')
+    if (params.roleId) {
+      params.roleId = params.roleId.join(',')
     }
-    if (dialog.formType === 2) {
+    if (dialog.formType === 'edit') {
       // 编辑模式下添加参数
       params.id = dialog.editId
     }
@@ -426,8 +428,8 @@
     return params
   }
   // 提交表单后事件
-  const afterSubmit = type => {
-    if (type === 'success') {
+  const afterSubmit = (res, success) => {
+    if (success) {
       // 添加成功，刷新列表数据
       closeResetDialog()
       tableListEl.value.getListData()
@@ -440,15 +442,15 @@
     // formEl.value.resetFields() // 重置表单
   }
   // 点击弹窗取消按钮时
-  const dialogBtnClick = type => {
+  const dialogBtnClick = (type) => {
     if (type === 'reset') {
       closeResetDialog()
     }
   }
   onMounted(() => {
-    if (route.query.role) {
+    if (route.query.roleId) {
       // 根据url参数设置查询表单初始值
-      tableListEl.value.setSearchFormValue({ role: parseInt(route.query.role) })
+      tableListEl.value.setSearchFormValue({ roleId: parseInt(route.query.roleId) })
     }
     // 等查询表单设值完整后，再加载列表数据，这样便可获取到查询条件
     nextTick(() => {
