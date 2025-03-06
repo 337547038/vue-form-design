@@ -30,7 +30,7 @@ https://github.com/337547038/ak-design-manage
 
 ### 微信交流群
 
-二维码过期可加微信
+群人数超出限制无法扫码加入，需入群请加微信 *337547038*
 
 <img src="https://gitee.com/q337547038/vue-form-design/raw/main/qrcode.jpg" width ="200" alt=""/>
 

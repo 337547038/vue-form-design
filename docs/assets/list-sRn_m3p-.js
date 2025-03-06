@@ -1,0 +1,1 @@
+import{L as t,o as e,c as o}from"./index-BR7JSMnu.js";const n={name:"List",components:{},props:{},data(){return{}},computed:{},mounted(){},methods:{}};function s(c,r,a,p,d,m){return e(),o("div",null,"开发完善中..")}const _=t(n,[["render",s]]);export{_ as default};
