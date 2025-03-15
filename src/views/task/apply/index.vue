@@ -1,83 +1,10 @@
-<!-- Created by 337547038 发起流程 -->
 <template>
-  <div class="task-apply">
-    <div
-      v-for="(item, key) in list"
-      :key="key"
-      class="item"
-    >
-      <h3>{{ category[key] || '未分组' }}</h3>
-      <div class="list">
-        <div
-          v-for="li in item"
-          :key="li.id"
-          @click="click(li)"
-        >
-          <i
-            v-if="getIcon(li.icon, 0)"
-            class="icon"
-            :class="getIcon(li.icon, 0)"
-            :style="{ background: getIcon(li.icon, 1) }"
-          />
-          <span>{{ li.name }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <Code />
 </template>
-
+<route>
+{meta:{
+permissions:false}}
+</route>
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue'
-  import { getRequest } from '@/api'
-  import { useRouter } from 'vue-router'
-  import { getStorage } from '@/utils'
-
-  const router = useRouter()
-
-  // 数据处理
-  const list = ref({})
-  const getIcon = (icon: string, index: number) => {
-    if (icon) {
-      try {
-        return JSON.parse(icon)[index]
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
-        const temp = icon.split(',')
-        return temp[index]
-      }
-    }
-    return ''
-  }
-  const category = computed(() => {
-    const storage = getStorage('akAllDict')
-    return storage['sys-flow'] || {}
-  })
-  const getListData = () => {
-    const params = {
-      query: {
-        type: 3
-      }
-    }
-    getRequest('designList', params).then((res: any) => {
-      const result = res.data.list
-      // 按分类分组
-      const group: number[] = []
-      result.forEach((item: any) => {
-        if (!group.includes(item.category)) {
-          group.push(item.category)
-        }
-      })
-      group.forEach((item: number) => {
-        list.value[item] = result.filter((fi: any) => {
-          return fi.category === item
-        })
-      })
-    })
-  }
-  const click = (obj: any) => {
-    router.push({ path: '/task/apply/start', query: { flowId: obj.id } })
-  }
-  onMounted(() => {
-    getListData()
-  })
+  import Code from '@/components/code.vue'
 </script>
