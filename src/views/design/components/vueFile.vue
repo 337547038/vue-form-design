@@ -72,14 +72,10 @@
   const open = (obj: any) => {
     visible.value = true
     const getHtml = getObjHtml(obj)
-    const { submitUrl = '', editUrl = '', requestUrl = '' } = obj.config
+    const { submitUrl = '', requestUrl = '' } = obj.config
     if (requestUrl) {
       // 从obj里删除使用props方式
       delete obj.config.requestUrl
-    }
-    if (editUrl) {
-      // 从obj里删除使用props方式
-      delete obj.config.editUrl
     }
     if (submitUrl) {
       // 从obj里删除使用props方式
@@ -90,12 +86,11 @@
   <div>
     <ak-form
       ref="formNameEl"
-      :type="formType"
+      :operate-type="formType"
       :data="formData"
       request-url="${requestUrl}"
       submit-url="${submitUrl}"
-      edit-url="${editUrl}"
-      :before-submit="beforeSubmit">
+      :before="beforeSubmit">
     </ak-form>
   </div>
 </template>
@@ -103,9 +98,9 @@
   import { ref, computed, provide } from 'vue'
   const formNameEl = ref()
   const formData = ref(${objToStringify(obj)})
-    // todo 存在编辑时，可根据路由等参数设置当前表单模式 1新增 2编辑
+    // todo 存在编辑时，可选add、edit、detail、design、search，默认add
   const formType = computed(() => {
-     return 1
+     return 'add'
   })
   ${getHtml.rulesMethods}
   ${getHtml.sourceFun}
