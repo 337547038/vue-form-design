@@ -105,10 +105,10 @@
   ${getHtml.rulesMethods}
   ${getHtml.sourceFun}
   // 表单提交时参数处理
-  const beforeSubmit = (params)=>{
-    // 如编辑时添加参数
-    //  params.id='xxx'
-    return params
+  const beforeSubmit = (params,type,obj)=>{
+    // params请求的参数，可根据type作判断，对params作修改后return回去
+    // 需要将params参数return
+    return params;
   }
 
 <\/script>`
