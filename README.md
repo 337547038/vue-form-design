@@ -140,10 +140,10 @@ pnpm build
 | 名称           | 版本      |
 |--------------|---------|
 | node         | 20.18.x |
-| pnpm         | 9.12.x  |
-| vite         | 5.4.x   |
+| pnpm         | 10.8.x  |
+| vite         | 6.2.x   |
 | vue          | 3.5.x   |
-| element-plus | 2.8.x   |
+| element-plus | 2.9.x   |
 
 ### 相关教程
 
