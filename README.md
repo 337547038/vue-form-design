@@ -148,6 +148,7 @@ pnpm build
 ### 相关教程
 
 [如何在本地调演示效果](https://www.bilibili.com/video/BV1xCYeeEEMS/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+[radio checkbox select等下拉选项数据配置](https://www.bilibili.com/video/BV1f5LgzmEfH/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
 
 
 ## `Star`
