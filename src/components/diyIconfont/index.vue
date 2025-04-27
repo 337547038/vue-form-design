@@ -12,7 +12,7 @@
           v-for="item in iconList"
           :key="item"
           :style="{ color: item === value ? color : '' }"
-          @click="iconClick(item)"
+          @click="iconClick(item,'val')"
         >
           <i :class="item" />
         </li>
@@ -43,8 +43,8 @@
   import iconfontJson from './iconfont.json'
   const props = withDefaults(
     defineProps<{
-      modelValue?: string | string[]
-      colorPicker?: boolean // 是否可选颜色，可选颜色时value为数组
+      modelValue?: string
+      colorPicker?: boolean // 是否可选颜色，可选颜色时value为使用豆号隔开的字符串
     }>(),
     {
       modelValue: ''
@@ -52,27 +52,43 @@
   )
 
   const emits = defineEmits<{
-    (e: 'update:modelValue', value: string | string[]): void
+    (e: 'update:modelValue', value: string): void
   }>()
   const visible = ref(false)
   const value = computed({
     get() {
       if (props.colorPicker) {
-        return props.modelValue && props.modelValue[0]
+        if (props.modelValue && props.modelValue.indexOf(',') > 0) {
+          const split = props.modelValue.split(',')
+          return split && split[0]
+        } else {
+          // 没使用豆号隔开时为异常情况
+          return ''
+        }
       } else {
         return props.modelValue
       }
     },
     set(newVal: string) {
-      iconClick(newVal)
+      iconClick(newVal, 'val')
     }
   })
   const color = computed({
     get() {
-      return props.modelValue && props.modelValue[1]
+      if (props.colorPicker) {
+        const split = props.modelValue.split(',')
+        if (split && split.length > 1) {
+          return split[1]
+        } else {
+          return ''
+        }
+      } else {
+        return ''
+      }
     },
     set(newVal: string) {
-      emits('update:modelValue', [value.value, newVal])
+      // emits('update:modelValue', [value.value, newVal])
+      iconClick(newVal)
     }
   })
   const iconList = computed(() => {
@@ -82,12 +98,19 @@
     })
     return temp
   })
-  const iconClick = (newVal: string) => {
+  const iconClick = (newVal: string, type?: string) => {
+    console.log('iconClick', newVal, type)
+    let val: string = ''
     if (props.colorPicker) {
-      emits('update:modelValue', [newVal, color.value])
+      if (type === 'val') {
+        val = newVal + ',' + color.value
+      } else {
+        val = value.value + ',' + newVal
+      }
     } else {
-      emits('update:modelValue', newVal)
+      val = newVal
     }
+    emits('update:modelValue', val)
     visible.value = false
   }
 </script>
