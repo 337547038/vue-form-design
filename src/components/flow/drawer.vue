@@ -27,7 +27,7 @@
             <el-input
               v-model="state.content"
               type="textarea"
-              rows="3"
+              :rows="3"
             />
           </el-form-item>
           <el-form-item>
@@ -37,7 +37,7 @@
             />
           </el-form-item>
           <div class="tip">
-            可使用运算符+-*/()&lt;&gt;=and or符号编写条件规则，$代表当前流程表单所有值，如name即为流程表单输入字段名称为name的值。<br>
+            可使用运算符+-*/()&lt;&gt;=and or符号编写条件规则，<br>
             如请假流程表单day为请假天数，当条件规则设置为 day>2
             即表示请假天假大于2天时，该条件成立
           </div>
@@ -128,7 +128,7 @@
   import { userTypeList } from './dict'
 
   const emits = defineEmits<{
-    (e: 'userSelect', callback: any): void
+    (e: 'userSelect', obj: any, callback: any): void
   }>()
   const visible = ref(false)
   const state = reactive({
@@ -183,8 +183,10 @@
       remark: state.remark
     }
     Object.assign(nodeData.value, newObj)
+    console.log('confirm', nodeData.value)
   }
   const open = (data: NodeList, index: number, length: number) => {
+    state.userType = '' // 重置
     visible.value = true
     nodeData.value = data
     if (data.nodeType === 5) {

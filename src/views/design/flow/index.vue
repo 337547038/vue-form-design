@@ -135,7 +135,6 @@
           colorPicker: true
         },
         config: {
-          // componentName: markRaw(iconfont)
           componentName: 'DiyIconfont'
         },
         name: 'icon',
