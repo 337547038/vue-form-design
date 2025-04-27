@@ -1425,7 +1425,7 @@
   // 校验规则必填勾选设置，存在校验规则时勾选
   const checkboxRequired = computed(() => {
     const val = controlData.value?.formItem?.rules
-    return val && val.length > 0
+    return !!(val && val.length > 0)
   })
   // 快速添加一条校验规则
   const addRulesFast = () => {
