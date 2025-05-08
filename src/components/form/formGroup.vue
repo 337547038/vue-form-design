@@ -119,7 +119,7 @@
   const draggableAdd = (evt: any) => {
     const newIndex = evt.newIndex
     const key = new Date().getTime().toString()
-    const obj: any = dataList.value[newIndex]
+    const obj: any = dataList.value?.[newIndex]
     const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
     if (isNested === 'not-nested' && notNested(obj.type)) {
       dataList.value.splice(newIndex, 1)

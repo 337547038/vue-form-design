@@ -17,7 +17,7 @@
       </template>
     </div>
     <el-button
-      v-if="data.config?.delBtnText && ['add', 'edit'].includes(type as number)"
+      v-if="data.config?.delBtnText && ['add', 'edit'].includes(type)"
       class="flex-delete-btn"
       type="primary"
       link

@@ -48,9 +48,9 @@
       modelValue: any
     }>(),
     {
-      control: () => {
+      /* control: () => {
         return {}
-      }
+      } */
     }
   )
   const emits = defineEmits<{

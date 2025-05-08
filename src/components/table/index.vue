@@ -21,7 +21,6 @@
             v-show="!state.searchFormDown"
             ref="searchFormEl"
             :data="searchData"
-            :dict="listDict"
             :disabled="state.loading"
             operate-type="search"
             request-url=""
@@ -240,26 +239,19 @@
       data: TableData
       searchData?: FormData
       apiKey?: ApiKey
-      before?: (params: any, type: EventType, obj: any) => boolean
-      after?: (res: any, success?: boolean, type?: EventType) => any
+      before?: string | ((params: any, obj: any) => any)
+      after?: string | ((res: any, obj: any) => any)
       pagination?: { pageSize: number, current: number } | boolean
-      dict?: { [key: string | number]: string | number }
       fixedBottomScroll?: boolean
       query?: { [key: string]: any } // 一些附加的请求参数
       autoLoad?: boolean // 初始时自动请求加载数据
       pk?: string // 主键
     }>(),
     {
-      data: () => {
-        return { columns: {} }
-      },
       searchData: () => {
         return { list: [], form: {} }
       },
       apiKey: () => {
-        return {}
-      },
-      dict: () => {
         return {}
       },
       fixedBottomScroll: true,
@@ -275,8 +267,10 @@
         }
       },
       pk: 'id',
-      before: () => {},
-      after: () => {}
+      before: () => {
+      },
+      after: () => {
+      }
     }
   )
   const emits = defineEmits<{
@@ -334,7 +328,7 @@
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
     const storage = getStorage('akAllDict')
-    return Object.assign(storage || {}, props.dict, state.dict) || {}
+    return Object.assign(storage || {}, state.dict) || {}
   })
   const isFixedBottomScroll = computed(() => {
     // 如果数据里没配置，则使用props

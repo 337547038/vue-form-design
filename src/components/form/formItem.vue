@@ -24,6 +24,7 @@
         v-if="['input', 'password'].includes(data.type)"
         v-bind="control"
         v-model="value"
+        :placeholder="getPlaceholder"
         :disabled="disabledEdit"
         :type="inputType as any"
       >
@@ -215,6 +216,10 @@
 
   const control = computed(() => {
     return props.data.control
+  })
+
+  const getPlaceholder = computed(() => {
+   return control.value.placeholder ? control.value.placeholder : `请输入${props.data.formItem?.label}`
   })
   const akFormValueChange = inject('akFormValueChange', '') as any
 

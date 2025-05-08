@@ -8,8 +8,8 @@
       ref="formEl"
       :data="state.formData"
       :operate-type="formType"
-      request-url="getFormContent"
-      :submit-url="formType==='add'?'saveFormContent':'editFormContent'"
+      :request-url="requestUrl"
+      :submit-url="submitUrl"
       :before="before"
       :params="{ formId: formId.value }"
       :after="after"
@@ -51,6 +51,24 @@
       return 'edit'
     } else {
       return 'add'
+    }
+  })
+  const submitUrl = computed(() => {
+    const { submitUrl } = state.formData.config
+    // 如果手动填写了地址，则使用填写的
+    if (submitUrl) {
+      // 手动配置时新增和修改使用同一接口，后端可根据参数区分
+       return submitUrl
+    } else {
+       return formType.value === 'add' ? 'saveFormContent' : 'editFormContent'
+    }
+  })
+  const requestUrl = computed(() => {
+    const { requestUrl } = state.formData.config
+    if (requestUrl) {
+      return requestUrl
+    } else {
+      return 'getFormContent'
     }
   })
   const getFormData = () => {
