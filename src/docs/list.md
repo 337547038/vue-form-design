@@ -19,8 +19,7 @@
 | searchData        | object                            | 列表页条件筛选表单数据，同表单的`formData`                                                         |
 | apiKey            | object                            | 数据请求交互api                                                                          |
 | before            | function(params,type,obj)/string  | 请求列表前参数处理方法，可对请求参数处理，type操作类型，可fetch(获取列表数据)/del(删除)/submit(修改提交switch)/export(导出) |
-| after             | function(res,success,type)/string | 请求完成后列表数据处理方法                                                                      |
-| dict              | object                            | 用于匹配的字典数据，一般不设置，从接口获取                                                              |
+| after             | function(res,success,type)/string | 请求完成后列表数据处理方法                                                                      | |
 | fixedBottomScroll | boolean                           | 横向滚动条固定在浏览器底部 ，默认为true                                                             |
 | autoLoad          | boolean                           | 初始时是否自动请求加载数据，默认为true                                                              |
 | treeData          | object                            | 列表左侧栏树数据                                                                           |

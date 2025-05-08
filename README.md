@@ -180,7 +180,18 @@ pnpm build
 
 [如何在本地调演示效果](https://www.bilibili.com/video/BV1xCYeeEEMS/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
 
+#### 表单相关
+
 [radio checkbox select等下拉选项数据配置](https://www.bilibili.com/video/BV1f5LgzmEfH/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+[创建数据源](https://www.bilibili.com/video/BV1M65KznExb/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+[表单设计器](https://www.bilibili.com/video/BV1sS5Kz5EY9/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+[列表设计器](https://www.bilibili.com/video/BV1Pm5Kz1ECQ/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+
+#### 流程相关
 
 [创建流程-流程管理](https://www.bilibili.com/video/BV1usLBzyE5E/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
 

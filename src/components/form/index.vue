@@ -62,13 +62,13 @@
         operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' | 'designSearch'
       }>(),
       {
-        data: () => {
+       /* data: () => {
           return {
             list: [],
             form: {},
             config: {}
           }
-        },
+        }, */
         query: () => {
           return {}
         },
@@ -163,6 +163,8 @@
       case 'design':
       case 'designSearch':
         return 'ak-form-design'
+      case 'search':
+        return 'ak-form-search'
       case 'detail':
         return 'ak-form-detail'
       default:
@@ -445,12 +447,13 @@
    * @param params
    */
   const submit = (params = {}) => {
-    const apiUrl = props.submitUrl || props.data.submitUrl
+    const apiUrl: string | undefined = props.submitUrl || props.data.submitUrl
     if (!['add', 'edit'].includes(props.operateType) || loading.value) {
       return // 只有add/edit允许提交表单，不提交表单
     }
     if (!apiUrl) {
       console.error(new Error('请配置表单提交url'))
+      return
     }
     validate((valid: boolean, fields: any) => {
       if (valid) {
@@ -470,13 +473,13 @@
         }
         // 提交保存表单
         beforeAfter({
-          apiKey: apiUrl,
+           apiKey: apiUrl,
           params: Object.assign({}, temp, params, props.params),
           before: getRequestEvent(props, 'before'),
           after: getRequestEvent(props, 'after'),
           type: 'submit',
           route: route,
-          formModel: model.value
+          formModel: model.value,
         })
             .then((res: any) => {
               loading.value = false

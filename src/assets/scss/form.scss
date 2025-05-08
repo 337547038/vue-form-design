@@ -227,6 +227,9 @@ $mainColor: #66b1ff;
   }
 }
 
+.ak-form-search {display: flex;flex-wrap: wrap;padding-bottom: 0;border-bottom: 1px solid #dcdfe6;margin-bottom: 10px;
+.group{width: auto}}
+
 /*表格设计*/
 .design-table {
   .main-body {border-left: 0}
@@ -331,8 +334,6 @@ $mainColor: #66b1ff;
   }
 
   .table-search {position: relative;
-
-    form {display: flex;flex-wrap: wrap;padding-bottom: 0;border-bottom: 1px solid #dcdfe6;margin-bottom: 10px;}
 
     .drag {display: flex;flex-wrap: wrap;}
 

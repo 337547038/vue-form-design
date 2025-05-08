@@ -34,14 +34,14 @@
         disabled?: boolean
         options?: { [key: string]: string | number }
         remoteMethod?: (name: string, callback: () => void) => void
-        type?: 'slot' // 类型，可选slot
+        type?: 'slot' | undefined // 类型，可选slot
       }>(),
       {
         options: () => {
-          return []
+          return {}
         },
-        modelValue: '',
-        type: '',
+        modelValue: undefined,
+        type: undefined,
         remoteMethod: null
       }
   )

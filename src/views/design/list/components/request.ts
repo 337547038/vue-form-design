@@ -77,7 +77,7 @@ const filterFiled = (obj: any) => {
       temp.push({
         prop: item.name,
         label: item.formItem?.label,
-        ...help
+        help: help
       })
     }
   })

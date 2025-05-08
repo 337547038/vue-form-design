@@ -51,7 +51,7 @@
           >
             <ak-form
               v-if="state.searchData?.list?.length"
-              is-search
+              operate-type="search"
               :data="state.searchData"
               request-url=""
             />
@@ -562,7 +562,7 @@
     if (!formId && (!list || !del)) {
       return ElMessage.error('请选择所属表单或配置接口url')
     }
-    const params = {
+    const params: any = {
       listData: objToStringify(tableData.value), // 列表数据
       data: objToStringify(state.searchData) || '{}', // 搜索表单数据，搜索设置不在这里修改
       source: formId,
@@ -616,15 +616,15 @@
     }
     // 从表单列表点创建列表，带有当前表单id，一键创建表单时
     if (routeQuery.form) {
-      tableData.value.config.formId = routeQuery.form
+       tableData.value.config.formId = routeQuery.form
       getFormColumns(routeQuery.form).then(({ data, defaultSearch }) => {
-        tableData.value.columns = data
+         tableData.value.columns = data
         // 根据选择的表单获取可供选择的表头
-        state.formFieldList = JSON.parse(JSON.stringify(data))
+         state.formFieldList = JSON.parse(JSON.stringify(data))
         // 添加上方及右侧按钮
         tableData.value.controlBtn = [{ key: 'add' }, { key: 'del' }]
         // 列表右侧操作按钮
-        tableData.value.columns.push({
+         tableData.value.columns.push({
           label: '操作',
           render: 'buttons',
           config: {},
@@ -645,7 +645,7 @@
             }]
         })
         // 默认条件查询
-        state.searchData = {
+         state.searchData = {
           list: defaultSearch,
           form: { size: 'default' },
           config: { submitCancel: true }
