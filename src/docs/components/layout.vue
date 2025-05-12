@@ -1,15 +1,17 @@
 <!-- Created by 337547038 on 2021/10/29. -->
 <template>
   <div class="layout-docs">
-    <div class="sidebar" :class="{ show: titleList?.length }">
+    <div
+      class="sidebar"
+      :class="{ show: titleList?.length }"
+    >
       <a
-        style="cursor: pointer"
         v-for="(anchor, index) in titleList"
+        :key="index"
+        style="cursor: pointer"
         :style="{ paddingLeft: `${(anchor.indent - 2) * 15}px` }"
         @click="rollTo(anchor)"
-        :key="index"
-        >{{ anchor.title }}</a
-      >
+      >{{ anchor.title }}</a>
     </div>
 
     <el-menu
@@ -21,25 +23,42 @@
       :ellipsis="false"
       @select="handleSelect"
     >
-      <template v-for="(item, index) in menu" :key="index">
+      <template
+        v-for="(item, index) in menu"
+        :key="index"
+      >
         <el-sub-menu
           v-if="item.children?.length"
           :index="item.to || item.title"
         >
-          <template #title>{{ item.title }}</template>
+          <template #title>
+            {{ item.title }}
+          </template>
           <el-menu-item
-            :index="ch.to"
             v-for="(ch, i) in item.children"
             :key="i"
-            >{{ ch.title }}</el-menu-item
+            :index="ch.to"
           >
+            {{ ch.title }}
+          </el-menu-item>
         </el-sub-menu>
-        <el-menu-item :index="item.to" v-else>{{ item.title }}</el-menu-item>
+        <el-menu-item
+          v-else
+          :index="item.to"
+        >
+          {{ item.title }}
+        </el-menu-item>
       </template>
     </el-menu>
-    <div class="main-content" ref="articleEl">
+    <div
+      ref="articleEl"
+      class="main-content"
+    >
       <router-view v-slot="{ Component }">
-        <transition name="left-fade" mode="out-in">
+        <transition
+          name="left-fade"
+          mode="out-in"
+        >
           <component :is="Component" />
         </transition>
       </router-view>
@@ -74,18 +93,18 @@
           }
           titleList.value = titles.map((el: any) => ({
             title: el.id, // 标题内容
-            //lineIndex: el.getAttribute('data-source-line'), // 标签line id
+            // lineIndex: el.getAttribute('data-source-line'), // 标签line id
             indent: parseInt(el.tagName.replace(/h/gi, '')) // 标签层级
-            //height: el.offsetTop // 标签距离顶部距离
+            // height: el.offsetTop // 标签距离顶部距离
           }))
         }
       }, 500)
     })
   }
   const rollTo = (item: any) => {
-    /*const heading = document.querySelector(
+    /* const heading = document.querySelector(
       `[data-source-line="${item.lineIndex}"]`
-    )*/
+    ) */
     const heading = document.getElementById(item.title)
     // 页面跳转
     if (heading) {

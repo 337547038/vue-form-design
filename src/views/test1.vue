@@ -44,7 +44,7 @@ layout:'hidden'}}
       loading.value = true
       setTimeout(() => {
         loading.value = false
-        options.value = list.value.filter(item => {
+        options.value = list.value.filter((item) => {
           return item.label.toLowerCase().includes(query.toLowerCase())
         })
       }, 200)
@@ -54,7 +54,7 @@ layout:'hidden'}}
   }
 
   onMounted(() => {
-    list.value = states.map(item => {
+    list.value = states.map((item) => {
       return { value: `value:${item}`, label: `label:${item}-1` }
     })
 

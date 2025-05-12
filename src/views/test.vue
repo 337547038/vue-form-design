@@ -1,9 +1,15 @@
 <template>
   <div>
-    <ak-form :data="formData" ref="akFormEl" operateType="add" />
+    <ak-form
+      ref="akFormEl"
+      :data="formData"
+      operate-type="add"
+    />
   </div>
   <div>
-    <el-button @click="setOptions">setOption</el-button>
+    <el-button @click="setOptions">
+      setOption
+    </el-button>
   </div>
   <!--  <el-form>
     <el-form-item label="input">
@@ -112,7 +118,7 @@ layout:'hidden'}}
     },
     apiKey: {},
     events: {
-      change: obj => {
+      change: (obj) => {
         console.log(obj)
       }
     }

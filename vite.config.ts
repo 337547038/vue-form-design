@@ -45,8 +45,8 @@ export default defineConfig({
       // external: ['vue', 'axios', 'vueRouter']
       // external: ['tinymce/tinymce']
       output: {
-        chunkFileNames: info => {
-          //[id].vue这种格式会被编译成_id开头的js，在github里获取不到，这里统一添加js
+        chunkFileNames: (info) => {
+          // [id].vue这种格式会被编译成_id开头的js，在github里获取不到，这里统一添加js
           if (info.name.indexOf('_') === 0) {
             return 'assets/js[name]-[hash].js'
           } else {
@@ -57,20 +57,20 @@ export default defineConfig({
     }
   },
   server: {
-    //https: true, // 是否开启 https
+    // https: true, // 是否开启 https
     port: 3000,
     host: '0.0.0.0',
     open: false,
     proxy: {
       '/api': {
         target: 'http://localhost:8089',
-        //target: 'http://localhost:3001',
+        // target: 'http://localhost:3001',
         changeOrigin: true
       }
     }
-    /*https: {
+    /* https: {
       cert: fs.readFileSync(path.join(__dirname, 'cert.crt')),
       key: fs.readFileSync(path.join(__dirname, 'cert.key'))
-    }*/
+    } */
   }
 })

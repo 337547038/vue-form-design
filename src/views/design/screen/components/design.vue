@@ -3,6 +3,12 @@
     ref="designBoxEl"
     class="design-box"
   >
+    <el-button
+      class="preview-refresh"
+      @click="previewRefreshClick"
+    >
+      刷新
+    </el-button>
     <a-ruler
       :scale="state.scale"
       :show-ruler="state.ruler"
@@ -21,6 +27,7 @@
       @mousedown.left="canvasOnmousedown"
     >
       <screen-group
+        v-if="previewEvent"
         v-model="screenData.list"
         @item-click="setShowRect"
       />
@@ -110,6 +117,13 @@
     {}
   )
 
+  const previewEvent = ref(true)
+  const previewRefreshClick = () => {
+    previewEvent.value = false
+    nextTick(() => {
+      previewEvent.value = true
+    })
+  }
   const screenData = inject('screenData')
   const screenStore = useScreenStore()
   const designBoxEl = ref()

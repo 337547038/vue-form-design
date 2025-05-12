@@ -274,11 +274,11 @@
     }
     const html = `<template>
   <div :style="screenStyle" class="design-canvas">
-    <ak-screen
+    <AKScreen
       v-for="(element, index) in screenData.list"
       :key="index"
       :data="element"
-    ></ak-screen>
+    ></AKScreen>
   </div>
 </template>
 

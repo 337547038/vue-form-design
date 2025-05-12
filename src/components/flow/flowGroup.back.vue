@@ -1,32 +1,54 @@
 <!-- Created by 337547038  -->
 <template>
-  <div class="flow-group" :class="{ 'flow-branch': isBranch }">
-    <div class="flow-branch-btn" v-if="isBranch">
-      <el-button size="small" type="primary" plain round @click="addBranchClick"
-      >添加条件</el-button
+  <div
+    class="flow-group"
+    :class="{ 'flow-branch': isBranch }"
+  >
+    <div
+      v-if="isBranch"
+      class="flow-branch-btn"
+    >
+      <el-button
+        size="small"
+        type="primary"
+        plain
+        round
+        @click="addBranchClick"
       >
+        添加条件
+      </el-button>
     </div>
     <div class="flow-row">
-      <div class="flow-col" v-for="(item, i) in flowBranch" :key="i">
-        <span class="mask-left" v-if="(i === 0) & isBranch"></span>
+      <div
+        v-for="(item, i) in flowBranch"
+        :key="i"
+        class="flow-col"
+      >
         <span
-          class="mask-right"
+          v-if="(i === 0) & isBranch"
+          class="mask-left"
+        />
+        <span
           v-if="(i === flowBranch.length - 1) & isBranch"
-        ></span>
+          class="mask-right"
+        />
         <div class="flow-item">
-          <div class="title" :class="`bg-${item.nodeType}`">
-            <i :class="getIcon(item)"></i>
-            <span
-            >{{ title[item.nodeType]
-            }}<span v-if="item.nodeType === 3">{{ index }}</span></span
-            >
+          <div
+            class="title"
+            :class="`bg-${item.nodeType}`"
+          >
+            <i :class="getIcon(item)" />
+            <span>{{ title[item.nodeType]
+            }}<span v-if="item.nodeType === 3">{{ index }}</span></span>
             <i
+              v-if="item.nodeType !== 1"
               class="icon-close close"
               @click="delClick(i)"
-              v-if="item.nodeType !== 1"
-            ></i>
+            />
           </div>
-          <div class="text">{{ getContent(item) }}</div>
+          <div class="text">
+            {{ getContent(item) }}
+          </div>
         </div>
         <popover @click="addNodeClick($event, i)" />
         <flow-group
@@ -38,7 +60,10 @@
         />
       </div>
     </div>
-    <popover v-if="isBranch" @click="addNodeClick($event, index)" />
+    <popover
+      v-if="isBranch"
+      @click="addNodeClick($event, index)"
+    />
   </div>
 </template>
 
