@@ -197,6 +197,13 @@ pnpm build
 
 [流程审批-流程管理](https://www.bilibili.com/video/BV18sLBzyEFp/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
 
+#### 可视化大屏相关
+
+[数据大屏-大屏设计](https://www.bilibili.com/video/BV1hR7ZzkE4Z/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+[数据大屏-大屏设计组件数据获取](https://www.bilibili.com/video/BV1em7Zz7Ed1//?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
+
+
 
 ## `Star`
 
