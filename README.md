@@ -208,7 +208,7 @@ pnpm build
 
 感谢您对ak-design开源项目的关注，如果该项目对您有帮助，并愿意支持其持续发展，欢迎扫码赞助。
 
-![wx.jpg](wx.jpg)
+<img src="https://gitee.com/q337547038/vue-form-design/raw/main/wx.jpg" width ="200" alt=""/>
 
 
 
