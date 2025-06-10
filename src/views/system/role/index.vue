@@ -2,7 +2,7 @@
   <div>
     <ak-list
       ref="tableListEl"
-      :api-key="{list:'roleList',del:'delete-url'}"
+      :api-key="{list:'roleList',del:'roleDelete'}"
       :search-data="searchData"
       :data="tableData"
       @btn-click="listBtnClick"
