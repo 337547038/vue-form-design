@@ -63,7 +63,18 @@
           alt=""
         >
         <h3>流程设计</h3>
-        <p>快速信息搜集</p>
+        <p>高效、灵活且易用简单审批流程</p>
+      </div>
+      <div
+        class="item"
+        @click="window.location.href='https://337547038.github.io/ak-flow/'"
+      >
+        <img
+          src="../assets/img/flow.png"
+          alt=""
+        >
+        <h3>流程设计v2.0</h3>
+        <p>高效、灵活且易用简单审批流程</p>
       </div>
     </div>
     <div class="info-box">
@@ -93,7 +104,8 @@
 <route>
 {meta:{permissions:"none"}}
 </route>
-<script setup></script>
+<script setup>
+</script>
 <style lang="scss">
   .design-index {
     text-align: center;
