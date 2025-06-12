@@ -67,7 +67,7 @@
       </div>
       <div
         class="item"
-        @click="window.location.href='https://337547038.github.io/ak-flow/'"
+        @click="toFlow"
       >
         <img
           src="../assets/img/flow.png"
@@ -105,6 +105,10 @@
 {meta:{permissions:"none"}}
 </route>
 <script setup>
+const toFlow = () => {
+  // window.location.href = 'https://337547038.github.io/ak-flow/'
+  window.open('https://337547038.github.io/ak-flow/')
+}
 </script>
 <style lang="scss">
   .design-index {
