@@ -34,7 +34,7 @@
         operate-type="edit"
         submit-url="dictEdit"
         :before="beforeSubmit2"
-        :after="afterSubmit"
+        :after="afterSubmit('set')"
         @btn-click="cancelClick"
       />
     </el-dialog>
@@ -43,6 +43,9 @@
 
 <script setup lang="ts">
   import { ref, reactive, nextTick } from 'vue'
+  import { useLayoutStore } from '@/store/layout'
+
+  const store = useLayoutStore()
 
   const tableListEl = ref()
   const formEl = ref()
@@ -345,10 +348,14 @@
     params.id = dialog2.editId // 添加编辑id
     return params
   }
-  const afterSubmit = () => {
+  const afterSubmit = (type: string) => {
     dialog.visible = false
     dialog2.visible = false
     tableListEl.value.getListData() // 重新拉数据
+    if (type === 'set') {
+      // 更新设置时，同时更新保存在本地的dict
+      store.getDict()
+    }
   }
   const cancelClick = (type: string) => {
     if (type === 'reset') {
