@@ -178,7 +178,7 @@ $mainColor: #66b1ff;
 
     > div {margin-bottom: 0}
 
-    &:after {content: '';position: absolute;left: 0;top: 0;right: 0;bottom: 0;opacity: 0;z-index: 1;display: block;}
+    &:after {content: ''; background: #0d1117; position: absolute;left: 0;top: 0;right: 0;bottom: 0;opacity: 0;z-index: 1;display: block;}
 
     &.group-grid, &.group-tabs, &.group-card, &.group-flex, &.group-div, &.group-table {
       &:after {display: none}

@@ -1,133 +1,47 @@
 <template>
   <div>
     <ak-form
-      ref="akFormEl"
+      ref="formNameEl"
+      :operate-type="formType"
       :data="formData"
-      operate-type="add"
+      request-url=""
+      submit-url=""
+      :before="beforeSubmit"
     />
   </div>
-  <div>
-    <el-button @click="setOptions">
-      setOption
-    </el-button>
-  </div>
-  <!--  <el-form>
-    <el-form-item label="input">
-      <el-input />
-    </el-form-item>
-  </el-form>-->
 </template>
-<route>
-{meta:{
-layout:'hidden'}}
-</route>
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  const formData = ref({
-    list: [
-      {
-        type: 'input',
-        control: {
-          modelValue: ''
-        },
-        config: {},
-        name: 'input1',
-        formItem: {
-          label: '单行文本'
-        }
-      },
-      {
-        type: 'table',
-        list: [
-          {
-            type: 'input',
-            control: {
-              modelValue: ''
-            },
-            config: {},
-            name: 'input1724721645324',
-            formItem: {
-              label: '单行文本'
-            }
-          },
-          {
-            type: 'select',
-            control: {
-              modelValue: '',
-              teleported: true
-            },
-            options: [],
-            config: {
-              optionsType: 0
-            },
-            name: 'select1724721656104',
-            formItem: {
-              label: '下拉选择框'
-            }
-          }
-        ],
-        tableData: [],
-        control: {
-          border: true
-        },
-        config: {
-          delBtnText: '删除',
-          addBtnText: '添加一行'
-        },
-        name: 'table1724721641645'
-      },
-      {
-        type: 'input',
-        control: {
-          modelValue: ''
-        },
-        config: {},
-        name: 'input1',
-        formItem: {
-          label: '单行文本'
-        }
-      },
-      {
-        type: 'flex',
-        list: [
-          {
-            type: 'input',
-            control: {
-              modelValue: ''
-            },
-            config: {},
-            name: 'input1724909802492',
-            formItem: {
-              label: '单行文本'
-            }
-          }
-        ],
-        tableData: [],
-        control: {},
-        config: {
-          addBtnText: '添加一行'
-        },
-        name: 'flex1724909800153'
-      }
-    ],
-    form: {
-      size: 'default'
-    },
-    config: {
-      submitCancel: true
-    },
-    apiKey: {},
-    events: {
-      change: (obj) => {
-        console.log(obj)
-      }
-    }
-  })
+import { ref, computed } from 'vue'
 
-  const akFormEl = ref()
-  const setOptions = () => {
-    akFormEl.value.setOptions({
-      select1: [{ label: '1', value: '1' }]
-    })
-  }
+const formNameEl = ref()
+const formData = ref({
+  list: [
+
+      {
+    type: 'inputSlot',
+    control: { modelValue: '', teleported: true, style: { width: '200px' } },
+    options: [{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }],
+    config: { optionsType: 0 },
+    name: 'pre',
+    formItem: { label: '下拉选择框' }
+  }, {
+    type: 'input',
+    control: { modelValue: '' },
+    config: { append: 'key:pre' },
+    name: 'input1750320588429',
+    formItem: { label: '单行文本' }
+  }], form: { size: 'default' }, config: { submitCancel: true }
+})
+// todo 存在编辑时，可选add、edit、detail、design、search，默认add
+const formType = computed(() => {
+  return 'add'
+})
+
+// 表单提交时参数处理
+const beforeSubmit = (params, type, obj) => {
+  // params请求的参数，可根据type作判断，对params作修改后return回去
+  // 需要将params参数return
+  return params
+}
+
 </script>
