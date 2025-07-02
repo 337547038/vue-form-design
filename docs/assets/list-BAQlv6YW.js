@@ -1,1 +1,0 @@
-import{L as t,c as e,o}from"./index-eyjXCVj4.js";const n={name:"List",components:{},props:{},data(){return{}},computed:{},mounted(){},methods:{}};function s(c,r,a,p,d,m){return o(),e("div",null,"开发完善中..")}const _=t(n,[["render",s]]);export{_ as default};
