@@ -1,7 +1,6 @@
 <template>
   <el-upload
     class="upload-style"
-    :action="uploadUrl"
     :http-request="httpRequest"
     v-bind="control"
     :file-list="fileList"
@@ -38,8 +37,7 @@
 
 <script setup lang="ts">
   import { computed, ref } from 'vue'
-  import { getRequest, uploadUrl } from '@/api'
-  import { ElMessage } from 'element-plus'
+  import { getRequest } from '@/api'
   const props = withDefaults(
     defineProps<{
       control: any
@@ -83,7 +81,7 @@
   }
   const uploadError = (err: any, file: any, fileList: any) => {
     // console.log('uploadError')
-    ElMessage.error(file.name + '上传失败')
+    // ElMessage.error(file.name + '上传失败')
     props.control?.onError(err, file, fileList)
   }
   const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {
