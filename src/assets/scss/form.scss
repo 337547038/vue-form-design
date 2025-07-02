@@ -448,7 +448,11 @@ $mainColor: #66b1ff;
 
     input.group-name {border: 1px solid #ddd;outline: none}
 
-    .group-btn {display: flex;justify-content: center;padding: 10px 0}
+    .group-btn {padding: 10px 10px 10px 0;
+      .btn{display: flex;justify-content: center}
+      .add-group{display: flex;align-items: center;flex-direction: column;
+      button{margin-top: 10px}}
+    }
 
     .icon-save, .icon-edit, .icon-del {font-size: 12px;margin-right: 5px;cursor: pointer;
 

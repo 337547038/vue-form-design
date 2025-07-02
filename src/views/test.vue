@@ -9,28 +9,43 @@
       :before="beforeSubmit"
     />
   </div>
+  <el-button @click="testClick">
+    test
+  </el-button>
+
+  <el-button @click="pageTest">
+    pageTest
+  </el-button>
 </template>
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { getRequest } from '@/api'
 
 const formNameEl = ref()
 const formData = ref({
-  list: [
-
-      {
-    type: 'inputSlot',
-    control: { modelValue: '', teleported: true, style: { width: '200px' } },
-    options: [{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }],
-    config: { optionsType: 0 },
-    name: 'pre',
-    formItem: { label: '下拉选择框' }
-  }, {
-    type: 'input',
+  list: [{
+    type: 'chunkUpload',
     control: { modelValue: '' },
-    config: { append: 'key:pre' },
-    name: 'input1750320588429',
-    formItem: { label: '单行文本' }
-  }], form: { size: 'default' }, config: { submitCancel: true }
+    config: {},
+    name: 'chunkUpload1750985450130',
+    formItem: { label: '选择上传' }
+  },
+    {
+      type: 'upload',
+      control:
+          {
+            modelValue: ''
+          },
+      config:
+          {
+            btnText: '文件'
+          },
+      name: 'upload1751334251035',
+      formItem:
+          {
+            label: '图片/文件'
+          }
+    }], form: { size: 'default' }, config: { submitCancel: true }
 })
 // todo 存在编辑时，可选add、edit、detail、design、search，默认add
 const formType = computed(() => {
@@ -44,4 +59,10 @@ const beforeSubmit = (params, type, obj) => {
   return params
 }
 
+const testClick = () => {
+  getRequest('upload/files/delete', { fileHash: 'b24ba6da9c158601889812565f590ce1' })
+}
+const pageTest = () => {
+  getRequest('upload/files/list', { query: { userId: 1 } })
+}
 </script>

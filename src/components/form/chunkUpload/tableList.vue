@@ -32,9 +32,13 @@
         </el-table-column>
         <el-table-column
           label="上传时间"
-          prop="createTime"
+          prop="creatTime"
           width="170"
-        />
+        >
+          <template #default="{row}">
+            {{ dateFormatting(row.creatTime) }}
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <div
@@ -53,8 +57,10 @@
           />
           <img
             v-if="fileIsImg(item.fileUrl)"
-            :src="item.fileUrl"
+            :src="`/api${item.fileUrl}`"
             alt=""
+            width="100px"
+            height="75px"
           >
           <i
             v-else
@@ -90,13 +96,13 @@
   import { ref, watch, computed, onBeforeUnmount } from 'vue'
   import type { FileList } from './types'
   import { getRequest } from '@/api'
+  import { dateFormatting } from '@/utils'
 
   const props = withDefaults(
     defineProps<{
       listType: string
-      modelValue: FileList[]
-      limit: number
-      groupId: string | number
+      modelValue?: FileList[]
+      limit?: number
     }>(),
     {
       modelValue: () => {
@@ -162,10 +168,10 @@
     const extension = url.split('.')?.pop()?.toLowerCase()
     return ['jpg', 'gif', 'png', 'jpeg', 'webp'].includes(extension as string)
   }
-  const getList = () => {
-    getRequest('chunkUploadFileList', { groupId: props.groupId }).then(
+  const getList = (obj = {}) => {
+    getRequest('chunkUploadFileList', { query: { groupId: obj.id } }).then(
       (res: { data: any }) => {
-        tableData.value = res.data
+        tableData.value = res.data?.list || []
       }
     )
   }

@@ -108,8 +108,8 @@
 
   const props = withDefaults(
     defineProps<{
-      config: { [key: string]: any }
-      defaultValue: FileList[]
+      config?: { [key: string]: any }
+      defaultValue?: FileList[]
     }>(),
     {
       config: () => {
@@ -169,8 +169,13 @@
 
   const open = () => {
     visible.value = true
+    // 重置
+    listType.value = 'table'
   }
   const changeGroup = (id: string | number) => {
+    if (showUploadList.value) {
+      return false
+    }
     currentGroupId.value = id
     getFileList()
   }

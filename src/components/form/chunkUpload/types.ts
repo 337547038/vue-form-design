@@ -15,4 +15,5 @@ export interface TempFileList {
   type: string
   file: File
   source: any // 用于取消上传
+  fileHash: string
 }
