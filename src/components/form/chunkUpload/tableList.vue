@@ -168,8 +168,8 @@
     const extension = url.split('.')?.pop()?.toLowerCase()
     return ['jpg', 'gif', 'png', 'jpeg', 'webp'].includes(extension as string)
   }
-  const getList = (obj = {}) => {
-    getRequest('chunkUploadFileList', { query: { groupId: obj.id } }).then(
+  const getList = (obj: { [key: string]: any }) => {
+    getRequest('chunkUploadFileList', { query: { groupId: obj?.id, fileName: obj?.keyword } }).then(
       (res: { data: any }) => {
         tableData.value = res.data?.list || []
       }
