@@ -235,13 +235,13 @@
             type: 'primary',
             click: (row: any) => {
               dialog2.visible = true
-              dialog2.editId = row.id
-              nextTick(() => {
+              // dialog2.editId = row.id
+              /* nextTick(() => {
                 formEl2.value.setValue({
                   name: row.name,
                   children: row.children ? JSON.parse(row.children) : []
                 })
-              })
+              }) */
             }
           },
           {
@@ -350,7 +350,7 @@
   }
   const afterSubmit = (type: string) => {
     dialog.visible = false
-    dialog2.visible = false
+    // dialog2.visible = false
     tableListEl.value.getListData() // 重新拉数据
     if (type === 'set') {
       // 更新设置时，同时更新保存在本地的dict
