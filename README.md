@@ -161,6 +161,8 @@ pnpm dev
 # 使用后端接口数据
 
 可访问后端库https://github.com/337547038/ak-design-manage
+
+注：本地搭建好接口服务后，请使用ip地址访问,如:http://192.168.xxxx。前端建议运行　`npm run preview`　以演示完整效果
  
 # 打包项目
 pnpm build
