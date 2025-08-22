@@ -229,8 +229,6 @@
       return val
     }
     switch (config.value.transformData) {
-      case 'none':
-        return val
       case 'string':
         try {
           return val.toString()
@@ -238,8 +236,12 @@
         } catch (e) {
           return val
         }
+        case 'number':
+          return formatNumber(val)
+      case 'none':
+      default:
+        return val
     }
-    return formatNumber(val)
   }
 
   const value = computed({
@@ -379,6 +381,9 @@
 
   // option选项动态数据
   const optionsList = ref(props.data.options)
+  const unWatch2 = watch(() => props.data.options, (val) => {
+    optionsList.value = val
+  })
   const formOptions = inject('akFormSetOptions', {}) as any
   const options = computed(() => {
     // 使用了setOptions时，从set方法里取
@@ -462,5 +467,6 @@
     if (unWatch1) {
       unWatch1()
     }
+    unWatch2()
   })
 </script>
