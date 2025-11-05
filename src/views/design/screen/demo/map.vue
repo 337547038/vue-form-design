@@ -423,11 +423,11 @@
   const getMapJson = () => {
     const path = props.mapType === 'gd' ? 'guangdong' : 'china'
     getRequest(`/static/demo1/${path}.json`)
-      .then(() => {})
-      .catch((res) => {
+      .then(res => {})
+      .catch(res => {
         echarts.registerMap(path, res)
-        option.value
-          = props.mapType === 'gd' ? optionGd.value : optionChina.value
+        option.value =
+          props.mapType === 'gd' ? optionGd.value : optionChina.value
       })
   }
 
