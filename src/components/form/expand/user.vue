@@ -33,15 +33,7 @@
     (e: 'update:modelValue', value: string): void
   }>() */
   const userDialogEl = ref()
-  const value = defineModel()
-  /* const value = computed({
-    get() {
-      return props.modelValue
-    },
-    set(newVal: string) {
-      emits('update:modelValue', newVal)
-    }
-  }) */
+  const value = defineModel<string>()
   const openDialog = () => {
     userDialogEl.value.open()
   }

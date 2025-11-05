@@ -13,7 +13,7 @@
   // http://tinymce.ax-z.cn/
   const props = withDefaults(
     defineProps<{
-      modelValue: string
+      modelValue?: string
       placeholder?: string
       width?: string
       height?: string

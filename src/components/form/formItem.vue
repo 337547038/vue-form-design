@@ -181,7 +181,7 @@
   import { onBeforeRouteLeave, useRoute } from 'vue-router'
   import Tooltip from '../tooltip/index.vue'
   import TinymceEdit from './tinymce.vue'
-  import { FormItem, FormList } from '@/types/form'
+  import type { FormItem, FormList } from '@/types/form'
   import { formatNumber, objectToArray } from '@/utils/design'
   import validate from './validate'
   import ExpandUser from './expand/user.vue'

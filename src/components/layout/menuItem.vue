@@ -51,7 +51,7 @@
 
   withDefaults(
     defineProps<{
-      data: Data[]
+      data?: Data[]
     }>(),
     {
       data: () => {

@@ -100,7 +100,7 @@
     />
     <screen-group
       v-if="['div', 'group'].includes(data.type)"
-      v-model="data.list"
+      :model-value="data.list"
       data-type="div"
       :p-id="data.id"
     />
@@ -138,9 +138,9 @@
     {
       type: 1,
       scale: 100,
-      data: () => {
+      /*data: () => {
         return {}
-      }
+      }*/
     }
   )
   const emits = defineEmits<{

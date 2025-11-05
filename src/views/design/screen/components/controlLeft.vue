@@ -105,7 +105,7 @@
   import Draggable from 'vuedraggable-es'
   import { jsonParseStringify } from '@/utils/design'
   import { useScreenStore } from '@/store/screen'
-  import { ScreenData } from '../types.ts'
+  import type { ScreenData } from '../types.ts'
 
   const screenStore = useScreenStore()
 
@@ -366,7 +366,7 @@
           type: 'div',
           label: 'div布局',
           position: {
-            height: 100
+            height: 400
           },
           list: []
         }

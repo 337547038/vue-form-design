@@ -40,7 +40,7 @@ const props = withDefaults(
       options: () => {
         return {}
       },
-      modelValue: undefined,
+      modelValue: null,
       type: undefined,
       remoteMethod: null
     }
@@ -54,7 +54,7 @@ const labelKey = computed(() => {
 const valueKey = computed(() => {
   return props.data.config?.value || 'value'
 })
-const value = defineModel()
+const value = defineModel<any>()
 const state = reactive({
   loading: false // 远程搜索加载状态
 })
@@ -165,8 +165,6 @@ const initGetOptions = () => {
       getOptions(data, 'default')
     }
   } else if (optionsType === 0) {
-    console.log(optionsType)
-    console.log(props.options)
     optionsSlot.value = props.data.options
   }
 }

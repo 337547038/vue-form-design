@@ -55,14 +55,6 @@
             }
           })
         }
-        // if (item.config?.optionsType === 2 && item.config?.optionsFun) {
-        //   // 单选多选下拉等方法设值
-        //   // const optionsValue = ref([{label: "选项1", value: '1'}])
-        //   // provide("getCheckbox", optionsValue)
-        //   sourceFun += `// todo ${item.item.label}设置选项值\n`
-        //   sourceFun += `const ${item.name}Option = ref([{label: "选项1", value: '1'}])\n`
-        //   sourceFun += `provide("${item.config.optionsFun}", ${item.name}Option)\n`
-        // }
       })
     return {
       rulesMethods: rulesMethods,
@@ -110,8 +102,7 @@
     // 需要将params参数return
     return params;
   }
-
-<\/script>`
+</scr` + `ipt>`
     nextTick(() => {
       editor.value = aceEdit(html, 'editJsonCopy', 'html')
     })
@@ -184,10 +175,10 @@
       if (btn.key === 'edit') {
         nextTick(() => {
        // eslint-disable-next-line no-irregular-whitespace
-       　 // todo 当表单内容字段比较少，所需值从列表数据就可以获取
+       // todo 当表单内容字段比较少，所需值从列表数据就可以获取
        // eslint-disable-next-line no-irregular-whitespace
        // eslint-disable-next-line no-irregular-whitespace
-       　　// formEl.value.setValue(row)
+       // formEl.value.setValue(row)
           formEl.value.getData({ id: row.id })
         })
       }
@@ -214,7 +205,7 @@
     dialog.editId = ''
     // formEl.value.resetFields() // 重置表单
   }
-  //　点击弹窗取消按钮时
+  // 点击弹窗取消按钮时
   const dialogBtnClick = (type) => {
     if (type === 'reset') {
       closeResetDialog()
@@ -246,7 +237,7 @@
   const searchData = ref({})
   const tableData = ref(${objToStringify(obj)})
   ${formContent}
-<\/script>`
+</scr` + `ipt>`
     nextTick(() => {
       editor.value = aceEdit(html, 'editJsonCopy', 'html')
     })
@@ -259,7 +250,7 @@
     const style = obj.config.style
     if (style) {
       styleCss = `<style>${style}
-<\/style>`
+</sty` + `le>`
     }
     if (obj.config.requestUrl) {
       // 全局大屏数据
@@ -299,7 +290,7 @@
     }
   })
   ${globalData}
-<\/script>
+</scr` + `ipt>
 ${styleCss}`
     nextTick(() => {
       editor.value = aceEdit(html, 'editJsonCopy', 'html')

@@ -54,8 +54,8 @@
   // import TagViews from './tagViews.vue'
   import Menu from './menu.vue'
   import CommonHeader from './header.vue'
-  import { getStorage, setStorage } from '@/utils'
-  import { getRequest } from '@/api'
+ // import { getStorage, setStorage } from '@/utils'
+  //import { getRequest } from '@/api'
 
   const store = useLayoutStore()
   // const isCollapse = ref(getStorage('collapseMenu') === 'true')

@@ -31,7 +31,7 @@ export const removeUnit = (value: any) => {
  * 将数字去掉小数并添加单位
  * @param value
  */
-export const addUnit = (value: string | number) => {
+export const addUnit = (value: string | number|undefined) => {
   if (value === 0 || value === '0') {
     return 0
   }

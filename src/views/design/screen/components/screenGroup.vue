@@ -42,7 +42,7 @@
     (e: 'itemClick', val: string[]): void
   }>()
 
-  const model = defineModel<ScreenData>()
+  const model = defineModel<any>({default:()=>{}})
   const screenData = inject('screenData') || {}
   const stateData = inject('stateData') || {}
   const screenStore = useScreenStore()
@@ -70,7 +70,7 @@
         // 选中了两个或以上时，显示id=rect的图层并计算宽高位置信息
         // 放外面处理，外面还有点击鼠标拖动选区选中的效果
         screenStore.setActiveId('rect')
-        emits('itemClick')
+        emits('itemClick',[])
       }
     } else {
       setCurrentConfig(data)
@@ -93,8 +93,8 @@
     if (data.type === 'tempRect' && obj.type === 'move') {
       model.value.forEach((item: ScreenData) => {
         if (screenStore.tempActiveId.includes(item.id)) {
-          item.position.left = parseInt(item.position.left) + obj.moveX
-          item.position.top = parseInt(item.position.top) + obj.moveY
+          item.position.left = parseInt(item.position.left+'') + obj.moveX
+          item.position.top = parseInt(item.position.top+'') + obj.moveY
         }
       })
     }
@@ -121,7 +121,7 @@
     obj.id = obj.type + new Date().getTime()
     obj.layerName = obj.id
     if (obj.type === 'div') {
-      obj.position.width = canvasWidth.value
+      obj.position.width = parseInt(canvasWidth.value) - offsetX
     }
     obj.position.left = offsetX
     obj.position.top = offsetY

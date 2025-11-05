@@ -1,4 +1,4 @@
-import { EventType } from '@/types/table.ts'
+import type {EventType} from '@/types/table.ts'
 
 export interface Config {
   width: string
@@ -12,10 +12,10 @@ export interface Config {
   after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
 }
 export interface CSSProperties {
-  width: number | string
-  height: number | string
-  left: number
-  top: number
+  width?: number | string
+  height?: number | string
+  left?: number | string
+  top?: number | string
   bottom?: number
   right?: number
   zIndex?: number

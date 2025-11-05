@@ -45,7 +45,7 @@
   import FormItem from './formItem.vue'
   const props = withDefaults(
     defineProps<{
-      data: any
+      data?: any
     }>(),
     {
       data: () => {

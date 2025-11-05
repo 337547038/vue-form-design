@@ -13,8 +13,8 @@
   const props = withDefaults(
     defineProps<{
       option: object
-      width: string | number
-      height: string | number
+      width?: string | number
+      height?: string | number
     }>(),
     {
       width: '600px',
@@ -27,6 +27,7 @@
     try {
       return /^\d+(\.\d+)?$/.test(val.toString())
     } catch (e) {
+      console.log(e)
       return false
     }
   }
@@ -42,7 +43,6 @@
     if (!echartsEl.value) {
       return
     }
-    // @ts-ignore
     myChart.value = echarts.init(echartsEl.value)
     myChart.value.setOption(props.option)
     window.onresize = myChart.value

@@ -233,7 +233,7 @@
           {
             label: '设置',
             type: 'primary',
-            click: (row: any) => {
+            click: () => {
               dialog2.visible = true
               // dialog2.editId = row.id
               /* nextTick(() => {

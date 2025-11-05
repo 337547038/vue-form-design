@@ -261,13 +261,12 @@
               // 这里简单处理px和%两种单位
               const widthUnit = item.position.width
               if (
-                typeof widthUnit === 'number'
-                || widthUnit.indexOf('px') !== -1
+                typeof widthUnit === 'number' || widthUnit?.toString().indexOf('px') !== -1
               ) {
                 // px单位
                 item.position.width
                   = (removeUnit(widthUnit) / obj.position.width) * 100 + '%'
-              } else if (widthUnit.indexOf('%') !== -1) {
+              } else if (widthUnit?.toString().indexOf('%') !== -1) {
                 // %单位，这里暂不处理
               }
               // item.width= removeUnit(item.position.width)
@@ -288,7 +287,7 @@
           screenStore.setControlAttr(mergeObj)
           break
         case 'split':
-          obj.list.forEach((item: ScreenData) => {
+          obj.list?.forEach((item: ScreenData) => {
             const { left, top, width } = item.position
             const { left: oLeft, top: oTop, width: oWidth } = obj.position
             delete item.pId
@@ -297,9 +296,8 @@
 
             // 单位转换计算比较复杂，这里暂简单化，只处理%单位
             if (
-              width.toString().indexOf('%') !== -1
-              && (typeof oWidth === 'number'
-                || oWidth.toString().indexOf('px') !== -1)
+                (width+'').indexOf('%') !== -1
+              && (typeof oWidth === 'number' || oWidth?.toString().indexOf('px') !== -1)
             ) {
               item.position.width
                 = (removeUnit(oWidth) * removeUnit(width)) / 100 + 'px'

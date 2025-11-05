@@ -33,7 +33,7 @@
 
   const props = withDefaults(
     defineProps<{
-      data: any
+      data?: any
       currentNodeKey: string | number
     }>(),
     {

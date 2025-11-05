@@ -39,7 +39,7 @@
     reactive
   } from 'vue'
   import FormGroup from './formGroup.vue'
-  import { FormData, FormList } from '@/types/form'
+  import type { FormData, FormList } from '@/types/form'
   import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { appendOrRemoveStyle, jsonParseStringify } from '@/utils/design'

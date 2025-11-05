@@ -26,8 +26,8 @@ layout:'hidden'}}
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
 
-  const list = ref<ListItem[]>([])
-  const options = ref<ListItem[]>([])
+  const list = ref([])
+  const options = ref([])
   const value = ref('A')
   const loading = ref(false)
   const states = [

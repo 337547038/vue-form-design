@@ -96,10 +96,10 @@
                         @change="tagCustomChange"
                       >
                         <el-option
-                          v-for="item in uiType"
-                          :key="item"
-                          :label="item"
-                          :value="item"
+                          v-for="op in uiType"
+                          :key="op"
+                          :label="op"
+                          :value="op"
                         />
                       </el-select>
                     </template>
@@ -401,7 +401,7 @@
   }>()
   const tableData = inject('tableData', {})
   const currentObj = inject('currentObj')
-  const tabsName = defineModel('tabsName')
+  const tabsName = defineModel<string>('tabsName')
   const state = reactive({
     formSourceList: [],
     tagCustomList: [], // 渲染为tag时

@@ -100,7 +100,7 @@
 
   const props = withDefaults(
       defineProps<{
-        data: any // 当前数据
+        data?: any // 当前数据
       }>(),
       {
         data: () => {

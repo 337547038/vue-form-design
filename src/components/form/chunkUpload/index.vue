@@ -100,7 +100,11 @@
     {
       config: () => {
         return {}
-      }
+      },
+      control:()=>{
+        return {}
+      },
+      modelValue:undefined
     }
   )
   const emits = defineEmits<{

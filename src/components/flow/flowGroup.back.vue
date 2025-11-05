@@ -72,8 +72,8 @@
   import popover from './popover.vue'
   const props = withDefaults(
     defineProps<{
-      data: any
-      dataList: any
+      data?: any
+      dataList?: any
       index: number
     }>(),
     {

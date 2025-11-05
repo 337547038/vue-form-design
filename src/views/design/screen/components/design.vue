@@ -4,6 +4,7 @@
     class="design-box"
   >
     <el-button
+      v-show="preview"
       class="preview-refresh"
       @click="previewRefreshClick"
     >
@@ -33,7 +34,7 @@
       />
     </div>
     <div
-      v-if="!screenData.list.length"
+      v-if="screenData.list.length===1"
       class="no-date"
     >
       请从左则组件栏拖动组件到设计区域
@@ -106,7 +107,7 @@
   import ARuler from './ruler.vue'
   import { useScreenStore } from '@/store/screen'
   import { useEventListener } from '@/utils/useEvent'
-  import { CSSProperties, ScreenData } from '../types.ts'
+  import type { CSSProperties, ScreenData } from '../types.ts'
   import { cannotDragResize, canRectSelect, removeUnit } from '../utils'
   import RightMenu from './rightMenu.vue'
 
@@ -399,10 +400,10 @@
     screenData.value.list.forEach((item: ScreenData) => {
       if (screenStore.tempActiveId.includes(item.id)) {
         const { left, top, width, height, zIndex } = item.position
-        const intLeft = parseInt(left)
-        const intTop = parseInt(top)
-        const intWidth = parseInt(width)
-        const intHeight = parseInt(height)
+        const intLeft = parseInt(left+'')
+        const intTop = parseInt(top+'')
+        const intWidth = parseInt(width+'')
+        const intHeight = parseInt(height+'')
         autoRect.left = getMin(autoRect.left, intLeft)
         autoRect.top = getMin(autoRect.top, intTop)
         autoRect.ex = Math.max(autoRect.ex, intWidth + intLeft) // 结束坐标点

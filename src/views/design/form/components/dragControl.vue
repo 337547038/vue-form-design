@@ -58,7 +58,7 @@
   import Draggable from 'vuedraggable-es'
   import { computed, ref, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
-  import { FormData, FormList } from '@/types/form'
+  import type { FormData, FormList } from '@/types/form'
   import UseTemplate from './template.vue'
   import { getRequest } from '@/api'
   import { stringToObj, jsonParseStringify } from '@/utils/design'

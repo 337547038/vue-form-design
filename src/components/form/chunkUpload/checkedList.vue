@@ -31,8 +31,8 @@
 
   const props = withDefaults(
     defineProps<{
-      limit: number | undefined
-      modelValue: FileList[]
+      limit?: number | undefined
+      modelValue?: FileList[]
     }>(),
     {
       limit: 0,

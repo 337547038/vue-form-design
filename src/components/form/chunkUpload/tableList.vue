@@ -175,7 +175,7 @@
       }
     )
   }
-  getList()
+  getList({})
   onBeforeUnmount(() => {
     unWatch()
   })

@@ -172,11 +172,11 @@ pnpm build
 ### 开发环境
 | 名称           | 版本      |
 |--------------|---------|
-| node         | 20.18.x |
-| pnpm         | 10.8.x  |
-| vite         | 6.2.x   |
+| node         | 22.17.x |
+| pnpm         | 10.15.x |
+| vite         | 7.1.x   |
 | vue          | 3.5.x   |
-| element-plus | 2.9.x   |
+| element-plus | 2.11.x  |
 
 ### 相关教程
 

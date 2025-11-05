@@ -45,7 +45,10 @@
       disabled?: boolean
       placeholder?: string
     }>(),
-    {}
+    {
+      modelValue:'',
+      placeholder:''
+    }
   )
 
   const emits = defineEmits<{

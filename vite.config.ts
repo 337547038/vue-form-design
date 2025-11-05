@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import Pages from 'vite-plugin-pages'
 import Markdown from 'vite-plugin-doc-preview'
+// @ts-ignore
 import creatFileJson from './vite-plugin-creatFileJson'
 import { resolve } from 'path'
 import fs from 'fs'
@@ -19,8 +19,7 @@ export default defineConfig({
     vue({
       include: [/\.vue$/, /\.md$/]
     }),
-    vueJsx({}),
-    Markdown(),
+    Markdown({}),
     Pages({
       dirs: [
         { dir: 'src/views', baseRoute: '' },
