@@ -129,15 +129,17 @@ export const flatToTree = (data: Data, props?: PropsKey): Data[] => {
   const nodeMap: { [key: number]: Data } = {}
   const tree: Data[] = []
   const { id = 'id', parentId = 'parentId' } = props || {}
-  // @ts-ignore
-  for (const n: any of data) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    for (const n of data) {
     nodeMap[n[id]] = { ...n }
   }
-  // @ts-ignore
-  for (const n: any of data) {
-    const node: Data = nodeMap[n[id]]
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   // @ts-expect-error
+    for (const n of data) {
+    const node: any = nodeMap[n[id]]
     if (n[parentId]) {
-      const parent: Data = nodeMap[n[parentId]]
+      const parent: any = nodeMap[n[parentId]]
       if (parent) {
         if (!parent.children) {
           parent.children = []

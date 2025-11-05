@@ -81,7 +81,7 @@
   import { jsonParseStringify } from '@/utils/design'
   const props = withDefaults(
     defineProps<{
-      data: any
+      data?: any
     }>(),
     {
       data: () => {

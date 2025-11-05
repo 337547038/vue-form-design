@@ -2,7 +2,7 @@
 
 import path from 'path'
 import fs from 'fs'
-//const fse = require('fs-extra')
+// const fse = require('fs-extra')
 
 const checkDirExist = function (dir) {
   try {
@@ -40,7 +40,7 @@ const checkDirExist = function (dir) {
 //   })
 // }
 const temp = {}
-const screenSource = directory => {
+const screenSource = (directory) => {
   // 将public/screen下的素材图片生成json
   const from = path.join('./public/static/screen', directory || '')
   if (!checkDirExist(from)) {
@@ -48,7 +48,7 @@ const screenSource = directory => {
     return
   }
   const dir = fs.readdirSync(from)
-  dir.forEach(file => {
+  dir.forEach((file) => {
     const filePath = path.resolve(from, file)
     const stats = fs.statSync(filePath)
     if (stats.isFile()) {
@@ -62,33 +62,33 @@ const screenSource = directory => {
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let viteConfig = null
 
 export default function (options) {
   return {
     name: 'vite-plugin-copy',
     enforce: 'post',
-    //apply: 'build',
+    // apply: 'build',
     configResolved(resolvedConfig) {
       viteConfig = resolvedConfig.root
     },
     buildStart() {
-      //console.log(viteConfig)
-      //const fromdir = path.resolve(viteConfig, options.from)
-      //const distDir = path.resolve(viteConfig, options.to)
-      //copy(options.from, options.to)
+      // console.log(viteConfig)
+      // const fromdir = path.resolve(viteConfig, options.from)
+      // const distDir = path.resolve(viteConfig, options.to)
+      // copy(options.from, options.to)
       screenSource()
 
       fs.writeFile(
         './src/views/design/dataScreen/components/fileJson.json',
         JSON.stringify(temp, null, 2),
-        err => {
+        (err) => {
           if (err) {
             return
           }
-        }
+        },
       )
-    }
+    },
   }
 }

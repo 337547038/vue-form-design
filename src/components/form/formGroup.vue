@@ -67,7 +67,7 @@
   import type { FormList } from '@/types/form'
   import { getGroupName, jsonParseStringify } from '@/utils/design'
 
-  const dataList = defineModel<FormList>('data')
+  const dataList = defineModel<FormList>('data',{default:()=>{}})
   const store = useDesignStore() as any
   const formProps = inject('akFormProps', {}) as any
 

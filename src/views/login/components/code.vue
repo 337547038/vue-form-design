@@ -19,11 +19,13 @@
   import { ref, watch, onMounted } from 'vue'
   import { getRequest } from '@/api'
 
-  const props = withDefaults(
+  withDefaults(
     defineProps<{
       placeholder?: string
     }>(),
-    {}
+    {
+      placeholder:''
+    }
   )
   const emits = defineEmits<{
     (e: 'update:modelValue', obj: any): void

@@ -227,7 +227,7 @@
     return params
   }
   // 提交表单后事件
-  const afterSubmit = (res: any, success: boolean, type: string) => {
+  const afterSubmit = (res: any, success: boolean) => {
     if (success) {
       // 添加成功，刷新列表数据
       closeResetDialog()

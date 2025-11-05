@@ -63,7 +63,8 @@
       type?: number // 两种模式1设计 2显示
     }>(),
     {
-      type: 2
+      type: 2,
+      data:()=>{return {}}
     }
   )
   const emits = defineEmits<{

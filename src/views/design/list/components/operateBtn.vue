@@ -22,7 +22,7 @@
       position: 'top'
     }
   )
-  const model = defineModel()
+  const model = defineModel<string>()
   const selectChecked = ref([])
   const lastSelectChecked = ref([])
   const btnList = computed(() => {

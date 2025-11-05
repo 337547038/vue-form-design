@@ -181,7 +181,7 @@
   import Tooltips from '../tooltip/index.vue'
   import FormItem from './formItem.vue'
   import ChildTable from './childTable.vue'
-  import { FormList } from '@/types/form'
+  import type { FormList } from '@/types/form'
   import { inject, computed } from 'vue'
   import { getGroupName } from '@/utils/design'
   const formProps = inject('akFormProps', {}) as any

@@ -328,7 +328,7 @@
   }
   const rowDelClick = (row: TableList, index: number) => {
     showForm.value = false // 如果已有展开添加行时，则收起
-    if (props.type === 2) {
+    if (props.type?.toString() === '2') {
       // 编辑状态，在编辑状态下新添加的才允许删，以前的不能删
       if (row.isNew !== 1) {
         ElMessage.error(`新添加的才能删除`)

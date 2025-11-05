@@ -62,7 +62,7 @@
 
   const props = withDefaults(
     defineProps<{
-      row: any // 表格右侧是当前行数据，表格上面按钮时为勾选中的行
+      row?: any // 表格右侧是当前行数据，表格上面按钮时为勾选中的行
       buttons: Button[]
       position?: string // 位置
       dropdown?: number | string | undefined // 按钮最大显示个数，超出以下拉形式展示
@@ -119,11 +119,11 @@
   const getOperateButton = (more?: boolean) => {
     if (more && props.dropdown) {
       // 用于下拉部分
-      return props.buttons.slice(props.dropdown)
+      return props.buttons.slice(parseInt(props.dropdown+''))
     } else {
       if (props?.dropdown) {
         // 截取前面
-        return props.buttons.slice(0, props.dropdown)
+        return props.buttons.slice(0, parseInt(props.dropdown+''))
       } else {
         return props.buttons
       }

@@ -36,7 +36,7 @@
       modelValue: boolean
       title?: string
       direction?: 'rtl' | 'ltr'
-      content: string
+      content?: string
       id?: string
       codeType?: string
     }>(),

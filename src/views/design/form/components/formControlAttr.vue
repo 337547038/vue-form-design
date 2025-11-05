@@ -246,7 +246,7 @@
             <el-form-item label="尝试转换value值为">
               <el-select
                 v-model="controlData.config.transformData"
-                placeholder="默认为number"
+                placeholder="可尝试将值转换类型"
               >
                 <el-option value="none">
                   不转换

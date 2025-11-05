@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import Pages from 'vite-plugin-pages'
 import Markdown from 'vite-plugin-doc-preview'
+// @ts-ignore
 import creatFileJson from './vite-plugin-creatFileJson'
 import { resolve } from 'path'
 import fs from 'fs'
@@ -19,8 +19,7 @@ export default defineConfig({
     vue({
       include: [/\.vue$/, /\.md$/]
     }),
-    vueJsx({}),
-    Markdown(),
+    Markdown({}),
     Pages({
       dirs: [
         { dir: 'src/views', baseRoute: '' },
@@ -45,8 +44,8 @@ export default defineConfig({
       // external: ['vue', 'axios', 'vueRouter']
       // external: ['tinymce/tinymce']
       output: {
-        chunkFileNames: info => {
-          //[id].vue这种格式会被编译成_id开头的js，在github里获取不到，这里统一添加js
+        chunkFileNames: (info) => {
+          // [id].vue这种格式会被编译成_id开头的js，在github里获取不到，这里统一添加js
           if (info.name.indexOf('_') === 0) {
             return 'assets/js[name]-[hash].js'
           } else {
@@ -57,20 +56,20 @@ export default defineConfig({
     }
   },
   server: {
-    //https: true, // 是否开启 https
+    // https: true, // 是否开启 https
     port: 3000,
     host: '0.0.0.0',
     open: false,
     proxy: {
       '/api': {
         target: 'http://localhost:8089',
-        //target: 'http://localhost:3001',
+        // target: 'http://localhost:3001',
         changeOrigin: true
       }
     }
-    /*https: {
+    /* https: {
       cert: fs.readFileSync(path.join(__dirname, 'cert.crt')),
       key: fs.readFileSync(path.join(__dirname, 'cert.key'))
-    }*/
+    } */
   }
 })
