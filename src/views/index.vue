@@ -105,22 +105,34 @@
 {meta:{permissions:"none"}}
 </route>
 <script setup>
-const toFlow = () => {
-  // window.location.href = 'https://337547038.github.io/ak-flow/'
-  window.open('https://337547038.github.io/ak-flow/')
-}
+  import {ElMessageBox} from 'element-plus'
+
+  const toFlow = () => {
+    ElMessageBox.alert('即将离开此项目，进入流程2.0系统', '警告', {
+      confirmButtonText: '确认',
+      callback: (action) => {
+        console.log(action)
+        if (action === 'confirm') {
+          window.open('https://337547038.github.io/ak-flow/')
+        }
+      },
+    })
+  }
 </script>
 <style lang="scss">
   .design-index {
     text-align: center;
     padding: 40px 0 !important;
+
     h2 {
       font-size: 16px;
     }
+
     .content {
       padding: 40px 100px;
       display: flex;
       flex-wrap: wrap;
+
       .item {
         cursor: pointer;
         background: #fff;
@@ -129,29 +141,35 @@ const toFlow = () => {
         min-width: 240px;
         margin: 0 15px 30px;
       }
+
       img {
         width: 80px;
         display: block;
         margin: 0 auto 20px;
       }
+
       h3 {
         font-size: 14px;
         margin-bottom: 5px;
       }
+
       p {
         font-size: 12px;
         color: #999;
       }
     }
+
     .info-box {
       display: flex;
       justify-content: center;
       background: #fff;
     }
+
     .info {
       h3 {
         text-align: center;
       }
+
       text-align: left;
       padding: 20px 0;
       line-height: 30px;
