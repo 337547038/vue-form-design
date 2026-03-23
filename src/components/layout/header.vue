@@ -10,7 +10,7 @@
     separator="/"
     class="breadcrumb"
   >
-    <el-breadcrumb-item :to="{ path: '/' } as string">
+    <el-breadcrumb-item :to="{ path: '/' }">
       首页
     </el-breadcrumb-item>
     <template
@@ -19,7 +19,7 @@
     >
       <el-breadcrumb-item
         v-if="item.path"
-        :to="{ path: item.path } as string"
+        :to="{ path: item.path }"
       >
         {{ item.label || item.name }}
       </el-breadcrumb-item>
@@ -51,9 +51,9 @@
           class="avatar"
           size="small"
           shape="circle"
-          :src="user.avatar"
+          :src="userInfo.avatar"
         />
-        <span class="name">{{ user.name }}</span>
+        <span class="name">{{ userInfo.userName }}</span>
         <el-icon class="el-icon--right">
           <arrow-down />
         </el-icon>
@@ -61,15 +61,21 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item>
-            <el-icon><User /></el-icon>
+            <el-icon>
+              <User />
+            </el-icon>
             <span class="title">个人中心</span>
           </el-dropdown-item>
           <el-dropdown-item>
-            <el-icon><Setting /></el-icon>
+            <el-icon>
+              <Setting />
+            </el-icon>
             <span class="title">设置</span>
           </el-dropdown-item>
           <el-dropdown-item @click="logout">
-            <el-icon><CircleClose /></el-icon>
+            <el-icon>
+              <CircleClose />
+            </el-icon>
             <span class="title">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -79,9 +85,10 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
-  import { useLayoutStore } from '@/store/layout'
-  import { useRouter } from 'vue-router'
+  import {computed} from 'vue';
+  import {useLayoutStore} from '@/store/layout'
+  import {useRouter} from 'vue-router'
+  import {getStorage} from "@/utils";
 
   const store = useLayoutStore()
   const router = useRouter()
@@ -94,10 +101,7 @@
   const emits = defineEmits<{
     (e: 'click', type: string): void
   }>()
-  const user = ref({
-    name: 'admin',
-    avatar: ''
-  })
+  const userInfo = getStorage('userInfo', true)
   const toolClick = (type: string) => {
     if (type === 'collapse') {
       store.setCollapseMenu(!collapse.value)
@@ -112,22 +116,28 @@
   .header-avatar {
     display: flex;
     align-items: center;
+
     .avatar,
     .name {
       align-self: center;
     }
+
     .avatar {
       margin-right: 8px;
     }
+
     .name {
       font-weight: 500;
     }
   }
+
   .avatar-menu {
     width: 150px;
+
     .title {
       margin-left: 10px;
     }
+
     li {
       height: 35px;
       line-height: 35px;
