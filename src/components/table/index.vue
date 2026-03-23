@@ -357,6 +357,10 @@
       })
       .then((data: any) => {
         tableDataList.value = data?.list || data
+        // 预防返回的data={}时
+        if(Object.keys(data).length === 0 && data.constructor === Object){
+          tableDataList.value=[]
+        }
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false
