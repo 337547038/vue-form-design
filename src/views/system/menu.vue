@@ -63,7 +63,7 @@
         prop: 'type',
         width: 100,
         render: 'tag',
-        replaceValue: 'menuType',
+        replaceValue: dict.menuType,
         custom: { 1: 'success', 2: 'info', 3: 'warning' },
         config: {
         }

@@ -82,7 +82,7 @@
     nextTick(() => {
       setTimeout(() => {
         if (articleEl.value) {
-          const anchors = articleEl.value.querySelectorAll('h2,h3,h4')
+          const anchors = articleEl.value.querySelectorAll('h1,h2,h3,h4')
           // 删除标题头尾的空格
           const titles = Array.from(anchors).filter(
             (title: any) => !!title.innerText.trim()
@@ -92,7 +92,7 @@
             titleList.value = []
           }
           titleList.value = titles.map((el: any) => ({
-            title: el.id, // 标题内容
+            title: el.innerText, // 标题内容
             // lineIndex: el.getAttribute('data-source-line'), // 标签line id
             indent: parseInt(el.tagName.replace(/h/gi, '')) // 标签层级
             // height: el.offsetTop // 标签距离顶部距离
