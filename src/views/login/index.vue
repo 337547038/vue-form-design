@@ -110,7 +110,7 @@
   const getNavList = () => {
     return new Promise((resolve) => {
       getRequest('userMenuList', {
-        query: { status: 1, navShow: 1 },
+        query: { status: 1 },
         extend: { sort: 'sort asc' }
       }).then((res: any) => {
         const list = res.data?.list || []
@@ -120,8 +120,8 @@
           if (item.path) {
             resources.push(item.path)
           }
-          if (item.type !== 2) {
-            // 过滤按钮类型
+          if (item.type !== 2 && item.navShow===1) {
+            // 过滤按钮类型，及不在导航里显示的
             menuList.push(item)
           }
         })
