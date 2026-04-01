@@ -26,21 +26,7 @@ declare module 'vuedraggable-es'
 declare module 'vite-plugin-pages'
 declare module 'vite'
 declare module 'pinia'
-declare module 'vite-plugin-doc-preview'
 declare module 'nprogress'
 declare module 'js-beautify'
 declare module '~pages'
-
-/*declare module 'vite-plugin-pages' {
-    const content: any; // 或具体类型定义
-    export default content;
-}*/
-/*
-declare module 'vuex' {
-  type StoreStateType = typeof store.state
-  type ModulesType = {
-    common: typeof common.state
-  }
-  export function useStore<S = StoreStateType & ModulesType>(): Store<S>
-}
-*/
+declare module 'vite-plugin-creatFileJson'

@@ -2,9 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
 import Markdown from 'vite-plugin-doc-preview'
-// @ts-ignore
 import creatFileJson from './vite-plugin-creatFileJson'
-import { resolve } from 'path'
+import { fileURLToPath, URL } from 'url'
 import fs from 'fs'
 
 // 将public下的iconfont.css复制到。直接从public目录导入会报错Assets in public cannot be imported from JavaScript
@@ -31,7 +30,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
+      //'@': resolve(__dirname, './src')
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
     // 使用路径别名时想要省略的后缀名，官方不建议将.vue文件省略后缀
     extensions: ['.js', '.ts']
