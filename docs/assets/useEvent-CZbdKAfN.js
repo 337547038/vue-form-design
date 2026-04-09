@@ -1,0 +1,1 @@
+import{I as e,L as t}from"./runtime-core.esm-bundler-CCuvnFRF.js";function n(n,r,i){e(()=>n.addEventListener(r,i)),t(()=>n.removeEventListener(r,i))}export{n as t};
