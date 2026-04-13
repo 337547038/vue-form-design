@@ -1,56 +1,40 @@
 import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
-import vuePlugin from 'eslint-plugin-vue';
-import vueParser from 'vue-eslint-parser';
-import typescriptParser from '@typescript-eslint/parser';
-import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 
 export default [
-    // 继承ESLint推荐规则
+    // 基础JS规则
     js.configs.recommended,
-
-    // Vue 3推荐规则（扁平化配置专用）
-    ...vuePlugin.configs['flat/recommended'],
-
-    // TypeScript配置
+    // TS 推荐规则
+    ...tseslint.configs.recommended,
+    // Vue3 推荐规则
+    ...pluginVue.configs['flat/recommended'],
     {
-        files: ['**/*.{ts,tsx,vue}'],
+        files: ['**/*.vue'],
         languageOptions: {
-            parser: vueParser, // 使用vue-eslint-parser解析Vue SFC
             parserOptions: {
-                parser: typescriptParser,
-                ecmaVersion: 'latest',
-                sourceType: 'module',
+                parser: tseslint.parser, // Vue文件内TS解析
             },
         },
-        plugins: {
-            '@typescript-eslint': typescriptPlugin,
-        },
-        rules: {
-            ...typescriptPlugin.configs.recommended.rules,
-            // 可在此处覆盖或添加自定义规则
-            '@typescript-eslint/no-explicit-any': 'off', // 示例：允许使用any类型
-        },
     },
-
-    // 全局规则（适用于所有文件）
     {
-        files: ['**/*.{js,mjs,cjs,ts,tsx,vue}'],
         languageOptions: {
             ecmaVersion: 'latest',
-            //globals: globals.browser,
+            sourceType: 'module',
             globals: {
                 ...globals.browser,
-
-                /** 追加一些其他自定义全局规则 */
+                ...globals.node,
                 ace: true,
                 tinymce: true,
                 AMap: true,
                 echarts: true,
-                getScreenGlobal: true,
-            }
+                getScreenGlobal: true
+            },
         },
         rules: {
+            'no-debugger': 'error',
+            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
             '@typescript-eslint/no-explicit-any': ['off'], // 允许使用any
             'comma-dangle': 'off', // 最后不加逗号
             '@stylistic/comma-dangle': 'off', // 最后不加逗号
@@ -61,5 +45,8 @@ export default [
             '@typescript-eslint/no-unused-expressions': 'off', // 允许使用a&&a()这种简单写法
             'vue/no-v-html': 'off' // 关闭v-html警告
         },
+    },
+    {
+        ignores: ['dist/**', 'node_modules/**', '*.config.ts', 'vite.config.ts', 'public/**'],
     },
 ];

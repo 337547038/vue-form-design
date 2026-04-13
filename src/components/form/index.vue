@@ -510,7 +510,8 @@
   provide('akFormButtonEvent', defaultBtnClick)
   // 一些所需参数
   const akFormProps = reactive({
-    operateType: props.operateType,
+    //operateType: props.operateType,
+    operateType: computed(() => props.operateType),
     model: model,
     hideField: props.data.config?.hideField as [],
     dict: dictForm.value

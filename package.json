@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
-    "axios": "^1.13.6",
+    "axios": "1.15.0",
     "clipboard": "^2.0.11",
     "element-plus": "^2.13.0",
     "js-beautify": "^1.15.4",
@@ -24,22 +24,20 @@
     "vuedraggable-es": "^4.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.35.0",
-    "@types/node": "^24.12.0",
-    "@typescript-eslint/eslint-plugin": "^8.43.0",
-    "@typescript-eslint/parser": "^8.43.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.6.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue/tsconfig": "^0.9.1",
-    "eslint": "^9.35.0",
-    "eslint-plugin-vue": "^10.4.0",
+    "eslint": "^10.2.0",
+    "eslint-plugin-vue": "^10.8.0",
     "globals": "^16.3.0",
     "sass": "^1.86.3",
-    "typescript": "^5.9.2",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.1",
     "vite": "^8.0.5",
     "vite-plugin-doc-preview": "^0.3.1",
+    "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-pages": "^0.33.3",
-    "vite-plugin-vue-devtools": "^8.1.1",
-    "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.2.5"
   }
 }
