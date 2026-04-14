@@ -267,7 +267,7 @@ const getSpeedTime = throttle(
       const remainingTime = (totalSize - hasProgress) / speed
       const minutes = Math.floor(remainingTime / 60)
       const seconds = Math.floor(remainingTime - minutes * 60)
-      let time = ''
+      let time
       if (minutes) {
         time = `${minutes}分${seconds}秒`
       } else {

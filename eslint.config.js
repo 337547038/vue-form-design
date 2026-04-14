@@ -40,6 +40,7 @@ export default [
             '@stylistic/comma-dangle': 'off', // 最后不加逗号
             'no-case-declarations': 'off', // 允许switch case里使用const
             'no-console': 'off',
+            'no-useless-assignment': 'off',
             '@stylistic/indent': ['off', 2],
             'vue/multi-word-component-names': 'off',
             '@typescript-eslint/no-unused-expressions': 'off', // 允许使用a&&a()这种简单写法
