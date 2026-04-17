@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import Pages from 'vite-plugin-pages'
 import Markdown from 'vite-plugin-doc-preview'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -10,6 +9,7 @@ import fs from 'fs'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import eslint from 'vite-plugin-eslint'
+import VueRouter from 'vue-router/vite'
 
 // 将public下的iconfont.css复制到。直接从public目录导入会报错Assets in public cannot be imported from JavaScript
 fs.createReadStream('./public/static/iconfont/iconfont.json').pipe(
@@ -19,6 +19,15 @@ fs.createReadStream('./public/static/iconfont/iconfont.json').pipe(
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    VueRouter({
+      routesFolder: ['src/views', {
+        src: 'src/docs',
+        // 覆盖全局扩展名以 **仅** 接受 markdown 文件
+        extensions: ['.md'],
+        path: 'docs/',
+      }],
+      exclude: ['**/components', '**/design/**/*.md']
+    }),
     creatFileJson({}),
     vue({
       include: [/\.vue$/, /\.md$/]
@@ -29,15 +38,7 @@ export default defineConfig({
       exclude: ['node_modules/', 'docs/'],
       fix: false, // 开发时不自动修复，避免误改
     }),
-    Markdown({}),
-    Pages({
-      dirs: [
-        { dir: 'src/views', baseRoute: '' },
-        { dir: 'src/docs', baseRoute: '/docs' }
-      ],
-      extensions: ['md', 'vue'],
-      exclude: ['**/components', '**/design/**/*.md']
-    })
+    Markdown({})
   ],
   resolve: {
     alias: {

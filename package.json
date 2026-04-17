@@ -37,7 +37,6 @@
     "vite": "^8.0.5",
     "vite-plugin-doc-preview": "^0.3.1",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-pages": "^0.33.3",
     "vue-tsc": "^3.2.5"
   }
 }

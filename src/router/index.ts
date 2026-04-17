@@ -1,48 +1,66 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import routesPage from '~pages'
-import { useLayoutStore } from '@/store/layout'
+import {createRouter, createWebHashHistory} from 'vue-router'
+import {useLayoutStore} from '@/store/layout'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { getStorage } from '@/utils'
-import { ElMessage } from 'element-plus'
-import { getTreeNodeById } from '@/utils/flatTree'
+import {getStorage} from '@/utils'
+import {ElMessage} from 'element-plus'
+import {getTreeNodeById} from '@/utils/flatTree'
+import {routes} from 'vue-router/auto-routes'
 /** 页面meta配置说明
  * meta:{
  *   layout:'hidden', // 设置hidden时路由不会出现侧边栏，如login,401等不需要主layout框架的页面
  *   title:'', // 需要显示的标题
- *   addRoute:true, // true为动态路由
  *   permissions:'' // 当前页面权限，默认为当前url，类型支持string/string[]/boolean false为白名单，none登录即可
  * }
  */
 /*
 路由拦截规则，目前分三种情况。可根据实际需要或将接口返回的全部作为动态路由
 1.白名单：设置了 `permissions:false` 或在 `whiteList` 列表里的路由，无需登录可直接访问；
-2.权限路由：（默认）根据 `permissions` 配置匹配接口菜单列表。设置了 `addRoute:true`为动态路由，根据接口菜单列表匹配动态添加到路由列表；
+2.权限路由：（默认）根据 `permissions` 配置匹配接口菜单列表。
 3.其他：设置了 `permissions:'none'`登录即可
 */
-console.log(routesPage)
+console.log("autoRoutes", routes)
+
 // 路由白名单，同时可在页面配置permissions=false。支持正则
 const whiteList: (RegExp | string)[] = [/^\/docs/, '/test1', '/test']
 // 根据条件提取路由
 const filterRoutePage = (type?: string) => {
-  return routesPage.filter((item: any) => {
-    const isHiddenLayout: boolean = item.meta?.layout === 'hidden'
-    const isAddRoute: boolean = item.meta?.addRoute === true
+  return routes.filter((item: any) => {
     switch (type) {
-      case 'addRoute': // 提取动态路由
-        return isAddRoute
-      case 'hidden': // 提取不包含在layout里的
-        return isHiddenLayout && !isAddRoute
       case 'docs': // 提取以docs开头的文档路由，同时包含在layout的
-        return item.name.indexOf('docs') === 0 && !isHiddenLayout && !isAddRoute
+        return item.path === '/docs'
       default:
-        return item.name.indexOf('docs') !== 0 && !isHiddenLayout && !isAddRoute
+        return item.path !== '/docs'
     }
   })
 }
-const hiddenLayout = filterRoutePage('hidden')
 
-const routes = [
+const findHiddenLayout = (routes: any, parentPath = '') => {
+  let result: any = [];
+  routes.forEach((item: any) => {
+    let fullPath: string = parentPath
+        ? `${parentPath}/${item.path}`
+        : item.path;
+    if (fullPath.endsWith('/')) {
+      fullPath = fullPath.slice(0, -1);
+    }
+    if (item.meta && item.meta.layout === "hidden") {
+      const newItem = {
+        ...item,
+        path: fullPath // 赋值拼接后的完整路径
+      };
+      result.push(newItem);
+    }
+    if (item.children && item.children.length) {
+      result = result.concat(findHiddenLayout(item.children,fullPath));
+    }
+  });
+
+  return result;
+}
+const hiddenLayout = findHiddenLayout(routes)
+
+const routesList = [
   {
     path: '/layout',
     redirect: '/',
@@ -58,13 +76,11 @@ const routes = [
     children: filterRoutePage('docs')
   }
 ]
-const routesList = [...routes, ...hiddenLayout]
-console.log('routesList', routesList)
 // 配置路由
 const router = createRouter({
   // history: createWebHistory(),
   history: createWebHashHistory(),
-  routes: routesList
+  routes: [...routesList, ...hiddenLayout]
 })
 
 const includesWhite = (str: string): boolean => {
@@ -76,7 +92,7 @@ const includesWhite = (str: string): boolean => {
   })
 }
 
-router.beforeEach(async (to: any, _from: any, next: any) => {
+router.beforeEach(async (to: any, from: any) => {
   NProgress.start()
   let permissions: any = to.meta?.permissions
   const hasRoute = router.hasRoute('catchAll')
@@ -87,74 +103,48 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
       redirect: '/404'
     })
   }
+  // 白名单 / 无需权限，直接放行
   if (permissions === false || includesWhite(to.path)) {
-    // 白名单
-    next()
-  } else {
-    // 除白名单其他页面需要登录，判断登录
-    // 如没有token过期刷新的需求，这里获取token为空或过期时，直接跳转即可。
-    // 存在刷新refreshToken操作时，token过期也不能跳到登录页，否则直接跳转没办法换
-    // const token: any = getStorage('token', true)
-    const refreshToken: any = getStorage('refreshToken', true)
-    // menuList为接口返回的当前用户可用路由或按钮
-    const menuList: string[] = getStorage('resources', true) || []
-    let nextQuery: any = {
-      path: '/login',
-      query: { redirect: encodeURI(to.fullPath) }
-    }
-    // 判断refreshToken即可，当token过期还能继续执行刷新token操作
-    if (refreshToken) {
-      // 根据菜单权限接口判断有没对应页面的权限
-      if (permissions !== 'none') {
-        // 需要有指定的权限
-        permissions = permissions || to.path
-        if (permissions) {
-          if (typeof permissions === 'string') {
-            permissions = [permissions]
-          }
-          let pass: boolean = false
-          for (const key in permissions) {
-            if (menuList.includes(permissions[key])) {
-              pass = true
-              break
-            }
-          }
-          if (!pass) {
-            ElMessage({
-              message: '没有权限查看该页面',
-              type: 'error'
-            })
-            // 返回来源页
-            nextQuery = {
-              path: _from.fullPath
-            }
-          } else {
-            nextQuery = ''
-          }
-        }
-      } else {
-        nextQuery = ''
-      }
-      // 动态路由，可根据实际需求修改
-      if (!hasRoute) {
-        const routeList = filterRoutePage('addRoute') // 所有设为动态的路由
-        routeList.forEach((item: any) => {
-          if (menuList.includes(item.path)) {
-            // 过滤掉没有权限的
-            const hiddenLayout: boolean = item.meta?.layout === 'hidden'
-            if (hiddenLayout) {
-              router.addRoute(item) // 没有包含layout
-            } else {
-              // 目前只有layout框架
-              router.addRoute('layout', item)
-            }
-          }
-        })
-        nextQuery = { ...to, replace: true }
-      }
-    }
-    nextQuery ? next(nextQuery) : next()
+    return undefined
   }
+  // 需要登录鉴权逻辑
+  const refreshToken: any = getStorage('refreshToken', true)
+  const menuList: string[] = getStorage('resources', true) || []
+  let redirectRoute: any = undefined
+  // 未登录，跳转到登录页
+  if (!refreshToken) {
+    return {
+      path: '/login',
+      query: {redirect: encodeURI(to.fullPath)}
+    }
+  }
+  // 已登录，判断页面权限
+  if (permissions !== 'none') {
+    permissions = permissions || to.path
+    if (typeof permissions === 'string') {
+      permissions = [permissions]
+    }
+
+    let pass = false
+    for (const key in permissions) {
+      if (menuList.includes(permissions[key])) {
+        pass = true
+        break
+      }
+    }
+
+    // 无权限
+    if (!pass) {
+      ElMessage({
+        message: '没有权限查看该页面',
+        type: 'error'
+      })
+      // 返回来源页，来源页不存在则返回首页
+      redirectRoute = from.fullPath || '/'
+    }
+  }
+  // 有权限，放行
+  return redirectRoute
 })
 router.afterEach((to: any) => {
   document.title = (to.meta?.title || '') + 'ak低代码管理系统'
@@ -167,10 +157,11 @@ router.afterEach((to: any) => {
 const getBreadcrumb = (path: string): void => {
   const menuList: string[] = getStorage('formMenuList', true)
   if (menuList?.length) {
-    const list: any = getTreeNodeById(menuList, path, { id: 'path' })
+    const list: any = getTreeNodeById(menuList, path, {id: 'path'})
     const layoutStore = useLayoutStore()
-    console.log('change', menuList, path)
+    //console.log('change', menuList, path)
     layoutStore.changeBreadcrumb(list)
   }
 }
+
 export default router
