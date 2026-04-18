@@ -52,7 +52,7 @@ const findHiddenLayout = (routes: any, parentPath = '') => {
       result.push(newItem);
     }
     if (item.children && item.children.length) {
-      result = result.concat(findHiddenLayout(item.children,fullPath));
+      result = result.concat(findHiddenLayout(item.children, fullPath));
     }
   });
 
