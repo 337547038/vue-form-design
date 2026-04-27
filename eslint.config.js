@@ -30,11 +30,12 @@ export default [
                 AMap: true,
                 echarts: true,
                 getScreenGlobal: true
+
             },
         },
         rules: {
             'no-debugger': 'error',
-            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+            '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
             '@typescript-eslint/no-explicit-any': ['off'], // 允许使用any
             'comma-dangle': 'off', // 最后不加逗号
             '@stylistic/comma-dangle': 'off', // 最后不加逗号

@@ -35,7 +35,7 @@
       <span class="size">{{ item.size }}</span>
       <span class="progress">{{ getStatusProgress(item) }}</span>
       <span
-        v-if="(item.status === 1) & !!item.speed && !!item.remainingTime"
+        v-if="(item.status === 1) && !!item.speed && !!item.remainingTime"
         class="speed-time"
       >{{ item.speed }}/s {{ item.remainingTime }}</span>
       <i

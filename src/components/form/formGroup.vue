@@ -61,7 +61,7 @@
 <script lang="ts" setup>
   import { reactive, computed, inject, onUnmounted } from 'vue'
   import { onBeforeRouteLeave } from 'vue-router'
-  import Draggable from 'vuedraggable-es'
+  import draggable from 'vuedraggable-es'
   import GroupControl from './groupControl.vue'
   import { useDesignStore } from '@/store/design'
   import type { FormList } from '@/types/form'

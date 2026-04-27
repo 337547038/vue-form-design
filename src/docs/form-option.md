@@ -487,8 +487,13 @@ const formData = ref({
 
 注意：`formName`值为表单唯一标识，即`form.name`
 
+
+使用方法见上面`校验设置`示例里的确认密码，当确认密码改变时，先通过此方法获取密码输入框的值，再和当前输入的比较是否一致
+
 ```javascript
 const control = getformNameControlByName('name')
+//　注意：通过`导出vue文件`方法使用时，直接使用可能会报错，可添加window,如
+const control = window.getformNameControlByName('name')
 ```
 
 ### - get[formName]ValueByName

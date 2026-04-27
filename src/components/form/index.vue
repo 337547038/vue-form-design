@@ -184,11 +184,11 @@
       getValueEvent = `get${formName}ValueByName`
       if (formName) {
         // 根据name获取当前数据项
-        window[eventName] = (name: string) => {
+        (window as any)[eventName] = (name: string) => {
           return getNameForEach(props.data.list, name)
         }
         // 根据name获取当前项的值
-        window[getValueEvent] = (name: string) => {
+        (window as any)[getValueEvent] = (name: string) => {
           return model.value[name]
         }
       }
@@ -336,7 +336,6 @@
     try {
       const style = props.data.config?.style || ''
       appendOrRemoveStyle('formStyle', style, type)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       /* empty */
     }
@@ -421,7 +420,6 @@
               for (const key in formatRes) {
                 try {
                   temp[key] = JSON.parse(formatRes[key])
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 } catch (e) {
                   temp[key] = formatRes[key]
                 }
@@ -536,7 +534,7 @@
   })
   onUnmounted(() => {
     if (eventName) {
-      window[eventName] = ''
+      (window as any)[eventName] = ''
     }
     appendRemoveStyle()
   })
