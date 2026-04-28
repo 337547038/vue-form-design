@@ -1,45 +1,58 @@
 import { defineStore } from 'pinia'
 import { getStorage, setStorage } from '@/utils'
+import {ref} from 'vue'
 
-export const useScreenStore = defineStore('screen', {
-  state: () => {
-    return {
-      controlAttr: {}, // 大屏设计时，选中的项
-      activeId: '', // 大屏设计时，当前选中项id
-      screenConfig: getStorage('screenConfig', true) || {}, // 大屏设计相关
-      controlTip: '', // 设计左右角提示文案
-      tempActiveId: [] // 临时选中的多个目标id
+export const useScreenStore = defineStore('screen', ()=>{
+  const controlAttr = ref({})
+  const activeId = ref('')
+  const screenConfig = ref(getStorage('screenConfig', true) || {})
+  const controlTip = ref('')
+  const tempActiveId = ref([])
+
+  function setTempActiveId(data: string | string[]) {
+    if (typeof data === 'string') {
+      const index = tempActiveId.value.indexOf(data)
+      index > -1
+          ? tempActiveId.value.splice(index, 1)
+          : tempActiveId.value.push(data)
+    } else if (Array.isArray(data)) {
+      tempActiveId.value = data
     }
-  },
-  actions: {
-    setTempActiveId(data: string | string[]) {
-      if (typeof data === 'string' && data) {
-        const index = this.tempActiveId.indexOf(data)
-        if (index !== -1) {
-          // 存在删除
-          this.tempActiveId.splice(index, 1)
-        } else {
-          this.tempActiveId.push(data)
-        }
-      } else {
-        this.tempActiveId = data
-      }
-    },
-    setControlTip(text: string) {
-      this.controlTip = text
-    },
-    setControlAttr(data: any) {
-      this.controlAttr = data
-    },
-    setScreenConfig(key: string, data: any) {
-      this.screenConfig[key] = data
-      setStorage('screenConfig', this.screenConfig, 0)
-    },
-    getScreenConfig(key: string) {
-      return this.screenConfig[key]
-    },
-    setActiveId(data: string[] | string) {
-      this.activeId = data
-    }
+  }
+
+  function setControlTip(text: string) {
+    controlTip.value = text
+  }
+
+  function setControlAttr(data: Record<string, any>) {
+    controlAttr.value = data
+  }
+
+  function setScreenConfig(key: string, data: any) {
+    screenConfig.value[key] = data
+    setStorage('screenConfig', screenConfig.value, 0)
+  }
+
+  function getScreenConfig<T = any>(key: string): T {
+    return screenConfig.value[key] as T
+  }
+
+  function setActiveId(data: string | string[]) {
+    activeId.value = Array.isArray(data) ? data.join(',') : data
+  }
+
+  return {
+    controlAttr,
+    activeId,
+    screenConfig,
+    controlTip,
+    tempActiveId,
+
+    setTempActiveId,
+    setControlTip,
+    setControlAttr,
+    setScreenConfig,
+    getScreenConfig,
+    setActiveId,
   }
 })

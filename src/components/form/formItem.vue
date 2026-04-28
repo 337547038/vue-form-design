@@ -232,7 +232,6 @@
       case 'string':
         try {
           return val.toString()
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
           return val
         }

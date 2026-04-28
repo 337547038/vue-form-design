@@ -341,7 +341,7 @@
     formEl.value.resetFields() // 先清空上一次的
     showForm.value = true
     editRowIndex.value = undefined
-    statusType.value = 1 // 点新增一行，表单都为增加模式
+    statusType.value = 'add' // 点新增一行，表单都为增加模式
   }
   /**
    * 添加行

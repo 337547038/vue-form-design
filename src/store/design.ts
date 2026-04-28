@@ -1,34 +1,52 @@
 import { defineStore } from 'pinia'
 import { getStorage, setStorage } from '@/utils'
+import {ref} from 'vue'
 
-export const useDesignStore = defineStore('design', {
-  state: () => {
-    return {
-      controlAttr: {}, // 表单设计时，选中的项
-      activeKey: '', // 表单设计时，选中项的标识，用于展示当前状态
-      columnsCheck: getStorage('tableColumns', true) || [], // 表格勾选的列
-      formAjaxCache: {} // 表单内组件选项数据请求缓存
-    }
-  },
-  actions: {
-    setControlAttr(data: any) {
-      this.controlAttr = data
-    },
-    setActiveKey(key: string) {
-      this.activeKey = key
-    },
-    setColumnsCheck(path: string, data: string[]) {
-      this.columnsCheck[path] = data
-      setStorage('tableColumns', this.columnsCheck, 0)
-    },
-    getColumnsCheck(path: string) {
-      return this.columnsCheck[path] || []
-    },
-    setFormAjaxCache(key: string, data: any) {
-      this.formAjaxCache[key] = data
-    },
-    getFormAjaxCache(key: string) {
-      return this.formAjaxCache[key] || false
-    }
+export const useDesignStore = defineStore('design', () => {
+  // ====== state 定义 ======
+  const controlAttr = ref({})
+  const activeKey = ref('')
+  const columnsCheck = ref(getStorage('tableColumns', true) || [])
+  const formAjaxCache = ref({})
+
+  // ====== actions 方法 ======
+  function setControlAttr(data: Record<string, any>) {
+    controlAttr.value = data
+  }
+
+  function setActiveKey(key: string) {
+    activeKey.value = key
+  }
+
+  function setColumnsCheck(path: string, data: string[]) {
+    columnsCheck.value[path] = data
+    setStorage('tableColumns', columnsCheck.value, 0)
+  }
+
+  function getColumnsCheck(path: string): string[] {
+    return columnsCheck.value[path] || []
+  }
+
+  function setFormAjaxCache(key: string, data: any) {
+    formAjaxCache.value[key] = data
+  }
+
+  function getFormAjaxCache(key: string): any {
+    return formAjaxCache.value[key] || false
+  }
+
+  // ====== 导出给外部使用 ======
+  return {
+    controlAttr,
+    activeKey,
+    columnsCheck,
+    formAjaxCache,
+
+    setControlAttr,
+    setActiveKey,
+    setColumnsCheck,
+    getColumnsCheck,
+    setFormAjaxCache,
+    getFormAjaxCache,
   }
 })

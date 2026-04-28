@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="vue-router/auto" />
 declare module '*.vue' {
     import type { DefineComponent } from 'vue'
 
@@ -23,10 +24,8 @@ declare module 'axios'
 declare module 'vue'
 declare module 'clipboard'
 declare module 'vuedraggable-es'
-declare module 'vite-plugin-pages'
 declare module 'vite'
 declare module 'pinia'
 declare module 'nprogress'
 declare module 'js-beautify'
-declare module '~pages'
 declare module 'vite-plugin-creatFileJson'

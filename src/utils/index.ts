@@ -173,7 +173,6 @@ export const getStorage = (key: string, hour?: boolean) => {
           data = false
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       data = undefined
     }
@@ -183,7 +182,6 @@ export const getStorage = (key: string, hour?: boolean) => {
   }
   try {
     return JSON.parse(data)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return data
   }

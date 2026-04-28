@@ -1,0 +1,1 @@
+import{b as e,m as t,z as n}from"./runtime-core.esm-bundler-CCuvnFRF.js";import{n as r}from"./layout-_xseSyVx.js";var i=e({__name:`test`,setup(e){return r(`userMenuList`,{query:{status:1},extend:{sort:`sort asc`}}),(e,r)=>(n(),t(`div`))}});export{i as default};

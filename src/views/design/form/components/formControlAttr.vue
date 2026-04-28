@@ -1500,7 +1500,6 @@
         const tableData = res.data?.tableData
         try {
           state.dataSourceFiledList = JSON.parse(tableData)
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
           state.dataSourceFiledList = []
         }

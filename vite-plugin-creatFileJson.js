@@ -62,7 +62,6 @@ const screenSource = (directory) => {
   })
 }
 
-// eslint-disable-next-line no-unused-vars
 let viteConfig = null
 
 export default function () {

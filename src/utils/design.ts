@@ -14,54 +14,50 @@ function evil(fn: any) {
  * 将拖拽生成的表单数据转为字符串类型
  * @param o
  */
-function obj2string(o: any) {
-  let r: any = []
-  if (o === null) {
-    // 这里有个问题 因typeOf null=object,下面判断会报错
-    return null
-  }
+function obj2string(o: unknown): string {
+  // 处理 null / undefined
+  if (o === null) return 'null';
+  if (o === undefined) return 'undefined';
+
+  // 处理字符串（转义引号、换行、制表符）
   if (typeof o === 'string') {
-    return (
-      '"'
-      + o
-        .replace(/([\\'\\"\\])/g, '\\$1')
-        .replace(/(\n)/g, '\\n')
-        .replace(/(\r)/g, '\\r')
-        .replace(/(\t)/g, '\\t')
-        + '"'
-    )
+    return `"${o
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t')}"`;
   }
-  if (typeof o === 'object') {
-    if (!o.sort) {
-      for (const i in o) {
-        let iii: string = i
-        if (i.indexOf('-') !== -1) {
-          iii = `"${i}"`
-        }
-        // r.push(iii + ':' + obj2string(o[i]))
-        r.push(`${iii}:${obj2string(o[i])}`)
-      }
-      if (
-        !!document.all
-        && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(
-          o.toString
-        )
-      ) {
-        // r.push('toString:' + o.toString.toString())
-        r.push(`toString:${o.toString.toString()}`)
-      }
-      // r = '{' + r.join() + '}'
-      r = `{${r.join()}}`
-    } else {
-      for (let i: number = 0; i < o.length; i++) {
-        r.push(obj2string(o[i]))
-      }
-      // r = '[' + r.join() + ']'
-      r = `[${r.join()}]`
-    }
-    return r
+
+  // 处理数字、布尔、Symbol、BigInt 等原始类型
+  if (typeof o !== 'object') {
+    return String(o);
   }
-  return o && o.toString()
+
+  // 处理数组
+  if (Array.isArray(o)) {
+    const items = o.map(item => obj2string(item));
+    return `[${items.join(',')}]`;
+  }
+
+  // 处理普通对象（排除循环引用，避免死循环）
+  const seen = new Set<unknown>();
+  const keys = Object.keys(o);
+  const result: string[] = [];
+
+  for (const key of keys) {
+    const value = (o as Record<string, unknown>)[key];
+    // 跳过循环引用
+    if (seen.has(value)) continue;
+    seen.add(value);
+
+    const keyStr = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
+        ? key
+        : `"${key}"`;
+    result.push(`${keyStr}:${obj2string(value)}`);
+  }
+
+  return `{${result.join(',')}}`;
 }
 
 /**

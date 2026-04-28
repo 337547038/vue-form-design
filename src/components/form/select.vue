@@ -104,14 +104,14 @@ const linkage = computed(() => {
 const unWatch1 = linkage.value
     ? watch(
         () => formProps.model[linkage.value],
-        (val) => {
+        (val: any) => {
           getOptions({ [queryName.value]: val }, 'linkage')
         }
     )
     : null
 const unWatch2 = watch(
     () => formProps.model,
-    (val) => {
+    (val: { [x: string]: any }) => {
       if (props.type === 'slot') {
         value.value = val[props.data.name]
       }
