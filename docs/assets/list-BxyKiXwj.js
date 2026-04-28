@@ -1,0 +1,1 @@
+import{m as e,z as t}from"./runtime-core.esm-bundler-CCuvnFRF.js";import{t as n}from"./js_plugin-vue_export-helper-CHVW1YHE.js";var r={name:`List`,components:{},props:{},data(){return{}},computed:{},mounted(){},methods:{}};function i(n,r,i,a,o,s){return t(),e(`div`,null,`开发完善中..`)}var a=n(r,[[`render`,i]]);export{a as default};

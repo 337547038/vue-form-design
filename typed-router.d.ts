@@ -139,6 +139,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/design/screen/show/[id]': RouteRecordInfo<
+      '/design/screen/show/[id]',
+      '/design/screen/show/:id',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
+      | never
+    >,
     '/docs/': RouteRecordInfo<
       '/docs/',
       '/docs',
@@ -413,6 +420,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/design/screen/list.vue': {
       routes:
         | '/design/screen/list'
+      views:
+        | never
+    }
+    'src/views/design/screen/show/[id].vue': {
+      routes:
+        | '/design/screen/show/[id]'
       views:
         | never
     }
