@@ -7,7 +7,6 @@ import { ElMessage } from 'element-plus'
 const isNumber = (val: any): boolean => {
   try {
     return /^-?\d+(\.\d+)?$/.test(val.toString())
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return false
   }

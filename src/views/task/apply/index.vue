@@ -40,7 +40,6 @@
     if (icon) {
       try {
         return JSON.parse(icon)[index]
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         const temp = icon.split(',')
         return temp[index]
