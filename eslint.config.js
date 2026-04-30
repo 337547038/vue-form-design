@@ -1,54 +1,70 @@
-import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import pluginVue from 'eslint-plugin-vue';
-import globals from 'globals';
+import js from '@eslint/js'
+import vue from 'eslint-plugin-vue'
+import tseslint from 'typescript-eslint'
 
 export default [
-    // 基础JS规则
+    // 1. 基础 JS 规则
     js.configs.recommended,
-    // TS 推荐规则
+
+    // 2. TypeScript 规则
     ...tseslint.configs.recommended,
-    // Vue3 推荐规则
-    ...pluginVue.configs['flat/recommended'],
+
+    // 3. Vue 规则
+    ...vue.configs['flat/recommended'],
+
+    // 4. 处理 .vue + .ts
     {
-        files: ['**/*.vue'],
+        files: ['**/*.vue', '**/*.ts', '**/*.tsx'],
         languageOptions: {
+            parser: vue.parser,
             parserOptions: {
-                parser: tseslint.parser, // Vue文件内TS解析
+                parser: tseslint.parser,
+                ecmaVersion: 'latest',
+                sourceType: 'module',
+            },
+            // 所有全局变量
+            globals: {
+                // Vue 编译器宏
+                defineProps: 'readonly',
+                defineEmits: 'readonly',
+                defineExpose: 'readonly',
+                withDefaults: 'readonly',
+                definePage: 'readonly',
+
+                // 你的全局变量
+                ace: 'readonly',
+                tinymce: 'readonly',
+                AMap: 'readonly',
+                echarts: 'readonly',
             },
         },
     },
-    {
-        languageOptions: {
-            ecmaVersion: 'latest',
-            sourceType: 'module',
-            globals: {
-                ...globals.browser,
-                ...globals.node,
-                ace: true,
-                tinymce: true,
-                AMap: true,
-                echarts: true,
-                getScreenGlobal: true
 
-            },
-        },
+    // 5. 自定义规则
+    {
         rules: {
-            'no-debugger': 'error',
-            '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
-            '@typescript-eslint/no-explicit-any': ['off'], // 允许使用any
-            'comma-dangle': 'off', // 最后不加逗号
-            '@stylistic/comma-dangle': 'off', // 最后不加逗号
-            'no-case-declarations': 'off', // 允许switch case里使用const
+            'no-debugger': 'warn',
+            '@typescript-eslint/no-unused-vars': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
+            'comma-dangle': 'off',
+            'no-case-declarations': 'off',
             'no-console': 'off',
             'no-useless-assignment': 'off',
-            '@stylistic/indent': ['off', 2],
             'vue/multi-word-component-names': 'off',
-            '@typescript-eslint/no-unused-expressions': 'off', // 允许使用a&&a()这种简单写法
-            'vue/no-v-html': 'off' // 关闭v-html警告
+            '@typescript-eslint/no-unused-expressions': 'off',
+            'vue/no-v-html': 'off'
         },
     },
+
+    // 6. 忽略文件
     {
-        ignores: ['dist/**', 'node_modules/**', '*.config.ts', 'vite.config.ts', 'public/**'],
+        ignores: [
+            'docs/**',
+            'node_modules/**',
+            'public/**',
+            'vite.config.js',
+            'tsconfig.json',
+            '*.config.js',
+        ],
     },
-];
+]

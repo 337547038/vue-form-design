@@ -28,4 +28,11 @@ declare module 'vite'
 declare module 'pinia'
 declare module 'nprogress'
 declare module 'js-beautify'
-declare module 'vite-plugin-creatFileJson'
+// 全局变量 TS 类型声明
+declare const ace: any;
+declare const tinymce: any;
+declare const AMap: any;
+declare const echarts: any;
+declare const definePage: any;
+declare const defineProps: any;
+declare const defineEmits: any;

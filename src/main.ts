@@ -33,6 +33,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册一个全局组件用于自定义组件测试
 import componentTest from '@/docs/components/componentTest.vue'
 app.component('ComponentTest', componentTest)
-// 大屏自定义组件
-import ScreenDemoComponent from './views/design/screen/demo/map.vue'
-app.component('EchartsMap', ScreenDemoComponent)
+

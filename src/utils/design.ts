@@ -109,8 +109,6 @@ export function json2string(obj: any, isBeautify?: boolean) {
 export const aceEdit = (data: any, id?: string, type?: string) => {
   type = type ? type : 'javascript'
   id = id ? id : 'editJson'
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
   const editor = ace.edit(id)
   editor.setOptions({
     enableBasicAutocompletion: true,

@@ -48,34 +48,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/design/echarts/': RouteRecordInfo<
-      '/design/echarts/',
-      '/design/echarts',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/design/echarts/list': RouteRecordInfo<
-      '/design/echarts/list',
-      '/design/echarts/list',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/design/flow/': RouteRecordInfo<
-      '/design/flow/',
-      '/design/flow',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/design/flow/list': RouteRecordInfo<
-      '/design/flow/list',
-      '/design/flow/list',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/design/form/': RouteRecordInfo<
       '/design/form/',
       '/design/form',
@@ -125,25 +97,11 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/design/screen/demo/map': RouteRecordInfo<
-      '/design/screen/demo/map',
-      '/design/screen/demo/map',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/design/screen/list': RouteRecordInfo<
       '/design/screen/list',
       '/design/screen/list',
       Record<never, never>,
       Record<never, never>,
-      | never
-    >,
-    '/design/screen/show/[id]': RouteRecordInfo<
-      '/design/screen/show/[id]',
-      '/design/screen/show/:id',
-      { id: ParamValue<true> },
-      { id: ParamValue<false> },
       | never
     >,
     '/docs/': RouteRecordInfo<
@@ -258,41 +216,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/task/apply/': RouteRecordInfo<
-      '/task/apply/',
-      '/task/apply',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/task/apply/start': RouteRecordInfo<
-      '/task/apply/start',
-      '/task/apply/start',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/task/applyed': RouteRecordInfo<
-      '/task/applyed',
-      '/task/applyed',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/task/done': RouteRecordInfo<
-      '/task/done',
-      '/task/done',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/task/todo': RouteRecordInfo<
-      '/task/todo',
-      '/task/todo',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/test': RouteRecordInfo<
       '/test',
       '/test',
@@ -345,30 +268,6 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/views/design/echarts/index.vue': {
-      routes:
-        | '/design/echarts/'
-      views:
-        | never
-    }
-    'src/views/design/echarts/list.vue': {
-      routes:
-        | '/design/echarts/list'
-      views:
-        | never
-    }
-    'src/views/design/flow/index.vue': {
-      routes:
-        | '/design/flow/'
-      views:
-        | never
-    }
-    'src/views/design/flow/list.vue': {
-      routes:
-        | '/design/flow/list'
-      views:
-        | never
-    }
     'src/views/design/form/index.vue': {
       routes:
         | '/design/form/'
@@ -411,21 +310,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/views/design/screen/demo/map.vue': {
-      routes:
-        | '/design/screen/demo/map'
-      views:
-        | never
-    }
     'src/views/design/screen/list.vue': {
       routes:
         | '/design/screen/list'
-      views:
-        | never
-    }
-    'src/views/design/screen/show/[id].vue': {
-      routes:
-        | '/design/screen/show/[id]'
       views:
         | never
     }
@@ -522,36 +409,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/system/user.vue': {
       routes:
         | '/system/user'
-      views:
-        | never
-    }
-    'src/views/task/apply/index.vue': {
-      routes:
-        | '/task/apply/'
-      views:
-        | never
-    }
-    'src/views/task/apply/start.vue': {
-      routes:
-        | '/task/apply/start'
-      views:
-        | never
-    }
-    'src/views/task/applyed.vue': {
-      routes:
-        | '/task/applyed'
-      views:
-        | never
-    }
-    'src/views/task/done.vue': {
-      routes:
-        | '/task/done'
-      views:
-        | never
-    }
-    'src/views/task/todo.vue': {
-      routes:
-        | '/task/todo'
       views:
         | never
     }
