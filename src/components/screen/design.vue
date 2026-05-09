@@ -1,11 +1,270 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-  <div>主设计区</div>
+  <draggable
+    v-bind="{
+      group: 'screen',
+      animation: 200,
+      handle: '.none'
+    }"
+    :list="designData"
+    class="drag"
+    item-key="id"
+    name="fade"
+    ghost-class="ghost"
+    @add="draggableAdd"
+  >
+    <template #item="{ element }">
+      <div
+        class="component-wrapper"
+        :class="{
+      ['group-' + element.type]: true,
+      [element.class]: element.class
+    }"
+        :style="getPositionStyle(element)"
+        @contextmenu.stop.prevent="componentContextMenu(element, $event)"
+        @mousedown.left.stop="dragStart($event, element)">
+        <div
+          v-show="activeIds?.includes(element.id)&&!element.locked"
+          class="resize-box">
+      <span
+        v-for="item in 8"
+        :key="item"
+        :class="`rs${item}`"
+        @mousedown.stop="startResize($event, element,item)"
+      />
+          <div
+            class="position-tips"
+          >
+            {{ getPositionStyle(element) }}
+          </div>
+        </div>
+        <template v-if="element.children?.length&&['container','div'].includes(element.type)">
+          <design v-model="element.children"></design>
+        </template>
+        <component-factory :data="element" v-else/>
+      </div>
+    </template>
+  </draggable>
 </template>
+<script setup lang="ts">
+  import {computed, onMounted, onUnmounted, ref} from 'vue'
+  import draggable from 'vuedraggable-es'
+  import {useScreenStore} from '@/store/screen'
+  import ComponentFactory from './componentFactory.vue'
+  import { groupWrapStyle, showTempRect, toNumber, getPositionStyle} from "./utils";
+  import type {ScreenData} from '@/types/screen'
 
-<style scoped lang="scss">
+  const emits = defineEmits<{
+    (e: 'contextmenuEvent', val: { x?: number, y?: number, component?: ScreenData, close?: boolean }): void
+  }>()
 
-</style>
+  const store = useScreenStore()
+  const designData = defineModel()
+  const MIN_SIZE = 1
+
+  const activeIds = computed(() => {
+    return store.selectedComp.map((item: { id: any; }) => item.id)
+  })
+  //　拖动和缩放
+  const resizeDrag = ref({
+    resizeFlag: false,
+    dragFlag: false,
+    index: -1,
+    startX: 0,
+    startY: 0,
+    startWidth: 0,
+    startHeight: 0,
+    startXPos: 0,
+    startYPos: 0,
+    obj: {},
+    groupPos: {}
+  })
+  const resetResizeDrag = JSON.stringify(resizeDrag.value)
+  const startResize = (evt: MouseEvent, obj: ScreenData, index: number) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    const {width, height, x, y} = obj || {}
+    resizeDrag.value = {
+      resizeFlag: true,
+      startX: evt.clientX,
+      startY: evt.clientY,
+      startWidth: toNumber(width),
+      startHeight: toNumber(height),
+      startXPos: toNumber(x),
+      startYPos: toNumber(y),
+      index: index,
+      obj: obj
+    }
+  }
+  const onResizeMove = (evt: MouseEvent) => {
+    const {resizeFlag, index, startX, startY, startWidth, startHeight, startXPos, startYPos, obj} = resizeDrag.value
+    if (!resizeFlag) return
+
+    const dx = evt.clientX - startX
+    const dy = evt.clientY - startY
+
+    let newW = startWidth
+    let newH = startHeight
+    let newX = startXPos
+    let newY = startYPos
+
+    switch (index) {
+      case 1:
+        newW = startWidth - dx
+        newH = startHeight - dy
+        newX = startXPos + dx
+        newY = startYPos + dy
+        break
+      case 2:
+        newH = startHeight - dy
+        newY = startYPos + dy
+        break
+      case 3:
+        newW = startWidth + dx
+        newH = startHeight - dy
+        newY = startYPos + dy
+        break
+      case 4:
+        newW = startWidth - dx
+        newX = startXPos + dx
+        break
+      case 5:
+        newW = startWidth + dx
+        break
+      case 6:
+        newW = startWidth - dx
+        newH = startHeight + dy
+        newX = startXPos + dx
+        break
+      case 7:
+        newH = startHeight + dy
+        break
+      case 8:
+        newW = startWidth + dx
+        newH = startHeight + dy
+        break
+    }
+    // 最小尺寸
+    newW = Math.max(newW, MIN_SIZE)
+    newH = Math.max(newH, MIN_SIZE)
+
+    // 最终赋值
+    obj.width = newW
+    obj.height = newH
+    obj.x = newX
+    obj.y = newY
+  }
+  const dragStart = (evt: MouseEvent, obj: ScreenData) => {
+    // 锁定的不能移动
+    if (obj.locked) {
+      return
+    }
+    evt.preventDefault()
+    // 关闭右键菜单
+    emits('contextmenuEvent', {close: true})
+    const {x, y} = obj || {}
+    resizeDrag.value = {
+      dragFlag: true,
+      startX: evt.clientX,
+      startY: evt.clientY,
+      startXPos: toNumber(x),
+      startYPos: toNumber(y),
+      obj: obj
+    }
+    if (obj.type === 'rect') {
+      // 当前移动的是矩形选框时，则连同选中的子节点一起移动．记录初始点
+      resizeDrag.value.groupPos = store.selectedComp.map((item: ScreenData) => [item.x, item.y])
+    }
+    const isCtrlPress = store.ctrlPress
+    // 设置当前为选中状态
+    if (obj.type !== 'rect') {
+      store.setSelectedComp(obj, isCtrlPress)
+      if (!isCtrlPress) {
+        store.deleteRect()
+      }
+    }
+    if (isCtrlPress && store.selectedComp.length > 1) {
+      // 按住多选时显示临时选区
+      console.log('创建')
+      resizeDrag.value.obj = showTempRect(groupWrapStyle())
+      console.log(JSON.stringify(resizeDrag.value.obj))
+    }
+    console.log('dragStart', store.selectedComp.length, isCtrlPress)
+    store.setControlTip('可使用键盘调整位置或按下delete键可删除')
+  }
+  const onMouseMove = (evt: MouseEvent) => {
+    const {startX, startY, startXPos, startYPos, dragFlag, obj, groupPos} = resizeDrag.value
+    if (!dragFlag) return
+    // 计算偏移量
+    const dx = evt.clientX - startX
+    const dy = evt.clientY - startY
+
+    // 计算新位置
+    let newX = startXPos + dx
+    let newY = startYPos + dy
+
+    // 赋值
+    obj.x = newX
+    obj.y = newY
+    if (obj.type === 'rect') {
+      // 当前移动的是矩形选框时，则连同选中的子节点一起移动
+      store.selectedComp.forEach((item: ScreenData, index: number) => {
+        item.x = toNumber(groupPos[index][0]) + dx
+        item.y = toNumber(groupPos[index][1]) + dy
+      })
+    }
+    store.setControlTip(`${newX}:${newY}`)
+  }
+  const onMouseUp = () => {
+    resizeDrag.value = JSON.parse(resetResizeDrag)
+  }
+  //　拖动缩放结束
+
+  const canvasWidth = computed(() => {
+    const {width} = store.designConfig || {}
+    return width
+  })
+
+  // 拖拽添加
+  const draggableAdd = (evt: any) => {
+    const newIndex = evt.newIndex
+    const obj: ScreenData = designData.value[newIndex]
+    // 不能嵌套
+    const isNested = evt.target && evt.target.getAttribute('data-type')
+    if (isNested === 'div' && obj.type === 'div') {
+      designData.value.splice(newIndex, 1)
+      return
+    }
+    const {offsetX, offsetY} = evt.originalEvent
+    obj.id = obj.type + new Date().getTime()
+    if (obj.type === 'div') {
+      obj.width = parseInt(canvasWidth.value) - offsetX
+    }
+    obj.x = offsetX
+    obj.y = offsetY
+    store.setSelectedComp(obj)
+    store.deleteRect() // 确保不会出现选区
+  }
+
+  // 鼠标右键事件
+  const componentContextMenu = (component: ScreenData, evt: MouseEvent) => {
+    evt.preventDefault()
+    // 如果组件被锁定，不处理
+    //if (component.locked) return
+    emits('contextmenuEvent', {x: evt.clientX, y: evt.clientY, component: component})
+  }
+  onMounted(() => {
+    window.addEventListener('mousemove', (e: MouseEvent) => {
+      onMouseMove(e)
+      onResizeMove(e)
+    })
+    window.addEventListener('mouseup', onMouseUp)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('mousemove', (e: MouseEvent) => {
+      onMouseMove(e)
+      onResizeMove(e)
+    })
+    window.removeEventListener('mouseup', onMouseUp)
+  })
+</script>

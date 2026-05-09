@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "47503890",
+      "name": "06底对齐-copy",
+      "font_class": "bottom-aglin",
+      "unicode": "10100",
+      "unicode_decimal": 65792
+    },
+    {
+      "icon_id": "47503893",
+      "name": "垂直居中",
+      "font_class": "vertical",
+      "unicode": "10101",
+      "unicode_decimal": 65793
+    },
+    {
+      "icon_id": "6337463",
+      "name": "右对齐",
+      "font_class": "right-align",
+      "unicode": "ec82",
+      "unicode_decimal": 60546
+    },
+    {
+      "icon_id": "6337473",
+      "name": "左对齐",
+      "font_class": "left-align",
+      "unicode": "ec86",
+      "unicode_decimal": 60550
+    },
+    {
+      "icon_id": "7850695",
+      "name": "拆分",
+      "font_class": "split",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "17652590",
+      "name": "06底对齐",
+      "font_class": "top-aglin",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    },
+    {
+      "icon_id": "38010131",
+      "name": "对齐居中",
+      "font_class": "horizontal",
+      "unicode": "e822",
+      "unicode_decimal": 59426
+    },
+    {
       "icon_id": "7336951",
       "name": "刷新",
       "font_class": "refresh",

@@ -2,7 +2,7 @@ export const getDrawerTitle = {
   after:
     '获取数据响应处理之后事件，可对请求返回数据进行处理；支持返回字符串形式',
   before: '获取数据请求发送之前事件，可对请求参数进行处理；支持返回字符串形式',
-  editCss: '当前表单应用页的样式，类似于.vue文件中的style scoped中的样式',
+  editCss: '当前应用页的样式，类似于.vue文件中的style scoped中的样式',
   change:
     '表单组件值改变事件。这里可修改其他组件的值。返回字符串形式可在@/utils/formChangeValue中处理',
   editRules:

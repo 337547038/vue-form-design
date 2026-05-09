@@ -95,6 +95,7 @@ export function stringToObj(string: string) {
 export function string2json(string: string) {
   return JSON.parse(string || '{}')
 }
+
 export function json2string(obj: any, isBeautify?: boolean) {
   return isBeautify ? JSON.stringify(obj, null, 2) : JSON.stringify(obj)
 }
@@ -102,11 +103,11 @@ export function json2string(obj: any, isBeautify?: boolean) {
 // ace编辑器相关
 /**
  * 打开aceEdit编辑器相关配置
- * @param data
- * @param id
- * @param type
+ * @param content
+ * @param id 页面标签id,防止同一页面出现两个编辑器
+ * @param type 显示编码类型 json/javascript
  */
-export const aceEdit = (data: any, id?: string, type?: string) => {
+export const aceEdit = ({content, id, type}: { content: string, id?: string, type?: string }) => {
   type = type ? type : 'javascript'
   id = id ? id : 'editJson'
   const editor = ace.edit(id)
@@ -119,7 +120,7 @@ export const aceEdit = (data: any, id?: string, type?: string) => {
   editor.setShowPrintMargin(false)
   editor.session.setMode('ace/mode/' + type)
   editor.setTheme('ace/theme/tomorrow_night')
-  editor.setValue(data)
+  editor.setValue(content)
   return editor
 }
 
@@ -166,15 +167,15 @@ export const objectToArray = (obj: any): { [key: string | number]: any } => {
   return obj
 }
 /****
- * 动态插入移除css
+ * 动态插入移除css  todo 移除
  * @param id 标签id
  * @param cssContent 要插入的css内容
  * @param append true插入false移除
  */
 export const appendOrRemoveStyle = (
-  id: string,
-  cssContent: string,
-  append?: boolean
+    id: string,
+    cssContent: string,
+    append?: boolean
 ): void => {
   const styleId: any = document.getElementById(id)
   if (styleId && append) {

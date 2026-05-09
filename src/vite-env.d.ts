@@ -31,6 +31,7 @@ declare module 'js-beautify'
 // 全局变量 TS 类型声明
 declare const ace: any;
 declare const tinymce: any;
+declare const getScreenGlobal: any;
 declare const AMap: any;
 declare const echarts: any;
 declare const definePage: any;

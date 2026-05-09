@@ -22,6 +22,10 @@ export default [
                 ecmaVersion: 'latest',
                 sourceType: 'module',
             },
+            env: {
+                browser: true, // 让 ESLint 认识 setTimeout 等浏览器全局变量
+                es2021: true,
+            },
             // 所有全局变量
             globals: {
                 // Vue 编译器宏
@@ -36,6 +40,7 @@ export default [
                 tinymce: 'readonly',
                 AMap: 'readonly',
                 echarts: 'readonly',
+                getScreenGlobal: 'readonly',
             },
         },
     },

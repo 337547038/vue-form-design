@@ -1,0 +1,147 @@
+.screen-container {
+  .el-tabs__nav {
+    display: flex;width: 100%;
+
+    .el-tabs__item {width: 50%}
+  }
+
+  /*左则组件图层*/
+
+  .components-list {overflow: hidden;padding: 0;width: 180px;transition: all .5s;
+
+    .scroll {
+      height: calc(100vh - 114px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .btn-group {position: absolute;top: 0;right: -100px;transition: all .3s;bottom: 0;height: 100%}
+
+    .layer-list {
+      li {font-size: 14px;width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 5px 10px;border-radius: 3px;
+
+        &:hover {cursor: default;border-color: #f4f6fc;
+
+          .btn-group {right: 0}
+        }
+      }
+
+      .btn-group {display: flex;justify-content: center;align-items: stretch;}
+
+      .icon {font-size: 20px;cursor: pointer;display: flex;align-items: center;padding: 0 5px;margin: 0;color: #fff}
+
+      .icon1 {background: #e6a23c;font-size: 26px}
+
+      .icon2 {background: #409eff;font-size: 22px}
+
+      .icon3 {background: #f56c6c}
+
+      .name {flex: 2}
+    }
+  }
+
+  /*左则组件图层结束*/
+  /*右则属性*/
+  .sidebar-tools {width: 220px;overflow: hidden;transition: all .5s;
+
+    .scroll {height: calc(100vh - 90px);overflow-y: auto;padding-right: 10px}
+
+    .el-tabs__content {padding-right: 0}
+
+    .el-form-item {margin-bottom: 10px}
+  }
+
+  /*右则属性结束*/
+  .main-body {color: #fff;flex-direction: column;width: 100%;height: calc(100vh - 66px);display: flex;overflow: hidden;
+  }
+
+  .design-main {
+    background: #304156;flex: 2;padding: 0 0 0 20px;position: relative;overflow: auto}
+
+  .design-canvas {
+    transform-origin: 0 0;height: 100%;position: absolute;top: 20px;left: 20px;
+  }
+
+  .no-date {color: #ccc;font-size: 20px;position: absolute;top: 30%;left: 50%;transform: translate(-50%);
+  }
+
+  .design-footer {
+    background: #304156;justify-content: space-between;align-items: center;padding: 0 5px;display: flex;
+
+    .icon {
+      cursor: pointer;
+    }
+
+    .control-tip {color: #999;white-space: nowrap;text-overflow: ellipsis;flex: 2;margin: 0 20px;overflow: hidden;
+    }
+
+    .center {justify-content: center;margin: 0 50px;display: flex;
+
+      .item {align-items: center;margin: 0 10px;display: flex;white-space: nowrap;
+
+        .label {margin-right: 10px;}
+      }
+    }
+
+    .el-slider {
+      width: 150px;
+    }
+  }
+
+  .drag {height: 100%}
+
+  .component-wrapper {position: absolute;cursor: move;overflow: hidden;user-select: none;
+
+    &:hover {background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);}
+  }
+
+  .resize-box {z-index: 5;border: 1px solid #409eff;width: 100%;height: 100%;position: absolute;top: 0;left: 0;
+
+    span {background: #fff;border: 1px solid #409eff;width: 8px;height: 8px;display: block;position: absolute;}
+
+    .rs1 {cursor: se-resize;top: -4px;left: -4px;}
+
+    .rs2 {cursor: s-resize;margin-left: -4px;top: -4px;left: 50%;}
+
+    .rs3 {cursor: sw-resize;top: -4px;right: -4px;}
+
+    .rs4 {cursor: e-resize;margin-top: -4px;top: 50%;left: -4px;}
+
+    .rs5 {cursor: e-resize;margin-top: -4px;top: 50%;right: -4px;}
+
+    .rs6 {cursor: sw-resize;bottom: -4px;left: -4px;}
+
+    .rs7 {cursor: s-resize;margin-left: -4px;bottom: -4px;left: 50%;}
+
+    .rs8 {cursor: se-resize;bottom: -4px;right: -4px;}
+  }
+
+  // 临时选区
+  .group-rect {cursor: pointer;background: rgba(64, 158, 255, 0.15);border: 1px dashed #409eff;z-index: 8888;
+  }
+
+  //　临时选区集合
+  .group-wrap {border: 1px dashed #f5222d;background: rgba(245, 34, 45, 0.05);cursor: move;
+  }
+
+  //　组合容器
+  .group-container {
+    .drag {pointer-events: none}
+  }
+
+  .context-menu {
+    position: fixed;background-color: #fff;border: 1px solid #ebeef5;border-radius: 4px;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);padding: 4px 0;z-index: 9999;min-width: 120px;
+
+    .menu-item {display: flex;align-items: center;padding: 8px 16px;cursor: pointer;transition: background-color 0.2s;
+      color: #333;z-index: 100;user-select: none;
+
+      &:hover {background-color: #f5f7fa;}
+
+      span {padding-left: 10px;}
+      &.disabled{color: #999;cursor: not-allowed}
+    }
+
+    .divider {height: 1px;background-color: #ebeef5;margin: 4px 0;padding: 0}
+  }
+}
