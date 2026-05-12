@@ -36,6 +36,14 @@
     :is="data.component"
     v-if="['component'].includes(data.type)"
   />
+  <table-com
+    :height="data.height"
+    :speed="data.speed"
+    :carousel="data.carousel"
+    :data="getReplaceGlobal"
+    v-if="data.type==='table'"
+    :style="getConfigStyle">
+  </table-com>
 </template>
 <script setup lang="ts">
   import {computed, onMounted, ref} from 'vue'
@@ -43,6 +51,7 @@
   import EchartsInit from './widgets/echartsInt.vue'
   import ScrollText from './widgets/scrollText.vue'
   import DataTime from './widgets/datetime.vue'
+  import TableCom from './widgets/table.vue'
   import {objToStringify, stringToObj} from "@/utils/design";
   import {useScreenStore} from "@/store/screen"
   import {getComponentData, getDataByType} from "@/components/screen/getData";

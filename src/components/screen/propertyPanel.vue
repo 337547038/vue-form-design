@@ -420,11 +420,12 @@
       // 静态数据 / 文本 / 表格数据
       editData: () => {
         const isText = ['text', 'sText'].includes(activeComp.value.type)
-        let title = '图表数据，静态时直接修改；使用全局时，通过{{getScreenGlobal.xxx}}字符串替换，如data:"{{getScreenGlobal.xxx}}．当前组件的动态数据可使用getScreenComp方法"'
-        if (isText) title = '编辑文本内容数据'
+        let title = '图表数据，静态时直接修改；'
+        if (isText) title = '编辑文本内容数据；'
         if (activeComp.value.type === 'table') {
-          title = '表格列表数据。根据设定的table-column列数据设置对应的数据'
+          title = '表格列表数据。根据设定的table-column列数据设置对应的数据；columns表头数据，如{prop:"name",label:"名称"}，list表格行数据'
         }
+        title += '使用全局时，通过{{getScreenGlobal.xxx}}字符串替换，如data:"{{getScreenGlobal.xxx}}"．当前组件的动态数据可使用getScreenComp方法'
         return {
           type: isText ? 'text' : '',
           title: title,

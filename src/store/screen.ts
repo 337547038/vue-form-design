@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import {computed, ref} from 'vue'
 import {getStorage, setStorage, isArray} from "@/utils";
-import type {ScreenData} from "@/types/screen.ts";
+import type {ScreenData} from "@/types/screen";
 
 export const useScreenStore = defineStore('screen', () => {
   const screenStorage = ref(getStorage('screenConfig', true) || {})
