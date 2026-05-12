@@ -18,25 +18,32 @@
     .btn-group {position: absolute;top: 0;right: -100px;transition: all .3s;bottom: 0;height: 100%}
 
     .layer-list {
-      li {font-size: 14px;width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 5px 10px;border-radius: 3px;
+      li {font-size: 14px;width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 5px 5px;border-radius: 3px;
+        background-color: #F8F9FA;
+        border: 1px solid #E9ECEF;
+        color: #212529;
 
-        &:hover {cursor: default;border-color: #f4f6fc;
+        &:hover {cursor: default;background-color: #F1F3F5;}
 
-          .btn-group {right: 0}
+        &.active {
+          background-color: #E7F5FF;
+          border: 1px solid #4DABF7;
+          color: #1971C2;}
+
+        &.locked {
+          background-color: #F1F3F5;
+          border: 1px solid #CED4DA;
+          color: #868E96;
         }
+
+        &.display {background-color: #F8F9FA;
+          border: 1px solid #E9ECEF;
+          color: #CED4DA;}
+        .icon{margin-right: 0;margin-left: 5px;cursor: pointer;color: #1971C2;}
       }
 
-      .btn-group {display: flex;justify-content: center;align-items: stretch;}
-
-      .icon {font-size: 20px;cursor: pointer;display: flex;align-items: center;padding: 0 5px;margin: 0;color: #fff}
-
-      .icon1 {background: #e6a23c;font-size: 26px}
-
-      .icon2 {background: #409eff;font-size: 22px}
-
-      .icon3 {background: #f56c6c}
-
       .name {flex: 2}
+      .input{border: none;background: none}
     }
   }
 
@@ -44,11 +51,11 @@
   /*右则属性*/
   .sidebar-tools {width: 220px;overflow: hidden;transition: all .5s;
 
-    .scroll {height: calc(100vh - 90px);overflow-y: auto;padding-right: 10px}
+    .scroll {height: calc(100vh - 140px);overflow-y: auto;padding-right: 10px}
 
     .el-tabs__content {padding-right: 0}
 
-    .el-form-item {margin-bottom: 10px}
+    .el-form-item {margin-bottom: 8px}
   }
 
   /*右则属性结束*/
@@ -94,9 +101,10 @@
 
     &:hover {background: rgba(255, 255, 255, 0.1);
       box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);}
+    &.active{border: 1px solid #409eff;}
   }
 
-  .resize-box {z-index: 5;border: 1px solid #409eff;width: 100%;height: 100%;position: absolute;top: 0;left: 0;
+  .resize-box {z-index: 5;width: 100%;height: 100%;position: absolute;top: 0;left: 0;
 
     span {background: #fff;border: 1px solid #409eff;width: 8px;height: 8px;display: block;position: absolute;}
 
@@ -115,6 +123,8 @@
     .rs7 {cursor: s-resize;margin-left: -4px;bottom: -4px;left: 50%;}
 
     .rs8 {cursor: se-resize;bottom: -4px;right: -4px;}
+
+    .position-tips{white-space: nowrap;font-size: 12px}
   }
 
   // 临时选区
@@ -139,7 +149,8 @@
       &:hover {background-color: #f5f7fa;}
 
       span {padding-left: 10px;}
-      &.disabled{color: #999;cursor: not-allowed}
+
+      &.disabled {color: #999;cursor: not-allowed}
     }
 
     .divider {height: 1px;background-color: #ebeef5;margin: 4px 0;padding: 0}

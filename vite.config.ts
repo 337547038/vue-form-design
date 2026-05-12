@@ -1,14 +1,10 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Markdown from 'vite-plugin-doc-preview'
-import { fileURLToPath, URL } from 'url'
-import fs from 'fs'
+import {fileURLToPath, URL} from 'url'
+//import fs from 'fs'
 import VueRouter from 'vue-router/vite'
-
-// 将public下的iconfont.css复制到。直接从public目录导入会报错Assets in public cannot be imported from JavaScript
-fs.createReadStream('./public/static/iconfont/iconfont.json').pipe(
-  fs.createWriteStream('./src/components/diyIconfont/iconfont.json')
-)
+import generateAssets from './scripts/generateAssets';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -25,7 +21,8 @@ export default defineConfig({
     vue({
       include: [/\.vue$/, /\.md$/]
     }),
-    Markdown({})
+    Markdown({}),
+    generateAssets()
   ],
   resolve: {
     alias: {

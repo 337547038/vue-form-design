@@ -39,49 +39,7 @@
         label="图层"
         name="layer"
       >
-        <div class="scroll layer-list">
-          <ul>
-            <li
-              v-for="element in layerList"
-              :key="element.id"
-              :class="{
-                active: activeId === element.id,
-                lock: element.lock,
-                display: element.display
-              }"
-            >
-              <i
-                class="icon-type"
-                :class="getIcon(element.type)"
-              />
-              <span class="name">名称</span>
-              <span class="btn-group">
-                <i
-                  class="icon icon1"
-                  :class="[
-                    element.display ? 'icon-eye-close' : 'icon-eye'
-                  ]"
-                  @click="layerClick(element, 'display')"
-                />
-                <i
-                  class="icon icon2"
-                  :class="[
-                    element.config?.lock ? 'icon-lock' : 'icon-lock-open'
-                  ]"
-                  @click="layerClick(element, 'lock')"
-                />
-                <el-popconfirm
-                  title="确认删除"
-                  @confirm="layerClick(element, 'del')"
-                >
-                  <template #reference>
-                    <i class="icon icon-del icon3" />
-                  </template>
-                </el-popconfirm>
-              </span>
-            </li>
-          </ul>
-        </div>
+        <layer-panel/>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -90,34 +48,13 @@
   import {ref} from 'vue'
   import draggable from 'vuedraggable-es'
   import {jsonParseStringify} from "@/utils/design";
+  import LayerPanel from "./layerPanel.vue";
+  import {iconList} from './utils'
 
-  const activeId = ref()
-  const layerList = ref([{name: '拆线图', type: 'line'}])
-  const layerClick = () => {
-
-  }
   const clone = (origin: any) => {
     return jsonParseStringify(origin);
   }
-  const iconList: { [key: string]: string } = {
-    line: 'line',
-    bar: 'bar',
-    pie: 'pie',
-    echarts: '',
-    table: 'table',
-    text: 'text2',
-    sText: 'sText',
-    image: 'image',
-    background: 'image',
-    border: 'border',
-    clock: 'time',
-    div: 'div',
-    group: 'div',
-    component: 'component'
-  }
-  const getIcon = (type: string) => {
-    return `icon-${iconList[type]}`
-  }
+
   const controlList = ref([
     {
       label: '图表',
@@ -240,16 +177,10 @@
         },
         {
           type: 'background',
-          label: '背景',
+          label: '背景边框',
           width: 100,
           height: 50,
           src: ''
-        },
-        {
-          type: 'border',
-          label: '边框',
-          width: 100,
-          height: 100
         },
         {
           type: 'clock',
@@ -266,6 +197,7 @@
           type: 'div',
           label: 'div布局',
           height: 400,
+          width: 500,
           list: []
         }
       ]

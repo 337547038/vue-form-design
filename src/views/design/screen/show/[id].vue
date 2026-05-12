@@ -9,12 +9,11 @@
 <script setup lang="ts">
   import {computed, onMounted, ref} from 'vue'
   import ScreenShow from '@/components/screen/show.vue'
-  import {useScreenStore} from "@/store/screen"
   import {useRoute} from "vue-router";
   import {getInitData} from "@/components/screen/getData";
+  import {getStorage} from "@/utils";
 
   const route = useRoute();
-  const store = useScreenStore()
 
   const loading = ref(false)
   const designData = ref({list: [], config: {}})
@@ -31,10 +30,7 @@
   const getData = () => {
     const id = route.params.id
     if (id === 'preview') {
-      designData.value = {
-        list: store.designFilterData,
-        config: store.designConfig
-      }
+      designData.value = getStorage('screenPreviewData')
       return
     }
     getInitData(id)

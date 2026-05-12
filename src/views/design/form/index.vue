@@ -87,7 +87,7 @@
   import { objToStringify, string2json, stringToObj } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
   import type { FormData } from '@/types/form'
-  import { getDrawerTitle, getDrawerContent } from '../components/aceTooptip'
+  import { getAceTitle, getAceContent } from '../../../components/ace/tooltip'
   import getOneFormCreation from './components/oneFormCreation'
 
   defineOptions({ name: 'DesignFormIndex' })
@@ -266,7 +266,7 @@
     drawer.direction = direction || 'ltr' // 窗口位置ltr/rtl
     drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
     drawer.codeType = codeType || '' // 显示代码类型
-    drawer.title = (getDrawerTitle as any)[type]
+    drawer.title = (getAceTitle as any)[type]
     drawer.visible = true
     drawer.callback = callback
     let editData
@@ -285,18 +285,18 @@
           if (type !== 'change') {
             eventType = type + 'Type'
           }
-          editData = getDrawerContent(eventType, 'form')
+          editData = getAceContent(eventType, 'form')
         }
         break
       case 'beforeOption':
       case 'afterOption':
         const keyType = type.replace('Option', '')
         if (!content) {
-          editData = getDrawerContent(keyType)
+          editData = getAceContent(keyType)
         } else {
           editData = objToStringify(content, true)
         }
-        drawer.title = (getDrawerTitle as any)[keyType]
+        drawer.title = (getAceTitle as any)[keyType]
         break
       case 'creatJson':
         editData = objToStringify(content, true)

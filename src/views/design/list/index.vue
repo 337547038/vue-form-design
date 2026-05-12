@@ -224,7 +224,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { ElMessage } from 'element-plus'
   import { useLayoutStore } from '@/store/layout'
-  import { getDrawerContent, getDrawerTitle } from '../components/aceTooptip'
+  import { getAceContent, getAceTitle } from '../../../components/ace/tooltip'
   import ControlAttr from './components/controlAttr.vue'
   import { getFormColumns, getInitData } from './components/request'
   import OperateBtn from '@/components/table/components/operateButton.vue'
@@ -398,7 +398,7 @@
         const newData: any = tableData.value.events || {}
         editData = newData[type]
         if (!editData) {
-          editData = getDrawerContent(type + 'Type', 'list')
+          editData = getAceContent(type + 'Type', 'list')
           isString = true
         }
         break
@@ -417,17 +417,17 @@
         break
       case 'treeBefore':
         editData = tableData.value.treeData?.before
-        title = getDrawerTitle.before
+        title = getAceTitle.before
         if (!editData) {
-          editData = getDrawerContent('beforeType', 'tree')
+          editData = getAceContent('beforeType', 'tree')
           isString = true
         }
         break
       case 'treeAfter':
         editData = tableData.value.treeData?.after
-        title = getDrawerTitle.after
+        title = getAceTitle.after
         if (!editData) {
-          editData = getDrawerContent('afterType', 'tree')
+          editData = getAceContent('afterType', 'tree')
           isString = true
         }
         break
@@ -446,7 +446,7 @@
       case 'renderFormatter':
         editData = currentObj.value.renderFormatter
         if (!editData) {
-          editData = getDrawerContent('renderFormatter')
+          editData = getAceContent('renderFormatter')
           isString = true
         }
         title = '渲染前对字段值的预处理方法，需返回新值'
@@ -464,7 +464,7 @@
     }
     drawer.visible = true
     drawer.direction = direction
-    drawer.title = title ? title : (getDrawerTitle as any)[type]
+    drawer.title = title ? title : (getAceTitle as any)[type]
     drawer.content = editData
     drawer.codeType = codeType
     drawer.type = type

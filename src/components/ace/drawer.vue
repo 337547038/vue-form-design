@@ -29,6 +29,7 @@
   import {nextTick, onMounted, onUnmounted, reactive, ref} from 'vue'
   import {aceEdit, json2string, objToStringify, string2json, stringToObj} from "@/utils/design";
   import type {AceDrawerT} from "@/components/ace/type"
+  import {getAceContent, getAceTitle} from "./tooltip";
 
   const emits = defineEmits<{
     (e: 'beforeClose'): void
@@ -45,10 +46,12 @@
   })
   const dialogConfirm = () => {
     const editVal = editor.value.getValue()
-    const content = state.type === 'json'
-      ? string2json(editVal)
-      : stringToObj(editVal)
-
+    let content = editVal
+    if (state.type !== 'css') {
+      content = state.type === 'json'
+        ? string2json(editVal)
+        : stringToObj(editVal)
+    }
     state.callback && state.callback(content)
     emits('confirm', editVal, state.key) // 传多个参数方便在confirm时判断来源
     visible.value = false
@@ -59,11 +62,22 @@
   }
   const open = (obj: AceDrawerT) => {
     visible.value = true
+    let content = obj.content
+    // css时不需要转换
+    if (obj.type !== 'css') {
+      content = obj.type === 'json'
+        ? json2string(obj.content, true)
+        : objToStringify(obj.content, true)
+    }
+    // 当传入内容为空，同时传入key时，则根据key配置初始值
+    if (obj.key && !obj.content) {
+      content = getAceContent(obj.key) || ''
+    }
+    // 当标题为空，则根据key配置标题
+    if (obj.key && !obj.title) {
+      obj.title = (getAceTitle as any)[obj.key] || ''
+    }
     Object.assign(state, obj)
-    const content = obj.type === 'json'
-      ? json2string(obj.content, true)
-      : objToStringify(obj.content, true)
-
     nextTick(() => {
       editor.value = aceEdit({content: content, type: obj.type})
     })

@@ -37,12 +37,13 @@
   import AceDrawer from '@/components/ace/drawer.vue'
   import type {AceDrawerT} from "@/components/ace/type";
 
-  import { objToStringify} from "@/utils/design";
+  import {objToStringify} from "@/utils/design";
   import VueFile from "../components/vueFile.vue";
   import {getRequest} from "@/api";
   import {useRoute, useRouter} from "vue-router";
   import {ElMessage} from "element-plus";
   import {getInitData} from '@/components/screen/getData'
+  import {setStorage} from "@/utils";
 
 
   definePage({meta: {permissions: 'none'}})
@@ -73,7 +74,7 @@
     drawer.direction = direction || 'ltr' // 窗口位置ltr/rtl
     drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
     drawer.codeType = codeType || '' // 显示代码类型
-    drawer.title = title || (getDrawerTitle as any)[type]
+    drawer.title = title || (getAceTitle as any)[type]
     drawer.visible = true
     drawer.callback = callback
     let editData
@@ -91,7 +92,7 @@
           if (type === 'after') {
             // todo eventType = isGlobal ? 'afterScreenGlobal' : 'afterScreen'
           }
-          editData = getDrawerContent(eventType)
+          editData = getAceContent(eventType)
         }
         break
     }
@@ -104,17 +105,20 @@
   const vueFileEl = ref()
   // 顶部工具栏点击事件
   const headToolsClick = (type: string) => {
-    // todo 清空右则属性相关
     switch (type) {
       case 'del':
         screenStore.setDesignConfig(JSON.parse(defaultConfig))
         screenStore.setDesignData([])
+        screenStore.setSelectedComp([])
+        screenStore.deleteRect()
         break
       case 'eye':
         // 新窗口预览
         const routeUrl = router.resolve({
           path: '/design/screen/show/preview',
         })
+        //　将数据存
+        setStorage('screenPreviewData', designData.value)
         window.open(routeUrl.href, '_blank')
         break
       case 'json':

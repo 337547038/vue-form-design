@@ -105,7 +105,7 @@ export function json2string(obj: any, isBeautify?: boolean) {
  * 打开aceEdit编辑器相关配置
  * @param content
  * @param id 页面标签id,防止同一页面出现两个编辑器
- * @param type 显示编码类型 json/javascript
+ * @param type 显示编码类型 json/javascript/css 默认javascript
  */
 export const aceEdit = ({content, id, type}: { content: string, id?: string, type?: string }) => {
   type = type ? type : 'javascript'

@@ -1,5 +1,6 @@
 import type {ScreenData} from "@/types/screen";
 import {useScreenStore} from "@/store/screen"
+import imagesFile from './imagesFile.json'
 
 const store = useScreenStore()
 /**
@@ -92,6 +93,9 @@ export const groupWrapStyle = () => {
 }
 
 export const getPositionStyle = (data: ScreenData) => {
+  if (data.notUseInlineStyle) {
+    return {} // 不使用内联位置信息
+  }
   const {x, y, height, width, zIndex, display, right, bottom} = data
   // 设置了right时left为auto，设置了bottom时top为auto
   const params = {
@@ -109,4 +113,89 @@ export const getPositionStyle = (data: ScreenData) => {
   return Object.fromEntries(
       Object.entries(params).filter(([_, v]) => v !== '')
   )
+}
+
+/**
+ * 插入页面的scoped样式id名，主要用于根据id删除
+ */
+export const ScopedStyleId = 'scopedStyleId'
+
+/**
+ * 开发环境下读读指定目录下的图片文件，并生成json列表，供生产环境使用
+ */
+export const loadStaticImages = async () => {
+  try {
+    /**
+     * 第二个参数 true = 递归读取子目录
+     * 匹配所有图片格式
+     */
+    if (import.meta.env.DEV) {
+      const imageModules = import.meta.glob(`/public/static/screen/**/*.{png,jpg,jpeg,gif,svg,webp}`, {eager: true})
+
+      // 处理成我们需要的格式
+      const list = []
+      for (const path in imageModules) {
+        const publicPath = path.replace('/public', '')
+        list.push(publicPath)
+      }
+      return list
+    } else {
+      return imagesFile
+    }
+  } catch (err) {
+    console.error('读取图片失败：', err)
+  }
+}
+
+export const iconList: { [key: string]: string } = {
+  line: 'line',
+  bar: 'bar',
+  pie: 'pie',
+  echarts: '',
+  table: 'table',
+  text: 'text2',
+  sText: 'sText',
+  image: 'image',
+  background: 'image',
+  border: 'border',
+  clock: 'time',
+  div: 'div',
+  group: 'div',
+  component: 'component'
+}
+
+/**
+ * 判断字符串是否是纯数字 或 数字开头+px结尾
+ * @param {string} str 要判断的字符串
+ * @returns {boolean}
+ */
+export function isValidNumberOrPx(str: string | number | null | undefined): boolean {
+  // 空值直接返回 false（可根据需求改成 true）
+  if (str === null || str === undefined || str === '') {
+    return false;
+  }
+  // 统一转成字符串判断
+  const reg = /^\d+(px)?$/i;
+  return reg.test(String(str));
+}
+
+/**
+ * 判断当前组件是否可以拖动组合等操作
+ * @param obj
+ */
+export const cannotDragScale = (obj: ScreenData): boolean => {
+  // 任一条件不满足 → 不可拖拽缩放（return false）
+  if (
+      obj.display ||
+      obj.locked ||
+      obj.notUseInlineStyle ||
+      !!obj.right ||
+      !!obj.bottom ||
+      !isValidNumberOrPx(obj.x) ||
+      !isValidNumberOrPx(obj.y)
+  ) {
+    return false
+  }
+  // 所有条件都满足 → 可以拖拽缩放
+  return true
 }

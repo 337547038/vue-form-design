@@ -22,7 +22,10 @@
       @focus="isCanvasFocused = true"
       @blur="isCanvasFocused = false"
     >
-      <design v-model="store.designData" @contextmenu-event="contextmenuEvent"></design>
+      <design
+        v-model="store.designData"
+        @clickFocus="isCanvasFocused = true"
+        @contextmenu-event="contextmenuEvent"></design>
       <context-menu ref="contextMenuRef"/>
     </div>
     <div
@@ -39,7 +42,7 @@
   import {useScreenStore} from "@/store/screen"
   import Design from "./design.vue"
   import type {ScreenData} from '@/types/screen'
-  import {groupWrapStyle, showTempRect, toNumber} from "./utils"
+  import {groupWrapStyle, showTempRect, toNumber, cannotDragScale} from "./utils"
   import ContextMenu from "./contextMenu.vue"
 
   const store = useScreenStore()
@@ -154,8 +157,8 @@
     }
     // 遍历匹配重叠box
     store.designFilterData?.forEach((item: ScreenData) => {
-      // 排除锁定的
-      if (!item.locked) {
+      // 排除不符合条件的
+      if (cannotDragScale(item)) {
         const boxRect = {
           x: toNumber(item.x),
           y: toNumber(item.y),

@@ -17,13 +17,14 @@
         class="component-wrapper"
         :class="{
       ['group-' + element.type]: true,
-      [element.class]: element.class
+      [element.class]: element.class,
+      'active':activeIds?.includes(element.id)
     }"
         :style="getPositionStyle(element)"
         @contextmenu.stop.prevent="componentContextMenu(element, $event)"
         @mousedown.left.stop="dragStart($event, element)">
         <div
-          v-show="activeIds?.includes(element.id)&&!element.locked"
+          v-show="activeIds?.includes(element.id)&&cannotDragScale(element)"
           class="resize-box">
       <span
         v-for="item in 8"
@@ -37,6 +38,9 @@
             {{ getPositionStyle(element) }}
           </div>
         </div>
+        <template v-if="['container','div'].includes(element.type)">
+          888
+        </template>
         <template v-if="element.children?.length&&['container','div'].includes(element.type)">
           <design v-model="element.children"></design>
         </template>
@@ -50,11 +54,12 @@
   import draggable from 'vuedraggable-es'
   import {useScreenStore} from '@/store/screen'
   import ComponentFactory from './componentFactory.vue'
-  import { groupWrapStyle, showTempRect, toNumber, getPositionStyle} from "./utils";
+  import {groupWrapStyle, showTempRect, toNumber, getPositionStyle, cannotDragScale} from "./utils";
   import type {ScreenData} from '@/types/screen'
 
   const emits = defineEmits<{
     (e: 'contextmenuEvent', val: { x?: number, y?: number, component?: ScreenData, close?: boolean }): void
+    (e: 'click'): void
   }>()
 
   const store = useScreenStore()
@@ -154,9 +159,15 @@
     obj.y = newY
   }
   const dragStart = (evt: MouseEvent, obj: ScreenData) => {
-    // 锁定的不能移动
+    emits('clickFocus') // 设置焦点，确保焦点在父节点，否则删除可能失败
+    // 锁定的不能操作
     if (obj.locked) {
       return
+    }
+    //　不符合移动组合等条件的，只选中
+    if (!cannotDragScale(obj)) {
+      store.setSelectedComp(obj)
+      return false
     }
     evt.preventDefault()
     // 关闭右键菜单
@@ -236,9 +247,9 @@
     }
     const {offsetX, offsetY} = evt.originalEvent
     obj.id = obj.type + new Date().getTime()
-    if (obj.type === 'div') {
+    /*if (obj.type === 'div') {
       obj.width = parseInt(canvasWidth.value) - offsetX
-    }
+    }*/
     obj.x = offsetX
     obj.y = offsetY
     store.setSelectedComp(obj)

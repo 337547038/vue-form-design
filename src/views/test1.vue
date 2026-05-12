@@ -1,51 +1,31 @@
 <template>
-  <div>
-  </div>
+  <div style="max-width: 500px; margin: 30px auto; display: flex; flex-direction: column; gap: 20px">
+    <!-- 左滚动：速度越快数字越大 -->
+    <div style="width: 100%;height:30px;overflow: hidden;line-height: 30px;">
+    <ScrollText :data="{speed:30,step:1,direction:'top',height:'30px'}">
+      🔥 JS 完美滚动 · speed 生效 · 横向无缝
+    </ScrollText>
+    </div>
 
+<!--    &lt;!&ndash; 右滚动 &ndash;&gt;
+    <ScrollText direction="right" :speed="2" width="100%" height="40px">
+      🚀 向右滚动 · 流畅丝滑 · 无卡顿
+    </ScrollText>
+
+    &lt;!&ndash; 上滚动：速度 + 停顿 &ndash;&gt;
+    <ScrollText direction="up" :speed="3" :delay="2000" width="100%" height="40px">
+      这是向上滚动的一段文字，每次滚一行
+    </ScrollText>
+
+    &lt;!&ndash; 下滚动 &ndash;&gt;
+    <ScrollText direction="down" :speed="3" :delay="2500" width="100%" height="40px">
+      这是向下滚动的一段文字，停顿后再滚动
+    </ScrollText>-->
+
+  </div>
 </template>
 
-<script setup lang="ts">
-  import {computed, ref} from 'vue'
 
-
-  const menuList = computed(() => {
-    return [
-      {key: 'copy', label: '复制', icon: 'DocumentCopy'},
-      {key: 'del', label: '删除', icon: 'Delete'},
-      {key: 'divider', label: ''},
-      {key: 'link', label: '组合', icon: 'Link'},
-      {key: 'split', label: '拆分', icon: 'icon-split'},
-      {key: 'divider', label: ''},
-      {key: 'unlock', label: '解锁', icon: 'Unlock'},
-      {key: 'lock', label: '锁定', icon: 'Lock'},
-      {key: 'divider', label: ''},
-      {key: 'left', label: '左对齐', icon: 'icon-left-align'},
-      {key: 'right', label: '右对齐', icon: 'icon-right-align'},
-      {key: 'top', label: '顶部对齐', icon: 'icon-top-align'},
-      {key: 'bottom', label: '底部对齐', icon: 'icon-bottom-align'},
-      {key: 'horizontally', label: '水平居中', icon: 'icon-horizontal'},
-      {key: 'verticalCenter', label: '垂直居中', icon: 'icon-vertical'}
-    ]
-  })
-  function toNumber(val) {
-    // 第一步：从字符串开头提取连续数字（支持正负、小数）
-    const match = String(val).trim().match(/^-?\d+(\.\d+)?/);
-
-    // 提取不到数字 → 返回0
-    if (!match) return 0;
-
-    // 转数字并四舍五入
-    const num = parseFloat(match[0]);
-    return Math.round(num);
-  }
-
-  console.log(toNumber(100))
-
-  const a={a:'1',b:'2'}
-
-  console.log(Object.assign(a,{a:''}))
+<script setup>
+  import ScrollText from '@/components/screen/widgets/scrollText.vue'
 </script>
-
-<style lang="scss" scoped>
-  .item {position: absolute}
-</style>

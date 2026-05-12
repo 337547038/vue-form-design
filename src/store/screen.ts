@@ -96,11 +96,27 @@ export const useScreenStore = defineStore('screen', () => {
                 },
             series: [
               {
-                data: [150, 230, 224, 218, 135, 147, 260],
+                data: "{{getScreenComp.line.data}}",
                 type: "line"
               }]
           },
-      id: "line1778042994925"
+      id: "line1778042994925",
+      optionsType: 1,
+      method: "get",
+      requestUrl: "/mock/demo/echarts",
+      after:(res,data)=>{
+          // res响应数据, 当前组件数据data，也即图表的option
+          console.log(res, data)
+        console.log('after.....')
+          // 如对当前组件进行赋值
+          // data.xAxis.data = res.line.xAxis
+          // data.series[0].data = res.line.data
+          // data.series[1].data = res.line.data1
+          // 还可以在静态编辑数据里使用字符串占位符，如 data:"{{getScreenComp.xAxis}}"
+          // getScreenComp即为res的值"
+        data.xAxis.data = res.line.xAxis
+          return data //返回新的图表数据
+      }
     },
     {
       type: "line",
@@ -125,7 +141,7 @@ export const useScreenStore = defineStore('screen', () => {
                 },
             series: [
               {
-                data: [150, 230, 224, 218, 135, 147, 260],
+                data: "{{getScreenComp.line.data}}",
                 type: "line"
               }]
           },
@@ -158,7 +174,7 @@ export const useScreenStore = defineStore('screen', () => {
                 },
             series: [
               {
-                data: [120, 200, 150, 80, 70, 110, 130],
+                data: "{{getScreenComp.line.data}}",
                 type: "bar"
               }]
           },
@@ -186,11 +202,17 @@ export const useScreenStore = defineStore('screen', () => {
     designData.value = designData.value.filter((item: { id: string }) => !idArray.includes(item.id));
   }
 
-  // ================================拖选选区选中的组件集合
+  // ================================拖选选区/单选选中的组件集合
   const selectedComp = ref([])
 
+  /**
+   * 设置选中组件
+   * @param data 需要处理的数组，可以为对象也可以是数组
+   * @param isPush 是否以push形式添加，false直接赋值
+   */
   function setSelectedComp(data: string[] | Record<string, any>, isPush?: boolean) {
     if (isPush && !Array.isArray(data)) {
+      // 防止重复意外添加
       const isExist = selectedComp.value.some((item: any) => item.id === data.id);
       if (!isExist) {
         selectedComp.value.push(data)
@@ -198,8 +220,12 @@ export const useScreenStore = defineStore('screen', () => {
     } else {
       selectedComp.value = isArray(data) ? data : [data]
     }
-    console.log('setSelectedComp',data,isPush)
+    console.log('setSelectedComp', data, isPush)
   }
+
+  const activeComp = computed(() => {
+    return selectedComp.value[0] || {}
+  })
 
   // =================================移除选区
   function deleteRect() {
@@ -219,6 +245,13 @@ export const useScreenStore = defineStore('screen', () => {
 
   function setControlTip(data: string) {
     controlTip.value = data
+  }
+
+  // ==========================全局接口数据
+  const getScreenGlobal = ref({})
+
+  function setScreenGlobal(data: Record<string, any>) {
+    getScreenGlobal.value = data
   }
 
   return {
@@ -241,10 +274,13 @@ export const useScreenStore = defineStore('screen', () => {
     setDesignConfig,
     selectedComp,
     setSelectedComp,
+    activeComp,
     deleteRect,
     ctrlPress,
     setCtrlPress,
     controlTip,
-    setControlTip
+    setControlTip,
+    getScreenGlobal,
+    setScreenGlobal
   }
 })

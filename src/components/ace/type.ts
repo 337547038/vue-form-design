@@ -3,6 +3,6 @@ export interface AceDrawerT {
   direction?: string
   content?: any
   callback?: (val: string) => void | null
-  type?: string
+  type?: 'json'|'css'|'javascript'
   key?: string
 }
