@@ -27,7 +27,6 @@
     try {
       return /^\d+(\.\d+)?$/.test(val.toString())
     } catch (e) {
-      console.log(e)
       return false
     }
   }

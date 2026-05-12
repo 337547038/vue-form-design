@@ -1,31 +1,43 @@
-<template>
-  <div style="max-width: 500px; margin: 30px auto; display: flex; flex-direction: column; gap: 20px">
-    <!-- 左滚动：速度越快数字越大 -->
-    <div style="width: 100%;height:30px;overflow: hidden;line-height: 30px;">
-    <ScrollText :data="{speed:30,step:1,direction:'top',height:'30px'}">
-      🔥 JS 完美滚动 · speed 生效 · 横向无缝
-    </ScrollText>
-    </div>
-
-<!--    &lt;!&ndash; 右滚动 &ndash;&gt;
-    <ScrollText direction="right" :speed="2" width="100%" height="40px">
-      🚀 向右滚动 · 流畅丝滑 · 无卡顿
-    </ScrollText>
-
-    &lt;!&ndash; 上滚动：速度 + 停顿 &ndash;&gt;
-    <ScrollText direction="up" :speed="3" :delay="2000" width="100%" height="40px">
-      这是向上滚动的一段文字，每次滚一行
-    </ScrollText>
-
-    &lt;!&ndash; 下滚动 &ndash;&gt;
-    <ScrollText direction="down" :speed="3" :delay="2500" width="100%" height="40px">
-      这是向下滚动的一段文字，停顿后再滚动
-    </ScrollText>-->
-
-  </div>
-</template>
-
-
-<script setup>
-  import ScrollText from '@/components/screen/widgets/scrollText.vue'
+<script setup lang="ts">
 </script>
+<style>
+  /* 外层容器：动态背景 */
+  .grid-box {
+    width: 400px;
+    height: 300px;
+    margin: 20px;
+    position: relative; /* 定位父级 */
+
+    /* 测试：纯黑背景！现在完全正常了 */
+    background-color: #000;
+  }
+
+  /* 内层网格：绝对定位 + 自动反色 */
+  .grid {
+    position: absolute;
+    inset: 0; /* 铺满父容器 */
+
+    /* 网格线样式（默认白色）*/
+    background-image:
+      linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px);
+    background-size: 20px 20px;
+
+    /* ✅ 核心修复：自动反色，永远和背景相反 */
+    mix-blend-mode: difference;
+
+    /* 不阻挡鼠标事件 */
+    pointer-events: none;
+  }
+</style>
+
+<template>
+  <div class="grid-box">
+    <div class="grid"></div>
+  </div>
+
+  <!-- 测试各种背景都正常 -->
+  <div class="grid-box" style="background:#fff"><div class="grid"></div></div>
+  <div class="grid-box" style="background:#000"><div class="grid"></div></div>
+  <div class="grid-box" style="background:#090ff6"><div class="grid"></div></div>
+</template>

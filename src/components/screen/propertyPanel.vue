@@ -488,7 +488,6 @@
     getComponentData(activeComp.value).then(() => {
       ElMessage.success('连接成功，可通过预览查看数据更新结束')
     }).catch((res: any) => {
-      console.log('res', res)
       ElMessage.error(res.msg || '连接失败1')
     })
   }
@@ -636,7 +635,7 @@
         type: 'color-picker',
         label: '背景颜色',
         key: 'background',
-        vShow: ['background','sText','text']
+        vShow: ['background', 'sText', 'text']
       },
       {
         type: 'color-picker',
@@ -677,10 +676,10 @@
       },
       {
         type: 'select',
-        label: '图片地址',
+        label: activeComp.value.type === 'image' ? '图片地址' : '背景图片',
         placeholder: '请输入或选择图片地址',
         key: 'src',
-        vShow: ['image', 'background'],
+        //vShow: ['image', 'background'],
         attr: {
           filterable: true,
           allowCreate: true

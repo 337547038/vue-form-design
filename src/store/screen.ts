@@ -13,11 +13,20 @@ export const useScreenStore = defineStore('screen', () => {
     screenStorage.value = obj
   }
 
+  //===========================是否显示网格
+  const isShowGrid = ref(screenStorage.value.isShowGrid ?? true)
+
+  function setIsShowGrid(data: boolean) {
+    isShowGrid.value = data
+    setScreenStorage({isShowGrid: data})
+  }
+
   // =========================是否显示标尺
-  const isShowRuler = ref(true)
+  const isShowRuler = ref(screenStorage.value.isShowRuler ?? true)
 
   function setIsShowRuler(data: boolean) {
     isShowRuler.value = data
+    setScreenStorage({isShowRuler: data})
   }
 
   // ========================手动设置的缩放比例
@@ -66,121 +75,10 @@ export const useScreenStore = defineStore('screen', () => {
 
   function setDesignConfig(data: Record<string, any>) {
     designConfig.value = data
-    console.log('setDesignConfig')
   }
 
   // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝设计的主数据
-  const designData = ref([
-    {
-      type: "line",
-      label: "折线图",
-      width: 400,
-      height: 300,
-      x: 99,
-      y: 6,
-      option:
-          {
-            xAxis:
-                {
-                  type: "category",
-                  data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-                },
-            yAxis:
-                {
-                  type: "value"
-                },
-            grid:
-                {
-                  left: 0,
-                  bottom: 30
-                },
-            series: [
-              {
-                data: "{{getScreenComp.line.data}}",
-                type: "line"
-              }]
-          },
-      id: "line1778042994925",
-      optionsType: 1,
-      method: "get",
-      requestUrl: "/mock/demo/echarts",
-      after:(res,data)=>{
-          // res响应数据, 当前组件数据data，也即图表的option
-          console.log(res, data)
-        console.log('after.....')
-          // 如对当前组件进行赋值
-          // data.xAxis.data = res.line.xAxis
-          // data.series[0].data = res.line.data
-          // data.series[1].data = res.line.data1
-          // 还可以在静态编辑数据里使用字符串占位符，如 data:"{{getScreenComp.xAxis}}"
-          // getScreenComp即为res的值"
-        data.xAxis.data = res.line.xAxis
-          return data //返回新的图表数据
-      }
-    },
-    {
-      type: "line",
-      label: "折线图",
-      width: 400,
-      height: 300,
-      option:
-          {
-            xAxis:
-                {
-                  type: "category",
-                  data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-                },
-            yAxis:
-                {
-                  type: "value"
-                },
-            grid:
-                {
-                  left: 0,
-                  bottom: 30
-                },
-            series: [
-              {
-                data: "{{getScreenComp.line.data}}",
-                type: "line"
-              }]
-          },
-      id: "line1778211776589",
-      x: 353,
-      y: 468
-    },
-    {
-      type: "bar",
-      label: "柱状图",
-      width: 400,
-      height: 300,
-      x: 516,
-      y: 146,
-      option:
-          {
-            xAxis:
-                {
-                  type: "category",
-                  data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-                },
-            yAxis:
-                {
-                  type: "value"
-                },
-            grid:
-                {
-                  left: 0,
-                  bottom: 30
-                },
-            series: [
-              {
-                data: "{{getScreenComp.line.data}}",
-                type: "bar"
-              }]
-          },
-      id: "bar1778042997719"
-    }
-  ])
+  const designData = ref([])
   const designFilterData = computed(() => {
     return designData.value.filter((item: any) => item.type !== 'rect')
   })
@@ -220,7 +118,6 @@ export const useScreenStore = defineStore('screen', () => {
     } else {
       selectedComp.value = isArray(data) ? data : [data]
     }
-    console.log('setSelectedComp', data, isPush)
   }
 
   const activeComp = computed(() => {
@@ -229,7 +126,6 @@ export const useScreenStore = defineStore('screen', () => {
 
   // =================================移除选区
   function deleteRect() {
-    console.log('清空选区')
     designData.value = designData.value.filter((item: { type: string }) => item.type !== 'rect');
   }
 
@@ -255,6 +151,8 @@ export const useScreenStore = defineStore('screen', () => {
   }
 
   return {
+    isShowGrid,
+    setIsShowGrid,
     isShowRuler,
     setIsShowRuler,
     scale,

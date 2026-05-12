@@ -68,6 +68,19 @@
   .design-canvas {
     transform-origin: 0 0;height: 100%;position: absolute;top: 20px;left: 20px;
   }
+  .show-grid{
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    //color: contrast-color(background);
+    z-index: -1;
+    background-size: 20px 20px;
+    background-image:
+            linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px);
+    /* 自动反色，永远和背景相反 */
+    mix-blend-mode: difference;
+  }
 
   .no-date {color: #ccc;font-size: 20px;position: absolute;top: 30%;left: 50%;transform: translate(-50%);
   }
@@ -96,6 +109,10 @@
   }
 
   .drag {height: 100%}
+
+  .design-border{
+    .component-wrapper{border: 1px dotted rgb(178 225 246 / 0.59)}
+  }
 
   .component-wrapper {position: absolute;cursor: move;overflow: hidden;user-select: none;
 
@@ -128,16 +145,31 @@
   }
 
   // 临时选区
-  .group-rect {cursor: pointer;background: rgba(64, 158, 255, 0.15);border: 1px dashed #409eff;z-index: 8888;
+  .group-rect {cursor: pointer;background: rgba(64, 158, 255, 0.15);border: 1px dashed #409eff!important;z-index: 8888;
   }
 
   //　临时选区集合
-  .group-wrap {border: 1px dashed #f5222d;background: rgba(245, 34, 45, 0.05);cursor: move;
+  .group-wrap {border: 1px dashed #f5222d!important;background: rgba(245, 34, 45, 0.05);cursor: move;
   }
 
   //　组合容器
   .group-container {
     .drag {pointer-events: none}
+  }
+  .group-div{
+    .drag{position: relative;z-index: 100}
+    .ghost{
+      background: #F56C6C;
+      border: 2px solid #F56C6C;
+      outline-width: 0;
+      height: 3px;
+      box-sizing: border-box;
+      font-size: 0;
+      content: '';
+      overflow: hidden;
+      padding: 0;
+      width: 100%;
+    }
   }
 
   .context-menu {

@@ -13,7 +13,7 @@
     <div
       tabindex="0"
       :style="canvasStyle"
-      class="design-canvas"
+      class="design-canvas design-border"
       @mousedown.left="canvasMousedown"
       @mousemove="canvasMouseMove"
       @mouseup="canvasMouseUp"
@@ -27,6 +27,7 @@
         @clickFocus="isCanvasFocused = true"
         @contextmenu-event="contextmenuEvent"></design>
       <context-menu ref="contextMenuRef"/>
+      <div class="show-grid" v-if="store.isShowGrid"></div>
     </div>
     <div
       v-if="designDataLen===0"
@@ -109,9 +110,7 @@
     // 确保关闭右键菜单
     contextmenuEvent({close: true})
     // 清空
-    console.log('setSelectedComp 清空')
     store.setSelectedComp([])
-    console.log('清空完成')
 
     const position = {
       x: getXY(evt.clientX, evt.clientY).x,
@@ -121,9 +120,7 @@
     state.startY = position.y
     state.currentComponent = showTempRect(position)
     state.moveFlag = true
-    console.log('canvasMousedown')
     store.setControlTip('')
-    console.log('修改提示为空')
   }
   const canvasMouseMove = (evt: MouseEvent) => {
     if (!state.moveFlag) return
@@ -140,7 +137,6 @@
   const canvasMouseUp = () => {
     if (!state.moveFlag) return
     state.moveFlag = false
-    console.log('canvasMouseUp')
     // 太小的选区不处理
     const {width, height, x, y} = state.currentComponent
     if (width < 30 || height < 30) {
@@ -174,7 +170,6 @@
     if (len > 1) {
       //选中两个以上,重新计算选区位置
       Object.assign(state.currentComponent, groupWrapStyle())
-      console.log('选中多个', JSON.stringify(state.currentComponent))
     } else {
       // 只有一条或没有时隐藏不显示
       state.currentComponent.display = true
@@ -211,7 +206,6 @@
   const isCanvasFocused = ref(false) // 当前焦点在container中才执行键盘事件
   const canvasKeyDown = (e: KeyboardEvent) => {
     // 判断是方向键
-    console.log('标签键盘事件', isCanvasFocused.value)
     const arrowKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
     if (arrowKeys.includes(e.key)) {
       // 关键：阻止浏览器默认滚动
@@ -281,7 +275,6 @@
       store.setSelectedComp([])
       //　清空选区
       store.deleteRect()
-      console.log('按下删除键')
     }
   }
   // 键盘事件结束

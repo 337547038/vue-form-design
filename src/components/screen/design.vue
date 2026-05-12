@@ -39,10 +39,7 @@
           </div>
         </div>
         <template v-if="['container','div'].includes(element.type)">
-          888
-        </template>
-        <template v-if="element.children?.length&&['container','div'].includes(element.type)">
-          <design v-model="element.children"></design>
+          <design v-model="element.children" data-type="div"></design>
         </template>
         <component-factory :data="element" v-else/>
       </div>
@@ -56,6 +53,7 @@
   import ComponentFactory from './componentFactory.vue'
   import {groupWrapStyle, showTempRect, toNumber, getPositionStyle, cannotDragScale} from "./utils";
   import type {ScreenData} from '@/types/screen'
+  import {ElMessage} from "element-plus";
 
   const emits = defineEmits<{
     (e: 'contextmenuEvent', val: { x?: number, y?: number, component?: ScreenData, close?: boolean }): void
@@ -195,11 +193,8 @@
     }
     if (isCtrlPress && store.selectedComp.length > 1) {
       // 按住多选时显示临时选区
-      console.log('创建')
       resizeDrag.value.obj = showTempRect(groupWrapStyle())
-      console.log(JSON.stringify(resizeDrag.value.obj))
     }
-    console.log('dragStart', store.selectedComp.length, isCtrlPress)
     store.setControlTip('可使用键盘调整位置或按下delete键可删除')
   }
   const onMouseMove = (evt: MouseEvent) => {
@@ -228,12 +223,6 @@
   const onMouseUp = () => {
     resizeDrag.value = JSON.parse(resetResizeDrag)
   }
-  //　拖动缩放结束
-
-  const canvasWidth = computed(() => {
-    const {width} = store.designConfig || {}
-    return width
-  })
 
   // 拖拽添加
   const draggableAdd = (evt: any) => {
@@ -243,6 +232,7 @@
     const isNested = evt.target && evt.target.getAttribute('data-type')
     if (isNested === 'div' && obj.type === 'div') {
       designData.value.splice(newIndex, 1)
+      ElMessage.warning('不能嵌套div标签')
       return
     }
     const {offsetX, offsetY} = evt.originalEvent

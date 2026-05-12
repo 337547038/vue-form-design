@@ -9,6 +9,13 @@
     </div>
     <div class="center">
       <div class="item">
+        <label class="label">网格</label>
+        <el-switch
+          v-model="isShowGrid"
+          size="small"
+        />
+      </div>
+      <div class="item">
         <label class="label">标尺</label>
         <el-switch
           v-model="isShowRuler"
@@ -55,6 +62,14 @@
 
   const screenStore = useScreenStore();
 
+  const isShowGrid = computed({
+    get() {
+      return screenStore.isShowGrid;
+    },
+    set(val: boolean) {
+      screenStore.setIsShowGrid(val);
+    }
+  });
   const isShowRuler = computed({
     get() {
       return screenStore.isShowRuler;

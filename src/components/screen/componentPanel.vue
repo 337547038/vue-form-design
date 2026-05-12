@@ -198,7 +198,7 @@
           label: 'div布局',
           height: 400,
           width: 500,
-          list: []
+          children: []
         }
       ]
     },

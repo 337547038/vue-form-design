@@ -2,6 +2,7 @@
   <echarts-init
     v-if="['line', 'bar', 'pie', 'echarts'].includes(data.type)"
     :option="getReplaceGlobal"
+    :style="getConfigStyle"
   />
   <div
     v-if="['text', 'border'].includes(data.type)"
@@ -83,7 +84,6 @@
       return keyPath.split('.').reduce((target: any, key) => target?.[key], data)
       //return new Function('return ' + keyPath)() //只能访问全局作用域,需使用window定义
     })
-    console.log('option', newStr)
     return stringToObj(newStr)
   })
   // 获取组件的动态数据

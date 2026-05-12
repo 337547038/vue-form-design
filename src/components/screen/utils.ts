@@ -46,7 +46,6 @@ export const toNumber = (value: any) => {
  * @param obj
  */
 export const showTempRect = (obj?: Record<string, any>) => {
-  console.log('showTempRect', JSON.stringify(obj))
   const rectObj = store.designData.find((item: ScreenData) => item.type === 'rect')
   let newObj = {
     type: 'rect',
@@ -59,12 +58,10 @@ export const showTempRect = (obj?: Record<string, any>) => {
   }
   if (!rectObj) {
     // 不存在,新增
-    console.log('新增选区')
     store.setAddDesignData(newObj)
     return newObj
   } else {
     //　存在，更新位置信息
-    console.log('已有选区')
     Object.assign(rectObj, newObj)
     return rectObj
   }

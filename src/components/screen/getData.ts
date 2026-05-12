@@ -34,7 +34,6 @@ export const getInitData = (id: string | number) => {
           resolve(resultData)
         })
         .catch((res: any) => {
-          console.log('catch', res)
           ElMessage.error(res.message || '加载异常')
           reject()
         })
@@ -79,7 +78,6 @@ export const getComponentData = (data: ScreenData) => {
       before,
       after
     } = data
-    console.log('000', data)
     if (optionsType === 1 && requestUrl) {
       beforeAfter({
         apiKey: requestUrl,
