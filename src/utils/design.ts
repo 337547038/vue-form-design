@@ -222,3 +222,11 @@ export const jsonParseStringify = (val: any) => {
     return val
   }
 }
+
+/**
+ * 深克隆
+ * @param obj
+ */
+export const deepClone = (obj: any) => {
+  return evil(obj2string(obj))
+}

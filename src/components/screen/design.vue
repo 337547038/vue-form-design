@@ -52,12 +52,12 @@
   import {useScreenStore} from '@/store/screen'
   import ComponentFactory from './componentFactory.vue'
   import {groupWrapStyle, showTempRect, toNumber, getPositionStyle, cannotDragScale} from "./utils";
-  import type {ScreenData} from '@/types/screen'
+  import type {Command, Component} from '@/types/screen'
   import {ElMessage} from "element-plus";
 
   const emits = defineEmits<{
-    (e: 'contextmenuEvent', val: { x?: number, y?: number, component?: ScreenData, close?: boolean }): void
-    (e: 'click'): void
+    (e: 'contextmenuEvent', val: { x?: number, y?: number, component?: Component, close?: boolean }): void
+    (e: 'clickFocus'): void
   }>()
 
   const store = useScreenStore()
@@ -71,6 +71,7 @@
   const resizeDrag = ref({
     resizeFlag: false,
     dragFlag: false,
+    hasMove: false,
     index: -1,
     startX: 0,
     startY: 0,
@@ -82,7 +83,7 @@
     groupPos: {}
   })
   const resetResizeDrag = JSON.stringify(resizeDrag.value)
-  const startResize = (evt: MouseEvent, obj: ScreenData, index: number) => {
+  const startResize = (evt: MouseEvent, obj: Component, index: number) => {
     evt.preventDefault()
     evt.stopPropagation()
     const {width, height, x, y} = obj || {}
@@ -155,8 +156,13 @@
     obj.height = newH
     obj.x = newX
     obj.y = newY
+    // 表示有移动过
+    if (startWidth !== newW && startHeight !== newH) {
+      resizeDrag.value.hasMove = true
+    }
+    console.log('resizeDrag.value.hasMove', resizeDrag.value.hasMove)
   }
-  const dragStart = (evt: MouseEvent, obj: ScreenData) => {
+  const dragStart = (evt: MouseEvent, obj: Component) => {
     emits('clickFocus') // 设置焦点，确保焦点在父节点，否则删除可能失败
     // 锁定的不能操作
     if (obj.locked) {
@@ -173,6 +179,7 @@
     const {x, y} = obj || {}
     resizeDrag.value = {
       dragFlag: true,
+      hasMove: false,
       startX: evt.clientX,
       startY: evt.clientY,
       startXPos: toNumber(x),
@@ -181,7 +188,7 @@
     }
     if (obj.type === 'rect') {
       // 当前移动的是矩形选框时，则连同选中的子节点一起移动．记录初始点
-      resizeDrag.value.groupPos = store.selectedComp.map((item: ScreenData) => [item.x, item.y])
+      resizeDrag.value.groupPos = store.selectedComp.map((item: Component) => [item.x, item.y])
     }
     const isCtrlPress = store.ctrlPress
     // 设置当前为选中状态
@@ -213,21 +220,53 @@
     obj.y = newY
     if (obj.type === 'rect') {
       // 当前移动的是矩形选框时，则连同选中的子节点一起移动
-      store.selectedComp.forEach((item: ScreenData, index: number) => {
+      store.selectedComp.forEach((item: Component, index: number) => {
         item.x = toNumber(groupPos[index][0]) + dx
         item.y = toNumber(groupPos[index][1]) + dy
       })
     }
+    // 表示有移动
+    if (dx !== 0 && dy !== 0) {
+      resizeDrag.value.hasMove = true
+    }
     store.setControlTip(`${newX}:${newY}`)
   }
   const onMouseUp = () => {
+    // 添加更新历史
+    const {
+      startXPos,
+      startYPos,
+      dragFlag,
+      obj,
+      groupPos,
+      hasMove,
+      resizeFlag,
+      startWidth,
+      startHeight
+    } = resizeDrag.value
+    if (hasMove) {
+      const updateComponents = [obj]
+      let oldProps: any = [{x: startXPos, y: startYPos}]
+      if (dragFlag) {
+        if (obj.type === 'rect') {
+          store.selectedComp.forEach((item: Component, index: number) => {
+            updateComponents.push(item)
+            oldProps.push({x: toNumber(groupPos[index][0]), y: groupPos[index][1]})
+          })
+        }
+      }
+      if (resizeFlag) {
+        oldProps = [{x: startXPos, y: startYPos, width: startWidth, height: startHeight}]
+      }
+      store.updateComponentHistory(updateComponents, oldProps, true)
+    }
     resizeDrag.value = JSON.parse(resetResizeDrag)
   }
 
   // 拖拽添加
   const draggableAdd = (evt: any) => {
     const newIndex = evt.newIndex
-    const obj: ScreenData = designData.value[newIndex]
+    const obj: Component = designData.value[newIndex]
     // 不能嵌套
     const isNested = evt.target && evt.target.getAttribute('data-type')
     if (isNested === 'div' && obj.type === 'div') {
@@ -244,10 +283,20 @@
     obj.y = offsetY
     store.setSelectedComp(obj)
     store.deleteRect() // 确保不会出现选区
+    //记录历史
+    const command: Command = {
+      execute: () => {
+        store.setDesignData(obj, true)
+      },
+      undo: () => {
+        store.setDeleteDesignData(obj.id)
+      }
+    }
+    store.setHistory(command)
   }
 
   // 鼠标右键事件
-  const componentContextMenu = (component: ScreenData, evt: MouseEvent) => {
+  const componentContextMenu = (component: Component, evt: MouseEvent) => {
     evt.preventDefault()
     // 如果组件被锁定，不处理
     //if (component.locked) return

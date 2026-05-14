@@ -51,14 +51,14 @@
   import {iconList} from './utils'
   import {storeToRefs} from "pinia";
   import {useScreenStore} from "@/store/screen"
-  import type {ScreenData} from "@/types/screen";
+  import type {Component} from "@/types/screen";
 
   const store = useScreenStore();
   const activeIds = computed(() => {
     return store.selectedComp.map((item: any) => item.id)
   })
   const {designFilterData} = storeToRefs(store)
-  const layerClick = (obj: ScreenData, key: string) => {
+  const layerClick = (obj: Component, key: string) => {
     switch (key) {
       case 'locked':
         obj.locked = !obj.locked;
@@ -73,7 +73,7 @@
         break
     }
   }
-  const selectClick = (obj: ScreenData) => {
+  const selectClick = (obj: Component) => {
     store.setSelectedComp(obj)
   }
   const getIcon = (type: string) => {

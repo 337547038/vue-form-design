@@ -42,7 +42,7 @@
   import ARuler from './ruler.vue'
   import {useScreenStore} from "@/store/screen"
   import Design from "./design.vue"
-  import type {ScreenData} from '@/types/screen'
+  import type {Component} from '@/types/screen'
   import {groupWrapStyle, showTempRect, toNumber, cannotDragScale} from "./utils"
   import ContextMenu from "./contextMenu.vue"
 
@@ -152,7 +152,7 @@
       h: height
     }
     // 遍历匹配重叠box
-    store.designFilterData?.forEach((item: ScreenData) => {
+    store.designFilterData?.forEach((item: Component) => {
       // 排除不符合条件的
       if (cannotDragScale(item)) {
         const boxRect = {
@@ -193,7 +193,7 @@
   }
   // 绘制选区结束
   //　右键菜单事件
-  const contextmenuEvent = (data: { x?: number, y?: number, component?: ScreenData, close?: boolean }) => {
+  const contextmenuEvent = (data: { x?: number, y?: number, component?: Component, close?: boolean }) => {
     //处理下位置坐标,
     if (data.x && data.y) {
       data.x = getXY(data.x, data.y).x
@@ -269,7 +269,7 @@
     pressFlag.value = false
     if (evt.key === 'Delete') {
       //获取需要删除的id从设计数组中删除
-      const ids = store.selectedComp.map((item: ScreenData) => item.id)
+      const ids = store.selectedComp.map((item: Component) => item.id)
       store.setDeleteDesignData(ids)
       // 从store中删除已选择的
       store.setSelectedComp([])

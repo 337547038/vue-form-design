@@ -5,7 +5,7 @@ import {beforeAfter} from '@/utils/beforeAfter'
 import {loadResource, removeResource} from "@/utils";
 import {ScopedStyleId} from "./utils";
 import {useScreenStore} from "@/store/screen"
-import type {ScreenData} from "@/types/screen.ts";
+import type {Component} from "@/types/screen.ts";
 
 const store = useScreenStore();
 
@@ -69,7 +69,7 @@ export const getGlobalData = (config: any) => {
  * 返回组件远程数据
  * @param data
  */
-export const getComponentData = (data: ScreenData) => {
+export const getComponentData = (data: Component) => {
   return new Promise((resolve, reject) => {
     const {
       optionsType,
@@ -111,7 +111,7 @@ export const getComponentData = (data: ScreenData) => {
     }
   })
 }
-export const getDataByType = (data: ScreenData) => {
+export const getDataByType = (data: Component) => {
   switch (data.type) {
     case 'text':
     case 'sText':

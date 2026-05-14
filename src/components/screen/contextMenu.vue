@@ -14,7 +14,7 @@
 <script setup lang="ts">
   import {ref, computed} from 'vue'
   import Icon from '@/components/icon/index.vue'
-  import type {ScreenData} from "@/types/screen";
+  import type {Command, Component} from "@/types/screen";
   import {useScreenStore} from "@/store/screen";
   import {objToStringify, stringToObj} from "@/utils/design";
   import {ElMessage} from 'element-plus'
@@ -25,7 +25,7 @@
   const style = ref({})
   const component = ref({})
   const disabled = ref([])
-  const setDisabled = (component: ScreenData) => {
+  const setDisabled = (component: Component) => {
     const {type, locked} = component
     const result = []
     // 组合，当前为选区并选中两个以上
@@ -74,29 +74,35 @@
     const selectedList = store.selectedComp
     const activeComp = component.value
     const hasMultiSelected = activeComp.type === 'rect' && selectedList.length > 1
-    const updateSelected = (callback: (item: ScreenData) => void) => {
+    const updateSelected = (callback: (item: Component) => void) => {
       selectedList.forEach(callback)
     }
+    const updateComponents: Component[] = hasMultiSelected ? [...selectedList] : [activeComp]
+    const newProps: { x?: number, y?: number, width?: number, height?: number }[] = []
+
     switch (key) {
       case 'copy':
         const targets = hasMultiSelected ? selectedList : [activeComp]
-        targets.forEach((item: ScreenData) => {
+        const temp: Component[] = []
+        targets.forEach((item: Component) => {
           const newComp = stringToObj(objToStringify(item))
           newComp.id += '_copy'
-          store.setAddDesignData(newComp)
+          temp.push(newComp)
         })
+        // 这里要一次添加进去，否则会记录多条操作历史
+        store.setDesignData(temp, true, true)
         ElMessage.success('复制成功')
         break
       case 'del':
         const ids = hasMultiSelected
           ? selectedList.map((i: { id: string }) => i.id)
           : activeComp.id
-        store.setDeleteDesignData(ids)
+        store.setDeleteDesignData(ids, true)
         ElMessage.success('删除成功')
         break
       case 'link': {
         if (!hasMultiSelected) return
-        const parsed = selectedList.map((item: ScreenData) => ({
+        const parsed = selectedList.map((item: Component) => ({
           x: toNumber(item.x),
           y: toNumber(item.y),
           w: toNumber(item.width),
@@ -107,7 +113,7 @@
         const maxX = Math.max(...parsed.map((p: { x: number; w: number }) => p.x + p.w))
         const maxY = Math.max(...parsed.map((p: { y: number; h: number }) => p.y + p.h))
 
-        const container: ScreenData = {
+        const container: Component = {
           id: 'container_' + Date.now(),
           type: 'container',
           label: '组合容器',
@@ -121,8 +127,21 @@
             y: toNumber(c.y) - minY,
           }))
         }
-        store.setDeleteDesignData(selectedList.map((i: { id: any; }) => i.id))
-        store.setAddDesignData(container)
+        const delComponent: Component[] = [...selectedList]
+        const command: Command = {
+          execute: () => {
+            store.setDeleteDesignData(selectedList.map((i: { id: any; }) => i.id))
+            store.setDesignData(container, true)
+          },
+          undo: () => {
+            // 删除组合组件
+            store.setDeleteDesignData(container.id)
+            // 将删除的恢复,不管原位置
+            store.setDesignData(delComponent, true)
+          }
+        }
+        store.setHistory(command)
+        command.execute()
         store.deleteRect()
         store.setSelectedComp(container)
         ElMessage.success('组合成功')
@@ -135,8 +154,22 @@
           x: toNumber(child.x) + toNumber(activeComp.x),
           y: toNumber(child.y) + toNumber(activeComp.y),
         }))
-        store.setAddDesignData(...children)
-        store.setDeleteDesignData(activeComp.id)
+        const delComponent: Component[] = [activeComp]
+        const delIds = activeComp.children.map((i: Component) => i.id)
+        const command: Command = {
+          execute: () => {
+            store.setDesignData(children, true)
+            store.setDeleteDesignData(activeComp.id)
+          },
+          undo: () => {
+            // 添加组件
+            store.setDesignData(delComponent, true)
+            //　删除子组件
+            store.setDeleteDesignData(delIds)
+          }
+        }
+        store.setHistory(command)
+        command.execute()
         ElMessage.success('已拆分')
         break
       }
@@ -144,10 +177,11 @@
         if (hasMultiSelected) {
           const xs = selectedList.map((i: any) => toNumber(i.x))
           const min = Math.min(...xs)
-          updateSelected(item => item.x = min)
+          updateSelected(() => newProps.push({x: min}))
         } else {
-          activeComp.x = 0
+          newProps.push({x: 0})
         }
+        store.updateComponentHistory(updateComponents, newProps)
         // 清空选择
         store.setSelectedComp([])
         break
@@ -156,10 +190,13 @@
         if (hasMultiSelected) {
           const rights = selectedList.map((i: any) => toNumber(i.x) + toNumber(i.width))
           const max = Math.max(...rights)
-          updateSelected(item => item.x = max - toNumber(item.width))
+          updateSelected(item => {
+            newProps.push({x: max - toNumber(item.width)})
+          })
         } else {
-          activeComp.x = toNumber(canvasWidth) - toNumber(activeComp.width)
+          newProps.push({x: toNumber(canvasWidth) - toNumber(activeComp.width)})
         }
+        store.updateComponentHistory(updateComponents, newProps)
         // 清空选择
         store.setSelectedComp([])
         break
@@ -168,10 +205,13 @@
         if (hasMultiSelected) {
           const ys = selectedList.map((i: any) => toNumber(i.y))
           const min = Math.min(...ys)
-          updateSelected(item => item.y = min)
+          updateSelected(() => {
+            newProps.push({y: min})
+          })
         } else {
-          activeComp.y = 0
+          newProps.push({y: 0})
         }
+        store.updateComponentHistory(updateComponents, newProps)
         // 清空选择
         store.setSelectedComp([])
         break
@@ -180,26 +220,28 @@
         if (hasMultiSelected) {
           const bottoms = selectedList.map((i: any) => toNumber(i.y) + toNumber(i.height))
           const max = Math.max(...bottoms)
-          updateSelected(item => item.y = max - toNumber(item.height))
+          updateSelected(item => {
+            newProps.push({y: max - toNumber(item.height)})
+          })
         } else {
-          activeComp.y = toNumber(canvasHeight) - toNumber(activeComp.height)
+          newProps.push({y: toNumber(canvasHeight) - toNumber(activeComp.height)})
         }
+        store.updateComponentHistory(updateComponents, newProps)
         // 清空选择
         store.setSelectedComp([])
         break
       }
       case 'horizontally': {
         if (hasMultiSelected) {
-          // 以第一个为基准
           const first = selectedList[0]
-          const cy = toNumber(first.y) + toNumber(first.height) / 2
+          const centerX = toNumber(first.x) + toNumber(first.width) / 2
           updateSelected(item => {
-            const h = toNumber(item.height)
-            item.y = cy - h / 2
+            newProps.push({x: centerX - toNumber(item.width) / 2})
           })
         } else {
-          activeComp.x = (toNumber(canvasWidth) - toNumber(activeComp.width)) / 2
+          newProps.push({x: (toNumber(canvasHeight) - toNumber(activeComp.width)) / 2})
         }
+        store.updateComponentHistory(updateComponents, newProps)
         // 清空选择
         store.setSelectedComp([])
         break
@@ -207,14 +249,14 @@
       case 'verticalCenter': {
         if (hasMultiSelected) {
           const first = selectedList[0]
-          const cx = toNumber(first.x) + toNumber(first.width) / 2
+          const centerY = toNumber(first.y) + toNumber(first.height) / 2
           updateSelected(item => {
-            const w = toNumber(item.width)
-            item.x = cx - w / 2
+            newProps.push({y: centerY - toNumber(item.height) / 2})
           })
         } else {
-          activeComp.y = (toNumber(canvasHeight) - toNumber(activeComp.height)) / 2
+          newProps.push({y: (toNumber(canvasHeight) - toNumber(activeComp.height)) / 2})
         }
+        store.updateComponentHistory(updateComponents, newProps)
         // 清空选择
         store.setSelectedComp([])
         break
@@ -233,7 +275,7 @@
     store.deleteRect()
     visible.value = false
   }
-  const open = (obj: { x?: number, y?: number, component?: ScreenData, close?: boolean }) => {
+  const open = (obj: { x?: number, y?: number, component?: Component, close?: boolean }) => {
     if (obj.close) { // 关闭
       visible.value = false
       return

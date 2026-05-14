@@ -47,7 +47,7 @@
 </template>
 <script setup lang="ts">
   import {computed, onMounted, ref} from 'vue'
-  import type {ScreenData} from '@/types/screen'
+  import type {Component} from '@/types/screen'
   import EchartsInit from './widgets/echartsInt.vue'
   import ScrollText from './widgets/scrollText.vue'
   import DataTime from './widgets/datetime.vue'
@@ -60,7 +60,7 @@
 
   const props = withDefaults(
     defineProps<{
-      data: ScreenData
+      data: Component
     }>(),
     {}
   )

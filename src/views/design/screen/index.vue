@@ -6,13 +6,21 @@
     <component-panel :style="{ width: toolVisible('left')}"/>
     <div class="main-body">
       <head-tools @click="headToolsClick">
-        <el-button type="primary" link>
+        <el-button
+          type="primary"
+          link
+          :disabled="!screenStore.canUndo"
+          @click="screenStore.setUndo">
           <el-icon :size="22">
             <RefreshLeft/>
           </el-icon>
           撤销
         </el-button>
-        <el-button type="primary" link><i class="icon-refresh"></i> 重做</el-button>
+        <el-button
+          type="primary" link
+          :disabled="!screenStore.canRedo"
+          @click="screenStore.setRedo"><i class="icon-refresh"></i> 重做
+        </el-button>
       </head-tools>
       <design-area/>
       <footer-panel/>
@@ -44,6 +52,7 @@
   import {ElMessage} from "element-plus";
   import {getInitData} from '@/components/screen/getData'
   import {setStorage} from "@/utils";
+  import type {Command, Component} from "@/types/screen.ts";
 
 
   definePage({meta: {permissions: 'none'}})
@@ -70,33 +79,6 @@
   // 顶部事件弹窗相关
   const openDrawer = (params: AceDrawerT) => {
     aceDrawerRef.value.open(params)
-    /*const {type = '', direction, codeType, title, callback, content} = params
-    drawer.direction = direction || 'ltr' // 窗口位置ltr/rtl
-    drawer.type = type // 作为窗口唯一标识，在窗口关闭时可根据type作不同处理
-    drawer.codeType = codeType || '' // 显示代码类型
-    drawer.title = title || (getAceTitle as any)[type]
-    drawer.visible = true
-    drawer.callback = callback
-    let editData
-      = codeType === 'json'
-      ? json2string(content, true)
-      : objToStringify(content, true)
-    switch (type) {
-      case 'editCss':
-        editData = designData.value.config.style || ''
-        break
-      case 'before':
-      case 'after':
-        if (!content) {
-          let eventType = type
-          if (type === 'after') {
-            // todo eventType = isGlobal ? 'afterScreenGlobal' : 'afterScreen'
-          }
-          editData = getAceContent(eventType)
-        }
-        break
-    }
-    drawer.content = editData*/
   }
   const drawerConfirm = () => {
     console.log('drawerConfirm')
@@ -104,11 +86,26 @@
 
   const vueFileEl = ref()
   // 顶部工具栏点击事件
+  const historyCommand = (design: any, config: any) => {
+    const originalComponents = [...screenStore.designFilterData]
+    const oldDefaultConfig = screenStore.designConfig
+    const command: Command = {
+      execute: () => {
+        screenStore.setDesignConfig(config)
+        screenStore.setDesignData(design)
+      },
+      undo: () => {
+        screenStore.setDesignData(originalComponents)
+        screenStore.setDesignConfig(oldDefaultConfig)
+      }
+    }
+    screenStore.setHistory(command)
+    command.execute()
+  }
   const headToolsClick = (type: string) => {
     switch (type) {
       case 'del':
-        screenStore.setDesignConfig(JSON.parse(defaultConfig))
-        screenStore.setDesignData([])
+        historyCommand([], JSON.parse(defaultConfig))
         screenStore.setSelectedComp([])
         screenStore.deleteRect()
         break
@@ -126,8 +123,7 @@
           content: designData.value,
           title: '可编辑修改或将已生成的脚本粘贴进来',
           callback: (content: Record<string, any>) => {
-            screenStore.setDesignData(content.list)
-            screenStore.setDesignConfig(content.config)
+            historyCommand(content.list, content.config)
           }
         })
         break

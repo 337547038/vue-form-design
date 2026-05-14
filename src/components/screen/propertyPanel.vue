@@ -20,7 +20,8 @@
               :placeholder="item.placeholder"
               v-model="activeComp[item.key]"
               v-bind="item.attr"
-              @change="propertyChange(item, $event)"
+              @change="propertyChange(item.key, $event)"
+              @focus="propertyFocus"
             >
               <el-option
                 v-for="(opt, key) in item.options"
@@ -41,7 +42,8 @@
               :is="`el-${item.type||'input'}`"
               :placeholder="item.placeholder"
               v-model="activeComp[item.key]"
-              @change="propertyChange(item, $event)"
+              @change="propertyChange(item.key, $event)"
+              @focus="propertyFocus"
               v-bind="item.attr"/>
           </el-form-item>
           <template v-if="
@@ -87,6 +89,8 @@
               <el-input
                 v-model="activeComp.requestUrl"
                 placeholder="接口URL或api中的key"
+                @change="propertyChange('requestUrl', $event)"
+                @focus="propertyFocus"
               >
                 <template #prepend>
                   <el-select
@@ -310,6 +314,7 @@
   import {ScopedStyleId, loadStaticImages} from './utils'
   import {getAceTitle} from '@/components/ace/tooltip'
   import {onBeforeRouteLeave} from "vue-router";
+  import {deepClone} from '@/utils/design'
 
   const store = useScreenStore()
 
@@ -362,6 +367,7 @@
             removeResource(ScopedStyleId)
             loadResource(content, ScopedStyleId)
             config.value.style = content
+            setConfigHistory('style')
           }
         }
       }),
@@ -374,6 +380,7 @@
           key: type,
           callback: (content: any) => {
             config.value[type] = content
+            setConfigHistory('before')
           }
         }
       },
@@ -385,6 +392,7 @@
         key: eventType,
         callback: (content: any) => {
           config.value.after = content
+          setConfigHistory('after')
         }
       }),
 
@@ -394,6 +402,7 @@
         content: activeComp.value.option,
         callback: (content: Record<string, any>) => {
           activeComp.value.option = content
+          propertyChange('option')
         }
       }),
 
@@ -404,6 +413,7 @@
         content: activeComp.value.style || {},
         callback: (content: Record<string, any>) => {
           activeComp.value.style = content
+          propertyChange('style')
         }
       }),
 
@@ -414,6 +424,7 @@
         content: activeComp.value.props || {},
         callback: (content: Record<string, any>) => {
           activeComp.value.props = content
+          propertyChange('props')
         }
       }),
 
@@ -436,6 +447,7 @@
             } else {
               activeComp.value.option = content
             }
+            propertyChange(isText ? 'text' : 'option')
           }
         }
       },
@@ -446,6 +458,7 @@
         key: 'before',
         callback: (content: any) => {
           activeComp.value.before = content
+          propertyChange('before')
         }
       }),
 
@@ -456,6 +469,7 @@
         key: eventType,
         callback: (content: any) => {
           activeComp.value.after = content
+          propertyChange('after')
         }
       })
     }
@@ -467,6 +481,26 @@
     emits('openDrawer', getParams())
   }
   // =====================处理全局属性
+  const setConfigHistory = (key: string) => {
+    const oldVal = cloneConfig.value[key]
+    store.updateCompHistory(config.value, {[key]: oldVal}, true, (type: string) => {
+      if (type === 'undo') {
+        if (key === 'style') {
+          // 删除重新插入样式
+          removeResource(ScopedStyleId)
+          loadResource(config.value.style, ScopedStyleId)
+        }
+        if (key === 'styleLink') {
+          removeResource(key) // 如果存在先删除之前的
+          const val = config.value.styleLink
+          val && loadResource(val, key).then(() => {
+          })
+        }
+      }
+    })
+    // 更新
+    updateCloneConfig()
+  }
   const configChange = (key: string, val: any) => {
     if (key === 'styleLink' && val) {
       // 插入样式
@@ -475,6 +509,7 @@
         ElMessage.success('资源加载成功！')
       })
     }
+    setConfigHistory(key)
   }
   const getGlobalDataTest = () => {
     getGlobalData(config.value)
@@ -722,15 +757,28 @@
       return hasFilter
     })
   })
-  const propertyChange = () => {
-    // 留个位置
+  const propertyChange = (key: string, _?: any) => {
+    const oldVal = cloneComponent.value[key]
+    store.updateCompHistory(activeComp.value, {[key]: oldVal}, true)
+    // 更新
+    updateCloneConfig()
+  }
+  // 属性输入框获取焦点时，保存修改前的值，用于撤销
+  const cloneComponent = ref({})
+  const propertyFocus = () => {
+    cloneComponent.value = deepClone(activeComp.value)
   }
 
   const screenStaticImages = ref([])
+  const cloneConfig = ref()
+  const updateCloneConfig = () => {
+    cloneConfig.value = deepClone(config.value)
+  }
   onMounted(() => {
     loadStaticImages().then((res) => {
       screenStaticImages.value = res
     })
+    updateCloneConfig()
   })
 
   onBeforeRouteLeave(() => {

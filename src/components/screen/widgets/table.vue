@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-table
+      class="table"
       ref="tableRef"
       :data="data.list"
       :height="`${height}`"
@@ -69,3 +70,8 @@
     unWatch()
   })
 </script>
+<style lang="scss" scoped>
+  .table{background: none}
+  :deep(.el-table tr){background: none}
+  :deep(.el-table th.el-table__cell){background: none}
+</style>

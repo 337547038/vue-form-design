@@ -18,11 +18,11 @@
 <script setup lang="ts">
   import {getPositionStyle} from "@/components/screen/utils"
   import ComponentFactory from "@/components/screen/componentFactory.vue"
-  import type {ScreenData} from "@/types/screen.ts";
+  import type {Component} from "@/types/screen.ts";
 
   const props = withDefaults(
     defineProps<{
-      data: ScreenData
+      data: Component
     }>(),
     {}
   )

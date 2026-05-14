@@ -1,4 +1,4 @@
-import type {ScreenData} from "@/types/screen";
+import type {Component} from "@/types/screen";
 import {useScreenStore} from "@/store/screen"
 import imagesFile from './imagesFile.json'
 
@@ -46,7 +46,7 @@ export const toNumber = (value: any) => {
  * @param obj
  */
 export const showTempRect = (obj?: Record<string, any>) => {
-  const rectObj = store.designData.find((item: ScreenData) => item.type === 'rect')
+  const rectObj = store.designData.find((item: Component) => item.type === 'rect')
   let newObj = {
     type: 'rect',
     label: '临时选区',
@@ -58,7 +58,7 @@ export const showTempRect = (obj?: Record<string, any>) => {
   }
   if (!rectObj) {
     // 不存在,新增
-    store.setAddDesignData(newObj)
+    store.setDesignData(newObj,true)
     return newObj
   } else {
     //　存在，更新位置信息
@@ -72,7 +72,7 @@ export const showTempRect = (obj?: Record<string, any>) => {
 export const groupWrapStyle = () => {
   let minX = Infinity, minY = Infinity
   let maxX = -Infinity, maxY = -Infinity
-  store.selectedComp.forEach((item: ScreenData) => {
+  store.selectedComp.forEach((item: Component) => {
     const {x, y, width, height} = item
     minX = Math.min(minX, toNumber(x))
     minY = Math.min(minY, toNumber(y))
@@ -89,7 +89,7 @@ export const groupWrapStyle = () => {
   }
 }
 
-export const getPositionStyle = (data: ScreenData) => {
+export const getPositionStyle = (data: Component) => {
   if (data.notUseInlineStyle) {
     return {} // 不使用内联位置信息
   }
@@ -180,7 +180,7 @@ export function isValidNumberOrPx(str: string | number | null | undefined): bool
  * 判断当前组件是否可以拖动组合等操作
  * @param obj
  */
-export const cannotDragScale = (obj: ScreenData): boolean => {
+export const cannotDragScale = (obj: Component): boolean => {
   // 任一条件不满足 → 不可拖拽缩放（return false）
   if (
       obj.display ||

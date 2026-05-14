@@ -17,11 +17,11 @@
 
 <script setup lang="ts">
   import {ref, onMounted, onUnmounted, computed} from 'vue'
-  import type {ScreenData} from "@/types/screen";
+  import type {Component} from "@/types/screen";
 
   // 定义 props 与默认值
   const props = withDefaults(defineProps<{
-    data: ScreenData
+    data: Component
   }>(), {})
 
   // DOM 引用
