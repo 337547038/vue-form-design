@@ -6,7 +6,11 @@
         label="属性配置"
         class="scroll"
       >
-        <el-form size="small" :disabled="activeComp.locked" v-show="Object.keys(activeComp).length">
+        <el-form
+          v-show="Object.keys(activeComp).length"
+          size="small"
+          :disabled="activeComp.locked"
+        >
           <el-form-item
             v-for="(item, index) in propertyList"
             :key="index"
@@ -17,8 +21,8 @@
             </h3>
             <el-select
               v-else-if="item.type === 'select'"
-              :placeholder="item.placeholder"
               v-model="activeComp[item.key]"
+              :placeholder="item.placeholder"
               v-bind="item.attr"
               @change="propertyChange(item.key, $event)"
               @focus="propertyFocus"
@@ -38,25 +42,28 @@
               {{ item.label }}
             </el-button>
             <component
-              v-else
               :is="`el-${item.type||'input'}`"
-              :placeholder="item.placeholder"
+              v-else
               v-model="activeComp[item.key]"
+              :placeholder="item.placeholder"
+              v-bind="item.attr"
               @change="propertyChange(item.key, $event)"
               @focus="propertyFocus"
-              v-bind="item.attr"/>
+            />
           </el-form-item>
-          <template v-if="
-            [
-              'line',
-              'bar',
-              'pie',
-              'echarts',
-              'text',
-              'sText',
-              'table'
-            ].includes(activeComp.type)
-          ">
+          <template
+            v-if="
+              [
+                'line',
+                'bar',
+                'pie',
+                'echarts',
+                'text',
+                'sText',
+                'table'
+              ].includes(activeComp.type)
+            "
+          >
             <el-form-item>
               <h3>
                 数据
@@ -115,7 +122,12 @@
               </el-input>
             </el-form-item>
             <el-form-item v-if="activeComp.requestUrl&&activeComp.method">
-              <el-button type="primary" @click="connectionTest">测试连接</el-button>
+              <el-button
+                type="primary"
+                @click="connectionTest"
+              >
+                测试连接
+              </el-button>
             </el-form-item>
             <el-form-item label="刷新时间">
               <el-input-number
@@ -154,15 +166,15 @@
           <el-form size="small">
             <el-form-item label="大屏宽度">
               <el-input
-                placeholder="请输入大屏宽度"
                 v-model="config.width"
+                placeholder="请输入大屏宽度"
                 @change="configChange('width', $event)"
               />
             </el-form-item>
             <el-form-item label="大屏高度">
               <el-input
-                placeholder="请输入大屏高度"
                 v-model="config.height"
+                placeholder="请输入大屏高度"
                 @change="configChange('height', $event)"
               />
             </el-form-item>
@@ -171,8 +183,8 @@
               label="主色"
             >
               <el-color-picker
-                show-alpha
                 v-model="config.primary"
+                show-alpha
                 @change="configChange('primary', $event)"
               />
             </el-form-item>
@@ -210,13 +222,14 @@
                 placeholder="请输入或选择图片地址"
                 filterable
                 allow-create
-                @change="stateChange">
+                @change="stateChange"
+              >
                 <el-option
                   v-for="(item,index) in screenStaticImages"
                   :key="index"
                   :label="item"
-                  :value="item">
-                </el-option>
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
             <el-form-item label="外链样式">
@@ -227,7 +240,10 @@
               />
             </el-form-item>
             <el-form-item>
-              <el-button @click="openDrawer('editCss')" type="primary">
+              <el-button
+                type="primary"
+                @click="openDrawer('editCss')"
+              >
                 编辑样式
               </el-button>
             </el-form-item>
@@ -273,8 +289,8 @@
             </el-form-item>
             <el-form-item label="刷新时间">
               <el-input-number
-                disabled
                 v-model="config.loopTime"
+                disabled
                 @change="configChange('loopTime', $event)"
               />
             </el-form-item>

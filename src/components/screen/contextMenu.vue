@@ -1,12 +1,22 @@
 <template>
-  <div class="context-menu" v-show="visible" :style="style" @mousedown.stop="">
+  <div
+    v-show="visible"
+    class="context-menu"
+    :style="style"
+    @mousedown.stop=""
+  >
     <div
-      class="menu-item"
       v-for="item in menuList"
       :key="item.key"
+      class="menu-item"
       :class="{divider:item.key==='divider','disabled':disabled.includes(item.key)}"
-      @click.stop="menuClick(item.key)">
-      <icon :name="item.icon" size="18px" v-if="item.icon"></icon>
+      @click.stop="menuClick(item.key)"
+    >
+      <icon
+        v-if="item.icon"
+        :name="item.icon"
+        size="18px"
+      />
       <span>{{ item.label }}</span>
     </div>
   </div>
@@ -36,7 +46,7 @@
     if (type !== 'container') {
       result.push('split')
     }
-    //　锁定解锁
+    // 锁定解锁
     if (locked) {
       const list = menuList.value
         .filter((item: any) => item.key !== 'unlock')
@@ -164,7 +174,7 @@
           undo: () => {
             // 添加组件
             store.setDesignData(delComponent, true)
-            //　删除子组件
+            // 删除子组件
             store.setDeleteDesignData(delIds)
           }
         }

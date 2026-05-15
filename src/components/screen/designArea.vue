@@ -24,10 +24,14 @@
     >
       <design
         v-model="store.designData"
-        @clickFocus="isCanvasFocused = true"
-        @contextmenu-event="contextmenuEvent"></design>
-      <context-menu ref="contextMenuRef"/>
-      <div class="show-grid" v-if="store.isShowGrid"></div>
+        @click-focus="isCanvasFocused = true"
+        @contextmenu-event="contextmenuEvent"
+      />
+      <context-menu ref="contextMenuRef" />
+      <div
+        v-if="store.isShowGrid"
+        class="show-grid"
+      />
     </div>
     <div
       v-if="designDataLen===0"
@@ -192,7 +196,7 @@
     )
   }
   // 绘制选区结束
-  //　右键菜单事件
+  // 右键菜单事件
   const contextmenuEvent = (data: { x?: number, y?: number, component?: Component, close?: boolean }) => {
     //处理下位置坐标,
     if (data.x && data.y) {
@@ -201,7 +205,7 @@
     }
     contextMenuRef.value.open(data)
   }
-  //　右键菜单事件结束
+  // 右键菜单事件结束
   // 键盘事件
   const isCanvasFocused = ref(false) // 当前焦点在container中才执行键盘事件
   const canvasKeyDown = (e: KeyboardEvent) => {
@@ -278,7 +282,7 @@
       store.setDeleteDesignData(ids)
       // 从store中删除已选择的
       store.setSelectedComp([])
-      //　清空选区
+      // 清空选区
       store.deleteRect()
     }
   }

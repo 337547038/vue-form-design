@@ -87,7 +87,7 @@
   import { objToStringify, string2json, stringToObj } from '@/utils/design'
   import { useLayoutStore } from '@/store/layout'
   import type { FormData } from '@/types/form'
-  import { getAceTitle, getAceContent } from '../../../components/ace/tooltip'
+  import { getAceTitle, getAceContent } from '@/components/ace/tooltip.ts'
   import getOneFormCreation from './components/oneFormCreation'
 
   defineOptions({ name: 'DesignFormIndex' })

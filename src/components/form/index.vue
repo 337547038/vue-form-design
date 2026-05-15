@@ -10,8 +10,8 @@
     :class="getFormCls"
     :hide-required-asterisk="operateType === 'detail'"
   >
-    <form-group :data="data.list"/>
-    <slot/>
+    <form-group :data="data.list" />
+    <slot />
     <div
       v-if="defaultBtnList.length"
       class="group group-btn"

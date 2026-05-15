@@ -1,6 +1,10 @@
 <template>
-  <el-icon v-if="isElIcon" :size="size" :color="color">
-    <component :is="name"/>
+  <el-icon
+    v-if="isElIcon"
+    :size="size"
+    :color="color"
+  >
+    <component :is="name" />
   </el-icon>
   <i
     v-else

@@ -10,9 +10,11 @@
     v-html="getReplaceGlobal"
   />
   <scroll-text
+    v-if="['sText'].includes(data.type)"
     :data="data"
     :style="getConfigStyle"
-    v-if="['sText'].includes(data.type)">{{ getReplaceGlobal }}
+  >
+    {{ getReplaceGlobal }}
   </scroll-text>
   <img
     v-if="data.type === 'image'"
@@ -26,25 +28,26 @@
     :style="getConfigStyle"
     class="default-bg"
   >
-<!--    <span v-if="!data.src">请选择或输入图片url地址</span>-->
+    <!--    <span v-if="!data.src">请选择或输入图片url地址</span>-->
   </div>
   <data-time
-    :formatType="data.dateTime"
+    v-if="data.type==='clock'"
+    :format-type="data.dateTime"
     :style="getConfigStyle"
-    v-if="data.type==='clock'"/>
+  />
   <component
     v-bind="data.props"
     :is="data.component"
     v-if="['component'].includes(data.type)"
   />
   <table-com
+    v-if="data.type==='table'"
     :height="data.height"
     :speed="data.speed"
     :carousel="data.carousel"
     :data="getReplaceGlobal"
-    v-if="data.type==='table'"
-    :style="getConfigStyle">
-  </table-com>
+    :style="getConfigStyle"
+  />
 </template>
 <script setup lang="ts">
   import {computed, onMounted, onUnmounted, ref} from 'vue'
@@ -87,7 +90,7 @@
   const getReplaceGlobal = computed(() => {
     const data = {
       getScreenGlobal: store.getScreenGlobal, // 全局数据
-      getScreenComp: componentResult.value　//　当前组件的动态接口数据
+      getScreenComp: componentResult.value // 当前组件的动态接口数据
     }
     const newData = objToStringify(Object.keys(componentData.value).length ? componentData.value : getDataByType(props.data))
     /*const newStr = newData.replace(/{{([\w.]+)}}/g, (_: any, keyPath: string) => {

@@ -1,6 +1,6 @@
 # 可视化数据大屏
 
-数据可视化大屏使用`position`和`let`和`top`定位布局。
+数据可视化大屏使用`position`的`let`和`top`定位布局。
 
 注意：当使用了`right、top`或其他非`px`单位布局时，当前组件将不能进拖动缩放及合并等操作
 
@@ -40,11 +40,41 @@ opt=(res,success) => {
 }
 ```
 
-这里返回的数据在当前页面可使用`getScreenGlobal`方法获取
+这里返回的数据存放在`store`里，可在页面组件数据中使用`getScreenGlobal`文本替换的方法获取．如：
 ```javascript
 //假如返回的数据为global这种形式
-const global = {list:[1],data:[],name:''}
-console.log(getScreenGlobal.list) //输出 1
+const res = {
+  series:[148, 57, 497, 478, 143, 292, 245, 317, 460, 49, 118, 281],
+  xAxisData:["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+  name:'图表名称',
+  pie:[20,80]  // 需要取20时则使用 getScreenGlobal.pie.0 0表示数组下标
+}
+// 图表的数据
+const opt = {
+  title:
+      {
+        text: "{{getScreenGlobal.name}}",　//　=> 图表名称
+      },
+  xAxis:
+      {
+        type: "category",
+        data: "{{getScreenGlobal.xAxisData}}"
+      },
+  yAxis:
+      {
+        type: "value"
+      },
+  grid:
+      {
+        left: 0,
+        bottom: 30
+      },
+  series: [
+    {
+      data: "{{getScreenGlobal.series}}",
+      type: "bar"
+    }]
+}
 ```
 
 ## 属性配置
@@ -62,20 +92,48 @@ console.log(getScreenGlobal.list) //输出 1
 ```javascript
 import { markRaw } from 'vue'
 import myComponents from 'xxxx';
-config:{
+{
   componentName: markRaw(myComponents)
 }
 ```
 
 ### 数据
 数据类型：
-- 1.静态/全局：对于图表即为option部分，这里可使用`getScreenGlobal`从全局数据中获取相应数据，在此处使用时需按约定使用特殊标识包起来，如
+- 1.静态/全局：对于图表即为option部分，这里可使用`getScreenGlobal`从`store`数据中获取相应数据，在此处使用时需按约定使用特殊标识包起来，如
 ```javascript 
 {
   data: "{{getScreenGlobal.xxxx}}"
 }
 ```
-- 2.动态：从`url`获取，同时在当前`after`事件中也可取到全局的数据
+- 2.动态：从`url`获取，可在`after`事件里对数据处理后返回，使用`getScreenComp`方法替换．也可直接在`after`方法里直接赋值
+
+```javascript
+const opt = {
+  title:
+      {
+        text: "{{getScreenComp.name}}",　//　=> 图表名称
+      },
+  xAxis:
+      {
+        type: "category",
+        data: "{{getScreenComp.xAxisData}}"
+      },
+  yAxis:
+      {
+        type: "value"
+      },
+  grid:
+      {
+        left: 0,
+        bottom: 30
+      },
+  series: [
+    {
+      data: "{{getScreenComp.series}}",
+      type: "bar"
+    }]
+}
+```
 
 #### after
 
@@ -86,12 +144,12 @@ config:{
 ```javascript
 opt=(res, data) => {
     // res响应数据, 当前组件数据data
-    // 这里可直接使用getScreenGlobal取得全局的数据
     console.log('afterScreen',data)
   　//如对当前组件进行赋值
   　//data.xAxis.data = res.line.xAxis
   　//data.series[0].data = res.line.data
   　//data.series[1].data = res.line.data1
+  　//同时也可以使用文本替换的方式，使用getScreenComp，即getScreenComp=res
     return data //返回新的图表数据
 }
 ```

@@ -4,12 +4,18 @@
     ref="containerRef"
     class="scroll-container"
   >
-    <div class="scroll-inner" :style="innerStyle">
-      <div class="scroll-content" ref="contentRef">
-        <slot/>
+    <div
+      class="scroll-inner"
+      :style="innerStyle"
+    >
+      <div
+        ref="contentRef"
+        class="scroll-content"
+      >
+        <slot />
       </div>
       <div class="scroll-content">
-        <slot/>
+        <slot />
       </div>
     </div>
   </div>

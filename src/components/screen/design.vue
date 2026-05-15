@@ -16,22 +16,24 @@
       <div
         class="component-wrapper"
         :class="{
-      ['group-' + element.type]: true,
-      [element.class]: element.class,
-      'active':activeIds?.includes(element.id)
-    }"
+          ['group-' + element.type]: true,
+          [element.class]: element.class,
+          'active':activeIds?.includes(element.id)
+        }"
         :style="getPositionStyle(element)"
         @contextmenu.stop.prevent="componentContextMenu(element, $event)"
-        @mousedown.left.stop="dragStart($event, element)">
+        @mousedown.left.stop="dragStart($event, element)"
+      >
         <div
           v-show="activeIds?.includes(element.id)&&cannotDragScale(element)"
-          class="resize-box">
-      <span
-        v-for="item in 8"
-        :key="item"
-        :class="`rs${item}`"
-        @mousedown.stop="startResize($event, element,item)"
-      />
+          class="resize-box"
+        >
+          <span
+            v-for="item in 8"
+            :key="item"
+            :class="`rs${item}`"
+            @mousedown.stop="startResize($event, element,item)"
+          />
           <div
             class="position-tips"
           >
@@ -39,9 +41,15 @@
           </div>
         </div>
         <template v-if="['container','div'].includes(element.type)">
-          <design v-model="element.children" data-type="div"></design>
+          <design
+            v-model="element.children"
+            data-type="div"
+          />
         </template>
-        <component-factory :data="element" v-else/>
+        <component-factory
+          v-else
+          :data="element"
+        />
       </div>
     </template>
   </draggable>
@@ -61,13 +69,13 @@
   }>()
 
   const store = useScreenStore()
-  const designData = defineModel()
+  const designData = defineModel<Component>()
   const MIN_SIZE = 1
 
   const activeIds = computed(() => {
     return store.selectedComp.map((item: { id: any; }) => item.id)
   })
-  //　拖动和缩放
+  // 拖动和缩放
   const resizeDrag = ref({
     resizeFlag: false,
     dragFlag: false,
@@ -168,7 +176,7 @@
     if (obj.locked) {
       return
     }
-    //　不符合移动组合等条件的，只选中
+    // 不符合移动组合等条件的，只选中
     if (!cannotDragScale(obj)) {
       store.setSelectedComp(obj)
       return false

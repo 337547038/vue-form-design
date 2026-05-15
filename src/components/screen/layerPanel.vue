@@ -5,10 +5,10 @@
         v-for="element in designFilterData"
         :key="element.id"
         :class="{
-                active: activeIds.includes(element.id),
-                locked: element.locked,
-                display:element.display,
-              }"
+          active: activeIds.includes(element.id),
+          locked: element.locked,
+          display:element.display,
+        }"
         @click="selectClick(element)"
       >
         <i
@@ -17,20 +17,24 @@
         />
         <el-input
           v-if="activeIds.includes(element.id)"
-          v-model="element.label"></el-input>
-        <span class="name" v-else>{{ element.label }}</span>
+          v-model="element.label"
+        />
+        <span
+          v-else
+          class="name"
+        >{{ element.label }}</span>
         <i
           class="icon icon1"
           :class="[
-                    element.display ? 'icon-eye-close' : 'icon-eye'
-                  ]"
+            element.display ? 'icon-eye-close' : 'icon-eye'
+          ]"
           @click.stop="layerClick(element, 'display')"
         />
         <i
           class="icon icon2"
           :class="[
-                    element.locked ? 'icon-lock' : 'icon-lock-open'
-                  ]"
+            element.locked ? 'icon-lock' : 'icon-lock-open'
+          ]"
           @click.stop="layerClick(element, 'locked')"
         />
         <el-popconfirm
@@ -38,10 +42,9 @@
           @confirm.stop="layerClick(element, 'del')"
         >
           <template #reference>
-            <i class="icon icon-del icon3"/>
+            <i class="icon icon-del icon3" />
           </template>
         </el-popconfirm>
-
       </li>
     </ul>
   </div>

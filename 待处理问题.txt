@@ -9,6 +9,6 @@ ace弹出重写，提示等
 
 
 ## 表格数据添加说明
-组件远程数据时添加参数方法说明
+##组件远程数据时添加参数方法说明
 ##组件类型type的ts定义
-resize-box8个点被overflow裁切
+##resize-box8个点被overflow裁切

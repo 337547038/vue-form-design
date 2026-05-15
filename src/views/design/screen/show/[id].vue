@@ -1,6 +1,10 @@
 <template>
-  <div class="container" :style="style" v-loading="loading">
-    <screen-show :data="designData.list"/>
+  <div
+    v-loading="loading"
+    class="container"
+    :style="style"
+  >
+    <screen-show :data="designData.list" />
   </div>
 </template>
 <route>

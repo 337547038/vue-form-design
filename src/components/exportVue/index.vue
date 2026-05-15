@@ -5,7 +5,7 @@
     class="export-dialog"
     width="80%"
   >
-    <div id="editJsonCopy"/>
+    <div id="editJsonCopy" />
     <template #footer>
       <div class="dialog-footer">
         <el-button

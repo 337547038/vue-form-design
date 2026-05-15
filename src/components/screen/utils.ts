@@ -47,7 +47,7 @@ export const toNumber = (value: any) => {
  */
 export const showTempRect = (obj?: Record<string, any>) => {
   const rectObj = store.designData.find((item: Component) => item.type === 'rect')
-  let newObj = {
+  const newObj = {
     type: 'rect',
     label: '临时选区',
     width: 0,
@@ -61,7 +61,7 @@ export const showTempRect = (obj?: Record<string, any>) => {
     store.setDesignData(newObj,true)
     return newObj
   } else {
-    //　存在，更新位置信息
+    // 存在，更新位置信息
     Object.assign(rectObj, newObj)
     return rectObj
   }
@@ -154,7 +154,6 @@ export const iconList: { [key: string]: string } = {
   sText: 'sText',
   image: 'image',
   background: 'image',
-  border: 'border',
   clock: 'time',
   div: 'div',
   group: 'div',

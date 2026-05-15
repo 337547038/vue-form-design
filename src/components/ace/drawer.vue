@@ -9,7 +9,7 @@
     :before-close="drawerBeforeClose"
   >
     <template #header>
-      <div v-html="state.title"/>
+      <div v-html="state.title" />
     </template>
     <div
       v-if="visible"

@@ -1,17 +1,23 @@
 <template>
   <div class="show-detail">
     <div
+      v-for="element in data"
+      :key="element.key"
       class="component-wrapper"
-      v-for="element in data" :key="element.key"
       :class="{
-      ['group-' + element.type]: true,
-      [element.class]: element.class
-    }"
-      :style="getPositionStyle(element)">
+        ['group-' + element.type]: true,
+        [element.class]: element.class
+      }"
+      :style="getPositionStyle(element)"
+    >
       <template v-if="element.children?.length&&['container','div'].includes(element.type)">
-        <show :data="element.children"></show>
+        <show :data="element.children" />
       </template>
-      <component-factory :data="element" v-else :key="element.key"/>
+      <component-factory
+        v-else
+        :key="element.key"
+        :data="element"
+      />
     </div>
   </div>
 </template>

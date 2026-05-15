@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import vue from 'eslint-plugin-vue'
 import tseslint from 'typescript-eslint'
+import globals from "globals";
 
 export default [
     // 1. 基础 JS 规则
@@ -22,12 +23,10 @@ export default [
                 ecmaVersion: 'latest',
                 sourceType: 'module',
             },
-            env: {
-                browser: true, // 让 ESLint 认识 setTimeout 等浏览器全局变量
-                es2021: true,
-            },
             // 所有全局变量
             globals: {
+                ...globals.browser,
+                ...globals.es2021,
                 // Vue 编译器宏
                 defineProps: 'readonly',
                 defineEmits: 'readonly',

@@ -39,7 +39,7 @@
         label="图层"
         name="layer"
       >
-        <layer-panel/>
+        <layer-panel />
       </el-tab-pane>
     </el-tabs>
   </div>

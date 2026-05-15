@@ -3,34 +3,38 @@
     v-loading="loading"
     class="design-container screen-container"
   >
-    <component-panel :style="{ width: toolVisible('left')}"/>
+    <component-panel :style="{ width: toolVisible('left')}" />
     <div class="main-body">
       <head-tools @click="headToolsClick">
         <el-button
           type="primary"
           link
           :disabled="!screenStore.canUndo"
-          @click="screenStore.setUndo">
+          @click="screenStore.setUndo"
+        >
           <el-icon :size="22">
-            <RefreshLeft/>
+            <RefreshLeft />
           </el-icon>
           撤销
         </el-button>
         <el-button
-          type="primary" link
+          type="primary"
+          link
           :disabled="!screenStore.canRedo"
-          @click="screenStore.setRedo"><i class="icon-refresh"></i> 重做
+          @click="screenStore.setRedo"
+        >
+          <i class="icon-refresh" /> 重做
         </el-button>
       </head-tools>
-      <design-area/>
-      <footer-panel/>
+      <design-area />
+      <footer-panel />
     </div>
     <property-panel
       :style="{ width: toolVisible('right')}"
       @open-drawer="openDrawer"
     />
-    <ace-drawer ref="aceDrawerRef"/>
-    <export-vue-file ref="exportVueFileRef"/>
+    <ace-drawer ref="aceDrawerRef" />
+    <export-vue-file ref="exportVueFileRef" />
   </div>
 </template>
 <script setup lang="ts">
@@ -111,7 +115,7 @@
         const routeUrl = router.resolve({
           path: '/design/screen/show/preview',
         })
-        //　将数据存
+        // 将数据存
         setStorage('screenPreviewData', designData.value)
         window.open(routeUrl.href, '_blank')
         break

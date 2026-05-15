@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-table
-      class="table"
       ref="tableRef"
+      class="table"
       :data="data.list"
       :height="`${height}`"
       style="width: 100%"
