@@ -121,7 +121,7 @@ export const getDataByType = (data: Component) => {
   }
 }
 // 对预览/导出vue页面插入静态资源
-export const loadStaticResource = (config: Config) => {
+export const loadConfigResource = (config: Config) => {
   const {requestUrl, style, styleLink} = config
   if (requestUrl) {
     getGlobalData(config).then(_ => {

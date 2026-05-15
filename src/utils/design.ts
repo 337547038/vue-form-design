@@ -64,11 +64,12 @@ function obj2string(o: unknown): string {
  * 将拖拽生成的表单数据转为字符串类型
  * @param obj
  * @param isBeautify
+ * @param opt 在ace编辑器里需要添加
  */
-export function objToStringify(obj: any, isBeautify?: boolean) {
+export function objToStringify(obj: any, isBeautify?: boolean, opt = "opt=") {
   if (EDITTYPE === 'javascript') {
     if (isBeautify) {
-      return jsBeautify('opt=' + obj2string(obj), {
+      return jsBeautify(`${opt}${obj2string(obj)}`, {
         indent_size: 2,
         brace_style: 'expand'
       })

@@ -1,21 +1,18 @@
 <template>
-  <div :style="screenStyle" class="design-canvas">
-    <AKScreen
-      v-for="(element, index) in screenData.list"
-      :key="index"
-      :data="element"
-    ></AKScreen>
+  <div class="container" :style="style" v-loading="loading">
+    <screen-show :data="designData.list"></screen-show>
   </div>
 </template>
-
 <script setup lang="ts">
-  import { ref, computed, provide } from 'vue'
+  import {computed, onMounted, ref} from 'vue'
+  import ScreenShow from '@/components/screen/show.vue'
+  import {loadConfigResource} from "@/components/screen/getData";
 
-  import AKScreen from '@/views/design/screen/components/screen.vue' //可根据需求是否全局注册
-
-  const designData = {{designData}}
-  const screenStyle = computed(() => {
-    const { width, height, background, primary } = designData.value.config
+  definePage({meta: {layout: 'hidden'}})
+  const loading = ref(false)
+  const designData = ref({{designData}})
+  const style = computed(() => {
+    const {width, height, background, primary} = designData.value.config || {}
     return {
       width: width,
       height: height,
@@ -24,5 +21,10 @@
       position: 'relative'
     }
   })
+  const initConfig = () => {
+    loadConfigResource(designData.value.config)
+  }
+  onMounted(() => {
+    initConfig()
+  })
 </script>
-{{style}}

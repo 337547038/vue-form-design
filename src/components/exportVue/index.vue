@@ -35,9 +35,18 @@
   const visible = ref(false)
   const editor = ref()
   // 根据生成的json提取需要导入的组件，远程方法，检验方法
-  const open = ({data, key}) => {
+  const open = ({data, type}: { data: any, type: string }) => {
     visible.value = true
-    const html = tplContent.replace('{{designData}}',objToStringify(data,true))
+    let html = ''
+    switch (type) {
+      case 'screen':
+        html = tplContent.replace('{{designData}}', objToStringify(data, true, ''))
+        break
+      case 'form':
+        break
+      case 'list':
+        break
+    }
     nextTick(() => {
       editor.value = aceEdit({content: html, id: 'editJsonCopy', type: 'html'})
     })
