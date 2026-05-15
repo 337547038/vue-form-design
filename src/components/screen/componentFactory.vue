@@ -26,13 +26,14 @@
     :style="getConfigStyle"
     class="default-bg"
   >
-    <span v-if="!data.src">请选择或输入图片url地址</span>
+<!--    <span v-if="!data.src">请选择或输入图片url地址</span>-->
   </div>
   <data-time
     :formatType="data.dateTime"
     :style="getConfigStyle"
     v-if="data.type==='clock'"/>
   <component
+    v-bind="data.props"
     :is="data.component"
     v-if="['component'].includes(data.type)"
   />
@@ -46,7 +47,7 @@
   </table-com>
 </template>
 <script setup lang="ts">
-  import {computed, onMounted, ref} from 'vue'
+  import {computed, onMounted, onUnmounted, ref} from 'vue'
   import type {Component} from '@/types/screen'
   import EchartsInit from './widgets/echartsInt.vue'
   import ScrollText from './widgets/scrollText.vue'
@@ -89,10 +90,18 @@
       getScreenComp: componentResult.value　//　当前组件的动态接口数据
     }
     const newData = objToStringify(Object.keys(componentData.value).length ? componentData.value : getDataByType(props.data))
-    const newStr = newData.replace(/{{([\w.]+)}}/g, (_: any, keyPath: string) => {
+    /*const newStr = newData.replace(/{{([\w.]+)}}/g, (_: any, keyPath: string) => {
       return keyPath.split('.').reduce((target: any, key) => target?.[key], data)
-      //return new Function('return ' + keyPath)() //只能访问全局作用域,需使用window定义
-    })
+    })*/
+    // 处理 纯变量 场景："{{xxx}}" → 直接替换成真实类型（数组/数字/布尔）
+    const newStr = newData.replace(/"{{([\w.]+)}}"/g, (_: any, key: string) => {
+      const val = key.split('.').reduce((o: any, k: string) => o?.[k], data);
+      return JSON.stringify(val);
+    }).replace(/{{([\w.]+)}}/g, (_: any, key: string) => {
+      //处理 混合文本 场景：xxx{{xxx}}xxx → 替换成文本
+      const val = key.split('.').reduce((o: any, k: string) => o?.[k], data);
+      return val ?? ''; // 纯文本拼接
+    });
     return stringToObj(newStr)
   })
   // 获取组件的动态数据
@@ -105,5 +114,9 @@
   }
   onMounted(() => {
     getData()
+  })
+  onUnmounted(() => {
+    componentData.value = {}
+    componentResult.value = {}
   })
 </script>

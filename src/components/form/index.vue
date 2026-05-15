@@ -10,8 +10,8 @@
     :class="getFormCls"
     :hide-required-asterisk="operateType === 'detail'"
   >
-    <form-group :data="data.list" />
-    <slot />
+    <form-group :data="data.list"/>
+    <slot/>
     <div
       v-if="defaultBtnList.length"
       class="group group-btn"
@@ -39,56 +39,57 @@
     reactive
   } from 'vue'
   import FormGroup from './formGroup.vue'
-  import type { FormData, FormList } from '@/types/form'
-  import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
-  import { ElMessage } from 'element-plus'
-  import { appendOrRemoveStyle, jsonParseStringify } from '@/utils/design'
+  import type {FormData, FormList} from '@/types/form'
+  import {useRoute, useRouter, onBeforeRouteLeave} from 'vue-router'
+  import {ElMessage} from 'element-plus'
+  import { jsonParseStringify} from '@/utils/design'
+  import {loadResource, removeResource} from '@/utils'
   import formChangeValue from '@/utils/formChangeValue'
-  import { getStorage } from '@/utils'
-  import { beforeAfter, getRequestEvent } from '@/utils/beforeAfter'
+  import {getStorage} from '@/utils'
+  import {beforeAfter, getRequestEvent} from '@/utils/beforeAfter'
 
-  defineOptions({ name: 'AkForm' })
+  defineOptions({name: 'AkForm'})
   const props = withDefaults(
-      defineProps<{
-        data: FormData
-        disabled?: boolean // 禁用表单提交
-        before?: string | ((params: any, obj: any) => any) // 请求编辑数据前参数处理方法，可对请求参数处理
-        after?: string | ((res: any, obj: any) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
-        query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
-        params?: { [key: string]: any } // 提交表单一些附加参数
-        submitUrl?: string // 表单提交url
-        requestUrl?: string // 用于回显填充数据请求数据url
-        // add/edit用于根据当前类型显示或禁用相关组件操作。design/designSearch设计模式。detail用于详情页查看。search用于列表上方条件筛选
-        operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' | 'designSearch'
-      }>(),
-      {
-       /* data: () => {
-          return {
-            list: [],
-            form: {},
-            config: {}
-          }
-        }, */
-        query: () => {
-          return {}
-        },
-        params: () => {
-          return {}
-        },
-        operateType: 'add',
-        submitUrl: '',
-        requestUrl: '',
-        before: () => {
-        },
-        after: () => {
-        }
+    defineProps<{
+      data: FormData
+      disabled?: boolean // 禁用表单提交
+      before?: string | ((params: any, obj: any) => any) // 请求编辑数据前参数处理方法，可对请求参数处理
+      after?: string | ((res: any, obj: any) => any) // 请求数据加载完成后数据处理方法，可对返回数据处理
+      query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
+      params?: { [key: string]: any } // 提交表单一些附加参数
+      submitUrl?: string // 表单提交url
+      requestUrl?: string // 用于回显填充数据请求数据url
+      // add/edit用于根据当前类型显示或禁用相关组件操作。design/designSearch设计模式。detail用于详情页查看。search用于列表上方条件筛选
+      operateType?: 'add' | 'edit' | 'design' | 'detail' | 'search' | 'designSearch'
+    }>(),
+    {
+      /* data: () => {
+         return {
+           list: [],
+           form: {},
+           config: {}
+         }
+       }, */
+      query: () => {
+        return {}
+      },
+      params: () => {
+        return {}
+      },
+      operateType: 'add',
+      submitUrl: '',
+      requestUrl: '',
+      before: () => {
+      },
+      after: () => {
       }
+    }
   )
   const emits = defineEmits<{
     (e: 'btnClick', type: string): void
     (
-        e: 'change',
-        { name, value, model, prop, options }: { name: string, value: any, model: any, prop: string, options: any }
+      e: 'change',
+      {name, value, model, prop, options}: { name: string, value: any, model: any, prop: string, options: any }
     ): void // 表单组件值发生变化时
   }>()
 
@@ -124,10 +125,10 @@
             type: 'primary',
             key: 'submit'
           },
-          { label: '取消', key: 'reset' }
+          {label: '取消', key: 'reset'}
         ]
       } else {
-        return [{ label: '取消返回', key: 'cancel' }]
+        return [{label: '取消返回', key: 'cancel'}]
       }
     } else if (typeof submitBtn === 'object' && submitBtn?.length) {
       return submitBtn
@@ -195,16 +196,16 @@
     }
   }
   const unWatchEvent = watch(
-      () => props.data.form!.name,
-      () => {
-        setWindowEvent()
-      }
+    () => props.data.form!.name,
+    () => {
+      setWindowEvent()
+    }
   )
   const unWatchStyle = watch(
-      () => props.data.config!.style,
-      () => {
-        appendRemoveStyle(true) // 更新样式
-      }
+    () => props.data.config!.style,
+    () => {
+      appendRemoveStyle(true) // 更新样式
+    }
   )
   // 设置全局事件结束
 
@@ -237,12 +238,12 @@
     model.value = obj
   }
   const unWatch2 = watch(
-      () => props.data.list,
-      () => {
-        // data从接口获取时
-        getInitModel()
-      },
-      { immediate: true }
+    () => props.data.list,
+    () => {
+      // data从接口获取时
+      getInitModel()
+    },
+    {immediate: true}
   )
 
   const dictForm = computed(() => {
@@ -330,12 +331,16 @@
 
   /**
    * 追加移除style样式
-   * @param type
+   * @param append false移除
    */
-  const appendRemoveStyle = (type?: boolean) => {
+  const appendRemoveStyle = (append?: boolean) => {
     try {
       const style = props.data.config?.style || ''
-      appendOrRemoveStyle('formStyle', style, type)
+      if (!append) {
+        removeResource('formStyle')
+      } else {
+        loadResource(style, 'formStyle')
+      }
     } catch (e) {
       /* empty */
     }
@@ -357,7 +362,7 @@
    * @param prop 子表或flex时的prop，其他情况等于name的值
    * @param options 当type=select时，同时返回当前选项options数据
    */
-  provide('akFormValueChange', ({ name, value, prop, options }: any) => {
+  provide('akFormValueChange', ({name, value, prop, options}: any) => {
     // change事件修改调整model的值
     const onFormChange = props.data.events?.change
     if (typeof onFormChange === 'function') {
@@ -374,7 +379,7 @@
         model.value = returnVal
       }
     }
-    emits('change', { name, value, model: model.value, prop, options })
+    emits('change', {name, value, model: model.value, prop, options})
   })
 
   // defineExpose方法，设置表单选项值
@@ -409,36 +414,36 @@
       route: route,
       type: 'fetch'
     })
-        .then((res: any) => {
-          loading.value = false
-          const result = res.data
-          if (result) {
-            const formatRes: any = result.result || result || {} // 兼容两种返回格式
-            // 这里尝试将string转obj以恢复提交保存时的转换
-            let temp: any = {}
-            if (props.data.config?.transformData) {
-              for (const key in formatRes) {
-                try {
-                  temp[key] = JSON.parse(formatRes[key])
-                } catch (e) {
-                  temp[key] = formatRes[key]
-                }
+      .then((res: any) => {
+        loading.value = false
+        const result = res.data
+        if (result) {
+          const formatRes: any = result.result || result || {} // 兼容两种返回格式
+          // 这里尝试将string转obj以恢复提交保存时的转换
+          let temp: any = {}
+          if (props.data.config?.transformData) {
+            for (const key in formatRes) {
+              try {
+                temp[key] = JSON.parse(formatRes[key])
+              } catch (e) {
+                temp[key] = formatRes[key]
               }
-            } else {
-              temp = formatRes
             }
-            setValue(temp)
-            nextTick(() => {
-              // 将dict保存，可用于从接口中设置表单组件options。
-              if (formatRes.dict && Object.keys(formatRes.dict).length) {
-                resultDict.value = formatRes.dict
-              }
-            })
+          } else {
+            temp = formatRes
           }
-        })
-        .catch(() => {
-          loading.value = false
-        })
+          setValue(temp)
+          nextTick(() => {
+            // 将dict保存，可用于从接口中设置表单组件options。
+            if (formatRes.dict && Object.keys(formatRes.dict).length) {
+              resultDict.value = formatRes.dict
+            }
+          })
+        }
+      })
+      .catch(() => {
+        loading.value = false
+      })
   }
   /**
    * 表单添加和编辑提交
@@ -471,7 +476,7 @@
         }
         // 提交保存表单
         beforeAfter({
-           apiKey: apiUrl,
+          apiKey: apiUrl,
           params: Object.assign({}, temp, params, props.params),
           before: getRequestEvent(props, 'before'),
           after: getRequestEvent(props, 'after'),
@@ -479,19 +484,19 @@
           route: route,
           formModel: model.value,
         })
-            .then((res: any) => {
-              loading.value = false
-              ElMessage.success(res.message || '保存成功！')
-            })
-            .catch((res) => {
-              // 接口返回code!=1时已统一提示异常，这里不重复提示
-              // 接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
-              if (res.code === undefined) {
-                console.error(res.message)
-               // ElMessage.error(res.message || '处理异常！')
-              }
-              loading.value = false
-            })
+          .then((res: any) => {
+            loading.value = false
+            ElMessage.success(res.message || '保存成功！')
+          })
+          .catch((res) => {
+            // 接口返回code!=1时已统一提示异常，这里不重复提示
+            // 接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
+            if (res.code === undefined) {
+              console.error(res.message)
+              // ElMessage.error(res.message || '处理异常！')
+            }
+            loading.value = false
+          })
       } else {
         // 没通过校验，这里单独处理，返回校验结果通知
         loading.value = false

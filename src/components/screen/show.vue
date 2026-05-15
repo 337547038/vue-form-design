@@ -11,7 +11,7 @@
       <template v-if="element.children?.length&&['container','div'].includes(element.type)">
         <show :data="element.children"></show>
       </template>
-      <component-factory :data="element" v-else/>
+      <component-factory :data="element" v-else :key="element.key"/>
     </div>
   </div>
 </template>

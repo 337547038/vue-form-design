@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
   import { reactive, watch, ref, onMounted, nextTick } from 'vue'
-  import { loadScript } from '@/utils'
+  import {loadResource} from '@/utils'
 
   const props = withDefaults(
     defineProps<{
@@ -163,7 +163,7 @@
   }
   onMounted(() => {
     console.log('onMountedonMounted')
-    loadScript(
+    loadResource(
       'https://webapi.amap.com/maps?v=2.0&key=160cab8ad6c50752175d76e61ef92c50&plugin=AMap.PlaceSearch'
     ).then(() => {})
   })

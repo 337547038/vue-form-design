@@ -93,6 +93,9 @@ export function loadResource(
   if (id && document.getElementById(id)) {
     return Promise.resolve();
   }
+  if (!content) {
+    return Promise.resolve();
+  }
 
   return new Promise((resolve, reject) => {
     let element: HTMLElement;
@@ -137,13 +140,6 @@ export function removeResource(id: string): void {
   if (element && element.parentNode === document.head) {
     document.head.removeChild(element);
   }
-}
-
-/**
- * 兼容旧版 loadScript todo 移除这个
- */
-export function loadScript(id: string, src: string): Promise<void> {
-  return loadResource(src,id, 'script');
 }
 
 /**

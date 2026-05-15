@@ -671,7 +671,8 @@
         type: 'color-picker',
         label: '背景颜色',
         key: 'background',
-        vShow: ['background', 'sText', 'text']
+        attr:{showAlpha:true}
+        //vShow: ['background', 'sText', 'text']
       },
       {
         type: 'color-picker',
@@ -718,7 +719,8 @@
         //vShow: ['image', 'background'],
         attr: {
           filterable: true,
-          allowCreate: true
+          allowCreate: true,
+          clearable: true
         },
         options: screenStaticImages.value
       },
@@ -734,7 +736,6 @@
           'sText',
           'image',
           'background',
-          'border',
           'clock'],
         key: 'style',
         label: '编辑内联样式'

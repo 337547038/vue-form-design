@@ -10,7 +10,7 @@
   import {computed, onMounted, ref} from 'vue'
   import ScreenShow from '@/components/screen/show.vue'
   import {useRoute} from "vue-router";
-  import {getInitData} from "@/components/screen/getData";
+  import {getInitData, loadStaticResource} from "@/components/screen/getData";
   import {getStorage} from "@/utils";
 
   const route = useRoute();
@@ -31,6 +31,8 @@
     const id = route.params.id
     if (id === 'preview') {
       designData.value = getStorage('screenPreviewData')
+      // 加载全局接口配置数据
+      loadStaticResource(designData.value.config)
       return
     }
     getInitData(id)

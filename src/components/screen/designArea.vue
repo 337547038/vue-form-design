@@ -259,6 +259,11 @@
     }
   }
   const keyup = (evt: KeyboardEvent) => {
+    // 撤销事件
+    if (evt.key === 'z' && store.ctrlPress && store.canUndo) {
+      store.setUndo()
+      return;
+    }
     if (!isCanvasFocused.value) {
       return
     }

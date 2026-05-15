@@ -1,5 +1,5 @@
 export interface Component {
-  type: "line" | "bar" | "pie" | "echarts" | "table" | "text" | "sText" | "image" | "background" | "clock" | "div" | "component" | "container"
+  type: "line" | "bar" | "pie" | "echarts" | "table" | "text" | "sText" | "image" | "background" | "clock" | "div" | "component" | "container" | "rect"
   width?: number | string
   height?: number | string
   x?: number | string
@@ -33,6 +33,7 @@ export interface Component {
   src?: string // type=background
   dateTime?: string
   carousel?: string // 是否轮播 type=table
+  props?: Record<string, any> // 表格或自定义组件时，可传给组件的props
 }
 
 export interface Config {

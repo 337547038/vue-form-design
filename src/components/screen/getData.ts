@@ -5,7 +5,7 @@ import {beforeAfter} from '@/utils/beforeAfter'
 import {loadResource, removeResource} from "@/utils";
 import {ScopedStyleId} from "./utils";
 import {useScreenStore} from "@/store/screen"
-import type {Component} from "@/types/screen.ts";
+import type {Component, Config} from "@/types/screen.ts";
 
 const store = useScreenStore();
 
@@ -21,7 +21,7 @@ export const getInitData = (id: string | number) => {
           const resultData = stringToObj(result.data)
           if (resultData.config?.style) {
             removeResource(ScopedStyleId)
-            loadResource(resultData.style, ScopedStyleId)
+            loadResource(resultData.config.style, ScopedStyleId)
           }
           if (resultData.config?.styleLink) {
             removeResource('styleLink')
@@ -39,7 +39,7 @@ export const getInitData = (id: string | number) => {
         })
   })
 }
-export const getGlobalData = (config: any) => {
+export const getGlobalData = (config: Config) => {
   return new Promise((resolve, reject) => {
     const {requestUrl, before, after, method}: any = config
     if (requestUrl) {
@@ -118,5 +118,21 @@ export const getDataByType = (data: Component) => {
       return data.text
     default:
       return data.option
+  }
+}
+// 对预览/导出vue页面插入静态资源
+export const loadStaticResource = (config: Config) => {
+  const {requestUrl, style, styleLink} = config
+  if (requestUrl) {
+    getGlobalData(config).then(_ => {
+    })
+  }
+  if (style) {
+    loadResource(style, ScopedStyleId).then(() => {
+    })
+  }
+  if (styleLink) {
+    loadResource(styleLink, 'styleLink').then(() => {
+    })
   }
 }

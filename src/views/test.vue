@@ -1,54 +1,1584 @@
 <template>
   <div class="wrap">
-    <button @click="alignCenterH">水平居中(以第一个为基准)</button>
-    <button @click="alignCenterV" style="margin-left:10px">垂直居中(以第一个为基准)</button>
 
-    <div class="container">
-      <div
-        v-for="(item, idx) in list"
-        :key="idx"
-        class="item"
-        :style="{
-          left: item.x + 'px',
-          top: item.y + 'px',
-          width: item.width + 'px',
-          height: item.height + 'px'
-        }"
-      >
-        {{ idx + 1 }}
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+  const list = [
+      {
+        id: "rect",
+        type: "tempRect",
+        position:
+          {
+            width: 200,
+            display: true
+          }
+      },
+      {
+        type: "background",
+        position:
+          {
+            height: "105",
+            left: 0,
+            display: false,
+            width: "100%"
+          },
+        config:
+          {
+            src: "./static/screen/bg/head_bg.png",
+            lock: false
+          },
+        id: "background17210383022510"
+      },
+      {
+        type: "text",
+        position:
+          {
+            height: 30,
+            left: 0,
+            top: 20,
+            width: "100%"
+          },
+        config:
+          {
+            text: "大数据可视化系统数据分析通用模版",
+            style:
+              {
+                fontSize: "20px",
+                "text-align": "center"
+              },
+            lock: false,
+            optionsType: 0
+          },
+        id: "text17210383022511"
+      },
+      {
+        type: "line",
+        position:
+          {
+            width: 550,
+            height: 280,
+            left: 32,
+            top: 139,
+            zIndex: 2
+          },
+        option:
+          {
+            tooltip:
+              {},
+            grid:
+              {
+                left: "0",
+                top: "30",
+                right: "20",
+                bottom: "10",
+                containLabel: true
+              },
+            xAxis: [
+              {
+                type: "category",
+                boundaryGap: false,
+                axisLabel:
+                  {
+                    textStyle:
+                      {
+                        color: "rgba(255,255,255,.6)",
+                        fontSize: 14
+                      }
+                  },
+                axisLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.1)"
+                      }
+                  },
+                data: "{{getScreenGlobal.line.xAxis}}"
+              },
+              {
+                axisPointer:
+                  {
+                    show: false
+                  },
+                axisLine:
+                  {
+                    show: false
+                  },
+                position: "bottom",
+                offset: 20
+              }],
+            yAxis: [
+              {
+                type: "value",
+                axisTick:
+                  {
+                    show: false
+                  },
+                axisLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.1)"
+                      }
+                  },
+                axisLabel:
+                  {
+                    textStyle:
+                      {
+                        color: "rgba(255,255,255,.6)",
+                        fontSize: 14
+                      }
+                  },
+                splitLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.1)"
+                      }
+                  }
+              }],
+            series: [
+              {
+                name: "模块标题",
+                type: "line",
+                smooth: true,
+                symbol: "circle",
+                symbolSize: 10,
+                lineStyle:
+                  {
+                    normal:
+                      {
+                        color: "rgba(228, 228, 126, 1)",
+                        width: 2
+                      }
+                  },
+                areaStyle:
+                  {
+                    normal:
+                      {
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "rgba(228, 228, 126, .8)"
+                              },
+                              {
+                                offset: 0.8,
+                                color: "rgba(228, 228, 126, 0.1)"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          },
+                        shadowColor: "rgba(0, 0, 0, 0.1)"
+                      }
+                  },
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        color: "#dddc6b",
+                        borderColor: "rgba(221, 220, 107, .1)",
+                        borderWidth: 12
+                      }
+                  },
+                data: "{{getScreenGlobal.line.data}}"
+              }]
+          },
+        config:
+          {
+            lock: false,
+            optionsType: 0
+          },
+        events:
+          {},
+        id: "line17210383022512"
+      },
+      {
+        type: "text",
+        position:
+          {
+            width: 100,
+            height: 30,
+            left: 32,
+            top: 453,
+            zIndex: 2
+          },
+        config:
+          {
+            text: "使用动态形式",
+            lock: false
+          },
+        id: "text17210383022513"
+      },
+      {
+        type: "border",
+        position:
+          {
+            width: 570,
+            height: 310,
+            left: 20,
+            top: 440
+          },
+        config:
+          {
+            style:
+              {},
+            class: "border",
+            lock: false
+          },
+        id: "border17210383022514"
+      },
+      {
+        type: "border",
+        position:
+          {
+            width: 570,
+            height: 310,
+            left: 20,
+            top: 110,
+            zIndex: 0
+          },
+        config:
+          {
+            style:
+              {},
+            lock: false,
+            class: "border"
+          },
+        id: "border17210383022515"
+      },
+      {
+        type: "text",
+        position:
+          {
+            width: 260,
+            height: 69,
+            left: 604,
+            top: 164
+          },
+        config:
+          {
+            text: "{{getScreenGlobal.textNum1}}",
+            style:
+              {
+                fontSize: "36px",
+                color: "rgba(254, 3, 3, 1)",
+                fontWeight: "700"
+              },
+            optionsType: 0
+          },
+        id: "text17210383022516"
+      },
+      {
+        type: "echarts",
+        position:
+          {
+            width: 148,
+            left: 929,
+            top: 142
+          },
+        option:
+          {
+            title:
+              {
+                text: "80%",
+                x: "center",
+                textStyle:
+                  {
+                    fontWeight: "normal",
+                    color: "#fff",
+                    fontSize: "18"
+                  }
+              },
+            color: "#49bcf7",
+            series: [
+              {
+                name: "Line 1",
+                type: "pie",
+                clockWise: true,
+                radius: ["65%", "80%"],
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        label:
+                          {
+                            show: false
+                          },
+                        labelLine:
+                          {
+                            show: false
+                          }
+                      }
+                  },
+                hoverAnimation: false,
+                data: [
+                  {
+                    value: "{{getScreenGlobal.pie[0]}}",
+                    name: "已使用",
+                    itemStyle:
+                      {
+                        normal:
+                          {
+                            color: "#eaff00",
+                            label:
+                              {
+                                show: false
+                              },
+                            labelLine:
+                              {
+                                show: false
+                              }
+                          }
+                      }
+                  },
+                  {
+                    name: "未使用",
+                    value: "{{getScreenGlobal.pie[1]}}"
+                  }]
+              }]
+          },
+        config:
+          {
+            optionsType: 0
+          },
+        id: "echarts17210383022517"
+      },
+      {
+        type: "echarts",
+        position:
+          {
+            width: 148,
+            left: 1101,
+            top: 143
+          },
+        option:
+          {
+            title:
+              {
+                text: "60%",
+                x: "center",
+                textStyle:
+                  {
+                    fontWeight: "normal",
+                    color: "#fff",
+                    fontSize: "18"
+                  }
+              },
+            color: "#49bcf7",
+            series: [
+              {
+                name: "Line 1",
+                type: "pie",
+                clockWise: true,
+                radius: ["65%", "80%"],
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        label:
+                          {
+                            show: false
+                          },
+                        labelLine:
+                          {
+                            show: false
+                          }
+                      }
+                  },
+                hoverAnimation: false,
+                data: [
+                  {
+                    value: "{{getScreenGlobal.pie2[0]}}",
+                    name: "已使用",
+                    itemStyle:
+                      {
+                        normal:
+                          {
+                            color: "#ea4d4d",
+                            label:
+                              {
+                                show: false
+                              },
+                            labelLine:
+                              {
+                                show: false
+                              }
+                          }
+                      }
+                  },
+                  {
+                    name: "未使用",
+                    value: "{{getScreenGlobal.pie2[1]}}"
+                  }]
+              }]
+          },
+        config:
+          {
+            optionsType: 0
+          },
+        id: "echarts17210383022518"
+      },
+      {
+        type: "echarts",
+        position:
+          {
+            width: 394,
+            height: 271,
+            left: 1474,
+            top: 140,
+            zIndex: 2
+          },
+        option:
+          {
+            tooltip:
+              {},
+            radar: [
+              {
+                indicator: [
+                  {
+                    text: "盈利能力",
+                    max: 100
+                  },
+                  {
+                    text: "发展水平",
+                    max: 100
+                  },
+                  {
+                    text: "融资能力",
+                    max: 100
+                  },
+                  {
+                    text: "技术能力",
+                    max: 100
+                  },
+                  {
+                    text: "企业规模",
+                    max: 100
+                  }],
+                textStyle:
+                  {
+                    color: "red"
+                  },
+                center: ["50%", "50%"],
+                radius: "70%",
+                startAngle: 90,
+                splitNumber: 4,
+                shape: "circle",
+                name:
+                  {
+                    padding: -5,
+                    formatter: "{value}",
+                    textStyle:
+                      {
+                        fontSize: 14,
+                        color: "rgba(255,255,255,.6)"
+                      }
+                  },
+                splitArea:
+                  {
+                    areaStyle:
+                      {
+                        color: "rgba(255,255,255,.05)"
+                      }
+                  },
+                axisLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.05)"
+                      }
+                  },
+                splitLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.05)"
+                      }
+                  }
+              }],
+            series: [
+              {
+                name: "雷达图",
+                type: "radar",
+                tooltip:
+                  {
+                    trigger: "item"
+                  },
+                data: [
+                  {
+                    name: "园区平均值",
+                    value: "{{getScreenGlobal.radar.list[0]}}",
+                    lineStyle:
+                      {
+                        normal:
+                          {
+                            color: "#03b48e",
+                            width: 2
+                          }
+                      },
+                    areaStyle:
+                      {
+                        normal:
+                          {
+                            color: "#03b48e",
+                            opacity: 0.4
+                          }
+                      },
+                    symbolSize: 0
+                  },
+                  {
+                    name: "当前园区",
+                    value: "{{getScreenGlobal.radar.list[1]}}",
+                    symbolSize: 0,
+                    lineStyle:
+                      {
+                        normal:
+                          {
+                            color: "#3893e5",
+                            width: 2
+                          }
+                      },
+                    areaStyle:
+                      {
+                        normal:
+                          {
+                            color: "rgba(19, 173, 255, 0.5)"
+                          }
+                      }
+                  }]
+              }]
+          },
+        config:
+          {
+            lock: false,
+            optionsType: 0
+          },
+        id: "echarts17210383022519"
+      },
+      {
+        type: "border",
+        position:
+          {
+            width: 470,
+            height: 310,
+            left: 1440,
+            top: 110
+          },
+        config:
+          {
+            style:
+              {
+                border: ""
+              },
+            class: "border",
+            lock: false
+          },
+        id: "border172103830225110"
+      },
+      {
+        type: "pie",
+        position:
+          {
+            width: 394,
+            height: 271,
+            left: 1486,
+            top: 466,
+            zIndex: 2
+          },
+        option:
+          {
+            tooltip:
+              {},
+            legend:
+              {
+                orient: "vertical",
+                left: "left",
+                color: "#fff"
+              },
+            series: "{{getScreenGlobal.pie3}}"
+          },
+        config:
+          {
+            lock: false,
+            optionsType: 0
+          },
+        id: "pie172103830225111"
+      },
+      {
+        type: "text",
+        position:
+          {
+            width: 100,
+            height: 30,
+            left: 607,
+            top: 123
+          },
+        config:
+          {
+            text: "使用全局数据"
+          },
+        id: "text172103830225112"
+      },
+      {
+        type: "border",
+        position:
+          {
+            width: 808,
+            height: 439,
+            left: 610,
+            top: 312
+          },
+        config:
+          {
+            style:
+              {
+                border: ""
+              },
+            class: "border",
+            lock: false
+          },
+        id: "border172103830225113"
+      },
+      {
+        type: "echarts",
+        position:
+          {
+            width: 780,
+            height: 407,
+            left: 626,
+            top: 332,
+            zIndex: 2
+          },
+        option:
+          {
+            tooltip:
+              {
+                trigger: "axis",
+                axisPointer:
+                  {
+                    type: "shadow"
+                  }
+              },
+            legend:
+              {
+                x: "center",
+                y: "0",
+                icon: "circle",
+                itemGap: 8,
+                textStyle:
+                  {
+                    color: "rgba(255,255,255,.5)"
+                  },
+                itemWidth: 10
+              },
+            grid:
+              {
+                left: "0",
+                top: "30",
+                right: "15",
+                containLabel: true
+              },
+            xAxis:
+              {
+                type: "category",
+                data: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                axisLine:
+                  {
+                    show: false
+                  },
+                axisLabel:
+                  {
+                    textStyle:
+                      {
+                        color: "rgba(255,255,255,.6)",
+                        fontSize: 14
+                      }
+                  }
+              },
+            yAxis:
+              {
+                type: "value",
+                splitNumber: 4,
+                axisLine:
+                  {
+                    show: false
+                  },
+                axisTick:
+                  {
+                    show: false
+                  },
+                splitLine:
+                  {
+                    show: true,
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,0.05)"
+                      }
+                  },
+                axisLabel:
+                  {
+                    textStyle:
+                      {
+                        color: "rgba(255,255,255,.6)",
+                        fontSize: 14
+                      }
+                  }
+              },
+            series: [
+              {
+                name: "字段1",
+                type: "bar",
+                barWidth: "15%",
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "#8bd46e"
+                              },
+                              {
+                                offset: 1,
+                                color: "#03b48e"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          },
+                        barBorderRadius: 11
+                      }
+                  },
+                data: [77, 35, 319, 364, 364, 416, 244, 45, 331, 267, 301, 353]
+              },
+              {
+                name: "字段2",
+                type: "bar",
+                barWidth: "15%",
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "#3893e5"
+                              },
+                              {
+                                offset: 1,
+                                color: "#248ff7"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          },
+                        barBorderRadius: 11
+                      }
+                  },
+                data: [86, 114, 70, 159, 196, 5, 197, 461, 12, 235, 252, 340]
+              },
+              {
+                name: "字段3",
+                type: "bar",
+                barWidth: "15%",
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "#43cadd"
+                              },
+                              {
+                                offset: 1,
+                                color: "#0097c9"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          },
+                        barBorderRadius: 11
+                      }
+                  },
+                data: [23, 354, 334, 221, 178, 190, 234, 354, 334, 221, 178, 190]
+              }]
+          },
+        config:
+          {
+            lock: false
+          },
+        id: "echarts172103830225114"
+      },
+      {
+        type: "bar",
+        position:
+          {
+            width: 550,
+            height: 277,
+            left: 28,
+            top: 471
+          },
+        option:
+          {
+            tooltip:
+              {
+                trigger: "axis",
+                axisPointer:
+                  {
+                    lineStyle:
+                      {
+                        color: "#dddc6b"
+                      }
+                  }
+              },
+            grid:
+              {
+                left: "0",
+                top: "30",
+                right: "20",
+                bottom: "10",
+                containLabel: true
+              },
+            legend:
+              {
+                data: ["字段1", "字段2"],
+                right: "center",
+                top: 0,
+                textStyle:
+                  {
+                    color: "#fff"
+                  },
+                itemWidth: 12,
+                itemHeight: 10
+              },
+            xAxis: [
+              {
+                type: "category",
+                boundaryGap: false,
+                axisLabel:
+                  {
+                    textStyle:
+                      {
+                        color: "rgba(255,255,255,.6)",
+                        fontSize: 14
+                      }
+                  },
+                axisLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.1)"
+                      }
+                  },
+                data: ["8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"]
+              },
+              {
+                axisPointer:
+                  {
+                    show: false
+                  },
+                axisLine:
+                  {
+                    show: false
+                  },
+                position: "bottom",
+                offset: 20
+              }],
+            yAxis: [
+              {
+                type: "value",
+                axisTick:
+                  {
+                    show: false
+                  },
+                axisLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.1)"
+                      }
+                  },
+                axisLabel:
+                  {
+                    textStyle:
+                      {
+                        color: "rgba(255,255,255,.6)",
+                        fontSize: 14
+                      }
+                  },
+                splitLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.1)"
+                      }
+                  }
+              }],
+            series: [
+              {
+                name: "字段1",
+                type: "line",
+                smooth: true,
+                symbol: "circle",
+                symbolSize: 5,
+                showSymbol: false,
+                lineStyle:
+                  {
+                    normal:
+                      {
+                        color: "rgba(228, 228, 126, 1)",
+                        width: 2
+                      }
+                  },
+                areaStyle:
+                  {
+                    normal:
+                      {
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "rgba(228, 228, 126, .8)"
+                              },
+                              {
+                                offset: 0.8,
+                                color: "rgba(228, 228, 126, 0.1)"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          },
+                        shadowColor: "rgba(0, 0, 0, 0.1)"
+                      }
+                  },
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        color: "#dddc6b",
+                        borderColor: "rgba(221, 220, 107, .1)",
+                        borderWidth: 12
+                      }
+                  },
+                data: [191, 203, 315, 429, 179, 78, 373, 10, 393, 469, 176, 126, 349, 119, 293]
+              },
+              {
+                name: "字段2",
+                type: "line",
+                smooth: true,
+                symbol: "circle",
+                symbolSize: 5,
+                showSymbol: false,
+                lineStyle:
+                  {
+                    normal:
+                      {
+                        color: "rgba(255, 128, 128, 1)",
+                        width: 2
+                      }
+                  },
+                areaStyle:
+                  {
+                    normal:
+                      {
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "rgba(255, 128, 128,.8)"
+                              },
+                              {
+                                offset: 0.8,
+                                color: "rgba(255, 128, 128, .1)"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          },
+                        shadowColor: "rgba(0, 0, 0, 0.1)"
+                      }
+                  },
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        color: "#dddc6b",
+                        borderColor: "rgba(221, 220, 107, .1)",
+                        borderWidth: 12
+                      }
+                  },
+                data: [298, 226, 11, 422, 24, 489, 234, 401, 323, 300, 335, 218]
+              }]
+          },
+        config:
+          {
+            lock: false,
+            optionsType: 1,
+            requestUrl: "demo/echarts",
+            method: "post"
+          },
+        events:
+          {},
+        id: "bar172103830225115"
+      },
+      {
+        type: "text",
+        position:
+          {
+            width: 100,
+            height: 30,
+            left: 627,
+            top: 780,
+            zIndex: 2
+          },
+        config:
+          {
+            text: "模块标题",
+            lock: false
+          },
+        id: "text172103830225116"
+      },
+      {
+        type: "border",
+        position:
+          {
+            width: 808,
+            height: 276,
+            left: 610,
+            top: 764
+          },
+        config:
+          {
+            style:
+              {
+                border: ""
+              },
+            class: "border",
+            lock: false
+          },
+        id: "border172103830225117"
+      },
+      {
+        type: "bar",
+        position:
+          {
+            width: 757,
+            height: 237,
+            left: 635,
+            top: 800,
+            zIndex: 2
+          },
+        option:
+          {
+            tooltip:
+              {
+                trigger: "axis",
+                axisPointer:
+                  {
+                    type: "shadow"
+                  }
+              },
+            grid:
+              {
+                top: "20%",
+                right: "50",
+                bottom: "20",
+                left: "30"
+              },
+            legend:
+              {
+                data: ["数据1", "数据2", "数据3", "增幅"],
+                right: "center",
+                width: "100%",
+                textStyle:
+                  {
+                    color: "rgba(255,255,255,.5)"
+                  },
+                itemWidth: 12,
+                itemHeight: 10
+              },
+            xAxis: [
+              {
+                type: "category",
+                data: ["2016", "2017", "2018", "2019"],
+                axisLine:
+                  {
+                    show: false
+                  },
+                axisLabel:
+                  {
+                    textStyle:
+                      {
+                        fontSize: 14,
+                        color: "rgba(255,255,255,.5)"
+                      }
+                  }
+              }],
+            yAxis: [
+              {
+                type: "value",
+                axisTick:
+                  {
+                    show: false
+                  },
+                splitLine:
+                  {
+                    show: false
+                  },
+                axisLine:
+                  {
+                    min: 0,
+                    max: 10,
+                    show: false
+                  },
+                axisLabel:
+                  {
+                    show: true,
+                    fontSize: 14,
+                    color: "rgba(255,255,255,.5)"
+                  }
+              },
+              {
+                type: "value",
+                show: true,
+                axisLabel:
+                  {
+                    formatter: "{value} %",
+                    fontSize: 14,
+                    color: "rgba(255,255,255,.5)"
+                  },
+                axisTick:
+                  {
+                    show: false
+                  },
+                splitNumber: 3,
+                axisLine:
+                  {
+                    show: false
+                  },
+                splitLine:
+                  {
+                    lineStyle:
+                      {
+                        color: "rgba(255,255,255,.05)"
+                      }
+                  }
+              }],
+            series: [
+              {
+                name: "数据1",
+                type: "bar",
+                data: [36.6, 38.8, 40.84, 41.6],
+                barWidth: "10%",
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        barBorderRadius: 15,
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "#8bd46e"
+                              },
+                              {
+                                offset: 1,
+                                color: "#09bcb7"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          }
+                      }
+                  },
+                barGap: "0.2"
+              },
+              {
+                name: "数据2",
+                type: "bar",
+                data: [14.8, 14.1, 15, 16.3],
+                barWidth: "10%",
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        barBorderRadius: 15,
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "#248ff7"
+                              },
+                              {
+                                offset: 1,
+                                color: "#6851f1"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          }
+                      }
+                  },
+                barGap: "0.2"
+              },
+              {
+                name: "数据3",
+                type: "bar",
+                data: [9.2, 9.1, 9.85, 8.9],
+                barWidth: "10%",
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        barBorderRadius: 15,
+                        color:
+                          {
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: "#fccb05"
+                              },
+                              {
+                                offset: 1,
+                                color: "#f5804d"
+                              }],
+                            x: 0,
+                            y2: 1,
+                            type: "linear",
+                            global: false
+                          }
+                      }
+                  },
+                barGap: "0.2"
+              },
+              {
+                name: "增幅",
+                type: "line",
+                yAxisIndex: 1,
+                data: [3, 1, 5, 2.3],
+                lineStyle:
+                  {
+                    normal:
+                      {
+                        width: 2
+                      }
+                  },
+                itemStyle:
+                  {
+                    normal:
+                      {
+                        color: "#3496f8"
+                      }
+                  },
+                symbolSize: 0
+              }]
+          },
+        config:
+          {
+            lock: false
+          },
+        id: "bar172103830225118"
+      },
+      {
+        type: "text",
+        position:
+          {
+            width: 100,
+            height: 30,
+            left: 32,
+            top: 119
+          },
+        config:
+          {
+            text: "使用全局数据",
+            lock: false
+          },
+        id: "text172103830225119"
+      },
+      {
+        type: "clock",
+        position:
+          {
+            width: 320,
+            height: 30,
+            left: 1600,
+            top: 21,
+            zIndex: 0
+          },
+        config:
+          {
+            style:
+              {
+                fontSize: "20px"
+              },
+            dateTime: "{y}年{m}月{d}日 {h}:{i}:{s} 星期{w}",
+            lock: false
+          },
+        id: "clock172103830225120"
+      },
+      {
+        type: "text",
+        position:
+          {
+            width: 100,
+            height: 30,
+            left: 1455,
+            top: 123
+          },
+        config:
+          {
+            text: "模块标题",
+            lock: false
+          },
+        id: "text172103830225121"
+      },
+      {
+        type: "border",
+        position:
+          {
+            width: 470,
+            height: 310,
+            left: 1440,
+            top: 440
+          },
+        config:
+          {
+            style:
+              {
+                border: ""
+              },
+            class: "border",
+            lock: false
+          },
+        id: "border172103830225122"
+      },
+      {
+        type: "bar",
+        position:
+          {
+            width: 389,
+            height: 239,
+            left: 1492,
+            top: 795,
+            zIndex: 2
+          },
+        option:
+          {
+            tooltip:
+              {
+                show: false
+              },
+            grid:
+              {
+                top: "0%",
+                left: "50"
+              },
+            xAxis:
+              {
+                min: 0,
+                splitLine:
+                  {
+                    show: false
+                  },
+                axisTick:
+                  {
+                    show: false
+                  },
+                axisLine:
+                  {
+                    show: false
+                  },
+                axisLabel:
+                  {
+                    show: false
+                  }
+              },
+            yAxis:
+              {
+                data: ["数据", "数据", "数据", "数据", "数据", "数据"],
+                axisTick:
+                  {
+                    show: false
+                  },
+                axisLine:
+                  {
+                    show: false
+                  },
+                axisLabel:
+                  {
+                    color: "rgba(255,255,255,.6)",
+                    fontSize: 14
+                  }
+              },
+            series: [
+              {
+                type: "bar",
+                label:
+                  {
+                    show: true,
+                    zlevel: 10000,
+                    position: "right",
+                    padding: 6,
+                    color: "#4e84a1",
+                    fontSize: 14,
+                    formatter: "{c}"
+                  },
+                itemStyle:
+                  {
+                    barBorderRadius: 25,
+                    color: "#3facff"
+                  },
+                barWidth: "15",
+                data: [1800, 1240, 1168, 1200, 2336, 1680],
+                z: 6
+              }]
+          },
+        config:
+          {
+            lock: false
+          },
+        id: "bar172103830225123"
+      },
+      {
+        type: "text",
+        position:
+          {
+            width: 100,
+            height: 30,
+            left: 1460,
+            top: 773,
+            zIndex: 2
+          },
+        config:
+          {
+            text: "模块标题",
+            lock: true
+          },
+        id: "text172103830225124"
+      },
+      {
+        type: "border",
+        position:
+          {
+            width: 470,
+            height: 276,
+            left: 1440,
+            top: 764
+          },
+        config:
+          {
+            style:
+              {
+                border: ""
+              },
+            class: "border",
+            lock: false
+          },
+        id: "border172103830225125"
+      },
+      {
+        type: "table",
+        position:
+          {
+            width: 570,
+            height: 276,
+            left: 20,
+            top: 764
+          },
+        option:
+          {
+            columns: [
+              {
+                prop: "name1",
+                label: "字段1"
+              },
+              {
+                prop: "name2",
+                label: "字段2"
+              },
+              {
+                prop: "name3",
+                label: "字段3"
+              },
+              {
+                prop: "name4",
+                label: "字段4"
+              },
+              {
+                prop: "name5",
+                label: "字段5"
+              }],
+            list: [
+              {
+                name5: "111",
+                name4: "4444",
+                name3: "3333",
+                name2: "222",
+                name1: "5555"
+              }]
+          },
+        config:
+          {
+            class: "border scroll-table",
+            optionsType: 0,
+            carousel: false,
+            props:
+              {},
+            speed: 50
+          },
+        id: "table172103830225126"
+      }]
 
-  const list = ref([
-    { x: 50, y: 50, width: 120, height: 80 },
-    { x: 180, y: 120, width: 100, height: 60 },
-    { x: 300, y: 180, width: 150, height: 100 },
-  ])
+  function formatList(data) {
+    // 遍历数组，返回新数组（避免修改原数据）
+    return data.map(item => {
+      // 解构出需要处理的字段，剩余属性保留
+      const { position, config, ...rest } = item;
 
-  // 水平居中：以第一个元素中心X为基准
-  const alignCenterH = () => {
-    const first = list.value[0]
-    // 基准中心X
-    const centerX = first.x + first.width / 2
-    list.value.forEach(item => {
-      item.x = centerX - item.width / 2
-    })
+      // 处理 position：重命名 left→x，top→y，保留其他属性
+      const posData = position ? {
+        x: position.left,
+        y: position.top,
+        ...position
+      } : {};
+      // 删除重名的 left/top
+      delete posData.left;
+      delete posData.top;
+
+      // 合并所有属性：原始属性 + 处理后的position + config
+      return {
+        ...rest,
+        ...posData,
+        ...config
+      };
+    });
   }
-
-  // 垂直居中：以第一个元素中心Y为基准
-  const alignCenterV = () => {
-    const first = list.value[0]
-    // 基准中心Y
-    const centerY = first.y + first.height / 2
-    list.value.forEach(item => {
-      item.y = centerY - item.height / 2
-    })
-  }
+  const result = formatList(list);
+  console.log(result);
+  console.log('ok')
 </script>
 
 <style scoped>
@@ -59,6 +1589,7 @@
     border: 1px solid #ccc;
     margin-top: 20px;
   }
+
   .item {
     position: absolute;
     border: 1px solid #409eff;
@@ -67,6 +1598,7 @@
     align-items: center;
     justify-content: center;
   }
+
   button {
     padding: 4px 12px;
     cursor: pointer;

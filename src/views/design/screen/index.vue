@@ -29,14 +29,14 @@
       :style="{ width: toolVisible('right')}"
       @open-drawer="openDrawer"
     />
-    <ace-drawer @confirm="drawerConfirm" ref="aceDrawerRef"/>
-    <vue-file ref="vueFileEl"/>
+    <ace-drawer ref="aceDrawerRef"/>
+    <export-vue-file ref="exportVueFileRef"/>
   </div>
 </template>
 <script setup lang="ts">
   import {useLayoutStore} from "@/store/layout";
   import {useScreenStore} from "@/store/screen";
-  import {computed, onMounted, ref} from "vue";
+  import {computed, onMounted, ref, onUnmounted} from "vue";
   import ComponentPanel from "@/components/screen/componentPanel.vue";
   import PropertyPanel from "@/components/screen/propertyPanel.vue";
   import HeadTools from "../components/headTools.vue";
@@ -46,13 +46,13 @@
   import type {AceDrawerT} from "@/components/ace/type";
 
   import {objToStringify} from "@/utils/design";
-  import VueFile from "../components/vueFile.vue";
+  import ExportVueFile from "@/components/exportVue/index.vue";
   import {getRequest} from "@/api";
   import {useRoute, useRouter} from "vue-router";
   import {ElMessage} from "element-plus";
   import {getInitData} from '@/components/screen/getData'
   import {setStorage} from "@/utils";
-  import type {Command, Component} from "@/types/screen.ts";
+  import type {Command} from "@/types/screen";
 
 
   definePage({meta: {permissions: 'none'}})
@@ -80,11 +80,8 @@
   const openDrawer = (params: AceDrawerT) => {
     aceDrawerRef.value.open(params)
   }
-  const drawerConfirm = () => {
-    console.log('drawerConfirm')
-  }
 
-  const vueFileEl = ref()
+  const exportVueFileRef = ref()
   // 顶部工具栏点击事件
   const historyCommand = (design: any, config: any) => {
     const originalComponents = [...screenStore.designFilterData]
@@ -128,7 +125,7 @@
         })
         break
       case 'vue':
-        vueFileEl.value.openScreen(designData.value)
+        exportVueFileRef.value.open({data: designData.value, type: 'screen'})
         break
       case 'save':
         saveData()
@@ -155,7 +152,8 @@
     const params: any = {
       data: objToStringify(designData.value),
       name: '未命名可视化大屏', // 表单名称，用于在显示所有已创建的表单列表里显示
-      type: 4 // 1表单,2列表,3流程,4大屏
+      type: 4, // 1表单,2列表,3流程,4大屏
+      status: 1
     }
     let apiKey = 'designSave'
     const queryId = route.query.id
@@ -200,5 +198,8 @@
 
   onMounted(() => {
     getData()
+  })
+  onUnmounted(() => {
+    screenStore.clearOnExitDesign()
   })
 </script>

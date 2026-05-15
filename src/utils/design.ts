@@ -166,37 +166,7 @@ export const objectToArray = (obj: any): { [key: string | number]: any } => {
   }
   return obj
 }
-/****
- * 动态插入移除css  todo 移除
- * @param id 标签id
- * @param cssContent 要插入的css内容
- * @param append true插入false移除
- */
-export const appendOrRemoveStyle = (
-    id: string,
-    cssContent: string,
-    append?: boolean
-): void => {
-  const styleId: any = document.getElementById(id)
-  if (styleId && append) {
-    // 存在时直接修改，不用多次插入
-    styleId.innerText = cssContent
-    return
-  }
-  if (cssContent && append) {
-    const styleEl = document.createElement('style')
-    styleEl.id = id
-    styleEl.type = 'text/css'
-    styleEl.appendChild(document.createTextNode(cssContent))
-    document.head.appendChild(styleEl)
-  }
-  if (!append || !cssContent) {
-    // 移除
-    if (styleId) {
-      styleId.parentNode.removeChild(styleId)
-    }
-  }
-}
+
 /**
  * 根据当前组数据返回一个标识，设计时用于当前选中标识
  * @param item

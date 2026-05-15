@@ -1,7 +1,8 @@
 import {defineStore} from 'pinia'
 import {computed, ref} from 'vue'
-import {getStorage, setStorage, isArray} from "@/utils";
+import {getStorage, setStorage, isArray,removeResource} from "@/utils";
 import type {Component, Command} from "@/types/screen";
+import {deepClone} from "@/utils/design";
 
 export const useScreenStore = defineStore('screen', () => {
       const screenStorage = ref(getStorage('screenConfig', true) || {})
@@ -184,7 +185,7 @@ export const useScreenStore = defineStore('screen', () => {
       function setDesignData(data: Component[] | Component | Record<string, any>, isPush = false, addHistory = false) {
         const newComponents = Array.isArray(data) ? data : [data];
         const newIds = newComponents.map((c: Component) => c.id);
-        const originalComponents = [...designData.value] // 添加前的原数据，用于撤销
+        const originalComponents = deepClone(designData.value) // 添加前的原数据，用于撤销
         const command: Command = {
           execute: () => {
             if (isPush) {
@@ -276,6 +277,20 @@ export const useScreenStore = defineStore('screen', () => {
         getScreenGlobal.value = data
       }
 
+      //==========================退出设计窗口，清空
+      const designConfigRest = JSON.stringify(designConfig.value)
+
+      function clearOnExitDesign() {
+        designData.value = []
+        designConfig.value = JSON.parse(designConfigRest)
+        selectedComp.value = []
+        history.value = []
+        getScreenGlobal.value = {}
+        //可能有插入样式
+        removeResource('scopedStyleId')
+        removeResource('styleLink')
+      }
+
       return {
         isShowGrid,
         setIsShowGrid,
@@ -312,7 +327,8 @@ export const useScreenStore = defineStore('screen', () => {
         setUndo,
         setRedo,
         updateComponentHistory,
-        updateCompHistory
+        updateCompHistory,
+        clearOnExitDesign
       }
     }
 )

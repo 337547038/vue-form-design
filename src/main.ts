@@ -34,3 +34,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 import componentTest from '@/docs/components/componentTest.vue'
 app.component('ComponentTest', componentTest)
 
+// 大屏自定义组件测试
+import ScreenDemoComponent from '@/components/test/map.vue'
+app.component('EchartsMap', ScreenDemoComponent)
+

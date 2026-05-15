@@ -114,7 +114,7 @@
     .component-wrapper{border: 1px dotted rgb(178 225 246 / 0.59)}
   }
 
-  .component-wrapper {position: absolute;cursor: move;overflow: hidden;user-select: none;
+  .component-wrapper {position: absolute;cursor: move;user-select: none;
 
     &:hover {background: rgba(255, 255, 255, 0.1);
       box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);}
