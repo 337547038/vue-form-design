@@ -50,11 +50,6 @@
   /*左则组件图层结束*/
   /*右则属性*/
   .sidebar-tools {width: 220px;overflow: hidden;transition: all .5s;
-
-    .scroll {height: calc(100vh - 140px);overflow-y: auto;padding-right: 10px}
-
-    .el-tabs__content {padding-right: 0}
-
     .el-form-item {margin-bottom: 8px}
   }
 

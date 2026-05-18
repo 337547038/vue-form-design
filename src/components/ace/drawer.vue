@@ -46,11 +46,16 @@
   })
   const dialogConfirm = () => {
     const editVal = editor.value.getValue()
-    let content = editVal
-    if (state.type !== 'css') {
-      content = state.type === 'json'
-        ? string2json(editVal)
-        : stringToObj(editVal)
+    let content = editVal //默认返回javascript
+    switch (state.type) {
+      case 'json':
+        content = string2json(content)
+        break
+      case undefined: //没传时默认为javascript
+      case 'javascript':
+        content = stringToObj(editVal)
+        break
+      default:
     }
     state.callback && state.callback(content)
     emits('confirm', editVal, state.key) // 传多个参数方便在confirm时判断来源
@@ -63,12 +68,18 @@
   const open = (obj: AceDrawerT) => {
     visible.value = true
     let content = obj.content
-    // css时不需要转换
-    if (obj.type !== 'css') {
-      content = obj.type === 'json'
-        ? json2string(obj.content, true)
-        : objToStringify(obj.content, true)
+    console.log(obj)
+    switch (obj.type) {
+      case 'json':
+        content = json2string(obj.content, true)
+        break
+      case undefined: //没传时默认为javascript
+      case 'javascript':
+        content = objToStringify(obj.content, true)
+        break
+      default:
     }
+
     // 当传入内容为空，同时传入key时，则根据key配置初始值
     if (obj.key && !obj.content) {
       content = getAceContent(obj.key) || ''

@@ -3,7 +3,7 @@
     <div class="main">
       <h3>后台管理系统</h3>
       <ak-form
-        ref="formEl"
+        ref="formRef"
         submit-url="loginSubmit"
         :after="afterSubmit"
         :data="formData"
@@ -25,7 +25,6 @@
   import { getRequest } from '@/api'
   import { flatToTree } from '@/utils/flatTree.ts'
 
-  const formEl = ref()
   const useStore = useLayoutStore()
   const router = useRouter()
   const route = useRoute()
@@ -40,9 +39,9 @@
           modelValue: 'admin',
           placeholder: '请输入登录账号'
         },
-        config: {},
         name: 'userName',
-        formItem: { label: '用户名', hideLabel: true },
+        hideLabel: true,
+        formItem: { label: '用户名' },
         customRules: [
           { type: 'required', message: '请输入登录账号', trigger: 'blur' }
         ]
@@ -54,9 +53,9 @@
           modelValue: '123456',
           placeholder: '请输入密码'
         },
-        config: {},
         name: 'password',
-        formItem: { label: '密码', hideLabel: true },
+        hideLabel: true,
+        formItem: { label: '密码' },
         customRules: [
           { type: 'required', message: '请输入密码', trigger: 'blur' }
         ]
@@ -71,9 +70,10 @@
             refreshKey.value = refreshFn
           }
         },
-        config: { componentName: markRaw(CodeCom) },
+        componentName: markRaw(CodeCom),
         name: 'code',
-        formItem: { label: '验证码', hideLabel: true },
+        hideLabel: true,
+        formItem: { label: '验证码'},
         customRules: [
           { type: 'required', message: '请输入验证码', trigger: 'blur' }
         ]
@@ -83,8 +83,7 @@
         control: { label: '登录', type: 'primary', key: 'submit' }
       }
     ],
-    form: { size: 'default' },
-    config: {}
+    config: {size: 'default'}
   })
   const beforeSubmit = (params: any) => {
     params.codeId = codeId.value // 添加验证码加密id
@@ -179,6 +178,7 @@
       font-size: 18px;
       text-align: center;
       font-weight: 400;
+      margin-bottom: 10px;
     }
   }
 

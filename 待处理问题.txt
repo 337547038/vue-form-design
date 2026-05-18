@@ -12,3 +12,7 @@ ace弹出重写，提示等
 ##组件远程数据时添加参数方法说明
 ##组件类型type的ts定义
 ##resize-box8个点被overflow裁切
+
+移除表单字段配置的config
+属性设置的issearch从store取
+移除方法getRequestEvent

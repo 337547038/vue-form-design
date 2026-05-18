@@ -13,8 +13,7 @@ export default [
         control: {
           // 组件所有属性
           modelValue: ''
-        },
-        config: {} // 其他配置信息
+        }
       },
       {
         type: 'textarea',

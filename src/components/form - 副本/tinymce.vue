@@ -40,12 +40,12 @@
   // 参数自定义初始化
 
   const buttonPlugins
-    = 'preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave '
+    = 'preview searchreplace autolink directionality visualblocks visualchars fullscreen images link media code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave '
 
   // 导入工具栏
 
   const toolbar
-    = 'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor table image | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
+    = 'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor table images | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
   const toolbarSimple
     = 'undo cut copy paste pastetext |forecolor backcolor bold italic underline strikethrough|alignleft aligncenter alignright alignjustify|'
   const commInit = {
@@ -117,9 +117,9 @@
         attr = { alt: file?.name }
       }
       if (meta.filetype === 'media') {
-        // attr={source2: 'alt.ogg', poster: 'image.jpg'}
+        // attr={source2: 'alt.ogg', poster: 'images.jpg'}
       }
-      /* if(file.type.slice(0,5)=='image'&&file.size/1024/1024>2){
+      /* if(file.type.slice(0,5)=='images'&&file.size/1024/1024>2){
       alert("上传失败，图片大小请控制在2M以内")
     }else if(file.type.slice(0,5)=='video'&&file.size/1024/1024>500){
       alert("上传失败，视频大小请控制在 500M 以内")
@@ -168,7 +168,7 @@
     },
     // 图片上传
     images_upload_handler: imgUploadFn,
-    file_picker_types: 'file image media', // 分别对应三个类型文件的上传：link插件，image和axupimgs插件，media插件。想屏蔽某个插件的上传就去掉对应的参数
+    file_picker_types: 'file images media', // 分别对应三个类型文件的上传：link插件，image和axupimgs插件，media插件。想屏蔽某个插件的上传就去掉对应的参数
     file_picker_callback: fileUpload
   }
   const simpleInit = {

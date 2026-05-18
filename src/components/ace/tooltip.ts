@@ -5,10 +5,7 @@ export const getAceTitle = {
   editCss: '当前应用页的样式，类似于.vue文件中的style scoped中的样式',
   change:
       '表单组件值改变事件。这里可修改其他组件的值。返回字符串形式可在@/utils/formChangeValue中处理',
-  editRules:
-      '可参考UI组件表单校验，<a'
-      + ' href=\'https://element-plus.gitee.io/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C\''
-      + ' target=\'_blank\' style=\'color:red\'>详情点击</a>',
+  editRules:`可参考UI组件表单校验，<a href="https://element-plus.org/zh-CN/component/form" target="_blank" style="color: red">详情点击</a>`,
   editProps: '可添加当前组件所有prop属性及事件方法',
   creatJson: '可编辑修改或将已生成的脚本粘贴进来',
   button: '可添加当前组件所有prop属性及事件方法'
@@ -31,6 +28,7 @@ export const getAceContent = (key: string, tips = 'form') => {
       return ('opt=(params, type, obj) => {\n'
           + '  // params请求的参数，需对params作修改后return回去。\n'
           + '  // type当前操作类型。' + beforeTip[tips] + '\n'
+          + '  // obj可能包含路由及表单信息\n'
           + '  return params\n'
           + '}')
     case 'after':
@@ -65,7 +63,7 @@ export const getAceContent = (key: string, tips = 'form') => {
     case 'afterScreenGlobal':
       return (
           'opt=(res,success) => {\n'
-          + '  // res响应数据，保存在window.getScreenGlobal\n'
+          + '  // res响应数据，保存在store中，在组件中可使用 {{getScreenGlobal.xxx}}获取\n'
           + '  return res //返回处理后的数据\n'
           + '}'
       )
@@ -84,6 +82,31 @@ export const getAceContent = (key: string, tips = 'form') => {
           + '  // 渲染前对字段值的预处理方法，需返回新值\n'
           + '  return val\n'
           + '}'
+      )
+    case 'editRules':
+      return (
+          'opt = [\n' +
+          '/*{required: true, message: \'Please input Activity name\', trigger: \'blur\'},\n' +
+          '    {min: 3, max: 5, message: \'Length should be 3 to 5\', trigger: \'blur\'},\n' +
+          '    {\n' +
+          '      validator: (rule, value, callback) => {\n' +
+          '        if (!value) {\n' +
+          '          return callback(new Error(\'Please input the age\'))\n' +
+          '        }\n' +
+          '        setTimeout(() => {\n' +
+          '          if (!Number.isInteger(value)) {\n' +
+          '            callback(new Error(\'Please input digits\'))\n' +
+          '          } else {\n' +
+          '            if (value < 18) {\n' +
+          '              callback(new Error(\'Age must be greater than 18\'))\n' +
+          '            } else {\n' +
+          '              callback()\n' +
+          '            }\n' +
+          '          }\n' +
+          '        }, 1000)\n' +
+          '      }, trigger: \'blur\'\n' +
+          '    }*/\n' +
+          ']'
       )
   }
 }

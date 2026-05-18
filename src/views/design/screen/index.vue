@@ -120,11 +120,13 @@
         window.open(routeUrl.href, '_blank')
         break
       case 'json':
-        aceDrawerRef.value.open({
+        openDrawer({
           content: designData.value,
           title: '可编辑修改或将已生成的脚本粘贴进来',
-          callback: (content: Record<string, any>) => {
-            historyCommand(content.list, content.config)
+          callback: (content: Record<string, any> | string) => {
+            if (typeof content === 'object') {
+              historyCommand(content.list, content.config)
+            }
           }
         })
         break

@@ -22,12 +22,21 @@
         v-for="(item, index) in state.list"
         :key="index"
         class="item"
-        @click="selectClick(item)"
       >
         <img
-          :src="item.imgPath"
+          :src="item.image"
           alt=""
-        >{{ item.title }}
+        >
+        <div class="name">
+          <span>{{ item.config?.name }}</span>
+          <el-button
+            text
+            type="primary"
+            @click="selectClick(item)"
+          >
+            使用
+          </el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -35,10 +44,9 @@
 
 <script lang="ts" setup>
   import { reactive } from 'vue'
-  import type { FormData } from '@/types/form'
-  const emits = defineEmits<{
-    (e: 'click', value: FormData): void
-  }>()
+  import {useFormStore} from "@/store/form.ts";
+
+  const store = useFormStore();
   const state = reactive({
     visible: false,
     list: []
@@ -48,21 +56,17 @@
     init()
   }
   const init = () => {
-    const template = import.meta.globEager('./template/*.ts')
-    // console.log(template)
+    const template = import.meta.glob(`./template/*.ts`, {eager: true})
     state.list = []
     Object.keys(template).forEach((key: string) => {
       const file: any = template[key]
-      state.list.push({
-        imgPath: file.imgPath,
-        title: file.title,
-        formData: file.formData
-      })
+      state.list.push(file.formData)
     })
   }
   const selectClick = (item: any) => {
-    emits('click', item.formData)
     state.visible = false
+    store.setDesignData(item.list)
+    store.setDesignConfig(item.config)
   }
   defineExpose({
     open

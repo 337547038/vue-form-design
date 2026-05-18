@@ -31,7 +31,7 @@
       </div>
       <draggable
         v-model="list.children"
-        item-key="key123"
+        item-key="key"
         tag="ul"
         :group="{ name: 'form', pull: 'clone', put: false }"
         ghost-class="ghost"
@@ -49,25 +49,22 @@
     <use-template
       v-if="!isSearch"
       ref="useTemplateEl"
-      @click="useTemplateSelect"
     />
   </div>
 </template>
 <script lang="ts" setup>
   import controlListData from './controlList'
-  import Draggable from 'vuedraggable-es'
-  import { computed, ref, onMounted } from 'vue'
-  import { useRoute } from 'vue-router'
-  import type { FormData, FormList } from '@/types/form'
+  import draggable from 'vuedraggable-es'
+  import {computed, ref, onMounted} from 'vue'
+  import {useRoute} from 'vue-router'
+  import type { FormList} from '@/types/form'
   import UseTemplate from './template.vue'
-  import { getRequest } from '@/api'
-  import { stringToObj, jsonParseStringify } from '@/utils/design'
+  import {getRequest} from '@/api'
+  import {stringToObj, jsonParseStringify} from '@/utils/design'
+  import {useFormStore} from "@/store/form";
 
+  const store = useFormStore()
   const route = useRoute()
-  const emits = defineEmits<{
-    (e: 'clickCheck', value: FormList): void
-    (e: 'click', value: FormData): void
-  }>()
   const formDataList = ref([])
   // 默认搜索允许显示的字段
   const searchField = [
@@ -83,7 +80,7 @@
     'button'
   ]
   const isSearch = computed(() => {
-    return route.query.type === 'search'
+    return store.designType === 'designSearch'
   })
   const controlList = computed(() => {
     if (isSearch.value) {
@@ -95,7 +92,7 @@
             return searchField.includes(ch.type)
           })
           if (filter && filter.length) {
-            temp.push({ title: item.title, children: filter })
+            temp.push({title: item.title, children: filter})
           }
         }
       })
@@ -110,7 +107,7 @@
 
   // 加载当前列表所属的表单，从表单中提取可用于搜索的字段
   const getFormField = (formId: number) => {
-    getRequest('designById', { id: formId }).then((res: any) => {
+    getRequest('designById', {id: formId}).then((res: any) => {
       const data = stringToObj(res.data.data)
       if (data && data.list) {
         forEachGetData(data.list)
@@ -134,10 +131,10 @@
   const selectChange = (obj: FormList, val: boolean) => {
     if (val) {
       // 勾选时追加
-      const newObj = jsonParseStringify(obj)
+      /*const newObj = jsonParseStringify(obj)
       delete newObj.rules
-      delete newObj.customRules
-      emits('clickCheck', newObj)
+      delete newObj.customRules*/
+
     }
   }
   // 使用模板
@@ -145,13 +142,10 @@
   const useTemplateClick = () => {
     useTemplateEl.value.open()
   }
-  const useTemplateSelect = (data: FormData) => {
-    emits('click', data)
-  }
   onMounted(() => {
     // 设计搜索表单时加载
-    const { type, id } = route.query
-    if (type === 'search' && id) {
+    const {id} = route.query
+    if (isSearch.value && id) {
       getFormField(id)
     }
   })

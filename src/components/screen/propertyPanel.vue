@@ -4,7 +4,6 @@
       <el-tab-pane
         name="property"
         label="属性配置"
-        class="scroll"
       >
         <el-form
           v-show="Object.keys(activeComp).length"
@@ -160,7 +159,6 @@
       <el-tab-pane
         label="全局配置"
         name="comm"
-        class="scroll"
       >
         <div class="scroll">
           <el-form size="small">
@@ -325,7 +323,7 @@
   import {storeToRefs} from 'pinia'
   import {loadResource, removeResource} from "@/utils";
   import {ElMessage} from "element-plus";
-  import type {AceDrawerT} from "@/components/ace/type"
+  import type {AceDrawerT, DrawerConfig} from "@/components/ace/type"
   import {getGlobalData, getComponentData} from './getData'
   import {ScopedStyleId, loadStaticImages} from './utils'
   import {getAceTitle} from '@/components/ace/tooltip'
@@ -337,16 +335,6 @@
   const emits = defineEmits<{
     (e: 'openDrawer', data: AceDrawerT): void
   }>()
-
-  type DrawerConfig = {
-    [key: string]: () => {
-      type?: string
-      title?: string
-      content: any
-      key?: string
-      callback: (content: any) => void
-    }
-  }
 
   const {designConfig: config, activeComp} = storeToRefs(store)
 
@@ -378,8 +366,8 @@
         content: config.value.style,
         type: 'css',
         key: eventType,
-        callback: (content: string) => {
-          if (content) {
+        callback: (content: Record<string, any>|string) => {
+          if (typeof content==='string' && content) {
             removeResource(ScopedStyleId)
             loadResource(content, ScopedStyleId)
             config.value.style = content
@@ -416,7 +404,7 @@
       echartsEdit: () => ({
         title: '可参考echarts相关例子编辑',
         content: activeComp.value.option,
-        callback: (content: Record<string, any>) => {
+        callback: (content: any) => {
           activeComp.value.option = content
           propertyChange('option')
         }
@@ -427,7 +415,7 @@
         type: 'json',
         title: '可输入更多的css样式，须为json格式',
         content: activeComp.value.style || {},
-        callback: (content: Record<string, any>) => {
+        callback: (content: any) => {
           activeComp.value.style = content
           propertyChange('style')
         }
@@ -438,7 +426,7 @@
         type: 'json',
         title: '支持所有表格props属性，可参考el-table。json格式',
         content: activeComp.value.props || {},
-        callback: (content: Record<string, any>) => {
+        callback: (content: any) => {
           activeComp.value.props = content
           propertyChange('props')
         }
@@ -732,7 +720,7 @@
         label: activeComp.value.type === 'image' ? '图片地址' : '背景图片',
         placeholder: '请输入或选择图片地址',
         key: 'src',
-        //vShow: ['image', 'background'],
+        //vShow: ['images', 'background'],
         attr: {
           filterable: true,
           allowCreate: true,
