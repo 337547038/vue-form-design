@@ -5,7 +5,7 @@
     style="min-height: 300px"
   >
     <ak-form
-      ref="formEl"
+      ref="formRef"
       :data="state.formData"
       :operate-type="formType"
       :request-url="requestUrl"
@@ -31,13 +31,12 @@
   const layoutStore = useLayoutStore()
   const route = useRoute()
   const router = useRouter()
-  const formEl = ref()
+  const formRef = ref()
   const state = reactive({
     formData: {
       list: [],
       config: {}
     },
-    dict: {},
     loading: true
   })
   const id = computed(() => {
@@ -86,7 +85,7 @@
           }
           // 编辑时加载表单初始数据。或设置了添加时获取请求
           if (id.value) {
-            formEl.value.getData({formId: formId.value, id: id.value})
+            formRef.value.getData({formId: formId.value, id: id.value})
           }
           layoutStore.changeBreadcrumb([
             {label: '内容管理'},
@@ -109,8 +108,8 @@
     params.formId = formId.value
     return params
   }
-  const after = (_: any, success: boolean, type: string) => {
-    console.log('after', success, type)
+  const after = (res: any, success: boolean, type: string) => {
+    console.log('after', res,success, type)
     if (success && type === 'submit') {
       router.go(-1)
     }

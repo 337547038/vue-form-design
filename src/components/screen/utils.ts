@@ -2,7 +2,10 @@ import type {Component} from "@/types/screen";
 import {useScreenStore} from "@/store/screen"
 import imagesFile from './imagesFile.json'
 
-const store = useScreenStore()
+
+const useStore = () => {
+  return useScreenStore()
+};
 /**
  * 判断是否为数字，有些是字符串形数字
  * @param val
@@ -46,7 +49,7 @@ export const toNumber = (value: any) => {
  * @param obj
  */
 export const showTempRect = (obj?: Record<string, any>) => {
-  const rectObj = store.designData.find((item: Component) => item.type === 'rect')
+  const rectObj = useStore().designData.find((item: Component) => item.type === 'rect')
   const newObj = {
     type: 'rect',
     label: '临时选区',
@@ -58,7 +61,7 @@ export const showTempRect = (obj?: Record<string, any>) => {
   }
   if (!rectObj) {
     // 不存在,新增
-    store.setDesignData(newObj,true)
+    useStore().setDesignData(newObj, true)
     return newObj
   } else {
     // 存在，更新位置信息
@@ -72,7 +75,7 @@ export const showTempRect = (obj?: Record<string, any>) => {
 export const groupWrapStyle = () => {
   let minX = Infinity, minY = Infinity
   let maxX = -Infinity, maxY = -Infinity
-  store.selectedComp.forEach((item: Component) => {
+  useStore().selectedComp.forEach((item: Component) => {
     const {x, y, width, height} = item
     minX = Math.min(minX, toNumber(x))
     minY = Math.min(minY, toNumber(y))

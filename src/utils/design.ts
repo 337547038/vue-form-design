@@ -15,49 +15,58 @@ function evil(fn: any) {
  * @param o
  */
 function obj2string(o: unknown): string {
-  // 处理 null / undefined
-  if (o === null) return 'null';
-  if (o === undefined) return 'undefined';
-
-  // 处理字符串（转义引号、换行、制表符）
-  if (typeof o === 'string') {
-    return `"${o
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r')
-        .replace(/\t/g, '\\t')}"`;
-  }
-
-  // 处理数字、布尔、Symbol、BigInt 等原始类型
-  if (typeof o !== 'object') {
-    return String(o);
-  }
-
-  // 处理数组
-  if (Array.isArray(o)) {
-    const items = o.map(item => obj2string(item));
-    return `[${items.join(',')}]`;
-  }
-
-  // 处理普通对象（排除循环引用，避免死循环）
+  // 用来检测循环引用，必须放在递归外部
   const seen = new Set<unknown>();
-  const keys = Object.keys(o);
-  const result: string[] = [];
 
-  for (const key of keys) {
-    const value = (o as Record<string, unknown>)[key];
-    // 跳过循环引用
-    if (seen.has(value)) continue;
+  // 内部递归函数
+  function stringify(value: unknown): string {
+    // 处理 null / undefined
+    if (value === null) return 'null';
+    if (value === undefined) return 'undefined';
+
+    // 处理字符串
+    if (typeof value === 'string') {
+      return `"${value
+          .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
+          .replace(/\t/g, '\\t')}"`;
+    }
+
+    // 处理数字、布尔、Symbol、BigInt
+    if (typeof value !== 'object') {
+      return String(value);
+    }
+
+    // 循环引用检测
+    if (seen.has(value)) {
+      return '"[Circular]"';
+    }
     seen.add(value);
 
-    const keyStr = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
-        ? key
-        : `"${key}"`;
-    result.push(`${keyStr}:${obj2string(value)}`);
+    // 处理数组
+    if (Array.isArray(value)) {
+      const items = value.map(item => stringify(item));
+      return `[${items.join(',')}]`;
+    }
+
+    // 处理普通对象
+    const keys = Object.keys(value);
+    const result: string[] = [];
+
+    for (const key of keys) {
+      const val = (value as Record<string, unknown>)[key];
+      const keyStr = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
+          ? key
+          : `"${key}"`;
+      result.push(`${keyStr}:${stringify(val)}`);
+    }
+
+    return `{${result.join(',')}}`;
   }
 
-  return `{${result.join(',')}}`;
+  return stringify(o);
 }
 
 /**

@@ -1,7 +1,7 @@
 <!-- Created by 337547038 表单设计. -->
 <template>
   <div class="design-container">
-    <component-panel />
+    <component-panel @select-template="selectTemplate" />
     <div class="main-body">
       <head-tools @click="headToolClick" />
       <div
@@ -9,13 +9,13 @@
         class="main-form"
       >
         <div
-          v-if="designData.list?.length === 0"
+          v-if="designData.length === 0"
           class="empty-tips"
         >
           从左侧拖拽来添加字段
         </div>
         <ak-form
-          :data="designData"
+          :data="designDataConfig"
           :operate-type="operateType"
         />
       </div>
@@ -32,7 +32,7 @@
 {meta:{permissions:'none'}}
 </route>
 <script setup lang="ts">
-  import {ref, onMounted, computed} from 'vue'
+  import {ref, onMounted, computed, onUnmounted} from 'vue'
   import HeadTools from '../components/headTools.vue'
   import ComponentPanel from './components/componentPanel.vue'
   import PropertyPanel from './components/propertyPanel.vue'
@@ -47,6 +47,7 @@
   import {useFormStore} from "@/store/form";
   import {getDesignDataBySource} from "./components/utils";
   import {setStorage} from "@/utils";
+  import type { FormData} from '@/types/designForm'
 
   defineOptions({name: 'DesignFormIndex'})
   const layoutStore = useLayoutStore()
@@ -57,10 +58,12 @@
   const aceDrawerRef = ref()
   const router = useRouter()
   const route: any = useRoute()
-  const designData = computed(() => {
+  const designData = ref([])
+  const designConfig = ref({})
+  const designDataConfig = computed(() => {
     return {
-      list: store.designData,
-      config: store.designConfig
+      list: designData.value,
+      config: designConfig.value
     }
   })
   // 设计三个类型，从url参数判断，form/search/flow
@@ -89,8 +92,8 @@
         if (result.data) {
           const resultData = stringToObj(result.data)
           if (resultData && Object.keys(resultData).length) {
-            store.setDesignData(resultData.list, false)
-            store.setDesignConfig(resultData.config)
+            designData.value = resultData.list
+            designConfig.value = result.config
           }
         }
         if (result.source && operateType.value !== 'designSearch') {
@@ -109,19 +112,15 @@
   const saveData = () => {
     // 添加校验，没有选择数据源时则必须要配置接口url
     const {id, redirect} = route.query
-    const {submitUrl, requestUrl, sourceId} = designData.value.config
-    if (
-      !sourceId
-      && (!submitUrl || !requestUrl)
-      && !store.isSearchDesign
-    ) {
+    const {submitUrl, requestUrl, sourceId} = designConfig.value
+    if (!sourceId && (!submitUrl || !requestUrl) && operateType.value === 'designForm') {
       ElMessage.error('请选择数据源或配置接口url地址，否则表单无法提交保存')
       return
     }
     let params: any = {
-      data: objToStringify(designData.value),
-      source: designData.value.config.sourceId, // 数据源允许在表单属性设置里修改的
-      name: designData.value.config.name || '未命名', // 表单名称，用于在显示所有已创建的表单列表里显示
+      data: objToStringify(designDataConfig.value),
+      source: designConfig.value.sourceId, // 数据源允许在表单属性设置里修改的
+      name: designConfig.value.name || '未命名', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1 // 1表单 2列表
     }
     let apiKey = 'designSave'
@@ -133,9 +132,9 @@
       params.status = 1 // 添加时默认启用
     }
     // 列表搜索模式下只有修改
-    if (store.isSearchDesign) {
+    if (operateType.value === 'designSearch') {
       params = {
-        data: objToStringify(designData.value),
+        data: objToStringify(designDataConfig.value),
         id: id
       }
     }
@@ -172,8 +171,8 @@
   const headToolClick = (type: string) => {
     switch (type) {
       case 'del':
-        store.setDesignData([], false)
-        store.setDesignConfig({})
+        designData.value = []
+        designConfig.value = {}
         store.setSelectComponent({})
         break
       case 'eye':
@@ -182,18 +181,18 @@
           path: '/design/form/form',
         })
         // 将数据存
-        setStorage('formPreviewData', objToStringify(designData.value))
+        setStorage('formPreviewData', objToStringify(designDataConfig.value))
         window.open(routeUrl.href, '_blank')
         break
       case 'json':
         // 生成脚本预览
         openAceEditDrawer({
-          content: designData.value,
+          content: designDataConfig.value,
           title: '可编辑修改或将已生成的脚本粘贴进来',
           callback: (content: Record<string, any> | string) => {
             if (typeof content === 'object') {
-              store.setDesignData(content.list, false)
-              store.setDesignConfig(content.config)
+              designData.value = content.list
+              designConfig.value = content.config
             }
           }
         })
@@ -202,7 +201,7 @@
         saveData()
         break
       case 'vue':
-        vueFileRef.value.open('form')
+        vueFileRef.value.open({data: designDataConfig.value, type: 'form'})
         break
     }
   }
@@ -214,12 +213,20 @@
     aceDrawerRef.value.open(params)
   }
 
+  const selectTemplate = (data: FormData) => {
+    designData.value = data.list
+    designConfig.value = data.config
+  }
+
   /*
   // 搜索设计时左侧快速添加字段
   const searchCheckField = (data: FormData) => {
     formData.value.list.push(data)
   }*/
   onMounted(() => {
+    // 保持供右侧使用
+    store.setDesignConfig(designConfig.value)
+    store.setDesignType(operateType.value)
     getInitData()
     const {source} = route.query
     if (source) {
@@ -227,10 +234,13 @@
       propertyPanelRef.value.getFormFieldBySource(
         source,
         (list: any, name: string) => {
-          Object.assign(store.designConfig, {sourceId: parseInt(source), name: name})
-          store.setDesignData(getDesignDataBySource(list), false)
+          Object.assign(designConfig.value, {sourceId: parseInt(source), name: name})
+          designData.value = getDesignDataBySource(list)
         }
       )
     }
+  })
+  onUnmounted(() => {
+    store.setSelectComponent({})
   })
 </script>

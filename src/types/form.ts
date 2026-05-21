@@ -1,10 +1,11 @@
-import type { FormProps } from 'element-plus/es'
+import type {FormProps} from 'element-plus/es'
 
 export interface Options {
   label: string
   value: string
   disabled?: boolean
 }
+
 export interface AKFormProps extends FormProps {
   name?: string
 }
@@ -33,6 +34,7 @@ export interface FormList {
   options?: Options[] // radio,checkbox,select选项
   list?: any
 }
+
 // export type EventType = 'get' | 'edit' | 'add'
 interface changeEvents {
   prop: string
@@ -41,6 +43,7 @@ interface changeEvents {
   name: string
   options: any
 }
+
 export interface FormData {
   list: FormList[]
   form: AKFormProps // form所有props
@@ -60,4 +63,13 @@ export interface FormData {
     after?: string | ((res: any, success: boolean, type?: string) => any)
     change?: | string | changeEvents
   }
+}
+
+export interface FormValueChange {
+  tableProp?: string // 表格的name，仅在子表内组件修改时
+  flexProp?: string // flex布局的name，仅在flex组件时，内部值改变
+  value: any
+  model?: Record<string, any> | undefined
+  prop: string // 设计时的name值
+  options?: Record<string, any> | undefined // 选项值，radio/checkbox/select等时
 }

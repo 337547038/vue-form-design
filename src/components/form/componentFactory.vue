@@ -23,15 +23,16 @@
     <form-item
       v-else
       :data="element"
+      @change="formValueChange"
     />
     <slot />
   </div>
 </template>
 <script setup lang="ts">
   import {ref} from 'vue'
-  import type {Component} from "@/types/designForm";
+  import type {Component,FormValueChange} from "@/types/designForm";
   import FormItem from "./formItem.vue";
-  import {useFormStore} from "@/store/form.ts";
+  import {useFormStore} from "@/store/form";
   import {formatNumber} from "@/utils/design";
 
   const store = useFormStore();
@@ -43,7 +44,12 @@
   )
   const emits = defineEmits<{
     (e: 'btnClick', key: string): void
+    (e: 'change', value: FormValueChange): void
   }>()
+
+  const formValueChange = (obj: FormValueChange) => {
+    emits('change', obj)
+  }
   /**
    * 返回栅格宽度
    * @param span
@@ -57,7 +63,7 @@
       return {width: (numberSpan / 24) * 100 + '%'}
     }
   }
-  const clickBtn = (key:string) => {
+  const clickBtn = (key: string) => {
     emits('btnClick', key)
   }
 </script>

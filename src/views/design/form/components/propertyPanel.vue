@@ -103,14 +103,14 @@
               label="添加全部项"
             >
               <el-input
-                v-model="selectComponent.config.addAll"
+                v-model="selectComponent.addAll"
                 placeholder="请输入全部项文案"
               />
             </el-form-item>
             <el-form-item label="选项数据源">
               <el-select
-                v-model="selectComponent.config.optionsType"
-                @change="selectComponent.config.optionsFun = ''"
+                v-model="selectComponent.optionsType"
+                @change="dataSourceSelectChange"
               >
                 <el-option
                   :value="0"
@@ -126,7 +126,7 @@
                 />
               </el-select>
             </el-form-item>
-            <template v-if="selectComponent.config.optionsType === 0">
+            <template v-if="selectComponent.optionsType === 0">
               <div v-if="selectComponent.type !== 'cascader'">
                 <el-form-item
                   v-for="(item, index) in selectComponent.options"
@@ -164,88 +164,86 @@
                 </el-button>
               </el-form-item>
             </template>
-            <template v-else>
-              <el-form-item>
-                <el-input
-                  v-model="selectComponent.config.optionsFun"
-                  :placeholder="
-                    getOptionPlaceholder(selectComponent.config.optionsType)
-                  "
+            <el-form-item v-if="[1,2].includes(selectComponent.optionsType)">
+              <el-input
+                v-model="selectComponent.optionsFun"
+                :placeholder="
+                  getOptionPlaceholder(selectComponent.optionsType)
+                "
+              >
+                <template
+                  v-if="selectComponent.optionsType === 1"
+                  #prepend
                 >
-                  <template
-                    v-if="selectComponent.config.optionsType === 1"
-                    #prepend
+                  <el-select
+                    v-model="selectComponent.method"
+                    style="width: 80px"
                   >
-                    <el-select
-                      v-model="selectComponent.config.method"
-                      style="width: 80px"
-                    >
-                      <el-option
-                        label="get"
-                        value="get"
-                      />
-                      <el-option
-                        label="post"
-                        value="post"
-                      />
-                    </el-select>
-                  </template>
-                </el-input>
+                    <el-option
+                      label="get"
+                      value="get"
+                    />
+                    <el-option
+                      label="post"
+                      value="post"
+                    />
+                  </el-select>
+                </template>
+              </el-input>
+            </el-form-item>
+            <template v-if="selectComponent.optionsType === 1">
+              <el-form-item label="指定label属性值">
+                <el-input
+                  v-model="selectComponent.label"
+                  placeholder="指定选项标签为选项对象的某个属性值"
+                />
               </el-form-item>
-              <template v-if="selectComponent.config.optionsType === 1">
-                <el-form-item label="指定label属性值">
-                  <el-input
-                    v-model="selectComponent.config.label"
-                    placeholder="指定选项标签为选项对象的某个属性值"
-                  />
-                </el-form-item>
-                <el-form-item label="指定value属性值">
-                  <el-input
-                    v-model="selectComponent.config.value"
-                    placeholder="指定选项的值为选项对象的某个属性值"
-                  />
-                </el-form-item>
+              <el-form-item label="指定value属性值">
+                <el-input
+                  v-model="selectComponent.value"
+                  placeholder="指定选项的值为选项对象的某个属性值"
+                />
+              </el-form-item>
+              <el-form-item label="缓存数据结果">
+                <el-switch v-model="selectComponent.cache" />
+              </el-form-item>
+              <template v-if="showHide(['select'], true)">
                 <el-form-item label="是否可筛选">
                   <el-switch v-model="selectComponent.control.filterable" />
                 </el-form-item>
-                <template v-if="showHide(['select'], true)">
-                  <el-form-item label="开启远程数据Remote">
-                    <el-switch v-model="selectComponent.control.remote" />
-                  </el-form-item>
-                  <el-form-item label="缓存数据结果">
-                    <el-switch v-model="selectComponent.config.cache" />
-                  </el-form-item>
-                  <el-form-item label="联动关联设置">
-                    <el-input
-                      v-model="selectComponent.config.linkage"
-                      placeholder="请输入关联的组件name"
-                    />
-                  </el-form-item>
-                  <el-form-item
-                    v-if="
-                      selectComponent.config.remote || selectComponent.config.linkage
-                    "
-                    label="远程数据参数字段名"
-                  >
-                    <el-input
-                      v-model="selectComponent.config.queryName"
-                      placeholder="远程数据参数字段名"
-                    />
-                  </el-form-item>
-                </template>
+                <el-form-item label="开启远程数据Remote">
+                  <el-switch v-model="selectComponent.control.remote" />
+                </el-form-item>
+                <el-form-item label="联动关联设置">
+                  <el-input
+                    v-model="selectComponent.linkage"
+                    placeholder="请输入关联的组件name"
+                  />
+                </el-form-item>
+                <el-form-item
+                  v-if="
+                    selectComponent.remote || selectComponent.linkage
+                  "
+                  label="远程数据参数字段名"
+                >
+                  <el-input
+                    v-model="selectComponent.queryName"
+                    placeholder="远程数据参数字段名"
+                  />
+                </el-form-item>
               </template>
-              <el-form-item v-if="selectComponent.config.optionsType === 1">
-                <el-button @click="openAttrDialog('beforeOption')">
-                  before事件
-                </el-button>
-                <el-button @click="openAttrDialog('afterOption')">
-                  after事件
-                </el-button>
-              </el-form-item>
             </template>
+            <el-form-item v-if="selectComponent.optionsType === 1">
+              <el-button @click="openAttrDialog('beforeOption')">
+                before事件
+              </el-button>
+              <el-button @click="openAttrDialog('afterOption')">
+                after事件
+              </el-button>
+            </el-form-item>
             <el-form-item label="尝试转换value值为">
               <el-select
-                v-model="selectComponent.config.transformData"
+                v-model="selectComponent.transformData"
                 placeholder="可尝试将值转换类型"
               >
                 <el-option value="none">
@@ -316,11 +314,6 @@
                   v-if="item.type === 'rules'"
                   v-model="item.rules"
                   placeholder="正则表达式"
-                />
-                <el-input
-                  v-if="item.type === 'methods'"
-                  v-model="item.methods"
-                  placeholder="方法名称，此方法仅适用于导出vue文件"
                 />
               </el-form-item>
               <el-form-item>
@@ -934,7 +927,6 @@
         value: attr.span,
         path: 'attr.span',
         vShow: ['gridChild'],
-        eventName: 'formatNumber',
         isNum: true
       },
       {
@@ -942,7 +934,6 @@
         value: attr.offset,
         path: 'attr.offset',
         vShow: ['gridChild'],
-        eventName: 'formatNumber',
         isNum: true
       },
       {
@@ -950,7 +941,6 @@
         value: attr.push,
         path: 'attr.push',
         vShow: ['gridChild'],
-        eventName: 'formatNumber',
         isNum: true
       },
       {
@@ -958,7 +948,6 @@
         value: attr.pull,
         path: 'attr.pull',
         vShow: ['gridChild'],
-        eventName: 'formatNumber',
         isNum: true
       },
       {
@@ -1032,7 +1021,6 @@
         value: control.min,
         path: 'control.min',
         vShow: ['slider'],
-        eventName: 'formatNumber',
         isNum: true
       },
       {
@@ -1040,7 +1028,6 @@
         value: control.max,
         path: 'control.max',
         vShow: ['rate', 'slider'],
-        eventName: 'formatNumber',
         isNum: true
       },
       {
@@ -1048,7 +1035,6 @@
         value: control.step,
         path: 'control.step',
         vShow: ['slider'],
-        eventName: 'formatNumber',
         isNum: true
       },
       {
@@ -1180,6 +1166,9 @@
     ], // 自定义校验规则
   })
   const controlChange = (obj: any, val: any) => {
+    if (obj.isNum) {
+      val = formatNumber(val)
+    }
     // select多选属性，
     switch (obj.eventName) {
       case 'selectMultiple':
@@ -1187,9 +1176,6 @@
         break
       case 'tableColumn1':
         tableColumnAdd(val)
-        break
-      case 'formatNumber':
-        // val = parseInt(val) // 将值转数值
         break
       case 'filedNameKey':
         // 选择字段标识时，同时修改显示标题
@@ -1215,11 +1201,9 @@
         } else {
           selectComponent.value.type = 'select'
         }
-        // 这里会报错Cannot set properties of null (setting 'checked')
-        // 因value:type===inputSlot，这里使用了v-model，影响不大暂不处理
         break
     }
-    setValueByPath(selectComponent.value, obj.path, val)
+    obj.path && setValueByPath(selectComponent.value, obj.path, val)
   }
   /**
    * 根据路径修改对象值
@@ -1244,13 +1228,24 @@
       }
       current = current[key]
     }
-
     // 最后一层赋值
     const lastKey = keys.pop()!
     current[lastKey] = value
   }
-
-  // 属性设置相关结束
+  const dataSourceSelectChange = () => {
+    //切换类型时，删除多余字段重写
+    selectComponent.value.optionsFun = ''
+    selectComponent.value.options = []
+    delete selectComponent.value.optionsFun
+    delete selectComponent.value.method
+    delete selectComponent.value.cache
+    delete selectComponent.value.before
+    delete selectComponent.value.after
+    delete selectComponent.value.label
+    delete selectComponent.value.value
+    delete selectComponent.value.queryName
+    delete selectComponent.value.linkage
+  }
   // 多选固定选项删除
   const delSelectOption = (index: number, type?: string) => {
     if (type === 'tabs') {
@@ -1308,7 +1303,8 @@
         key: 'beforeType',
         callback: (content: any) => {
           designConfig.value.before = content
-        }
+        },
+        tip: 'form'
       }),
       //表单配置－after事件
       after: () => ({
@@ -1317,7 +1313,8 @@
         key: 'afterType',
         callback: (content: any) => {
           designConfig.value.after = content
-        }
+        },
+        tip: 'form'
       }),
       //表单配置－change改变事件
       change: () => ({
@@ -1344,7 +1341,24 @@
           console.log(typeof content)
           selectComponent.value.control = content
         }
-      })
+      }),
+      //字段属性->before
+      beforeOption: () => ({
+        key: 'beforeType',
+        title: getAceTitle.before,
+        content: selectComponent.value.before,
+        callback: (content: any) => {
+          selectComponent.value.before = content
+        }
+      }),
+      afterOption: () => ({
+        key: 'afterType',
+        title: getAceTitle.after,
+        content: selectComponent.value.after,
+        callback: (content: any) => {
+          selectComponent.value.after = content
+        }
+      }),
     }
 
     const getParams = drawerConfigMap[eventType]
@@ -1452,7 +1466,7 @@
       })
     }
   }
-  const getFormFieldBySource = (sourceId: string, callback?: (val: any,name:string) => void) => {
+  const getFormFieldBySource = (sourceId: string, callback?: (val: any, name: string) => void) => {
     if (!sourceId) {
       return // 仅在设计
     }
@@ -1462,7 +1476,7 @@
         const tableData = res.data?.tableData
         try {
           state.dataSourceFiledList = JSON.parse(tableData)
-          callback && callback(state.dataSourceFiledList,res.data?.name)
+          callback && callback(state.dataSourceFiledList, res.data?.name)
         } catch (e) {
           state.dataSourceFiledList = []
         }
@@ -1481,7 +1495,7 @@
       getDataSource()
     })
   })
-  onUnmounted(()=>{
+  onUnmounted(() => {
     removeResource('form-style')
   })
   defineExpose({getFormFieldBySource})

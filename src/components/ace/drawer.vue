@@ -82,7 +82,7 @@
 
     // 当传入内容为空，同时传入key时，则根据key配置初始值
     if (obj.key && !obj.content) {
-      content = getAceContent(obj.key) || ''
+      content = getAceContent(obj.key, obj.tip) || ''
     }
     // 当标题为空，则根据key配置标题
     if (obj.key && !obj.title) {

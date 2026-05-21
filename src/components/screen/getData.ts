@@ -5,7 +5,7 @@ import {beforeAfter} from '@/utils/beforeAfter'
 import {loadResource, removeResource} from "@/utils";
 import {ScopedStyleId} from "./utils";
 import {useScreenStore} from "@/store/screen"
-import type {Component, Config} from "@/types/screen.ts";
+import type {Component, Config} from "@/types/screen";
 
 const store = useScreenStore();
 
@@ -47,9 +47,7 @@ export const getGlobalData = (config: Config) => {
         apiKey: requestUrl,
         before: before,
         after: after,
-        params: {},
-        options: {method: method},
-        type: 'none'
+        options: {method: method}
       })
           .then((res: any) => {
             // 将全局数据保存在window里，以方便调用

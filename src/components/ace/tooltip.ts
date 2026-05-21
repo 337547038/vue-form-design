@@ -5,18 +5,18 @@ export const getAceTitle = {
   editCss: '当前应用页的样式，类似于.vue文件中的style scoped中的样式',
   change:
       '表单组件值改变事件。这里可修改其他组件的值。返回字符串形式可在@/utils/formChangeValue中处理',
-  editRules:`可参考UI组件表单校验，<a href="https://element-plus.org/zh-CN/component/form" target="_blank" style="color: red">详情点击</a>`,
+  editRules: `可参考UI组件表单校验，<a href="https://element-plus.org/zh-CN/component/form" target="_blank" style="color: red">详情点击</a>`,
   editProps: '可添加当前组件所有prop属性及事件方法',
   creatJson: '可编辑修改或将已生成的脚本粘贴进来',
   button: '可添加当前组件所有prop属性及事件方法'
 }
 
 const beforeTip: any = {
-  form: '可选fetch/submit。使用时需对type作判断',
-  list: '可选fetch/submit/del/export。使用时需对type作判断',
+  form: '分获取表单数据和提交表单两种，可选fetch/submit。使用时需对type作判断区分获取和提交',
+  list: '分表格获取数据及删除等，可选fetch/submit/del/export。使用时需对type作判断区分获取和提交',
   tree: '可选del'
 }
-export const getAceContent = (key: string, tips = 'form') => {
+export const getAceContent = (key: string, tips = '') => {
   switch (key) {
     case 'before':
       return ('opt=(params) => {\n'
@@ -25,10 +25,10 @@ export const getAceContent = (key: string, tips = 'form') => {
           + '  return params\n'
           + '}')
     case 'beforeType':
-      return ('opt=(params, type, obj) => {\n'
+      return ('opt=(params, obj) => {\n'
           + '  // params请求的参数，需对params作修改后return回去。\n'
-          + '  // type当前操作类型。' + beforeTip[tips] + '\n'
-          + '  // obj可能包含路由及表单信息\n'
+          + '  // obj包含路由及表单信息及请求类型type\n'
+          + '  // ' + (beforeTip[tips] || '')+'\n'
           + '  return params\n'
           + '}')
     case 'after':
@@ -41,7 +41,7 @@ export const getAceContent = (key: string, tips = 'form') => {
       return (
           'opt=(res, success, type) => {\n'
           + '  // res接口返回结果，type当前操作事件类型，success是否成功；对结果修改后返回\n'
-          + '  // ' + beforeTip[tips] + '\n'
+          + '  // ' + (beforeTip[tips] || '')+'\n'
           + `  console.log(type, res)\n`
           + '  return res\n'
           + '}'
@@ -71,7 +71,7 @@ export const getAceContent = (key: string, tips = 'form') => {
       return (
           'opt=(obj) => {\n'
           + '  // 表单组件改变事件，可修改后返回新值\n'
-          + '  // name:当前组件名称, value:当前值, model：当前表单值, prop:当前组件名称, options：选项数据\n'
+          + '  // prop:当前组件名称, value:当前值, model：当前表单值, flexProp/tableProp:表格或flex布局时的prop, options：选项数据\n'
           + '  console.log(\'change\',obj)\n'
           + '  return obj.model\n'
           + '}'

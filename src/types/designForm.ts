@@ -1,5 +1,4 @@
 import type {FormProps, FormItemProps} from 'element-plus/es'
-import type {FormItem, Options} from "@/types/form.ts";
 
 interface CustomRules {
   type: string
@@ -26,13 +25,28 @@ export interface Component {
   conditionalDisplay?: string // 根据条件隐藏显示
   conditionalDisabled?: string // 根据条件禁用
   customRules?: CustomRules[] // 自定义检验规则,这个规则会合并进item.rules
+  optionsType?: number //远程数据获取方法0静态1接口2字典
+  optionsFun?: string// optionsType=1时为接口url，2时为字典key
+  label?: string // 接口数据时从数据哪个字段取label值
+  value?: string//同上
+  before?: (params: Record<string, any>, other?: Other) => any
+  after?: string | ((res: Record<string, any>, success: boolean) => any)
+  linkage?: string // 用于实现级联，当前select组件关联的linkage改变时，重新加载数据
+  method?: 'get' | 'post'
+  cache?: boolean //是否缓存数据
+}
+
+interface Other {
+  type?: string
+  route?: Record<string, any> | undefined
+  model?: Record<string, any> | undefined
 }
 
 export interface Config {
   props?: FormProps // 绑定el-form相关参数
   submitCancel?: boolean // 显示提交取消按钮
   name?: string // 表单名称
-  before?: string | ((params: Record<string, any>, type: string, obj: any) => void)
+  before?: string | ((params: Record<string, any>, other: Other) => void)
   after?: string | ((res: Record<string, any>, success: boolean, type: string) => void)
   change?: (obj: Record<string, any>) => void
   transformData?: boolean // 将object转string提交
@@ -50,15 +64,11 @@ export interface FormData {
   config: Config
 }
 
-export interface FormList {
-  name: string
-  type: string
-  control: any // 当前type表单控件所有props
-  formItem?: FormItem // formItem组件所有props
-  config: any // 其他配置信息
-  customRules?: any // 自定义检验规则,这个规则会合并进item.rules
-  columns?: any // 布局字段
-  tableData?: any // 子表时
-  options?: Options[] // radio,checkbox,select选项
-  list?: any
+export interface FormValueChange {
+  tableProp?: string // 表格的name，仅在子表内组件修改时
+  flexProp?: string // flex布局的name，仅在flex组件时，内部值改变
+  value: any
+  model?: Record<string, any> | undefined
+  prop: string // 设计时的name值
+  options?: Record<string, any> | undefined // 选项值，radio/checkbox/select等时
 }

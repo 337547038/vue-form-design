@@ -1,29 +1,38 @@
+<!-- Created by weiXin:337547038 -->
 <template>
   <div>
     <ak-form
       ref="formRef"
-      :operate-type="formType"
       :data="formData"
-      request-url=""
-      submit-url=""
-      :before="beforeSubmit">
-    </ak-form>
+      :operate-type="formType"
+      request-url="{{requestUrl}}"
+      submit-url="{{submitUrl}}"
+      :before="before"
+      :params="params"
+      :after="after"
+    ></ak-form>
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, computed, provide } from 'vue'
-  const formRef = ref()
-  const formData = ref({list:[{type:"input",control:{modelValue:"",disabled:false},config:{span:12},name:"input1778990287710",formItem:{label:"单行文本",rules:[{required:true,message:"Please input Activity name",trigger:"blur"},{min:3,max:5,message:"Length should be 3 to 5",trigger:"blur"}]},customRules:[]},{type:"textarea",control:{modelValue:""},config:{},name:"textarea1778990289948",formItem:{label:"多行文本"}},{type:"grid",columns:[{attr:{span:12},list:[]},{attr:{span:12},list:[]}],control:{},config:{}},{type:"tabs",columns:[{label:"Tab1",list:[]}],control:{},config:{}}],form:{size:"default",name:"858"},config:{submitCancel:true}})
-    // todo 存在编辑时，可选add、edit、detail、design、search，默认add
+  import {ref, computed} from 'vue'
+
+  const formData = ref({{formData}})
+  // 表单提交时可附加的参数
+  const params = ref({})
+  // 表单操作类型，如没有设置添加和编辑页的禁用隐藏等设置可不传
   const formType = computed(() => {
-     return 'add'
+    return 'add'
   })
 
-
-  // 表单提交时参数处理
-  const beforeSubmit = (params,type,obj)=>{
-    // params请求的参数，可根据type作判断，对params作修改后return回去
-    // 需要将params参数return
-    return params;
+  // 获取表单数据值或是提交表单前事件，可使用return false阻止操作．type可选fetch/submit
+  const before = (params: Record<string, any>, type: string) => {
+    console.log('before', params, type)
+    return params
+  }
+  // 获取表单数据或提交表单请求后事件,type可选fetch/submit
+  const after = (res: any, success: boolean, type: string) => {
+    if (success && type === 'submit') {
+      console.log('after', res, success, type)
+    }
   }
 </script>

@@ -21,8 +21,7 @@ export default [
         icon: 'textarea',
         control: {
           modelValue: ''
-        },
-        config: {}
+        }
       },
       {
         type: 'radio',
@@ -32,7 +31,7 @@ export default [
           modelValue: ''
         },
         options: selectOption, // 下拉选项数据集合
-        config: config
+        optionsType:0 // 0固定 1数据源 2 接口字典
       },
       {
         type: 'checkbox',
@@ -42,7 +41,7 @@ export default [
           modelValue: []
         },
         options: selectOption,
-        config: config
+        optionsType:0 // 0固定 1数据源 2 接口字典
       },
       {
         type: 'select',
@@ -53,7 +52,6 @@ export default [
           teleported: true
         },
         options: selectOption,
-        config: config
       },
       {
         type: 'datePicker',

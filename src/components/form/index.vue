@@ -19,6 +19,7 @@
         :key="index"
         :element="element"
         @btn-click="defaultBtnClick"
+        @change="componentChange"
       />
     </template>
     <slot />
@@ -39,7 +40,7 @@
 </template>
 <script setup lang="ts">
   import type {Component, FormData} from "@/types/designForm";
-  import {computed, onMounted, ref, watch} from "vue";
+  import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
   import {ElMessage} from "element-plus";
   import {useRouter, onBeforeRouteLeave} from 'vue-router'
   import DesignForm from './design.vue'
@@ -49,13 +50,14 @@
   import ComponentFactory from "@/components/form/componentFactory.vue";
   import {beforeAfter, getRequestEvent} from "@/utils/beforeAfter.ts";
   import {loadResource, removeResource} from "@/utils";
+  import type {FormValueChange} from "@/types/designForm.ts";
 
   defineOptions({name: 'AkForm'})
   const props = withDefaults(
     defineProps<{
       data: FormData
       disabled?: boolean // 禁用表单提交
-      before?: (params: Record<string, any>, type: string, obj: any) => any // 请求编辑数据前参数处理方法，可对请求参数处理
+      before?: (params: Record<string, any>, obj: any) => any // 请求编辑数据前参数处理方法，可对请求参数处理
       after?: (res: Record<string, any>, success: boolean, type: string) => any // 请求数据加载完成后数据处理方法，可对返回数据处理
       query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
       params?: { [key: string]: any } // 提交表单一些附加参数
@@ -84,7 +86,7 @@
   const emits = defineEmits<{
     (e: 'btnClick', type: string): void
     (
-      e: 'change', obj: { name: string, value: any, model: any, prop: string, options: any }
+      e: 'change', obj: FormValueChange
     ): void
   }>()
 
@@ -159,6 +161,20 @@
         break
     }
   }
+  // 表单组件值改变时
+  const componentChange = (obj: FormValueChange) => {
+    const {change} = props.data.config
+    if (typeof change === 'function') {
+      const newValue = change(obj)
+      if (newValue && typeof newValue === 'string') {
+        console.log('change 钩子返回字符串标识，暂不处理:');
+      } else if (typeof newValue === 'object') {
+        model.value = newValue
+      }
+    }
+    // 合并修改后的model
+    emits('change', Object.assign(obj, model.value))
+  }
   const model = ref({})
   // 从表单数据里提取表单所需的model
   const forEachGetFormModel = (list: Component[]) => {
@@ -179,19 +195,6 @@
       }
     })
   }
-  const unWatch = watch(
-    () => props.data.list,
-    () => {
-      // data从接口获取时
-      const {list, config} = props.data
-      forEachGetFormModel(list)
-      store.setFormValue(model.value)
-      if (config.style) {
-        loadResource(config.style, 'form-style')
-      }
-    },
-    {immediate: true}
-  )
   // 注册window事件
   let eventName = ''
   let getValueEvent = ''
@@ -210,9 +213,17 @@
       }
     }
   }
-  const unWatchEvent = watch(
-    () => props.data.config!.key,
+  const unWatch = watch(
+    () => props.data.list,
     () => {
+      console.log('watch list')
+      // data从接口获取时
+      const {list, config} = props.data
+      forEachGetFormModel(list)
+      store.setFormValue(model.value)
+      if (config.style) {
+        loadResource(config.style, 'form-style')
+      }
       setWindowEvent()
     },
     {immediate: true}
@@ -269,8 +280,51 @@
       callback(valid, fieldValue)
     })
   }
-  const getData = () => {
-
+  const getData = (params = {}) => {
+    const requestUrl = props.data.requestUrl || props.requestUrl
+    if (!['add', 'edit', 'detail'].includes(props.operateType)) {
+      console.error('当前模式不能请求数据！')
+      return
+    }
+    if (!requestUrl) {
+      console.error('请配置获取表单数据接口！')
+      return
+    }
+    loading.value = true
+    const newParams: any = Object.assign({}, params, props.query)
+    const {config: {before, after, transformData}} = props.data
+    beforeAfter({
+      apiKey: requestUrl,
+      params: newParams,
+      before: [props.before, before],
+      after: [props.after, after],
+      route: {},//后面处理返回路由todo,
+      type: 'fetch'
+    })
+      .then((res: any) => {
+        loading.value = false
+        const result = res.data
+        if (result) {
+          const formatRes: any = result.result || result || {} // 兼容两种返回格式
+          // 这里尝试将string转obj以恢复提交保存时的转换
+          let temp: any = {}
+          if (transformData) {
+            for (const key in formatRes) {
+              try {
+                temp[key] = JSON.parse(formatRes[key])
+              } catch (e) {
+                temp[key] = formatRes[key]
+              }
+            }
+          } else {
+            temp = formatRes
+          }
+          setValue(temp)
+        }
+      })
+      .catch(() => {
+        loading.value = false
+      })
   }
   const submit = (params = {}) => {
     const apiUrl: string | undefined = props.submitUrl || props.data.submitUrl
@@ -297,8 +351,7 @@
         } else {
           temp = fields
         }
-        const {config:{before,after}} = props.data
-        // 提交保存表单
+        const {config: {before, after}} = props.data
         beforeAfter({
           apiKey: apiUrl,
           params: Object.assign({}, temp, params, props.params),
@@ -310,15 +363,11 @@
         })
           .then((res: any) => {
             loading.value = false
-            ElMessage.success(res.message || '保存成功！')
+            ElMessage.success(res.message || '操作成功！')
           })
           .catch((res) => {
+            console.log('catch', res)
             // 接口返回code!=1时已统一提示异常，这里不重复提示
-            // 接口返回正常，处理程序错误时，这里需提示下。这种情况没有code
-            if (res.code === undefined) {
-              console.error(res.message)
-              // ElMessage.error(res.message || '处理异常！')
-            }
             loading.value = false
           })
       } else {
@@ -336,11 +385,14 @@
   }
   onMounted(() => {
     store.setDesignType(props.operateType)
+    store.setDesignDataConfig(props.data)
+  })
+  onUnmounted(() => {
+    removeResource('form-style')
   })
   onBeforeRouteLeave(() => {
     unWatch()
-    unWatchEvent()
-    removeResource('form-style')
+    // unWatchEvent()
   })
   defineExpose({
     setOptions,

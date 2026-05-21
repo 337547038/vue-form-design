@@ -5,17 +5,22 @@ import SparkMD5 from "spark-md5";
 
 export const useFormStore = defineStore('form', () => {
   // ==========================================设计的主数据列表
-  const designData = ref([])
-  const setDesignData = (component: Component | Component[], isPush = true) => {
-    if (isPush) {
-      designData.value.push(component)
-    } else {
-      designData.value = component
-    }
-  }
-  const setDeleteDesignData = (ids: string | string[]) => {
-    const idArray = Array.isArray(ids) ? ids : [ids];
-    designData.value = designData.value.filter((item: { id: string }) => !idArray.includes(item.id));
+  /*  const designData = ref([])
+    const setDesignData = (component: Component | Component[], isPush = true) => {
+      if (isPush) {
+        designData.value.push(component)
+      } else {
+        designData.value = component
+      }
+    }*/
+  /*  const setDeleteDesignData = (ids: string | string[]) => {
+      const idArray = Array.isArray(ids) ? ids : [ids];
+      designData.value = designData.value.filter((item: { id: string }) => !idArray.includes(item.id));
+    }*/
+  //==================================设计生成的表单数据
+  const designDataConfig = ref({})
+  const setDesignDataConfig = (data: FormData) => {
+    designDataConfig.value = data
   }
   // ============================================设计表单配置信息
   const designConfig = ref({})
@@ -62,10 +67,24 @@ export const useFormStore = defineStore('form', () => {
     formOptions.value = data
   }
 
+  //==============================表单组件缓存接口数据
+  const formComponentsDataCache = ref({})
+  const setFormComponentsDataCache = (key: string, data: Record<string, any>) => {
+    formComponentsDataCache.value[key] = data
+  }
+  const delFormComponentsDataCache = (key: string | undefined) => {
+    if (key) {
+      delete formComponentsDataCache.value[key]
+    } else {
+      //clear
+      formComponentsDataCache.value = {}
+    }
+  }
+
+  //============================全局及表单返回字典
   return {
-    designData,
-    setDesignData,
-    setDeleteDesignData,
+    designDataConfig,
+    setDesignDataConfig,
     designConfig,
     setDesignConfig,
     selectComponent,
@@ -76,6 +95,9 @@ export const useFormStore = defineStore('form', () => {
     setFormValue,
     getIsActive,
     formOptions,
-    setFormOptions
+    setFormOptions,
+    formComponentsDataCache,
+    setFormComponentsDataCache,
+    delFormComponentsDataCache
   }
 })

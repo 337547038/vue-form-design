@@ -30,19 +30,22 @@
   import Clipboard from 'clipboard'
   import {ElMessage} from 'element-plus'
   import {aceEdit, objToStringify} from '@/utils/design'
-  import tplContent from './tpl/sereen.tpl?raw'
+  import tplScreen from './tpl/sereen.tpl?raw'
+  import tplForm from './tpl/form.tpl?raw'
 
   const visible = ref(false)
   const editor = ref()
   // 根据生成的json提取需要导入的组件，远程方法，检验方法
   const open = ({data, type}: { data: any, type: string }) => {
+    console.log(type)
     visible.value = true
     let html = ''
     switch (type) {
       case 'screen':
-        html = tplContent.replace('{{designData}}', objToStringify(data, true, ''))
+        html = tplScreen.replace('{{designData}}', objToStringify(data, true, ''))
         break
       case 'form':
+        html = getFormData(data)
         break
       case 'list':
         break
@@ -51,7 +54,12 @@
       editor.value = aceEdit({content: html, id: 'editJsonCopy', type: 'html'})
     })
   }
-  // 打开弹窗，导出表格数据
+  const getFormData = (data: any) => {
+    console.log('formdata',objToStringify(data))
+    return tplForm.replace('{{formData}}', objToStringify(data, true, ''))
+      .replace('{{requestUrl}}', data.config.requestUrl || '')
+      .replace('{{submitUrl}}', data.config.submitUrl || '')
+  }
 
 
   const copyData = (e: any) => {

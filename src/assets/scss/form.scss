@@ -100,6 +100,12 @@ $mainColor: #66b1ff;
       &:after {display: none}
     }
   }
+  .group-inputSlot {
+    border-color: #eebe77;
+    &.active{
+      border-color: #eebe77;
+    }
+  }
 }
 
 .ak-form {

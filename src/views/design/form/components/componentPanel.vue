@@ -49,6 +49,7 @@
     <use-template
       v-if="!isSearch"
       ref="useTemplateEl"
+      @select-template="selectTemplate"
     />
   </div>
 </template>
@@ -57,12 +58,15 @@
   import draggable from 'vuedraggable-es'
   import {computed, ref, onMounted} from 'vue'
   import {useRoute} from 'vue-router'
-  import type { FormList} from '@/types/form'
+  import type {Component, FormData} from '@/types/designForm'
   import UseTemplate from './template.vue'
   import {getRequest} from '@/api'
   import {stringToObj, jsonParseStringify} from '@/utils/design'
   import {useFormStore} from "@/store/form";
 
+  const emits = defineEmits<{
+    (e: 'selectTemplate', val: FormData): void
+  }>()
   const store = useFormStore()
   const route = useRoute()
   const formDataList = ref([])
@@ -115,7 +119,7 @@
     })
   }
   // 筛选设计时左则勾选已有表单字段
-  const forEachGetData = (data: FormList[]) => {
+  const forEachGetData = (data: Component[]) => {
     data.forEach((item: any) => {
       if (item.type === 'grid' || item.type === 'tabs') {
         item.columns.forEach((col: any) => {
@@ -128,7 +132,7 @@
       }
     })
   }
-  const selectChange = (obj: FormList, val: boolean) => {
+  const selectChange = (obj: Component, val: boolean) => {
     if (val) {
       // 勾选时追加
       /*const newObj = jsonParseStringify(obj)
@@ -141,6 +145,9 @@
   const useTemplateEl = ref()
   const useTemplateClick = () => {
     useTemplateEl.value.open()
+  }
+  const selectTemplate = (dataList: FormData) => {
+    emits('selectTemplate', dataList)
   }
   onMounted(() => {
     // 设计搜索表单时加载

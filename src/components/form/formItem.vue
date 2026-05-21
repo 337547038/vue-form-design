@@ -14,7 +14,7 @@
       <Tooltip :content="data.help" />
     </template>
     <el-input
-      v-if="['input', 'password'].includes(data.type)"
+      v-if="['input', 'password','textarea'].includes(data.type)"
       v-bind="control"
       v-model="formValue[data.name]"
       :placeholder="getPlaceholder"
@@ -28,6 +28,7 @@
         <select-comp
           v-if="getInputSlot('p')"
           :data="getInputSlot('p')"
+          :disabled="disabled"
           type="slot"
         />
         <span v-else>{{ data.prepend }}</span>
@@ -39,11 +40,40 @@
         <select-comp
           v-if="getInputSlot()"
           :data="getInputSlot()"
+          :disabled="disabled"
           type="slot"
         />
         <span v-else>{{ data.append }}</span>
       </template>
     </el-input>
+    <el-radio-group
+      v-if="data.type === 'radio'"
+      v-bind="control"
+      v-model="formValue[data.name]"
+      :disabled="disabled"
+    >
+      <el-radio
+        v-for="(item, index) in options"
+        :key="index"
+        :value="getLabelValue('value',item)"
+      >
+        {{ getLabelValue('label', item) }}
+      </el-radio>
+    </el-radio-group>
+    <el-checkbox-group
+      v-if="data.type === 'checkbox'"
+      v-bind="control"
+      v-model="formValue[data.name]"
+      :disabled="disabled"
+    >
+      <el-checkbox
+        v-for="(item, index) in options"
+        :key="index"
+        :value="getLabelValue('value',item)"
+      >
+        {{ getLabelValue('label', item) }}
+      </el-checkbox>
+    </el-checkbox-group>
     <component
       :is="currentComponent"
       v-bind="control"
@@ -63,18 +93,26 @@
       v-model="formValue[data.name]"
       :disabled="disabled"
     />
+    <select-comp
+      v-if="['select'].includes(data.type)"
+      :data="data"
+      :disabled="disabled"
+      :options="options"
+      :remote-method="getRemoteMethod"
+    />
   </el-form-item>
 </template>
 <script setup lang="ts">
   import type {Component} from "@/types/designForm.ts";
-  import {computed, markRaw} from "vue";
+  import {computed, markRaw, watch, ref, onMounted, onUnmounted} from "vue";
   import {storeToRefs} from "pinia";
   import {useFormStore} from "@/store/form";
   import Tooltip from "@/components/tooltip/index.vue";
   import selectComp from './widgets/select.vue'
-  import {getNameForEach} from "./utils";
+  import {getNameForEach, getOptionsList, getTransformLabelValue} from "./utils";
   import validate from "./validate";
-
+  import type {FormValueChange} from "@/types/designForm";
+  import {objectToArray} from "@/utils/design";
 
   const props = withDefaults(
     defineProps<{
@@ -82,6 +120,9 @@
     }>(),
     {}
   )
+  const emits = defineEmits<{
+    (e: 'change', value: FormValueChange): void
+  }>()
   const store = useFormStore();
   const {formValue} = storeToRefs(store)
   const currentComponent = computed(() => {
@@ -95,7 +136,7 @@
     return `el-${props.data.type}`
   })
   const getLabel = computed(() => {
-    const showColon = store.designConfig.showColon
+    const showColon = store.designConfig.showColon // todo
     const {formItem = {}, hideLabel} = props.data
     if (hideLabel) {
       return ''
@@ -107,11 +148,38 @@
     return props.data.control
   })
   const inputType = computed(() => {
-    return props.data.type === 'password' ? 'password' : 'text'
+    if (props.data.type === 'input') {
+      return 'text'
+    } else {
+      return props.data.type
+    }
   })
   const getPlaceholder = computed(() => {
     return control.value.placeholder ? control.value.placeholder : `请输入${props.data.formItem?.label}`
   })
+
+  //=====================================获取options
+  const optionsList = ref(props.data.options)
+  const options = computed(() => {
+    // 使用了setOptions时，优先使用此值
+    const opt = store.formOptions[props.data.name]
+    if (opt) {
+      return objectToArray(opt)
+    } else {
+      // 判断下option的类型，为对象时转换下
+      return objectToArray(optionsList.value)
+    }
+  })
+
+  // 这里数据转换放在选项里处理
+  const getLabelValue = (type: string, obj: Record<string, any>) => {
+    const {transformData, label, value} = props.data
+    return getTransformLabelValue(type, obj, {transformData, label, value})
+  }
+  const getRemoteMethod = (option: any) => {
+    optionsList.value = option
+  }
+  //=====================================获取options结束
   const getInputSlot = (key?: string) => {
     const {prepend, append} = props.data
     const slot = key === 'p' ? prepend : append
@@ -120,7 +188,7 @@
       return false
     }
     const slotKey = slot.replace('key:', '')
-    const control = getNameForEach(store.designData, slotKey)
+    const control = getNameForEach(store.designDataConfig?.list, slotKey)
     if (!control || Object.keys(control)?.length === 0) {
       return false
     }
@@ -200,5 +268,21 @@
     })
     return temp
   }
+
+  const unwatch = watch(
+    () => formValue.value[props.data.name],
+    (newVal: any) => {
+      console.log('formItem watch')
+      emits('change', {prop: props.data.name, value: newVal, model: formValue.value, options: options.value})
+    }
+  )
+  onMounted(() => {
+    getOptionsList(props.data, (opt: Record<string, any>) => {
+      optionsList.value = opt
+    })
+  })
+  onUnmounted(() => {
+    unwatch()
+  })
 
 </script>

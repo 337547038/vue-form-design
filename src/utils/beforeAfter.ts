@@ -1,12 +1,13 @@
 import {jsonParseStringify} from '@/utils/design'
 import {getRequest} from '@/api'
 
-interface RouteModel {
+interface Other {
   route: Record<string, any> | undefined
   model: Record<string, any>
+  type?: string | undefined
 }
 
-type BeforeHook = (params: any, type?: string | undefined, routeModel?: RouteModel) => any;
+type BeforeHook = (params: Record<string, any>, other?: Other) => any;
 type AfterHook = (result: any, isSuccess: boolean, type?: string | undefined) => any;
 type MayBeHook = BeforeHook | undefined | null;
 type MayBeHookA = AfterHook | undefined | null;
@@ -25,25 +26,24 @@ type RequestParams = {
 const executeBeforeHook = (
     params: Record<string, any>,
     before: RequestParams['before'],
-    type: string | undefined,
-    routeModel: RouteModel,
+    other: Other,
 ): any => {
   const deepCloneParams = jsonParseStringify(params);
   if (!before) return deepCloneParams;
 
   if (typeof before === 'function') {
-    return before(deepCloneParams, type, routeModel);
+    return before(deepCloneParams, other)??deepCloneParams;
   }
 
   if (Array.isArray(before) && before.length === 2) {
     const [hook1, hook2] = before;
     let propsResult = deepCloneParams
     if (typeof hook1 === 'function') {
-      propsResult = hook1(deepCloneParams, type, routeModel);
+      propsResult = hook1(deepCloneParams, other)??deepCloneParams;
     }
     if (propsResult === false) return false;
     if (typeof hook2 === 'function') {
-      return hook2(jsonParseStringify(propsResult), type, routeModel);
+      return hook2(jsonParseStringify(propsResult), other)??propsResult;
     }
     return propsResult
   }
@@ -72,9 +72,9 @@ const executeAfterHook = (
     }
     if (result1 === false) return false;
     if (typeof hook2 === 'function') {
-      return hook2(result1, isSuccess, type);
+      return hook2(result1 ?? result, isSuccess, type);
     }
-    return result1
+    return result1 ?? result
   }
 
   console.log('after 钩子返回字符串标识，暂不处理:', after);
@@ -92,7 +92,7 @@ const executeAfterHook = (
  * formModel // 当前表单所有值；
  * before 请求后结果后方法，同时支持props.before和设计数据的config.before；
  * after 请求前方法；
- * type 事件类型
+ * type 事件类型，在表单和表格时用于区分获取数据和提交请求
  */
 export const beforeAfter = async (dataParams: RequestParams) => {
   const {apiKey, params = {}, route, formModel, options = {}, before, after, type} = dataParams
@@ -100,12 +100,12 @@ export const beforeAfter = async (dataParams: RequestParams) => {
     throw new Error('请求 apiKey 不能为空');
   }
 
-  const routeModel: RouteModel = {
+  const other: Other = {
     route,
     model: jsonParseStringify(formModel),
+    type: type
   };
-
-  const beforeResult = executeBeforeHook(params, before, type, routeModel);
+  const beforeResult = executeBeforeHook(params, before, other);
   if (beforeResult === false) {
     throw new Error('用户终止操作');
   }

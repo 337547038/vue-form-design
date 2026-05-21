@@ -1,3 +1,4 @@
+<!-- Created by weiXin:337547038 -->
 <template>
   <div class="container" :style="style" v-loading="loading">
     <screen-show :data="designData.list"></screen-show>
