@@ -14,8 +14,8 @@
             <h3>通用属性</h3>
           </div>
           <template
-            v-for="(item, index) in attrList"
-            :key="index"
+            v-for="item in attrList"
+            :key="item.path"
           >
             <el-form-item :label="item.label">
               <el-select
@@ -123,6 +123,7 @@
                 <el-option
                   :value="2"
                   label="接口字典"
+                  :disabled="['treeSelect','cascader'].includes(selectComponent.type)"
                 />
               </el-select>
             </el-form-item>
@@ -215,14 +216,18 @@
                   <el-switch v-model="selectComponent.control.remote" />
                 </el-form-item>
                 <el-form-item label="联动关联设置">
-                  <el-input
-                    v-model="selectComponent.linkage"
-                    placeholder="请输入关联的组件name"
-                  />
+                  <el-select v-model="selectComponent.linkage">
+                    <el-option
+                      v-for="item in linkageOptions"
+                      :key="item.name"
+                      :label="item.label"
+                      :value="item.name"
+                    />
+                  </el-select>
                 </el-form-item>
                 <el-form-item
                   v-if="
-                    selectComponent.remote || selectComponent.linkage
+                    selectComponent.control.remote || selectComponent.linkage
                   "
                   label="远程数据参数字段名"
                 >
@@ -339,7 +344,7 @@
               />
             </el-form-item>
           </template>
-          <div v-if="showHide(['grid', 'card', 'gridChild', 'divider', 'div'])">
+          <div v-if="showHide(['grid', 'card', 'gridChild', 'divider', 'div','txt'])">
             <div class="h3">
               <h3>其他属性</h3>
             </div>
@@ -446,14 +451,7 @@
 </template>
 
 <script lang="ts" setup>
-  import {
-    reactive,
-    computed,
-    ref,
-    onMounted,
-    nextTick,
-    onUnmounted
-  } from 'vue'
+  import {computed, nextTick, onMounted, onUnmounted, reactive, ref} from 'vue'
   import {getRequest} from '@/api'
   import validate from '@/components/form/validate'
   import {ElMessage} from 'element-plus'
@@ -463,6 +461,7 @@
   import type {DrawerConfig} from "@/components/ace/type";
   import {loadResource, removeResource} from "@/utils";
   import {getAceTitle} from "@/components/ace/tooltip";
+  import type {Component} from "@/types/designForm.ts";
 
   const emits = defineEmits<{
     (e: 'openDialog', data: any): void
@@ -729,6 +728,7 @@
         label: '帮助信息',
         value: sc.help,
         path: 'help',
+        placeholder: '问号鼠标滑过提示信息',
         vHide: [
           'table',
           'grid',
@@ -1021,6 +1021,7 @@
         value: control.min,
         path: 'control.min',
         vShow: ['slider'],
+        placeholder: '组件min属性',
         isNum: true
       },
       {
@@ -1028,6 +1029,7 @@
         value: control.max,
         path: 'control.max',
         vShow: ['rate', 'slider'],
+        placeholder: '组件max属性',
         isNum: true
       },
       {
@@ -1035,6 +1037,7 @@
         value: control.step,
         path: 'control.step',
         vShow: ['slider'],
+        placeholder: '组件step属性',
         isNum: true
       },
       {
@@ -1359,6 +1362,22 @@
           selectComponent.value.after = content
         }
       }),
+      //字段属性类型=cascader 选项配置编辑
+      cascader: () => ({
+        title: '级联数据',//todo 标题文案优化下
+        content: selectComponent.value.options,
+        callback: (content: any) => {
+          selectComponent.value.options = content
+        }
+      }),
+      //字段属性类型=treeSelect 选项配置编辑
+      treeSelect: () => ({
+        title: '树形控件数据',//todo 标题文案优化下
+        content: selectComponent.value.control.data,
+        callback: (content: any) => {
+          selectComponent.value.control.data = content
+        }
+      })
     }
 
     const getParams = drawerConfigMap[eventType]
@@ -1456,6 +1475,28 @@
     }
   }
 
+  //设置级联设置
+  const linkageOptions = computed(() => {
+    if (selectComponent.value.type !== 'select') {
+      return []
+    }
+    const formList = storeForm.designDataConfig?.list || []
+    const validTypes = ['select', 'checkbox', 'radio', 'input', 'switch'];
+    return formList.reduce((acc: any, item: Component) => {
+      // 条件判断：类型合法 + name 不等于目标值
+      const isValidType = validTypes.includes(item.type);
+      const isNotTarget = item.name !== selectComponent.value.name;
+
+      if (isValidType && isNotTarget) {
+        // 只保留 name 和 label
+        acc.push({
+          name: item.name,
+          label: item.formItem?.label || item.name
+        });
+      }
+      return acc;
+    }, [] as { name: string; label: string }[]);
+  })
   // 接口数据处理
   // 获取数据源
   const getDataSource = () => {

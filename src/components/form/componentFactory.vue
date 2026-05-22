@@ -7,10 +7,33 @@
     }"
     :style="getFormItemStyle(element.span)"
   >
-    <template v-if="element.type === 'tabs'">
+    <template v-if="element.type === 'txt'">
+      <div
+        v-bind="element.control"
+        :class="[element?.className]"
+        v-html="element.control?.modelValue"
+      />
+    </template>
+    <template v-else-if="element.type === 'title'">
+      <div
+        class="title"
+        :class="[element.className]"
+        v-bind="element.control"
+      >
+        <span v-html="element.control?.modelValue" />
+        <tooltips
+          v-if="element?.help"
+          :content="element?.help"
+        />
+      </div>
+    </template>
+    <template v-else-if="element.type === 'inputSlot' && !isDesignType">
+      <!--  除设计外其他无需处理-->
+    </template>
+    <template v-else-if="element.type === 'tabs'">
       1
     </template>
-    <template v-if="element.type === 'button'">
+    <template v-else-if="element.type === 'button'">
       <div :class="[element?.className]">
         <el-button
           v-bind="element.control"
@@ -29,11 +52,12 @@
   </div>
 </template>
 <script setup lang="ts">
-  import {ref} from 'vue'
+  import {computed, ref} from 'vue'
   import type {Component,FormValueChange} from "@/types/designForm";
   import FormItem from "./formItem.vue";
   import {useFormStore} from "@/store/form";
   import {formatNumber} from "@/utils/design";
+  import Tooltips from '../tooltip/index.vue'
 
   const store = useFormStore();
   withDefaults(
@@ -50,6 +74,9 @@
   const formValueChange = (obj: FormValueChange) => {
     emits('change', obj)
   }
+  const isDesignType = computed(() => {
+    return ['designForm','designSearch','designFlow'].includes(store.designType)
+  })
   /**
    * 返回栅格宽度
    * @param span

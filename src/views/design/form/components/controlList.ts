@@ -1,7 +1,4 @@
 const selectOption: any = []
-const config: { optionsType: number } = {
-  optionsType: 0 // 0固定 1数据源 2 接口字典
-}
 export default [
   {
     title: '基础字段',
@@ -31,7 +28,7 @@ export default [
           modelValue: ''
         },
         options: selectOption, // 下拉选项数据集合
-        optionsType:0 // 0固定 1数据源 2 接口字典
+        optionsType: 0 // 0固定 1数据源 2 接口字典
       },
       {
         type: 'checkbox',
@@ -41,7 +38,7 @@ export default [
           modelValue: []
         },
         options: selectOption,
-        optionsType:0 // 0固定 1数据源 2 接口字典
+        optionsType: 0 // 0固定 1数据源 2 接口字典
       },
       {
         type: 'select',
@@ -60,8 +57,7 @@ export default [
         control: {
           modelValue: '',
           type: 'date'
-        },
-        config: {}
+        }
       },
       {
         type: 'timePicker',
@@ -69,8 +65,7 @@ export default [
         icon: 'time',
         control: {
           modelValue: ''
-        },
-        config: {}
+        }
       },
       {
         type: 'colorPicker',
@@ -78,8 +73,7 @@ export default [
         icon: 'color',
         control: {
           modelValue: ''
-        },
-        config: {}
+        }
       },
       {
         type: 'switch',
@@ -87,8 +81,7 @@ export default [
         icon: 'switch',
         control: {
           modelValue: false
-        },
-        config: {}
+        }
       },
       {
         type: 'inputNumber',
@@ -96,8 +89,7 @@ export default [
         icon: 'number',
         control: {
           modelValue: 0
-        },
-        config: {}
+        }
       },
       {
         type: 'cascader',
@@ -106,8 +98,7 @@ export default [
         control: {
           modelValue: []
         },
-        options: [],
-        config: config
+        options: []
       },
       {
         type: 'rate',
@@ -115,8 +106,7 @@ export default [
         icon: 'rate',
         control: {
           modelValue: 0
-        },
-        config: {}
+        }
       },
       {
         type: 'slider',
@@ -124,8 +114,7 @@ export default [
         icon: 'slider',
         control: {
           modelValue: 0
-        },
-        config: {}
+        }
       },
       {
         type: 'treeSelect',
@@ -136,18 +125,15 @@ export default [
           data: [],
           renderAfterExpand: false
         },
-        config: {
-          optionsType: 0
-        }
+        optionsType: 0
       },
       {
         type: 'txt',
         label: '文字',
         icon: 'text',
         control: {
-          modelValue: ''
-        },
-        config: {}
+          modelValue: '请输入文字信息'
+        }
       },
       {
         type: 'title',
@@ -155,8 +141,7 @@ export default [
         icon: 'title',
         control: {
           modelValue: '标题'
-        },
-        config: {}
+        }
       },
       {
         type: 'button',
@@ -164,8 +149,7 @@ export default [
         icon: 'button',
         control: {
           label: '保存'
-        },
-        config: {}
+        }
       }
     ]
   },
@@ -181,9 +165,7 @@ export default [
         control: {
           border: true
         },
-        config: {
           addBtnText: '添加一行'
-        }
       },
       {
         type: 'component',
@@ -191,10 +173,7 @@ export default [
         icon: 'component',
         control: {
           modelValue: ''
-        },
-        config: {}
-        /* template: '', // 组件模板名称
-                component: '' // 根据template注入的组件 */
+        }
       },
       {
         type: 'upload',
@@ -202,8 +181,7 @@ export default [
         icon: 'image',
         control: {
           modelValue: '' // 也可以是[{name:'',url:''}]形式
-        },
-        config: {}
+        }
       },
       {
         type: 'chunkUpload',
@@ -211,8 +189,7 @@ export default [
         icon: 'upload',
         control: {
           modelValue: ''
-        },
-        config: {}
+        }
       },
       {
         type: 'tinymce',
@@ -220,8 +197,7 @@ export default [
         icon: 'tinymce',
         control: {
           modelValue: ''
-        },
-        config: {}
+        }
       }
     ]
   },
@@ -235,16 +211,15 @@ export default [
         columns: [
           // 格栅列数据
           {
-            attr: { span: 12 },
+            attr: {span: 12},
             list: []
           },
           {
-            attr: { span: 12 },
+            attr: {span: 12},
             list: []
           }
         ],
-        control: {},
-        config: {}
+        control: {}
       },
       {
         type: 'tabs',
@@ -256,16 +231,14 @@ export default [
             list: []
           }
         ],
-        control: {},
-        config: {}
+        control: {}
       },
       {
         type: 'card',
         label: '卡片布局',
         icon: 'card',
         list: [],
-        control: {},
-        config: {}
+        control: {}
       },
       {
         type: 'flex',
@@ -274,23 +247,21 @@ export default [
         list: [],
         tableData: [], // 值集合
         control: {},
-        config: {
+
           addBtnText: '添加一行'
-        }
+
       },
       {
         type: 'divider',
         label: '分割线',
         icon: 'divider',
-        control: {},
-        config: {}
+        control: {}
       },
       {
         type: 'div',
         label: 'div容器',
         icon: 'div',
         control: {},
-        config: {},
         list: []
       }
     ]
@@ -305,8 +276,7 @@ export default [
         control: {
           // 组件所有属性
           modelValue: ''
-        },
-        config: {} // 其他配置信息
+        }
       }
     ]
   }

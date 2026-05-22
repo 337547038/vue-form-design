@@ -3,7 +3,7 @@
     v-bind="data.control"
     v-model="value"
     :disabled="disabled"
-    :loading="state.loading"
+    :loading="loading"
     :remote-method="getRemoteM"
     @change="selectChange"
   >
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-  import {reactive, computed, onMounted, ref} from 'vue'
+  import {computed, onMounted, ref} from 'vue'
   import {onBeforeRouteLeave} from 'vue-router'
   import type {Component} from '@/types/designForm'
   import {getTransformLabelValue, getOptionsList, getRemoteMethod} from "@/components/form/utils";
@@ -69,9 +69,7 @@
     return props.data?.queryName || 'name'
   })
   const value = ref()
-  const state = reactive({
-    loading: false // 远程搜索加载状态
-  })
+  const loading = ref(false)
   // 远程搜索
   const getRemoteM = debounce((name: string) => {
     getRemoteMethod(props.data, (opt) => {
@@ -79,6 +77,7 @@
       if (props.type === 'slot') {
         optionSlot.value = opt
       }
+      loading.value = false
     }, {[queryName.value]: name})
   })
 

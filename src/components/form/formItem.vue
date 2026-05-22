@@ -94,11 +94,25 @@
       :disabled="disabled"
     />
     <select-comp
-      v-if="['select'].includes(data.type)"
+      v-if="['select','inputSlot'].includes(data.type)"
       :data="data"
       :disabled="disabled"
       :options="options"
       :remote-method="getRemoteMethod"
+    />
+    <el-cascader
+      v-if="data.type==='cascader'"
+      v-bind="control"
+      v-model="formValue[data.name]"
+      :disabled="disabled"
+      :data="options"
+    />
+    <el-tree-select
+      v-if="data.type==='treeSelect'"
+      v-bind="control"
+      v-model="formValue[data.name]"
+      :disabled="disabled"
+      :data="options"
     />
   </el-form-item>
 </template>
