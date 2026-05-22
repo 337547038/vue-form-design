@@ -16,9 +16,12 @@
     <template #item="{ element, index }">
       <component-factory
         :element="element"
-        @click="selectClick(element)"
+        @click.stop="selectClick(element)"
       >
-        <div class="drag-control">
+        <div
+          v-if="store.getIsActive(element)"
+          class="drag-control"
+        >
           <div class="item-control">
             <i
               v-if="element.type === 'grid'"
@@ -54,6 +57,7 @@
   import {useFormStore} from '@/store/form'
   import type {Component} from '@/types/designForm'
   import {jsonParseStringify} from "@/utils/design.ts";
+  import {ElMessage} from "element-plus";
 
   const dataList = defineModel<Component[]>('data', {
     default: () => {
@@ -96,10 +100,22 @@
     const newIndex = evt.newIndex
     const key = new Date().getTime().toString()
     const obj: any = dataList.value?.[newIndex]
-    const isNested = evt.target && evt.target.getAttribute('data-type') // 不能嵌套
+    const isNested = evt.target && evt.target.getAttribute('data-nested') // 不能嵌套
     if (isNested === 'not-nested' && notNested(obj.type)) {
+      ElMessage.warning('当前区域不能嵌套' + obj.label)
       dataList.value.splice(newIndex, 1)
       return
+    }
+    // 父级类型
+    const parentType = evt.target && evt.target.getAttribute('data-type')
+    if (parentType === 'table') {
+      //子表时只能放的组件
+      const compList = ['input', 'radio', 'checkbox', 'select', 'datePicker', 'timePicker', 'switch']
+      if (!compList.includes(obj.type)) {
+        ElMessage.warning('子表区域不能使用组件：' + obj.label)
+        dataList.value.splice(newIndex, 1)
+        return
+      }
     }
     if (!obj) {
       return

@@ -30,6 +30,18 @@
     <template v-else-if="element.type === 'inputSlot' && !isDesignType">
       <!--  除设计外其他无需处理-->
     </template>
+    <template v-else-if="element.type === 'table'">
+      <design-form
+        v-if="isDesignType"
+        :data="element.list"
+        data-nested="not-nested"
+        data-type="table"
+      />
+      <child-table
+        v-else
+        :data="element"
+      />
+    </template>
     <template v-else-if="element.type === 'tabs'">
       1
     </template>
@@ -45,19 +57,22 @@
     </template>
     <form-item
       v-else
+      v-model="formValue[element.name]"
       :data="element"
-      @change="formValueChange"
     />
     <slot />
   </div>
 </template>
 <script setup lang="ts">
   import {computed, ref} from 'vue'
-  import type {Component,FormValueChange} from "@/types/designForm";
+  import type {Component} from "@/types/designForm";
   import FormItem from "./formItem.vue";
   import {useFormStore} from "@/store/form";
   import {formatNumber} from "@/utils/design";
-  import Tooltips from '../tooltip/index.vue'
+  import Tooltips from '@/components/tooltip/index.vue'
+  import DesignForm from "./design.vue";
+  import ChildTable from "./widgets/childTable.vue";
+  import {storeToRefs} from "pinia";
 
   const store = useFormStore();
   withDefaults(
@@ -68,14 +83,11 @@
   )
   const emits = defineEmits<{
     (e: 'btnClick', key: string): void
-    (e: 'change', value: FormValueChange): void
   }>()
 
-  const formValueChange = (obj: FormValueChange) => {
-    emits('change', obj)
-  }
+  const {formValue} = storeToRefs(store)
   const isDesignType = computed(() => {
-    return ['designForm','designSearch','designFlow'].includes(store.designType)
+    return ['designForm', 'designSearch', 'designFlow'].includes(store.designType)
   })
   /**
    * 返回栅格宽度

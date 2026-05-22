@@ -34,6 +34,7 @@ export interface Component {
   linkage?: string // 用于实现级联，当前select组件关联的linkage改变时，重新加载数据
   method?: 'get' | 'post'
   cache?: boolean //是否缓存数据
+  [key:string]:any
 }
 
 interface Other {
@@ -65,8 +66,7 @@ export interface FormData {
 }
 
 export interface FormValueChange {
-  tableProp?: string // 表格的name，仅在子表内组件修改时
-  flexProp?: string // flex布局的name，仅在flex组件时，内部值改变
+  parentProp?: string // 表格/flex的name，仅在子表/flex内组件修改时
   value: any
   model?: Record<string, any> | undefined
   prop: string // 设计时的name值

@@ -19,7 +19,6 @@
         :key="index"
         :element="element"
         @btn-click="defaultBtnClick"
-        @change="componentChange"
       />
     </template>
     <slot />
@@ -40,7 +39,7 @@
 </template>
 <script setup lang="ts">
   import type {Component, FormData} from "@/types/designForm";
-  import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+  import {computed, nextTick, onMounted, onUnmounted, provide, ref, watch} from "vue";
   import {ElMessage} from "element-plus";
   import {useRouter, onBeforeRouteLeave} from 'vue-router'
   import DesignForm from './design.vue'
@@ -85,9 +84,7 @@
 
   const emits = defineEmits<{
     (e: 'btnClick', type: string): void
-    (
-      e: 'change', obj: FormValueChange
-    ): void
+    (e: 'change', obj: FormValueChange): void
   }>()
 
   const store = useFormStore()
@@ -161,20 +158,7 @@
         break
     }
   }
-  // 表单组件值改变时
-  const componentChange = (obj: FormValueChange) => {
-    const {change} = props.data.config
-    if (typeof change === 'function') {
-      const newValue = change(obj)
-      if (newValue && typeof newValue === 'string') {
-        console.log('change 钩子返回字符串标识，暂不处理:');
-      } else if (typeof newValue === 'object') {
-        model.value = newValue
-      }
-    }
-    // 合并修改后的model
-    emits('change', Object.assign(obj, model.value))
-  }
+
   const model = ref({})
   // 从表单数据里提取表单所需的model
   const forEachGetFormModel = (list: Component[]) => {
@@ -195,6 +179,22 @@
       }
     })
   }
+
+  // 表单组件值改变时
+  provide('akFormValueChange', (params: FormValueChange) => {
+    // change事件修改调整model的值
+    const onFormChange = props.data.config
+    if (typeof onFormChange === 'function') {
+      const returnVal = onFormChange(params)
+      if (returnVal && typeof returnVal === 'string') {
+        console.log('change 钩子返回字符串标识，暂不处理:');
+      } else if (typeof returnVal === 'object') {
+        model.value = returnVal
+      }
+    }
+    emits('change', Object.assign(params, model.value))
+    console.log('form value is change:', Object.assign(params, model.value))
+  })
   // 注册window事件
   let eventName = ''
   let getValueEvent = ''

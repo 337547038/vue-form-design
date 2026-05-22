@@ -69,9 +69,9 @@ export const getAceContent = (key: string, tips = '') => {
       )
     case 'change':
       return (
-          'opt=(obj) => {\n'
+          'opt=(params) => {\n'
           + '  // 表单组件改变事件，可修改后返回新值\n'
-          + '  // prop:当前组件名称, value:当前值, model：当前表单值, flexProp/tableProp:表格或flex布局时的prop, options：选项数据\n'
+          + '  // prop:当前组件名称, value:当前值, model：当前表单值, parentProp:表格或flex布局时的prop, options：选项数据\n'
           + '  console.log(\'change\',obj)\n'
           + '  return obj.model\n'
           + '}'

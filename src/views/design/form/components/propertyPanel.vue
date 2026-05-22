@@ -685,8 +685,8 @@
       },
       {
         label: '显示类型',
-        value: config.showType,
-        path: 'config.showType',
+        value: sc.showType,
+        path: 'showType',
         type: 'select',
         dict: {
           input: '文本选择框',
@@ -697,30 +697,30 @@
       },
       {
         label: '按钮文本',
-        value: config.btnText,
+        value: sc.btnText,
         placeholder: '按钮文本，默认为选择文件',
-        path: 'config.btnText',
+        path: 'btnText',
         vShow: ['chunkUpload'],
-        vIf: config.showType === 'img'
+        vIf: sc.showType === 'img'
       },
       {
         label: '可选数量',
-        value: config.limit,
+        value: sc.limit,
         placeholder: '可选择的个数，默认1个',
-        path: 'config.limit',
+        path: 'limit',
         vShow: ['chunkUpload']
       },
       {
         label: '接受的文件类型',
-        value: config.accept,
+        value: sc.accept,
         placeholder: '接受的文件类型，input原生属性',
-        path: 'config.accept',
+        path: 'accept',
         vShow: ['chunkUpload']
       },
       {
         label: '是否自动上传',
-        value: config.auto,
-        path: 'config.auto',
+        value: sc.auto,
+        path: 'auto',
         type: 'switch',
         vShow: ['chunkUpload']
       },
@@ -807,15 +807,17 @@
       },
       {
         label: '增加按钮文案',
-        value: config.addBtnText,
-        path: 'config.addBtnText',
+        value: sc.addBtnText,
+        path: 'addBtnText',
+        placeholder: '添加表格数据入口按钮文案',
         type: 'text',
         vShow: ['flex', 'table']
       },
       {
         label: '删除按钮文案',
-        value: config.delBtnText,
-        path: 'config.delBtnText',
+        value: sc.delBtnText,
+        placeholder: '删除表格数据入口按钮文案',
+        path: 'delBtnText',
         type: 'text',
         vShow: ['flex', 'table']
       },
@@ -959,9 +961,9 @@
       },
       {
         label: '组件名',
-        value: config.componentName,
+        value: sc.componentName,
         placeholder: '全局注册的组件名称',
-        path: 'config.componentName',
+        path: 'componentName',
         vShow: ['component']
       },
       {
@@ -980,16 +982,16 @@
       },
       {
         label: '提示文字',
-        value: config.tip,
+        value: sc.tip,
         placeholder: '提示说明文字',
-        path: 'config.tip',
+        path: 'tip',
         vShow: ['upload']
       },
       {
         label: '按钮文本',
-        value: config.btnText,
+        value: sc.btnText,
         placeholder: '上传按钮文本',
-        path: 'config.btnText',
+        path: 'btnText',
         vShow: ['upload']
       },
       {
@@ -1111,8 +1113,8 @@
       },
       {
         label: '显示模式',
-        value: config.style,
-        path: 'config.style',
+        value: control.style,
+        path: 'control.style',
         placeholder: '显示风格(预览查看效果)',
         type: 'select',
         dict: {default: 'default', simple: 'simple'},
@@ -1420,8 +1422,7 @@
       item: {
         label: '序号'
       },
-      control: {},
-      config: {}
+      control: {}
     }
     if (val) {
       selectComponent.value.list.unshift(item)

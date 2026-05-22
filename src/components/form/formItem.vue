@@ -2,7 +2,7 @@
   <el-form-item
     v-bind="data.formItem"
     :class="data.className"
-    :prop="data.name"
+    :prop="parentProp||data.name"
     :label="getLabel"
     :rules="getItemRules"
   >
@@ -16,7 +16,7 @@
     <el-input
       v-if="['input', 'password','textarea'].includes(data.type)"
       v-bind="control"
-      v-model="formValue[data.name]"
+      v-model="modelValue"
       :placeholder="getPlaceholder"
       :disabled="disabled"
       :type="inputType"
@@ -49,7 +49,7 @@
     <el-radio-group
       v-if="data.type === 'radio'"
       v-bind="control"
-      v-model="formValue[data.name]"
+      v-model="modelValue"
       :disabled="disabled"
     >
       <el-radio
@@ -63,7 +63,7 @@
     <el-checkbox-group
       v-if="data.type === 'checkbox'"
       v-bind="control"
-      v-model="formValue[data.name]"
+      v-model="modelValue"
       :disabled="disabled"
     >
       <el-checkbox
@@ -90,7 +90,7 @@
           'expand-user'
         ].includes(data.type)
       "
-      v-model="formValue[data.name]"
+      v-model="modelValue"
       :disabled="disabled"
     />
     <select-comp
@@ -103,42 +103,76 @@
     <el-cascader
       v-if="data.type==='cascader'"
       v-bind="control"
-      v-model="formValue[data.name]"
+      v-model="modelValue"
       :disabled="disabled"
       :data="options"
     />
     <el-tree-select
       v-if="data.type==='treeSelect'"
       v-bind="control"
-      v-model="formValue[data.name]"
+      v-model="modelValue"
       :disabled="disabled"
       :data="options"
     />
+    <upload-file
+      v-if="data.type === 'upload'"
+      v-model="modelValue"
+      :data="data"
+      :disabled="disabled"
+    />
+    <chunk-upload
+      v-if="data.type === 'chunkUpload'"
+      v-model="modelValue"
+      :data="data"
+      :disabled="disabled"
+    />
+    <template v-if="data.type === 'tinymce'">
+      <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
+      <tinymce-edit
+        v-if="
+          ['add', 'edit', 'detail'].includes(store.designType)
+        "
+        v-bind="control"
+        v-model="modelValue"
+        :disabled="disabled"
+      />
+      <img
+        v-if="store.designType.indexOf('design')!==-1"
+        alt=""
+        src="./widgets/tinymce.png"
+        style="max-width: 100%"
+      >
+    </template>
   </el-form-item>
 </template>
 <script setup lang="ts">
   import type {Component} from "@/types/designForm.ts";
-  import {computed, markRaw, watch, ref, onMounted, onUnmounted} from "vue";
+  import {computed, markRaw, watch, ref, onMounted, onUnmounted, inject} from "vue";
   import {storeToRefs} from "pinia";
   import {useFormStore} from "@/store/form";
   import Tooltip from "@/components/tooltip/index.vue";
   import selectComp from './widgets/select.vue'
   import {getNameForEach, getOptionsList, getTransformLabelValue} from "./utils";
   import validate from "./validate";
-  import type {FormValueChange} from "@/types/designForm";
   import {objectToArray} from "@/utils/design";
+  import UploadFile from './widgets/uploadFile.vue'
+  import ChunkUpload from './chunkUpload/index.vue'
+  import TinymceEdit from './widgets/tinymce.vue'
 
   const props = withDefaults(
     defineProps<{
       data: Component
+      parentProp?: string //子表/flex时的form-item的prop值，用于子表校验用
     }>(),
-    {}
+    {
+      parentProp: ''
+    }
   )
-  const emits = defineEmits<{
-    (e: 'change', value: FormValueChange): void
-  }>()
   const store = useFormStore();
   const {formValue} = storeToRefs(store)
+
+  const modelValue = defineModel<any>()
+
   const currentComponent = computed(() => {
     if (props.data.type === 'component') {
       // 自定义组件
@@ -283,11 +317,26 @@
     return temp
   }
 
+  const akFormValueChange = inject('akFormValueChange', '') as any
   const unwatch = watch(
-    () => formValue.value[props.data.name],
+    () => modelValue.value,
     (newVal: any) => {
-      console.log('formItem watch')
-      emits('change', {prop: props.data.name, value: newVal, model: formValue.value, options: options.value})
+      console.log('formItem watch', newVal)
+      let parentProp = ''
+      if (props.parentProp) {
+        // 将prop设为当前table或flex的name
+        const parts = props.parentProp?.split('.')
+        if (parts?.length) {
+          parentProp = parts[0]
+        }
+      }
+      akFormValueChange && akFormValueChange({
+        prop: props.data.name,
+        value: newVal,
+        parentProp: parentProp,
+        options: options.value,
+        model: formValue.value
+      })
     }
   )
   onMounted(() => {
