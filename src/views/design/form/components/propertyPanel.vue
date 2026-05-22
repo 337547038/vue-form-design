@@ -50,7 +50,7 @@
               />
             </el-form-item>
           </template>
-          <template v-if="showHide(['tabs'], true)">
+          <template v-if="showHide(['tabs','card'], true)">
             <div class="h3">
               <h3>标签配置项</h3>
             </div>
@@ -635,7 +635,7 @@
       },
       {
         label: '按钮事件',
-        value: sc.control.key,
+        value: sc.control?.key,
         path: 'control.key',
         type: 'select',
         dict: {
@@ -660,7 +660,8 @@
           'inputSlot',
           'flex',
           'button',
-          'txt'
+          'txt',
+          'card'
         ]
       },
       {
@@ -739,7 +740,8 @@
           'inputSlot',
           'flex',
           'button',
-          'txt'
+          'txt',
+          'card'
         ]
       },
       {
@@ -926,29 +928,29 @@
       },
       {
         label: '占据的列数span',
-        value: attr.span,
-        path: 'attr.span',
+        value: control.span,
+        path: 'control.span',
         vShow: ['gridChild'],
         isNum: true
       },
       {
         label: '左侧的间隔格数offset',
-        value: attr.offset,
-        path: 'attr.offset',
+        value: control.offset,
+        path: 'control.offset',
         vShow: ['gridChild'],
         isNum: true
       },
       {
         label: '向右移动格数push',
-        value: attr.push,
-        path: 'attr.push',
+        value: control.push,
+        path: 'control.push',
         vShow: ['gridChild'],
         isNum: true
       },
       {
         label: '向左移动格数pull',
-        value: attr.pull,
-        path: 'attr.pull',
+        value: control.pull,
+        path: 'control.pull',
         vShow: ['gridChild'],
         isNum: true
       },

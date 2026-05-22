@@ -165,7 +165,7 @@ export default [
         control: {
           border: true
         },
-          addBtnText: '添加一行'
+        addBtnText: '添加一行'
       },
       {
         type: 'component',
@@ -211,11 +211,15 @@ export default [
         columns: [
           // 格栅列数据
           {
-            attr: {span: 12},
+            type: 'gridChild',
+            control: {
+              span: 12
+            },
             list: []
           },
           {
-            attr: {span: 12},
+            type: 'gridChild',
+            control: {span: 12},
             list: []
           }
         ],
@@ -237,7 +241,12 @@ export default [
         type: 'card',
         label: '卡片布局',
         icon: 'card',
-        list: [],
+        columns: [
+          {
+            label: '卡片1',
+            list: []
+          }
+        ],
         control: {}
       },
       {
@@ -247,8 +256,7 @@ export default [
         list: [],
         tableData: [], // 值集合
         control: {},
-
-          addBtnText: '添加一行'
+        addBtnText: '添加一行'
 
       },
       {

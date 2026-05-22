@@ -6,6 +6,7 @@
       active: store.getIsActive(element)
     }"
     :style="getFormItemStyle(element.span)"
+    @click.stop="selectClick(element)"
   >
     <template v-if="element.type === 'txt'">
       <div
@@ -42,8 +43,120 @@
         :data="element"
       />
     </template>
+    <template v-else-if="element.type === 'grid'">
+      <el-row
+        class="form-grid"
+        :class="[element.className]"
+      >
+        <el-col
+          v-for="(col, i) in element.columns"
+          v-bind="col.control"
+          :key="i"
+          class="form-col"
+          :class="{
+            'active-col': store.getIsActive(col),
+            [col.className]: col.className
+          }"
+          @click.stop="selectClick(col, i)"
+        >
+          <design-form
+            :data="col.list"
+            data-nested="not-nested"
+            data-type="grid"
+          />
+          <div
+            v-if="isDesignType"
+            class="drag-control drag-control-del"
+          >
+            <div class="item-control">
+              <i
+                class="icon-del"
+                @click.stop="delGridChild(i, element.columns)"
+              />
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </template>
     <template v-else-if="element.type === 'tabs'">
-      1
+      <div class="form-tabs">
+        <el-tabs
+          v-bind="element.control"
+          :class="[element?.className]"
+        >
+          <el-tab-pane
+            v-for="(item, tIndex) in element.columns"
+            :key="tIndex"
+            :label="item.label"
+          >
+            <design-form
+              :data="item.list"
+              data-nested="not-nested"
+              data-type="tabs"
+            />
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </template>
+    <template v-else-if="element.type === 'card'">
+      <el-collapse
+        model-value="1"
+        v-bind="element.control"
+        :class="[element?.className]"
+      >
+        <el-collapse-item
+          v-for="(item, tIndex) in element.columns"
+          :key="tIndex"
+          :title="item.label"
+          name="1"
+        >
+          <template
+            v-if="item.help"
+            #title
+          >
+            {{ item.label }}
+            <tooltips :content="item.help" />
+          </template>
+          <design-form
+            :data="item.list"
+            data-nested="not-nested"
+            data-type="card"
+          />
+        </el-collapse-item>
+      </el-collapse>
+    </template>
+    <template v-else-if="element.type === 'flex'">
+      <design-form
+        v-if="isDesignType"
+        :data="element.list"
+        data-nested="not-nested"
+        data-type="flex"
+      />
+      <flex-box
+        v-else
+        :data="element"
+      />
+      <el-button
+        v-if="element?.addBtnText && isDesignType"
+        size="small"
+      >
+        {{ element?.addBtnText }}
+      </el-button>
+    </template>
+    <template v-else-if="element.type === 'div'">
+      <div
+        class="div-layout"
+        v-bind="element.control"
+        :class="{
+          [element.className]: element.className
+        }"
+      >
+        <design-form
+          :data="element.list"
+          data-nested="not-nested"
+          data-type="div"
+        />
+      </div>
     </template>
     <template v-else-if="element.type === 'button'">
       <div :class="[element?.className]">
@@ -72,6 +185,7 @@
   import Tooltips from '@/components/tooltip/index.vue'
   import DesignForm from "./design.vue";
   import ChildTable from "./widgets/childTable.vue";
+  import FlexBox from './widgets/flex.vue'
   import {storeToRefs} from "pinia";
 
   const store = useFormStore();
@@ -104,5 +218,13 @@
   }
   const clickBtn = (key: string) => {
     emits('btnClick', key)
+  }
+
+  //=======grid
+  const selectClick = (item: Component) => {
+    store.setSelectComponent(item)
+  }
+  const delGridChild = (index: number, columns: any) => {
+    columns.splice(index, 1)
   }
 </script>

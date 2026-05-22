@@ -165,7 +165,7 @@
     list.forEach((item: any) => {
       if (['table', 'flex'].includes(item.type)) {
         model.value[item.name] = jsonParseStringify(item.tableData)
-      } else if (['grid', 'tabs'].includes(item.type)) {
+      } else if (['grid', 'tabs','card'].includes(item.type)) {
         item.columns.forEach((col: any) => {
           forEachGetFormModel(col.list)
         })

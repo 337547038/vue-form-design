@@ -16,34 +16,34 @@
     <template #item="{ element, index }">
       <component-factory
         :element="element"
-        @click.stop="selectClick(element)"
       >
-        <div
-          v-if="store.getIsActive(element)"
-          class="drag-control"
-        >
-          <div class="item-control">
-            <i
-              v-if="element.type === 'grid'"
-              class="icon-plus"
-              title="添加列"
-              @click.stop="click('gridAdd', index, element)"
-            />
-            <i
-              class="icon-clone"
-              title="克隆"
-              @click.stop="click('clone', index, element)"
-            />
-            <i
-              class="icon-del"
-              @click.stop="click('del', index)"
-            />
+        <template v-if="store.getIsActive(element)&&store.designType.indexOf('design')!==-1">
+          <div
+            class="drag-control"
+          >
+            <div class="item-control">
+              <i
+                v-if="element.type === 'grid'"
+                class="icon-plus"
+                title="添加列"
+                @click.stop="click('gridAdd', index, element)"
+              />
+              <i
+                class="icon-clone"
+                title="克隆"
+                @click.stop="click('clone', index, element)"
+              />
+              <i
+                class="icon-del"
+                @click.stop="click('del', index)"
+              />
+            </div>
+            <div class="drag-move icon-move" />
           </div>
-          <div class="drag-move icon-move" />
-        </div>
-        <div class="tooltip">
-          {{ element.name }}
-        </div>
+          <div class="tooltip">
+            {{ element.name }}
+          </div>
+        </template>
       </component-factory>
     </template>
   </draggable>
@@ -129,7 +129,8 @@
       'grid',
       'tabs',
       'flex',
-      'div'
+      'div',
+      'card'
     ]
     if (!notNeedItem.includes(obj.type)) {
       Object.assign(obj, {
@@ -157,9 +158,6 @@
     delete obj.label
     delete obj.icon
     store.setSelectComponent(obj)
-  }
-  const selectClick = (component: Component) => {
-    store.setSelectComponent(component)
   }
 
   onBeforeRouteLeave(() => {
