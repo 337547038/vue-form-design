@@ -39,7 +39,7 @@
 </template>
 <script setup lang="ts">
   import type {Component, FormData} from "@/types/designForm";
-  import {computed, nextTick, onMounted, onUnmounted, provide, ref, watch} from "vue";
+  import {computed, onMounted, onUnmounted, provide, ref, watch} from "vue";
   import {ElMessage} from "element-plus";
   import {useRouter, onBeforeRouteLeave} from 'vue-router'
   import DesignForm from './design.vue'
@@ -47,7 +47,7 @@
   import {useFormStore} from '@/store/form'
   import {getNameForEach} from "./utils";
   import ComponentFactory from "@/components/form/componentFactory.vue";
-  import {beforeAfter, getRequestEvent} from "@/utils/beforeAfter.ts";
+  import {beforeAfter} from "@/utils/beforeAfter.ts";
   import {loadResource, removeResource} from "@/utils";
   import type {FormValueChange} from "@/types/designForm.ts";
 
@@ -165,7 +165,7 @@
     list.forEach((item: any) => {
       if (['table', 'flex'].includes(item.type)) {
         model.value[item.name] = jsonParseStringify(item.tableData)
-      } else if (['grid', 'tabs','card'].includes(item.type)) {
+      } else if (['grid', 'tabs', 'card'].includes(item.type)) {
         item.columns.forEach((col: any) => {
           forEachGetFormModel(col.list)
         })
@@ -221,7 +221,8 @@
       const {list, config} = props.data
       forEachGetFormModel(list)
       store.setFormValue(model.value)
-      if (config.style) {
+      store.setDesignDataConfig(props.data)
+      if (config?.style) {
         loadResource(config.style, 'form-style')
       }
       setWindowEvent()
@@ -373,9 +374,11 @@
       } else {
         // 没通过校验，这里单独处理，返回校验结果通知
         loading.value = false
-        const submitEvent = getRequestEvent(props, 'after')
-        if (typeof submitEvent === 'function') {
-          submitEvent(fields, false, 'validate')
+        if (typeof props.after === 'function') {
+          props.after(fields, false, 'validate')
+        }
+        if (typeof props.data.after === 'function') {
+          props.data.after(fields, false, 'validate')
         }
       }
     })
@@ -389,6 +392,9 @@
   })
   onUnmounted(() => {
     removeResource('form-style')
+    store.setDesignDataConfig([])
+    store.setFormValue({})
+    store.setFormOptions({})
   })
   onBeforeRouteLeave(() => {
     unWatch()

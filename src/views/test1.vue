@@ -19,45 +19,6 @@
   const formData = ref({
     list: [
       {
-        type: "inputSlot",
-        control:
-          {
-            modelValue: "",
-            teleported: true,
-            filterable: true,
-            remote: false
-          },
-        options: [{label:'label',value:'value'}],
-        formItem:
-          {
-            label: "下拉选择框"
-          },
-        name: "inputSlot1779265329663",
-        optionsType: 1,
-        method: "post",
-        optionsFun: "demo/dict"
-      },
-      {
-        type: "select",
-        control:
-          {
-            modelValue: "",
-            teleported: true,
-            filterable: true,
-            remote: true
-          },
-        options: [{label:'label',value:'value'}],
-        formItem:
-          {
-            label: "下拉选择框"
-          },
-        name: "select1779265385774",
-        addAll: "全部",
-        method: "post",
-        optionsType: 1,
-        optionsFun: "demo/dict"
-      },
-      {
         type: "input",
         control:
           {
@@ -65,16 +26,31 @@
           },
         formItem:
           {
-            label: "单行文本"
+            label: "申请内容"
           },
-        name: "input1",
-        prepend: "key:inputSlot1779265329663"
-      }],
-    config:
+        name: "content"
+      },
       {
-        submitCancel: true,
-        style:'body{color:blue}'
+        type: "select",
+        control:
+          {
+            modelValue: "",
+            teleported: true
+          },
+        options: [],
+        formItem:
+          {
+            label: "文件附件"
+          },
+        name: "files",
+        optionsType: 1,
+        method: "get",
+        optionsFun: "demo/select",
+        linkage: "content"
       }
+      ],
+    config:
+      {}
   })
   // 表单提交时可附加的参数
   const params = ref({})

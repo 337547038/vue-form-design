@@ -4,19 +4,7 @@ import type {Config, Component} from '@/types/designForm'
 import SparkMD5 from "spark-md5";
 
 export const useFormStore = defineStore('form', () => {
-  // ==========================================设计的主数据列表
-  /*  const designData = ref([])
-    const setDesignData = (component: Component | Component[], isPush = true) => {
-      if (isPush) {
-        designData.value.push(component)
-      } else {
-        designData.value = component
-      }
-    }*/
-  /*  const setDeleteDesignData = (ids: string | string[]) => {
-      const idArray = Array.isArray(ids) ? ids : [ids];
-      designData.value = designData.value.filter((item: { id: string }) => !idArray.includes(item.id));
-    }*/
+
   //==================================设计生成的表单数据
   const designDataConfig = ref({})
   const setDesignDataConfig = (data: FormData) => {
@@ -81,7 +69,16 @@ export const useFormStore = defineStore('form', () => {
     }
   }
 
-  //============================全局及表单返回字典
+  //============================设计时将option保存为供列表使用的字典
+  const formOptionDict = ref({})
+  const setFormOptionDict = (key: string, data?: Record<string, any>) => {
+    if (!key) {
+      formOptionDict.value = {}
+    } else {
+      formOptionDict.value[key] = data
+    }
+  }
+
   return {
     designDataConfig,
     setDesignDataConfig,
@@ -98,6 +95,8 @@ export const useFormStore = defineStore('form', () => {
     setFormOptions,
     formComponentsDataCache,
     setFormComponentsDataCache,
-    delFormComponentsDataCache
+    delFormComponentsDataCache,
+    formOptionDict,
+    setFormOptionDict
   }
 })

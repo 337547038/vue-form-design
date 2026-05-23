@@ -192,6 +192,21 @@
                 </template>
               </el-input>
             </el-form-item>
+            <template v-if="showHide(['select'], true)">
+              <el-form-item label="是否可筛选">
+                <el-switch v-model="selectComponent.control.filterable" />
+              </el-form-item>
+            </template>
+            <el-form-item
+              v-if="showHide(['select','radio','checkbox'],true)&&[0,1].includes(selectComponent.optionsType)"
+            >
+              <el-button
+                type="primary"
+                @click="saveFormListDictClick"
+              >
+                保存为列表字典
+              </el-button>
+            </el-form-item>
             <template v-if="selectComponent.optionsType === 1">
               <el-form-item label="指定label属性值">
                 <el-input
@@ -209,21 +224,8 @@
                 <el-switch v-model="selectComponent.cache" />
               </el-form-item>
               <template v-if="showHide(['select'], true)">
-                <el-form-item label="是否可筛选">
-                  <el-switch v-model="selectComponent.control.filterable" />
-                </el-form-item>
                 <el-form-item label="开启远程数据Remote">
                   <el-switch v-model="selectComponent.control.remote" />
-                </el-form-item>
-                <el-form-item label="联动关联设置">
-                  <el-select v-model="selectComponent.linkage">
-                    <el-option
-                      v-for="item in linkageOptions"
-                      :key="item.name"
-                      :label="item.label"
-                      :value="item.name"
-                    />
-                  </el-select>
                 </el-form-item>
                 <el-form-item
                   v-if="
@@ -236,16 +238,34 @@
                     placeholder="远程数据参数字段名"
                   />
                 </el-form-item>
+                <el-form-item label="联动关联设置">
+                  <el-select v-model="selectComponent.linkage">
+                    <el-option
+                      v-for="item in linkageOptions"
+                      :key="item.name"
+                      :label="item.label"
+                      :value="item.name"
+                    />
+                  </el-select>
+                </el-form-item>
               </template>
+              <el-form-item>
+                <el-button @click="openAttrDialog('beforeOption')">
+                  before事件
+                </el-button>
+                <el-button @click="openAttrDialog('afterOption')">
+                  after事件
+                </el-button>
+                <el-button
+                  v-if="selectComponent.optionsFun&&selectComponent.method"
+                  type="primary"
+                  @click="getOptionTest"
+                >
+                  测试连接
+                </el-button>
+              </el-form-item>
             </template>
-            <el-form-item v-if="selectComponent.optionsType === 1">
-              <el-button @click="openAttrDialog('beforeOption')">
-                before事件
-              </el-button>
-              <el-button @click="openAttrDialog('afterOption')">
-                after事件
-              </el-button>
-            </el-form-item>
+
             <el-form-item label="尝试转换value值为">
               <el-select
                 v-model="selectComponent.transformData"
@@ -448,6 +468,7 @@
       </el-tab-pane>
     </el-tabs>
   </div>
+  <get-save-dict ref="getSaveDictRef" />
 </template>
 
 <script lang="ts" setup>
@@ -462,6 +483,8 @@
   import {loadResource, removeResource} from "@/utils";
   import {getAceTitle} from "@/components/ace/tooltip";
   import type {Component} from "@/types/designForm.ts";
+  import {getRemoteMethod} from "@/components/form/utils.ts";
+  import GetSaveDict from "./getSaveDict.vue";
 
   const emits = defineEmits<{
     (e: 'openDialog', data: any): void
@@ -1359,7 +1382,7 @@
         }
       }),
       afterOption: () => ({
-        key: 'afterType',
+        key: 'after',
         title: getAceTitle.after,
         content: selectComponent.value.after,
         callback: (content: any) => {
@@ -1501,6 +1524,12 @@
     }, [] as { name: string; label: string }[]);
   })
   // 接口数据处理
+  //测试连接
+  const getOptionTest = () => {
+    getRemoteMethod(storeForm.selectComponent, () => {
+      ElMessage.success('连接成功')
+    })
+  }
   // 获取数据源
   const getDataSource = () => {
     // 获取数据源，表单设计才加载，搜索设置不需要
@@ -1530,6 +1559,11 @@
       })
   }
   // 接口数据处理结束
+  //将表单的option保存到列表作为字典
+  const getSaveDictRef = ref()
+  const saveFormListDictClick = () => {
+    getSaveDictRef.value.open()
+  }
   onMounted(() => {
     nextTick(() => {
       if (designConfig.value.submitCancel === undefined) {

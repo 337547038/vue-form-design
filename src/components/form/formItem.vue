@@ -98,7 +98,7 @@
       :data="data"
       :disabled="disabled"
       :options="options"
-      :remote-method="getRemoteMethod"
+      :remote-method="getSelectRemoteMethod"
     />
     <el-cascader
       v-if="data.type==='cascader'"
@@ -152,12 +152,18 @@
   import {useFormStore} from "@/store/form";
   import Tooltip from "@/components/tooltip/index.vue";
   import selectComp from './widgets/select.vue'
-  import {getNameForEach, getOptionsList, getTransformLabelValue} from "./utils";
+  import {
+    getNameForEach,
+    getOptionsList,
+    getRemoteMethodDebounce,
+    getTransformLabelValue
+  } from "./utils";
   import validate from "./validate";
   import {objectToArray} from "@/utils/design";
   import UploadFile from './widgets/uploadFile.vue'
   import ChunkUpload from './chunkUpload/index.vue'
   import TinymceEdit from './widgets/tinymce.vue'
+  import ExpandUser from './expand/user.vue'
 
   const props = withDefaults(
     defineProps<{
@@ -179,7 +185,7 @@
       return props.data.componentName
     }
     if (props.data.type === 'expand-user') {
-      // return markRaw(ExpandUser)
+      return markRaw(ExpandUser)
     }
     return `el-${props.data.type}`
   })
@@ -224,7 +230,7 @@
     const {transformData, label, value} = props.data
     return getTransformLabelValue(type, obj, {transformData, label, value})
   }
-  const getRemoteMethod = (option: any) => {
+  const getSelectRemoteMethod = (option: any) => {
     optionsList.value = option
   }
   //=====================================获取options结束
@@ -321,7 +327,6 @@
   const unwatch = watch(
     () => modelValue.value,
     (newVal: any) => {
-      console.log('formItem watch', newVal)
       let parentProp = ''
       if (props.parentProp) {
         // 将prop设为当前table或flex的name
@@ -337,8 +342,22 @@
         options: options.value,
         model: formValue.value
       })
+    }, {
+      flush: 'pre',
     }
   )
+ //级联
+  const linkage = props.data.linkage
+  const unWatchLink = linkage
+    ? watch(
+      () => formValue.value[linkage],
+      (val: any) => {
+        getRemoteMethodDebounce(props.data, (opt: any) => {
+          optionsList.value = opt
+        }, {[linkage]: val})
+      }
+    )
+    : null
   onMounted(() => {
     getOptionsList(props.data, (opt: Record<string, any>) => {
       optionsList.value = opt
@@ -346,6 +365,7 @@
   })
   onUnmounted(() => {
     unwatch()
+    unWatchLink && unWatchLink()
   })
 
 </script>

@@ -83,7 +83,7 @@
     } else if (action === 'del') {
       dataList.value.splice(index, 1)
       // 清空右侧栏信息
-      store.setSelectedComponents({})
+      store.setSelectComponent({})
     } else if (action === 'gridAdd') {
       item.columns.push({
         list: [],

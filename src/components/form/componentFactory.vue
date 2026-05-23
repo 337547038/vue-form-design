@@ -1,5 +1,6 @@
 <template>
   <div
+    v-show="getVShow"
     class="group"
     :class="{
       ['group-' + element.type]: true,
@@ -177,7 +178,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import {computed, ref} from 'vue'
+  import {computed} from 'vue'
   import type {Component} from "@/types/designForm";
   import FormItem from "./formItem.vue";
   import {useFormStore} from "@/store/form";
@@ -189,7 +190,7 @@
   import {storeToRefs} from "pinia";
 
   const store = useFormStore();
-  withDefaults(
+  const props = withDefaults(
     defineProps<{
       element: Component
     }>(),
@@ -202,6 +203,30 @@
   const {formValue} = storeToRefs(store)
   const isDesignType = computed(() => {
     return ['designForm', 'designSearch', 'designFlow'].includes(store.designType)
+  })
+
+  //在不同页面根据设定的隐藏条件是否显示
+  const getVShow = computed(() => {
+    const designType = store.designType
+    const {displayAdd, displayEdit, displayDetail, conditionalDisplay} = props.element
+    //添加页隐藏
+    const add = designType === 'add' && displayAdd
+    const edit = designType === 'edit' && displayEdit
+    const detail = designType === 'detail' && displayDetail
+    if (add || edit || detail) {
+      return false
+    }
+    // 条件禁用表达式执行
+    if (conditionalDisplay && !isDesignType.value) {
+      try {
+        const conditionFn = new Function('$', `return (${conditionalDisplay})`)
+        return !conditionFn(store.formValue)
+      } catch (e) {
+        console.warn('条件禁用表达式执行失败：', conditionalDisplay, e)
+        return true
+      }
+    }
+    return true
   })
   /**
    * 返回栅格宽度

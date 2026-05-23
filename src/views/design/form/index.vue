@@ -47,7 +47,7 @@
   import {useFormStore} from "@/store/form";
   import {getDesignDataBySource} from "./components/utils";
   import {setStorage} from "@/utils";
-  import type { FormData} from '@/types/designForm'
+  import type {FormData} from '@/types/designForm'
 
   defineOptions({name: 'DesignFormIndex'})
   const layoutStore = useLayoutStore()
@@ -121,7 +121,8 @@
       data: objToStringify(designDataConfig.value),
       source: designConfig.value.sourceId, // 数据源允许在表单属性设置里修改的
       name: designConfig.value.name || '未命名', // 表单名称，用于在显示所有已创建的表单列表里显示
-      type: 1 // 1表单 2列表
+      type: 1, // 1表单 2列表
+      dict: JSON.stringify(store.formOptionDict)
     }
     let apiKey = 'designSave'
     if (id) {
@@ -241,6 +242,9 @@
     }
   })
   onUnmounted(() => {
+    console.log('form unmounted')
     store.setSelectComponent({})
+    store.setDesignConfig({})
+    store.setFormOptionDict('', {})
   })
 </script>

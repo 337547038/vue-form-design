@@ -1,7 +1,7 @@
 import {formatNumber, objectToArray} from "@/utils/design.ts";
 import type {Component} from "@/types/designForm.ts";
 import {computed} from "vue";
-import {getStorage} from "@/utils";
+import {debounce, getStorage} from "@/utils";
 import {useFormStore} from "@/store/form.ts";
 import SparkMD5 from "spark-md5";
 import {beforeAfter} from "@/utils/beforeAfter.ts";
@@ -89,7 +89,6 @@ export const getOptionsList = (component: Component, callback: (opt: Record<stri
   }
 }
 export const getRemoteMethod = (component: Component, callback: (opt: Record<string, any>) => void, data = {}) => {
-  console.log('getRemoteMethod')
   const {formValue} = useStore()
   const {optionsType, optionsFun, cache, method, before, after} = component
   const {remote} = component.control
@@ -97,7 +96,7 @@ export const getRemoteMethod = (component: Component, callback: (opt: Record<str
   // 有联动条件的带上联动的参数
   if (component.linkage) {
     params = {
-      [component.linkage]: formValue.value[component.linkage]
+      [component.linkage]: formValue[component.linkage]
     }
   }
   Object.assign(params, data)
@@ -109,7 +108,7 @@ export const getRemoteMethod = (component: Component, callback: (opt: Record<str
       const spark = new SparkMD5()
       spark.append(optionsFun + JSON.stringify(params))
       cacheKey = spark.end()
-      const cacheData = useStore().formComponentsDataCache.value[cacheKey]
+      const cacheData = useStore().formComponentsDataCache[cacheKey]
       if (cacheData) {
         callback && callback(cacheData)
         return false
@@ -132,6 +131,11 @@ export const getRemoteMethod = (component: Component, callback: (opt: Record<str
             useStore().setFormComponentsDataCache(cacheKey, result)
           }
         })
+
   }
 }
+
+export const getRemoteMethodDebounce = debounce((component: Component, callback: (opt: Record<string, any>) => void, data = {}) => {
+  getRemoteMethod(component, callback, data)
+})
 //==========================================options相关结束
