@@ -23,12 +23,11 @@
         :after="afterFetchSubmit"
         :params="{ id: dialog.id }"
         @btn-click="cancelClick"
-      >
-        <child-table
-          v-model="childTableData"
-          :type="dialog.type"
-        />
-      </ak-form>
+      />
+      <child-table
+        v-model="childTableData"
+        :type="dialog.type"
+      />
       <div class="tips">
         提示：默认会添加id自增主键；其中标题作为表单的label值，组件类型仅用于一健创建表单；模糊搜索用于条件查询时
       </div>
@@ -178,7 +177,6 @@
           modelValue: '',
           placeholder: '请输入数据源名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '名称'
@@ -197,9 +195,7 @@
           modelValue: '',
           placeholder: '请输入数据表名'
         },
-        config: {
-          disabledEdit: true
-        },
+        disabledEdit: true,
         name: 'tableName',
         formItem: {
           label: '数据表名'
@@ -218,11 +214,8 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          // transformData: 'string',
-          optionsType: 2,
-          optionsFun: 'sys-source' // 使用字典选项，字典key为source
-        },
+        optionsType: 2,
+        optionsFun: 'sys-source', // 使用字典选项，字典key为source,
         name: 'category',
         formItem: {
           label: '分类'
@@ -234,9 +227,7 @@
           modelValue: '',
           placeholder: '数据库表注释'
         },
-        config: {
-          disabledEdit: true
-        },
+        disabledEdit: true,
         name: 'remark',
         formItem: {
           label: '表注释'
@@ -249,7 +240,6 @@
           activeValue: 1,
           inactiveValue: 0
         },
-        config: {},
         name: 'status',
         formItem: {
           label: '状态'
@@ -260,19 +250,15 @@
         control: {
           modelValue: '数据库表字段'
         },
-        config: {
-          span: 24
-        },
+        span: 24,
         name: 'title'
       }
     ],
-    form: {
+    config: {
       labelWidth: '100px',
       class: 'form-row-2',
       size: 'default',
-      name: 'source'
-    },
-    config: {
+      name: 'source',
       submitCancel: true
     }
   })

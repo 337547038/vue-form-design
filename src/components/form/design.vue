@@ -17,7 +17,7 @@
       <component-factory
         :element="element"
       >
-        <template v-if="store.getIsActive(element)&&store.designType.indexOf('design')!==-1">
+        <template v-if="designStore.getIsActive(element)&&designStore.designType.indexOf('design')!==-1">
           <div
             class="drag-control"
           >
@@ -50,21 +50,20 @@
 </template>
 
 <script lang="ts" setup>
-  import {onUnmounted} from 'vue'
+  import { onUnmounted} from 'vue'
   import {onBeforeRouteLeave} from 'vue-router'
   import draggable from 'vuedraggable-es'
   import ComponentFactory from './componentFactory.vue'
-  import {useFormStore} from '@/store/form'
   import type {Component} from '@/types/designForm'
   import {jsonParseStringify} from "@/utils/design.ts";
   import {ElMessage} from "element-plus";
+  import {useDesignFormStore} from '@/store/form'
 
   const dataList = defineModel<Component[]>('data', {
     default: () => {
     }
   })
-  const store = useFormStore()
-
+  const designStore = useDesignFormStore()
   // 不能嵌套
   const notNested = (type: string) => {
     return ['grid', 'table', 'tabs', 'div', 'flex', 'card'].includes(type)
@@ -83,7 +82,7 @@
     } else if (action === 'del') {
       dataList.value.splice(index, 1)
       // 清空右侧栏信息
-      store.setSelectComponent({})
+      designStore.setSelectComponent({})
     } else if (action === 'gridAdd') {
       item.columns.push({
         list: [],
@@ -157,7 +156,7 @@
     }
     delete obj.label
     delete obj.icon
-    store.setSelectComponent(obj)
+    designStore.setSelectComponent(obj)
   }
 
   onBeforeRouteLeave(() => {

@@ -4,7 +4,7 @@
     class="group"
     :class="{
       ['group-' + element.type]: true,
-      active: store.getIsActive(element)
+      active: designStore.getIsActive(element)
     }"
     :style="getFormItemStyle(element.span)"
     @click.stop="selectClick(element)"
@@ -55,7 +55,7 @@
           :key="i"
           class="form-col"
           :class="{
-            'active-col': store.getIsActive(col),
+            'active-col': designStore.getIsActive(col),
             [col.className]: col.className
           }"
           @click.stop="selectClick(col, i)"
@@ -178,18 +178,18 @@
   </div>
 </template>
 <script setup lang="ts">
-  import {computed} from 'vue'
+  import {computed, inject} from 'vue'
   import type {Component} from "@/types/designForm";
   import FormItem from "./formItem.vue";
-  import {useFormStore} from "@/store/form";
   import {formatNumber} from "@/utils/design";
   import Tooltips from '@/components/tooltip/index.vue'
   import DesignForm from "./design.vue";
   import ChildTable from "./widgets/childTable.vue";
   import FlexBox from './widgets/flex.vue'
   import {storeToRefs} from "pinia";
+  import {useDesignFormStore} from '@/store/form'
 
-  const store = useFormStore();
+
   const props = withDefaults(
     defineProps<{
       element: Component
@@ -199,20 +199,19 @@
   const emits = defineEmits<{
     (e: 'btnClick', key: string): void
   }>()
-
+  const designStore = useDesignFormStore()
+  const store = inject('formStore')
   const {formValue} = storeToRefs(store)
   const isDesignType = computed(() => {
-    return ['designForm', 'designSearch', 'designFlow'].includes(store.designType)
+    return ['designForm', 'designSearch', 'designFlow'].includes(designStore.designType)
   })
-
   //在不同页面根据设定的隐藏条件是否显示
   const getVShow = computed(() => {
-    const designType = store.designType
     const {displayAdd, displayEdit, displayDetail, conditionalDisplay} = props.element
     //添加页隐藏
-    const add = designType === 'add' && displayAdd
-    const edit = designType === 'edit' && displayEdit
-    const detail = designType === 'detail' && displayDetail
+    const add = store.formType === 'add' && displayAdd
+    const edit = store.formType === 'edit' && displayEdit
+    const detail = store.formType === 'detail' && displayDetail
     if (add || edit || detail) {
       return false
     }
@@ -220,7 +219,7 @@
     if (conditionalDisplay && !isDesignType.value) {
       try {
         const conditionFn = new Function('$', `return (${conditionalDisplay})`)
-        return !conditionFn(store.formValue)
+        return !conditionFn(formValue.value)
       } catch (e) {
         console.warn('条件禁用表达式执行失败：', conditionalDisplay, e)
         return true
@@ -247,7 +246,7 @@
 
   //=======grid
   const selectClick = (item: Component) => {
-    store.setSelectComponent(item)
+    designStore.setSelectComponent(item)
   }
   const delGridChild = (index: number, columns: any) => {
     columns.splice(index, 1)

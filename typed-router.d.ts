@@ -55,13 +55,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/design/form/components/getSaveDict': RouteRecordInfo<
-      '/design/form/components/getSaveDict',
-      '/design/form/components/getSaveDict',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/design/form/form': RouteRecordInfo<
       '/design/form/form',
       '/design/form/form',
@@ -285,12 +278,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/design/form/index.vue': {
       routes:
         | '/design/form/'
-      views:
-        | never
-    }
-    'src/views/design/form/components/getSaveDict.vue': {
-      routes:
-        | '/design/form/components/getSaveDict'
       views:
         | never
     }

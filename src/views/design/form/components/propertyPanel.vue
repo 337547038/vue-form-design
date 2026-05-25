@@ -477,7 +477,7 @@
   import validate from '@/components/form/validate'
   import {ElMessage} from 'element-plus'
   import {formatNumber} from '@/utils/design'
-  import {useFormStore} from "@/store/form";
+  import {useDesignFormStore} from "@/store/form";
   import {storeToRefs} from "pinia";
   import type {DrawerConfig} from "@/components/ace/type";
   import {loadResource, removeResource} from "@/utils";
@@ -490,7 +490,7 @@
     (e: 'openDialog', data: any): void
   }>()
 
-  const storeForm = useFormStore()
+  const storeForm = useDesignFormStore()
   const {designConfig, selectComponent} = storeToRefs(storeForm)
 
   const isSearch = computed(() => {
@@ -1506,7 +1506,7 @@
     if (selectComponent.value.type !== 'select') {
       return []
     }
-    const formList = storeForm.designDataConfig?.list || []
+    const formList = storeForm.designData || []
     const validTypes = ['select', 'checkbox', 'radio', 'input', 'switch'];
     return formList.reduce((acc: any, item: Component) => {
       // 条件判断：类型合法 + name 不等于目标值

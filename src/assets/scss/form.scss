@@ -51,8 +51,9 @@ $mainColor: #66b1ff;
 //设计模式
 .ak-design {height: 100%;padding: 10px;
 
-  /*.drag {height: calc(100% - 50px);min-height: 50px}*/
-  .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;align-content: flex-start;}
+  .drag {
+    width: 100%;height: max-content;border: 1px dashed #ddd;
+    min-height: 90%;margin: 0 2px;padding: 5px;align-content: flex-start;}
 
   .ghost {
     background: #F56C6C;
@@ -101,6 +102,7 @@ $mainColor: #66b1ff;
     &.group-grid, &.group-tabs, &.group-card, &.group-flex, &.group-div, &.group-table {
       &:after {display: none}
     }
+    .drag{min-height: 50px;}
   }
 
   .group-inputSlot {
@@ -132,6 +134,7 @@ $mainColor: #66b1ff;
 }
 
 .ak-form {
+
   .submit-btn-group {
     justify-content: center;
     display: flex;
@@ -139,12 +142,51 @@ $mainColor: #66b1ff;
   }
 
   .group-table {
-    .table-btn {margin-top: 10px}
+    .table-btn {margin: 10px 0}
   }
 
   .group-flex {
     .flex-group {display: flex;}
-    .flex-delete-btn{margin-left: 10px;}
+
+    .flex-delete-btn {margin-left: 10px;}
+  }
+
+  .title {
+    border-bottom: 1px solid #ddd;
+    height: 30px;
+    padding: 0 5px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .group-card, .group-table, .group-txt, .group-title, .group-flex, .group-tabs {margin-bottom: 15px}
+
+  &.form-row-2, &.form-row-3, &.form-row-4 {
+    display: flex;flex-wrap: wrap;column-gap:15px;
+    > .drag {display: flex;flex-wrap: wrap}
+  }
+
+  &.form-row-2 {
+    .group {
+      width: calc(50% - 15px);
+    }
+  }
+
+  &.form-row-3 {
+    .group {
+      width: calc(33% - 30px);
+    }
+  }
+
+  &.form-row-4 {
+    .group {
+      /*flex: 1 1 calc(25% - 45px);*/
+      width: calc(25% - 45px);
+    }
+  }
+
+  &.ak-form-add, &.ak-form-edit, &.ak-form-detail {
+    .group-inputSlot {display: none}
   }
 }
 
@@ -489,193 +531,3 @@ $mainColor: #66b1ff;
 @keyframes colorChange {
   100% {left: 0}
 }
-
-
-/*.ak-form {
-  .title {border-bottom: 1px solid #ddd;font-weight: 700;font-size: 14px;height: 30px;padding: 0 5px;margin-bottom: 22px}
-
-  padding: 10px;box-sizing: border-box;
-  // 格珊
-  !*.form-row {
-    .form-col {
-      &.active-col {border: 3px solid $mainColor;position: relative;
-
-        > .drag-control {display: block;}
-
-        > .tooltip {display: block;}
-      }
-    }
-  }*!
-
-  .form-tabs {
-    .drag {min-height: 80px;}
-  }
-
-  .group-card {
-    .el-collapse {border: 0}
-
-    .el-collapse-item__header {font-weight: 700;border-bottom: 1px solid #ddd;margin-bottom: 20px}
-
-    .el-collapse-item__wrap {border: 0}
-  }
-
-  .group-inputSlot {display: none}
-
-  .group-btn {display: flex;justify-content: center;width: 100% !important;}
-
-  .table-btn {padding-top: 10px;margin-bottom: 18px;}
-
-  .el-collapse-item__content {padding-bottom: 5px }
-
-  .form-table-add {
-    .el-form-item__label {display: none}
-
-    .el-form-item {margin: 0}
-
-    .el-table .cell {overflow: inherit;
-
-      .el-form-item__error {padding-top: 0}
-    }
-  }
-
-  .gray {color: #999}
-
-  > .drag {border: 0 !important;}
-
-  .group-flex {
-    .flex-group {display: flex;justify-content: space-between;
-
-      button {margin-left: 10px}
-    }
-
-    .flex-item {flex: 2;}
-  }
-
-  .group-txt {margin-bottom: 18px}
-
-  .div-layout {
-    &.right {
-      .drag {text-align: right;justify-content: flex-end}
-    }
-
-    &.center {
-      .drag {text-align: center;justify-content: center}
-    }
-
-    &.left {
-
-    }
-  }
-
-  // 设置默认下input和select一样宽
-  .el-select {width: 100%;}
-
-  .el-select {
-    .el-input__wrapper .el-input__suffix {position: absolute;right: 10px}
-  }
-
-  .group {width: 100%}
-
-  .drag {display: flex;flex-wrap: wrap}
-
-  &.form-row-2 {display: flex;justify-content: space-between;flex-wrap: wrap;
-
-    .group {width: 50%}
-  }
-
-  &.form-row-3 {display: flex;justify-content: space-between;flex-wrap: wrap;
-
-    .group {width: 33%}
-  }
-
-  &.form-row-4 {display: flex;justify-content: space-between;flex-wrap: wrap;
-
-    .group {width: 25%}
-  }
-}*/
-/*
-
-.ak-form-design {min-height: calc(100vh - 126px);
-
-  > div {height: 100%}
-
-  > .drag {min-height: calc(100vh - 176px) !important;}
-
-  .ghost {
-    background: #F56C6C;
-    border: 2px solid #F56C6C;
-    outline-width: 0;
-    height: 3px;
-    box-sizing: border-box;
-    font-size: 0;
-    content: '';
-    overflow: hidden;
-    padding: 0;
-    width: 100%;
-  }
-
-  .group {border: 1px dashed #ddd;margin: 2px 2px 10px 2px;padding: 5px;position: relative;min-height: 50px;
-
-    &.active {border: 3px solid $mainColor;position: relative;
-
-      > .drag-control {display: block}
-
-      > .tooltip {display: block;}
-    }
-
-    &:hover {border-color: $mainColor;background: #ecf5ff}
-
-    > div {margin-bottom: 0}
-
-    &:after {content: ''; background: #0d1117; position: absolute;left: 0;top: 0;right: 0;bottom: 0;opacity: 0;z-index: 1;display: block;}
-
-    &.group-grid, &.group-tabs, &.group-card, &.group-flex, &.group-div, &.group-table {
-      &:after {display: none}
-    }
-  }
-
-  .group-inputSlot {border-color: #eebe77;display: inline-block;
-
-    &:hover, &.active {border-color: #eebe77 !important;}
-  }
-
-  .form-table {margin-bottom: 22px;
-
-    .drag {border: 0;display: flex;overflow-x: auto;white-space: nowrap;padding: 0;flex-wrap: nowrap;
-
-      > div {min-width: 150px;width: auto}
-    }
-
-    .el-form-item {display: block}
-  }
-  .tooltip {display: none;position: absolute;font-size: 12px;top: 0;right: 0;z-index: 5}
-
-  .drag-control {display: none;
-
-    .item-control {position: absolute;right: 0;bottom: 0;z-index: 2; display: flex;align-items: center;height: 24px;background: $mainColor;
-
-      i {width: 24px;height: 24px;color: #fff;display: flex;align-items: center;justify-content: center;cursor: pointer}
-    }
-
-    .drag-move {position: absolute;left: 0;top: 0;z-index: 2;width: 24px;height: 24px;background: $mainColor;color: #fff;text-align: center;line-height: 24px;cursor: move}
-  }
-
-  .drag {height: 100%;border: 1px dashed #ddd;min-height: 40px;margin: 0 2px;padding: 5px;align-content: flex-start;}
-
-  &.form-row-2 {
-    .group {width: 48%}
-  }
-
-  &.form-row-3 {
-    .group {width: 32%}
-  }
-
-  &.form-row-4 {
-    .group {width: 23%}
-  }
-}
-
-.ak-form-search {display: flex;flex-wrap: wrap;padding-bottom: 0;border-bottom: 1px solid #dcdfe6;margin-bottom: 10px;
-
-  .group {width: auto}
-}*/

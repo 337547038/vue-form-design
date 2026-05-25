@@ -43,12 +43,11 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive } from 'vue'
-  import type{FormData} from "@/types/designForm";
+  import {reactive} from 'vue'
+  import type {FormData} from "@/types/designForm";
+  import {useDesignFormStore} from '@/store/form'
 
-  const emits = defineEmits<{
-      (e: 'selectTemplate', val: FormData): void
-    }>()
+  const designStore = useDesignFormStore()
   const state = reactive({
     visible: false,
     list: []
@@ -67,8 +66,8 @@
   }
   const selectClick = (item: FormData) => {
     state.visible = false
-    emits('selectTemplate',item)
-
+    designStore.setDesignData(item.list)
+    designStore.setDesignConfig(item.config)
   }
   defineExpose({
     open

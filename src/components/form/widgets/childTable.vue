@@ -35,7 +35,7 @@
       </el-table-column>
       <el-table-column
         v-if="
-          ['add', 'edit'].includes(type) &&
+          ['add', 'edit'].includes(formType) &&
             data.delBtnText &&
             !disabledEdit
         "
@@ -55,7 +55,7 @@
     </el-table>
     <div
       v-if="
-        ['add', 'edit'].includes(type) &&
+        ['add', 'edit'].includes(formType) &&
           data.addBtnText &&
           !disabledEdit
       "
@@ -74,10 +74,9 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import {computed, inject} from 'vue'
   import Tooltip from '@/components/tooltip/index.vue'
-  import { jsonParseStringify } from '@/utils/design'
-  import {useFormStore} from "@/store/form.ts";
+  import {jsonParseStringify} from '@/utils/design'
   import {storeToRefs} from "pinia";
   import FormItem from '../formItem.vue'
 
@@ -91,18 +90,15 @@
       }
     }
   )
-  const store= useFormStore()
-  const {formValue}=storeToRefs(store)
+  const store = inject('formStore')
+  const {formValue,formType} = storeToRefs(store)
 
   const tableDataNew = computed(() => {
     return formValue.value[props.data.name]
   })
-  const type = computed(() => {
-    return store.designType
-  })
   // 如果编辑页禁用时，则返回true
   const disabledEdit = computed(() => {
-    return store.designType === 'edit' && props.data?.disabledEdit
+    return formType.value === 'edit' && props.data?.disabledEdit
   })
   const addColumn = () => {
     const temp: any = {}

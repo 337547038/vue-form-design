@@ -36,7 +36,10 @@
     >
       添加一行
     </el-button>
-    <div v-show="showForm">
+    <div
+      v-show="showForm"
+      style="padding-top: 15px"
+    >
       <ak-form
         ref="formEl"
         :data="formData"
@@ -103,7 +106,7 @@
           modelValue: '',
           placeholder: '数据库字段名称'
         },
-        config: { disabledEdit: true },
+        disabledEdit: true,
         name: 'name',
         formItem: {
           label: '表名字'
@@ -152,10 +155,8 @@
             value: 'BOOLEAN'
           }
         ],
-        config: {
-          optionsType: 0,
-          disabledEdit: true
-        },
+        optionsType: 0,
+        disabledEdit: true,
         name: 'type',
         formItem: {
           label: '类型'
@@ -173,7 +174,7 @@
         control: {
           modelValue: ''
         },
-        config: { disabledEdit: true },
+        disabledEdit: true,
         name: 'length',
         formItem: {
           label: '长度/值'
@@ -184,7 +185,7 @@
         control: {
           modelValue: ''
         },
-        config: { disabledEdit: true },
+        disabledEdit: true,
         name: 'default',
         formItem: {
           label: '默认'
@@ -196,9 +197,7 @@
           modelValue: '',
           size: 'small'
         },
-        config: {
-          disabledEdit: true
-        },
+        disabledEdit: true,
         name: 'remark',
         formItem: {
           label: '注释'
@@ -209,7 +208,7 @@
         control: {
           modelValue: true
         },
-        config: { disabledEdit: true },
+        disabledEdit: true,
         name: 'empty',
         formItem: {
           label: '空'
@@ -221,7 +220,6 @@
           modelValue: '',
           placeholder: '中文标题名称'
         },
-        config: {},
         name: 'label',
         formItem: {
           label: '标题'
@@ -282,9 +280,7 @@
             value: 'tinymce'
           }
         ],
-        config: {
-          optionsType: 0
-        },
+        optionsType: 0,
         name: 'filedType',
         formItem: {
           label: '组件类型'
@@ -295,20 +291,18 @@
         control: {
           modelValue: false
         },
-        config: {},
         name: 'search',
         formItem: {
           label: '模糊搜索'
         }
       }
     ],
-    form: {
+    config: {
       labelWidth: '60px',
       class: 'form-row-3',
       size: 'small',
       name: 'source'
-    },
-    config: {}
+    }
   })
   const columns = computed(() => {
     const temp: any = []

@@ -130,14 +130,14 @@
       <!--  设计模式时拖动会出现异常，设计模式暂用图片代替-->
       <tinymce-edit
         v-if="
-          ['add', 'edit', 'detail'].includes(store.designType)
+          ['add', 'edit', 'detail'].includes(store.formType)
         "
         v-bind="control"
         v-model="modelValue"
         :disabled="disabled"
       />
       <img
-        v-if="store.designType.indexOf('design')!==-1"
+        v-if="store.formType.indexOf('design')!==-1"
         alt=""
         src="./widgets/tinymce.png"
         style="max-width: 100%"
@@ -149,7 +149,6 @@
   import type {Component} from "@/types/designForm.ts";
   import {computed, markRaw, watch, ref, onMounted, onUnmounted, inject} from "vue";
   import {storeToRefs} from "pinia";
-  import {useFormStore} from "@/store/form";
   import Tooltip from "@/components/tooltip/index.vue";
   import selectComp from './widgets/select.vue'
   import {
@@ -174,7 +173,7 @@
       parentProp: ''
     }
   )
-  const store = useFormStore();
+  const store = inject('formStore')
   const {formValue} = storeToRefs(store)
 
   const modelValue = defineModel<any>()
@@ -190,7 +189,7 @@
     return `el-${props.data.type}`
   })
   const getLabel = computed(() => {
-    const showColon = store.designConfig.showColon // todo
+    const showColon = store.formConfig.showColon
     const {formItem = {}, hideLabel} = props.data
     if (hideLabel) {
       return ''
@@ -242,7 +241,7 @@
       return false
     }
     const slotKey = slot.replace('key:', '')
-    const control = getNameForEach(store.designDataConfig?.list, slotKey)
+    const control = getNameForEach(store.formList, slotKey)
     if (!control || Object.keys(control)?.length === 0) {
       return false
     }
@@ -346,7 +345,7 @@
       flush: 'pre',
     }
   )
- //级联
+  //级联
   const linkage = props.data.linkage
   const unWatchLink = linkage
     ? watch(

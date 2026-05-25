@@ -1,7 +1,7 @@
 <!-- Created by 337547038 表单设计. -->
 <template>
   <div class="design-container">
-    <component-panel @select-template="selectTemplate" />
+    <component-panel />
     <div class="main-body">
       <head-tools @click="headToolClick" />
       <div
@@ -44,22 +44,21 @@
   import {objToStringify, stringToObj} from '@/utils/design'
   import {useLayoutStore} from '@/store/layout'
   import type {AceDrawerT} from "@/components/ace/type";
-  import {useFormStore} from "@/store/form";
+  import {useDesignFormStore} from "@/store/form";
   import {getDesignDataBySource} from "./components/utils";
-  import {setStorage} from "@/utils";
-  import type {FormData} from '@/types/designForm'
+  import {setStorage} from "@/utils"
+  import {storeToRefs} from "pinia";
 
   defineOptions({name: 'DesignFormIndex'})
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([{label: '系统工具'}, {label: '表单设计'}])
 
   const loading = ref(false)
-  const store = useFormStore()
+  const designStore = useDesignFormStore()
   const aceDrawerRef = ref()
   const router = useRouter()
   const route: any = useRoute()
-  const designData = ref([])
-  const designConfig = ref({})
+  const {designData, designConfig} = storeToRefs(designStore)
   const designDataConfig = computed(() => {
     return {
       list: designData.value,
@@ -91,9 +90,10 @@
         const result = res.data
         if (result.data) {
           const resultData = stringToObj(result.data)
+          console.log(resultData)
           if (resultData && Object.keys(resultData).length) {
-            designData.value = resultData.list
-            designConfig.value = result.config
+            designStore.setDesignData(resultData.list)
+            designStore.setDesignConfig(resultData.config)
           }
         }
         if (result.source && operateType.value !== 'designSearch') {
@@ -122,7 +122,7 @@
       source: designConfig.value.sourceId, // 数据源允许在表单属性设置里修改的
       name: designConfig.value.name || '未命名', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1, // 1表单 2列表
-      dict: JSON.stringify(store.formOptionDict)
+      dict: JSON.stringify(designStore.formOptionDict)
     }
     let apiKey = 'designSave'
     if (id) {
@@ -166,15 +166,15 @@
         loading.value = false
       })
     // 清空右侧栏信息
-    store.setSelectComponent({})
+    designStore.setSelectComponent({})
   }
 
   const headToolClick = (type: string) => {
     switch (type) {
       case 'del':
-        designData.value = []
-        designConfig.value = {}
-        store.setSelectComponent({})
+        designStore.setDesignData([])
+        designStore.setDesignConfig({})
+        designStore.setSelectComponent({})
         break
       case 'eye':
         // 打开预览窗口
@@ -192,8 +192,8 @@
           title: '可编辑修改或将已生成的脚本粘贴进来',
           callback: (content: Record<string, any> | string) => {
             if (typeof content === 'object') {
-              designData.value = content.list
-              designConfig.value = content.config
+              designStore.setDesignData(content.list)
+              designStore.setDesignConfig(content.config)
             }
           }
         })
@@ -214,11 +214,6 @@
     aceDrawerRef.value.open(params)
   }
 
-  const selectTemplate = (data: FormData) => {
-    designData.value = data.list
-    designConfig.value = data.config
-  }
-
   /*
   // 搜索设计时左侧快速添加字段
   const searchCheckField = (data: FormData) => {
@@ -226,8 +221,7 @@
   }*/
   onMounted(() => {
     // 保持供右侧使用
-    store.setDesignConfig(designConfig.value)
-    store.setDesignType(operateType.value)
+    designStore.setDesignType(operateType.value)
     getInitData()
     const {source} = route.query
     if (source) {
@@ -236,15 +230,14 @@
         source,
         (list: any, name: string) => {
           Object.assign(designConfig.value, {sourceId: parseInt(source), name: name})
-          designData.value = getDesignDataBySource(list)
+          designStore.setDesignData(getDesignDataBySource(list))
         }
       )
     }
   })
   onUnmounted(() => {
-    console.log('form unmounted')
-    store.setSelectComponent({})
-    store.setDesignConfig({})
-    store.setFormOptionDict('', {})
+    designStore.setSelectComponent({})
+    designStore.setDesignConfig({})
+    designStore.setDesignData([])
   })
 </script>

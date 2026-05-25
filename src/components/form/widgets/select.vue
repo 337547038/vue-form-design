@@ -22,11 +22,10 @@
 </template>
 
 <script setup lang="ts">
-  import {computed, onMounted, ref} from 'vue'
+  import {computed, inject, onMounted, ref} from 'vue'
   import {onBeforeRouteLeave} from 'vue-router'
   import type {Component} from '@/types/designForm'
-  import {getTransformLabelValue, getOptionsList, getRemoteMethod} from "@/components/form/utils";
-  import {useFormStore} from "@/store/form.ts";
+  import {getTransformLabelValue, getOptionsList, getRemoteMethod} from "../utils";
   import {storeToRefs} from "pinia";
   import {debounce} from "@/utils";
   import {objectToArray} from "@/utils/design.ts";
@@ -47,7 +46,7 @@
       remoteMethod: null
     }
   )
-  const store = useFormStore()
+  const store = inject('formStore')
   const {formValue} = storeToRefs(store)
   const optionSlot = ref([])
   const newOptions = computed(() => {

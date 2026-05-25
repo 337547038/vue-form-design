@@ -49,7 +49,6 @@
     <use-template
       v-if="!isSearch"
       ref="useTemplateEl"
-      @select-template="selectTemplate"
     />
   </div>
 </template>
@@ -58,16 +57,13 @@
   import draggable from 'vuedraggable-es'
   import {computed, ref, onMounted} from 'vue'
   import {useRoute} from 'vue-router'
-  import type {Component, FormData} from '@/types/designForm'
+  import type {Component} from '@/types/designForm'
   import UseTemplate from './template.vue'
   import {getRequest} from '@/api'
   import {stringToObj, jsonParseStringify} from '@/utils/design'
-  import {useFormStore} from "@/store/form";
+  import {useDesignFormStore} from "@/store/form";
 
-  const emits = defineEmits<{
-    (e: 'selectTemplate', val: FormData): void
-  }>()
-  const store = useFormStore()
+  const designStore = useDesignFormStore()
   const route = useRoute()
   const formDataList = ref([])
   // 默认搜索允许显示的字段
@@ -84,7 +80,7 @@
     'button'
   ]
   const isSearch = computed(() => {
-    return store.designType === 'designSearch'
+    return designStore.designType === 'designSearch'
   })
   const controlList = computed(() => {
     if (isSearch.value) {
@@ -145,9 +141,6 @@
   const useTemplateEl = ref()
   const useTemplateClick = () => {
     useTemplateEl.value.open()
-  }
-  const selectTemplate = (dataList: FormData) => {
-    emits('selectTemplate', dataList)
   }
   onMounted(() => {
     // 设计搜索表单时加载

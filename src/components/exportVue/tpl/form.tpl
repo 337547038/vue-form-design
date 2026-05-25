@@ -24,9 +24,9 @@
     return 'add'
   })
 
-  // 获取表单数据值或是提交表单前事件，可使用return false阻止操作．type可选fetch/submit
-  const before = (params: Record<string, any>, type: string) => {
-    console.log('before', params, type)
+  // 获取表单数据值或是提交表单前事件，可使用return false阻止操作．other.type可选fetch/submit
+  const before = (params: Record<string, any>, other: string) => {
+    console.log('before', params, other)
     return params
   }
   // 获取表单数据或提交表单请求后事件,type可选fetch/submit

@@ -39,7 +39,7 @@
 </template>
 <script setup lang="ts">
   import type {Component, FormData} from "@/types/designForm";
-  import {computed, onMounted, onUnmounted, provide, ref, watch} from "vue";
+  import {computed, getCurrentInstance, onMounted, onUnmounted, provide, ref, watch} from "vue";
   import {ElMessage} from "element-plus";
   import {useRouter, onBeforeRouteLeave} from 'vue-router'
   import DesignForm from './design.vue'
@@ -49,7 +49,7 @@
   import ComponentFactory from "@/components/form/componentFactory.vue";
   import {beforeAfter} from "@/utils/beforeAfter.ts";
   import {loadResource, removeResource} from "@/utils";
-  import type {FormValueChange} from "@/types/designForm.ts";
+  import type {FormValueChange} from "@/types/designForm";
 
   defineOptions({name: 'AkForm'})
   const props = withDefaults(
@@ -86,13 +86,21 @@
     (e: 'btnClick', type: string): void
     (e: 'change', obj: FormValueChange): void
   }>()
-
-  const store = useFormStore()
+  const instance = getCurrentInstance()
+  const store = useFormStore(instance.uid)()
+  provide('formStore', store)
   const router = useRouter()
   const formRef = ref()
   const formProps = computed(() => {
     const {config = {}} = props.data
-    return Object.assign({}, config.props || {}, {size: config.size, labelWidth: config.labelWidth})
+    return Object.assign({},
+      config.props || {},
+      {
+        size: config.size,
+        labelWidth: config.labelWidth,
+        class: config.class
+      }
+    )
   })
   const getFormCls = computed(() => {
     switch (props.operateType) {
@@ -162,7 +170,7 @@
   const model = ref({})
   // 从表单数据里提取表单所需的model
   const forEachGetFormModel = (list: Component[]) => {
-    list.forEach((item: any) => {
+    list?.forEach((item: any) => {
       if (['table', 'flex'].includes(item.type)) {
         model.value[item.name] = jsonParseStringify(item.tableData)
       } else if (['grid', 'tabs', 'card'].includes(item.type)) {
@@ -180,21 +188,6 @@
     })
   }
 
-  // 表单组件值改变时
-  provide('akFormValueChange', (params: FormValueChange) => {
-    // change事件修改调整model的值
-    const onFormChange = props.data.config
-    if (typeof onFormChange === 'function') {
-      const returnVal = onFormChange(params)
-      if (returnVal && typeof returnVal === 'string') {
-        console.log('change 钩子返回字符串标识，暂不处理:');
-      } else if (typeof returnVal === 'object') {
-        model.value = returnVal
-      }
-    }
-    emits('change', Object.assign(params, model.value))
-    console.log('form value is change:', Object.assign(params, model.value))
-  })
   // 注册window事件
   let eventName = ''
   let getValueEvent = ''
@@ -214,14 +207,15 @@
     }
   }
   const unWatch = watch(
-    () => props.data.list,
+    () => props.data,
     () => {
-      console.log('watch list')
+      console.log('watch props.data')
       // data从接口获取时
       const {list, config} = props.data
       forEachGetFormModel(list)
       store.setFormValue(model.value)
-      store.setDesignDataConfig(props.data)
+      store.setFormList(list)
+      store.setFormConfig(config)
       if (config?.style) {
         loadResource(config.style, 'form-style')
       }
@@ -386,19 +380,36 @@
   const resetFields = () => {
     formRef.value.resetFields()
   }
+
+  // 表单组件值改变时
+  provide('akFormValueChange', (params: FormValueChange) => {
+    // change事件修改调整model的值
+    const onFormChange = props.data.config?.change
+    if (typeof onFormChange === 'function') {
+      const returnVal = onFormChange(params)
+      console.log('returnVal', JSON.parse(returnVal))
+      if (returnVal && typeof returnVal === 'string') {
+        console.log('change 钩子返回字符串标识，暂不处理:');
+      } else if (typeof returnVal === 'object') {
+        model.value = returnVal
+      }
+    }
+    console.log('model.value', model.value)
+    emits('change', Object.assign(params, model.value))
+    console.log('form value is change:', Object.assign(params, model.value))
+  })
+
   onMounted(() => {
-    store.setDesignType(props.operateType)
-    store.setDesignDataConfig(props.data)
+    store.setFormType(props.operateType)
   })
   onUnmounted(() => {
     removeResource('form-style')
-    store.setDesignDataConfig([])
+    store.setFormList([])
     store.setFormValue({})
     store.setFormOptions({})
   })
   onBeforeRouteLeave(() => {
     unWatch()
-    // unWatchEvent()
   })
   defineExpose({
     setOptions,
