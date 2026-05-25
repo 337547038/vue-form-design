@@ -50,6 +50,7 @@
   import {beforeAfter} from "@/utils/beforeAfter.ts";
   import {loadResource, removeResource} from "@/utils";
   import type {FormValueChange} from "@/types/designForm";
+  import {storeToRefs} from "pinia";
 
   defineOptions({name: 'AkForm'})
   const props = withDefaults(
@@ -89,6 +90,7 @@
   const instance = getCurrentInstance()
   const store = useFormStore(instance.uid)()
   provide('formStore', store)
+  const {formValue: model} = storeToRefs(store)
   const router = useRouter()
   const formRef = ref()
   const formProps = computed(() => {
@@ -166,8 +168,6 @@
         break
     }
   }
-
-  const model = ref({})
   // 从表单数据里提取表单所需的model
   const forEachGetFormModel = (list: Component[]) => {
     list?.forEach((item: any) => {
@@ -387,16 +387,14 @@
     const onFormChange = props.data.config?.change
     if (typeof onFormChange === 'function') {
       const returnVal = onFormChange(params)
-      console.log('returnVal', JSON.parse(returnVal))
       if (returnVal && typeof returnVal === 'string') {
         console.log('change 钩子返回字符串标识，暂不处理:');
       } else if (typeof returnVal === 'object') {
         model.value = returnVal
       }
     }
-    console.log('model.value', model.value)
-    emits('change', Object.assign(params, model.value))
-    console.log('form value is change:', Object.assign(params, model.value))
+    emits('change', Object.assign({}, params, {model: model.value}))
+    console.log('form value is change:', Object.assign({}, params, {model: model.value}))
   })
 
   onMounted(() => {
@@ -407,6 +405,8 @@
     store.setFormList([])
     store.setFormValue({})
     store.setFormOptions({})
+    store.setFormConfig({})
+    store.setFormComponentsDataCache({})
   })
   onBeforeRouteLeave(() => {
     unWatch()

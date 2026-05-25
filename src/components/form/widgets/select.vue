@@ -67,7 +67,13 @@
   const queryName = computed(() => {
     return props.data?.queryName || 'name'
   })
-  const value = ref()
+  const value = computed({
+    get: () => {
+      return formValue.value[props.data.name]
+    },
+    set: () => {
+    }
+  })
   const loading = ref(false)
   // 远程搜索
   const getRemoteM = debounce((name: string) => {

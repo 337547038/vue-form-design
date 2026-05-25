@@ -44,20 +44,19 @@
         ref="formEl"
         :data="formData"
         :operate-type="statusType"
+      />
+      <el-button
+        type="primary"
+        @click="addRowSubmit"
       >
-        <el-button
-          type="primary"
-          @click="addRowSubmit"
-        >
-          保存
-        </el-button>
-      </ak-form>
+        保存
+      </el-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, computed, watch } from 'vue'
-  import { ElMessage } from 'element-plus'
+  import {ref, computed, watch, nextTick} from 'vue'
+  import {ElMessage} from 'element-plus'
 
   interface TableList {
     label: string
@@ -71,6 +70,7 @@
     filedType?: string
     isNew?: number
   }
+
   const props = withDefaults(
     defineProps<{
       modelValue?: TableList[] // 当前数据
@@ -95,7 +95,7 @@
     (val: TableList[]) => {
       tableData.value = val
     },
-    { deep: true, immediate: true }
+    {deep: true, immediate: true}
   )
   const showForm = ref(false)
   const formData = ref({
@@ -316,7 +316,9 @@
   })
   const rowEditClick = (row: TableList, index: number) => {
     showForm.value = true
-    formEl.value.setValue(row)
+    nextTick(()=>{
+      formEl.value.setValue(row)
+    })
     editRowIndex.value = index
     statusType.value = props.type
   }
@@ -332,10 +334,12 @@
     tableData.value.splice(index, 1)
   }
   const showFormClick = () => {
-    formEl.value.resetFields() // 先清空上一次的
     showForm.value = true
-    editRowIndex.value = undefined
-    statusType.value = 'add' // 点新增一行，表单都为增加模式
+    nextTick(() => {
+      formEl.value.resetFields() // 先清空上一次的
+      editRowIndex.value = undefined
+      statusType.value = 'add' // 点新增一行，表单都为增加模式
+    })
   }
   /**
    * 添加行

@@ -341,8 +341,6 @@
         options: options.value,
         model: formValue.value
       })
-    }, {
-      flush: 'pre',
     }
   )
   //级联

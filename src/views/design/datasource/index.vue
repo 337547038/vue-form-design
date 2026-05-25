@@ -23,11 +23,12 @@
         :after="afterFetchSubmit"
         :params="{ id: dialog.id }"
         @btn-click="cancelClick"
-      />
-      <child-table
-        v-model="childTableData"
-        :type="dialog.type"
-      />
+      >
+        <child-table
+          v-model="childTableData"
+          :type="dialog.type"
+        />
+      </ak-form>
       <div class="tips">
         提示：默认会添加id自增主键；其中标题作为表单的label值，组件类型仅用于一健创建表单；模糊搜索用于条件查询时
       </div>
@@ -166,8 +167,7 @@
     ],
     config: {
       submitCancel: true
-    },
-    form: {}
+    }
   })
   const formData = ref({
     list: [
@@ -283,8 +283,8 @@
     }
   }
   // 提交表单前校验
-  const beforeSubmit = (params: any, type: string) => {
-    if (type === 'submit') {
+  const beforeSubmit = (params: any, other: any) => {
+    if (other.type === 'submit') {
       if (dialog.type === 'add') {
         if (!childTableData.value.length) {
           ElMessage.error('数据库表字段内容不能为空')

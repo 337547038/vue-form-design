@@ -24,17 +24,13 @@ export const getDesignDataBySource = (list: any) => {
           control: {
           },
           options: [],
-          config: {
-            optionsType: 0
-          }
+          optionsType: 0
         }
         break
       case 'radio':
         custom = {
           options: [],
-          config: {
-            optionsType: 0
-          }
+          optionsType: 0
         }
         break
       case 'checkbox':
@@ -44,9 +40,7 @@ export const getDesignDataBySource = (list: any) => {
             modelValue: []
           },
           options: [],
-          config: {
-            optionsType: 0
-          }
+          optionsType: 0
         }
         break
       case 'switch':

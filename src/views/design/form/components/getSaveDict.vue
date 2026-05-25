@@ -10,7 +10,7 @@
       class="content"
     >
       <div v-if="optionsList?.length">
-        <p>当前字典名称：{{ formStore.selectComponent.name }}</p>
+        <p>当前字典名称：form-{{ selectComponent.name }}</p>
         <pre>{{ optionsList }}</pre>
       </div>
       <p v-else>
@@ -76,7 +76,7 @@
     }
   }
   const confirmClick = () => {
-    designStore.setFormOptionDict([selectComponent.value.name], optionsList.value)
+    designStore.setFormOptionDict(`form-${selectComponent.value.name}`, optionsList.value)
     visible.value = false
   }
   const updateClick = () => {

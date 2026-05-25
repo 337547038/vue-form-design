@@ -1575,6 +1575,7 @@
   })
   onUnmounted(() => {
     removeResource('form-style')
+    storeForm.setFormOptionDict('')
   })
   defineExpose({getFormFieldBySource})
 </script>

@@ -4,7 +4,10 @@ import {computed, inject} from "vue";
 import {debounce, getStorage} from "@/utils";
 import SparkMD5 from "spark-md5";
 import {beforeAfter} from "@/utils/beforeAfter.ts";
-const store = inject('formStore')
+
+const store = () => {
+  return inject('formStore')
+}
 /**
  * 提供一个方法，用于根据name从data.list里查找数据
  * @param data
@@ -85,7 +88,7 @@ export const getOptionsList = (component: Component, callback: (opt: Record<stri
   }
 }
 export const getRemoteMethod = (component: Component, callback: (opt: Record<string, any>) => void, data = {}) => {
-  const {formValue} = store
+  const {formValue} = store()
   const {optionsType, optionsFun, cache, method, before, after} = component
   const {remote} = component.control
   let params = {}
@@ -104,7 +107,7 @@ export const getRemoteMethod = (component: Component, callback: (opt: Record<str
       const spark = new SparkMD5()
       spark.append(optionsFun + JSON.stringify(params))
       cacheKey = spark.end()
-      const cacheData = store.formComponentsDataCache[cacheKey]
+      const cacheData = store().formComponentsDataCache[cacheKey]
       if (cacheData) {
         callback && callback(cacheData)
         return false
@@ -124,7 +127,7 @@ export const getRemoteMethod = (component: Component, callback: (opt: Record<str
           const result = res.data.list || res.data
           callback && callback(result)
           if (cache && !remote) {
-            store.setFormComponentsDataCache(cacheKey, result)
+            store().setFormComponentsDataCache(cacheKey, result)
           }
         })
 
