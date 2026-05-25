@@ -179,7 +179,7 @@
 </template>
 <script setup lang="ts">
   import {computed, inject} from 'vue'
-  import type {Component} from "@/types/designForm";
+  import type {Component} from "@/types/form";
   import FormItem from "./formItem.vue";
   import {formatNumber} from "@/utils/design";
   import Tooltips from '@/components/tooltip/index.vue'

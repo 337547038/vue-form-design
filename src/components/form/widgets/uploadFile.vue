@@ -38,7 +38,7 @@
 <script setup lang="ts">
   import {computed, ref} from 'vue'
   import {getRequest} from '@/api'
-  import type {Component} from "@/types/designForm.ts";
+  import type {Component} from "@/types/form";
 
   const props = withDefaults(
     defineProps<{

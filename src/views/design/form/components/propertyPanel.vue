@@ -482,7 +482,7 @@
   import type {DrawerConfig} from "@/components/ace/type";
   import {loadResource, removeResource} from "@/utils";
   import {getAceTitle} from "@/components/ace/tooltip";
-  import type {Component} from "@/types/designForm.ts";
+  import type {Component} from "@/types/form";
   import {getRemoteMethod} from "@/components/form/utils.ts";
   import GetSaveDict from "./getSaveDict.vue";
 

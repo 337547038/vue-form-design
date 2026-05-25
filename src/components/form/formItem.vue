@@ -146,7 +146,7 @@
   </el-form-item>
 </template>
 <script setup lang="ts">
-  import type {Component} from "@/types/designForm.ts";
+  import type {Component} from "@/types/form";
   import {computed, markRaw, watch, ref, onMounted, onUnmounted, inject} from "vue";
   import {storeToRefs} from "pinia";
   import Tooltip from "@/components/tooltip/index.vue";

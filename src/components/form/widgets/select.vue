@@ -24,7 +24,7 @@
 <script setup lang="ts">
   import {computed, inject, onMounted, ref} from 'vue'
   import {onBeforeRouteLeave} from 'vue-router'
-  import type {Component} from '@/types/designForm'
+  import type {Component} from '@/types/form'
   import {getTransformLabelValue, getOptionsList, getRemoteMethod} from "../utils";
   import {storeToRefs} from "pinia";
   import {debounce} from "@/utils";

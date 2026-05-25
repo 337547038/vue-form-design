@@ -54,7 +54,7 @@
   import {onBeforeRouteLeave} from 'vue-router'
   import draggable from 'vuedraggable-es'
   import ComponentFactory from './componentFactory.vue'
-  import type {Component} from '@/types/designForm'
+  import type {Component} from '@/types/form'
   import {jsonParseStringify} from "@/utils/design.ts";
   import {ElMessage} from "element-plus";
   import {useDesignFormStore} from '@/store/form'

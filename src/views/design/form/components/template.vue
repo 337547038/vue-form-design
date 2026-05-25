@@ -44,7 +44,7 @@
 
 <script lang="ts" setup>
   import {reactive} from 'vue'
-  import type {FormData} from "@/types/designForm";
+  import type {FormData} from "@/types/form";
   import {useDesignFormStore} from '@/store/form'
 
   const designStore = useDesignFormStore()

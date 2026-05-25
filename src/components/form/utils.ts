@@ -1,5 +1,5 @@
 import {formatNumber, objectToArray} from "@/utils/design.ts";
-import type {Component} from "@/types/designForm.ts";
+import type {Component} from "@/types/form";
 import {computed, inject} from "vue";
 import {debounce, getStorage} from "@/utils";
 import SparkMD5 from "spark-md5";

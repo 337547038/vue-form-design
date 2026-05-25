@@ -38,7 +38,7 @@
   </el-form>
 </template>
 <script setup lang="ts">
-  import type {Component, FormData} from "@/types/designForm";
+  import type {Component, FormData} from "@/types/form";
   import {computed, getCurrentInstance, onMounted, onUnmounted, provide, ref, watch} from "vue";
   import {ElMessage} from "element-plus";
   import {useRouter, onBeforeRouteLeave} from 'vue-router'
@@ -49,7 +49,7 @@
   import ComponentFactory from "@/components/form/componentFactory.vue";
   import {beforeAfter} from "@/utils/beforeAfter.ts";
   import {loadResource, removeResource} from "@/utils";
-  import type {FormValueChange} from "@/types/designForm";
+  import type {FormValueChange} from "@/types/form";
   import {storeToRefs} from "pinia";
 
   defineOptions({name: 'AkForm'})

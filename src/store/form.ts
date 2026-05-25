@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {ref} from 'vue'
-import type {Config, Component} from '@/types/designForm'
+import type {Config, Component} from '@/types/form'
 import SparkMD5 from "spark-md5";
 
 export const useDesignFormStore = defineStore('designForm', () => {

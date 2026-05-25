@@ -89,7 +89,7 @@
   import {ref, computed} from 'vue'
   import SelectDialog from './dialog.vue'
   import type {FileList} from './types'
-  import type {Component} from "@/types/designForm.ts";
+  import type {Component} from "@/types/form";
 
   const props = withDefaults(
     defineProps<{
