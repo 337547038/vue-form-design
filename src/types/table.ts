@@ -46,9 +46,8 @@ export interface Button {
   // 按钮是否禁用，请返回布尔值
   disabled?: (row: { [key: string]: any }) => boolean
   // 自定义el-button属性
-  attr?: ButtonProps
+  props?: ButtonProps
   key?: 'add' | 'edit' | 'del' | 'detail' | 'export' // 内容三个特殊值常用的按钮key。其它自定义按钮无需key
-  permission?: string // 权限校验标识
 }
 
 export interface TreeData {

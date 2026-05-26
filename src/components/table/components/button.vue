@@ -9,7 +9,7 @@
       v-show="getDisplay(btn)"
       :class="[btn.class]"
       :type="btn.type"
-      v-bind="btn.attr"
+      v-bind="btn.props"
       :disabled="getDisabled(btn)"
       @click="clickEvent"
     >

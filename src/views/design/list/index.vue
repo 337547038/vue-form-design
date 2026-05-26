@@ -118,7 +118,7 @@
             :data="[{}]"
           >
             <template
-              v-for="item in tableData.columns"
+              v-for="item in designColumns"
               :key="item.prop || item.label"
             >
               <el-table-column
@@ -154,8 +154,8 @@
                     <el-image
                       v-else-if="item.render === 'image'"
                       :style="{
-                        width: item.config.width,
-                        height: item.config.height
+                        width: item.config?.width||'50px',
+                        height: item.config?.height||'50px'
                       }"
                       src="/static/images/empty.png"
                     />
@@ -468,16 +468,13 @@
         label: "操作",
         prop: "operate",
         render: "buttons",
-        config:
+        buttons: [
           {
-            buttons: [
-              {
-                key: "edit"
-              },
-              {
-                key: "del"
-              }]
-          }
+            key: "edit"
+          },
+          {
+            key: "del"
+          }]
       }]
       const newColumns = [...columns, ...operate]
       designStore.setDesignColumns(newColumns)

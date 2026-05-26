@@ -28,6 +28,7 @@
       </template>
     </el-input>
     <el-input
+      v-if="type==='replaceValue'"
       v-model="item.label"
       placeholder="替换的值"
       @change="change"
