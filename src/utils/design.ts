@@ -210,3 +210,31 @@ export const jsonParseStringify = (val: any) => {
 export const deepClone = (obj: any) => {
   return evil(obj2string(obj))
 }
+
+/**
+ * 根据路径修改对象值
+ * @param obj 数据源对象
+ * @param path 路径,路径不存在时自动创建
+ * @param value 新值
+ */
+export const setValueByPath = (obj: any, path: string, value: any) => {
+  /*const keys = path.split('.')
+  const lastKey = keys.pop()!
+  const target = keys.reduce((o, k) => o[k], obj)
+  target[lastKey] = value*/
+  const keys = path.split('.')
+  let current = obj
+
+  // 遍历到倒数第二层，自动创建不存在的对象
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i]
+    // 如果没有这个属性 / 不是对象，就强制创建空对象
+    if (!current[key] || typeof current[key] !== 'object') {
+      current[key] = {}
+    }
+    current = current[key]
+  }
+  // 最后一层赋值
+  const lastKey = keys.pop()!
+  current[lastKey] = value
+}

@@ -23,21 +23,24 @@
                 </el-button>
               </template>
               <div class="table-field-list">
-                <div
-                  v-for="(item, index) in fieldOptions"
-                  :key="index"
-                  class="item"
-                >
-                  <h3>{{ item.label }}</h3>
-                  <div class="list">
-                    <el-checkbox
-                      v-for="li in item.options"
-                      :key="li.prop"
-                      :label="li.label"
-                      @change="fieldSelectClick(li, $event)"
-                    />
+                <el-checkbox-group v-model="columnsCheckList">
+                  <div
+                    v-for="(item, index) in fieldOptions"
+                    :key="index"
+                    class="item"
+                  >
+                    <h3>{{ item.label }}</h3>
+                    <div class="list">
+                      <el-checkbox
+                        v-for="li in item.options"
+                        :key="li.prop"
+                        :label="li.label"
+                        :value="li.prop"
+                        @change="fieldSelectClick(li, $event)"
+                      />
+                    </div>
                   </div>
-                </div>
+                </el-checkbox-group>
               </div>
             </el-popover>
           </div>
@@ -50,9 +53,9 @@
             @click="searchFormClick"
           >
             <ak-form
-              v-if="state.searchData?.list?.length"
+              v-if="searchFormData?.list?.length"
               operate-type="search"
-              :data="state.searchData"
+              :data="searchFormData"
               request-url=""
             />
             <div
@@ -71,7 +74,7 @@
             >
               <div
                 v-if="
-                  tableData?.controlBtn?.length === 0 || !tableData?.controlBtn
+                  designConfig?.controlBtn?.length === 0 || !designConfig?.controlBtn
                 "
                 class="tip"
               >
@@ -80,7 +83,7 @@
               <operate-btn
                 v-else
                 position="top"
-                :buttons="mergeDefaultBtn(tableData?.controlBtn)"
+                :buttons="mergeDefaultBtn(designConfig?.controlBtn)"
                 :row="{}"
               />
             </div>
@@ -102,7 +105,7 @@
             </div>
           </div>
           <div
-            v-if="!tableData.columns?.length"
+            v-if="!designColumns?.length"
             class="tip"
           >
             表格列设置区域，可从左上角 添加表格列字段
@@ -118,7 +121,10 @@
               v-for="item in tableData.columns"
               :key="item.prop || item.label"
             >
-              <el-table-column v-bind="item">
+              <el-table-column
+                v-bind="item"
+                :class-name="getActiveCls(item.prop)"
+              >
                 <template #header="scope">
                   {{ scope.column.label }}
                   <i
@@ -151,15 +157,15 @@
                         width: item.config.width,
                         height: item.config.height
                       }"
+                      src="/static/images/empty.png"
                     />
+
                     <el-tag v-else-if="item.render === 'tag'">
                       设置
                     </el-tag>
                     <operate-btn
                       v-else-if="item.render === 'buttons'"
-                      class="btn-group"
-                      position="demo"
-                      :buttons="mergeDefaultBtn(item.buttons, 'right')"
+                      :buttons="mergeDefaultBtn(item.buttons)"
                       :row="{}"
                     />
                     <span v-else>设置</span>
@@ -177,144 +183,98 @@
           </div>
         </div>
       </div>
-      <control-attr
+      <property-panel
         ref="controlAttrEl"
         v-model:tabs-name="state.tabsName"
         @change-event="controlAttrChangeEvent"
       />
     </div>
-    <ace-drawer
-      v-model="drawer.visible"
-      :title="drawer.title"
-      :direction="drawer.direction"
-      :content="drawer.content"
-      :code-type="drawer.codeType"
-      @before-close="drawerBeforeClose"
-      @confirm="dialogConfirm"
-    />
-    <vue-file ref="vueFileEl" />
-    <el-dialog
-      v-model="state.previewVisible"
-      title="预览"
-      :fullscreen="true"
-    >
-      <ak-list
-        v-if="state.previewVisible"
-        :data="tableData"
-        :search-data="state.searchData"
-      />
-    </el-dialog>
+    <ace-drawer ref="aceDrawerRef" />
+    <vue-file ref="vueFileRef" />
   </div>
 </template>
 <route>
 {meta:{permissions:'none'}}
 </route>
 <script setup lang="ts">
-  import { reactive, ref, nextTick, onMounted, computed, provide } from 'vue'
+  import {reactive, ref, nextTick, onMounted, computed, onUnmounted} from 'vue'
   import HeadTools from '../components/headTools.vue'
-  import VueFile from '../components/vueFile.vue'
-  import AceDrawer from '../components/aceDrawer.vue'
+  import VueFile from '@/components/exportVue/index.vue'
+  import AceDrawer from '@/components/ace/drawer.vue'
   import Sortable from 'sortablejs'
-  import {
-    json2string,
-    objToStringify,
-    stringToObj
-  } from '@/utils/design'
-  import { getRequest } from '@/api'
-  import { useRouter, useRoute } from 'vue-router'
-  import { ElMessage } from 'element-plus'
-  import { useLayoutStore } from '@/store/layout'
-  import { getAceContent, getAceTitle } from '../../../components/ace/tooltip'
-  import ControlAttr from './components/controlAttr.vue'
-  import { getFormColumns, getInitData } from './components/request'
+  import {objToStringify} from '@/utils/design'
+  import {getRequest} from '@/api'
+  import {useRouter, useRoute} from 'vue-router'
+  import {ElMessage} from 'element-plus'
+  import {useLayoutStore} from '@/store/layout'
+  import PropertyPanel from './components/propertyPanel.vue'
+  import {getFormColumns, getInitData} from './components/request'
   import OperateBtn from '@/components/table/components/operateButton.vue'
-  import { mergeDefaultBtn } from '@/components/table/components/defaultBtn'
+  import {mergeDefaultBtn} from '@/components/table/components/defaultBtn'
+  import type {AceDrawerT} from "@/components/ace/type.ts";
+  import {setStorage} from "@/utils";
+  import {useDesignListStore} from "@/store/list";
+  import {storeToRefs} from "pinia";
+  import {tableOtherColumns} from "./components/const";
 
   const layoutStore = useLayoutStore()
-  layoutStore.changeBreadcrumb([{ label: '设计管理' }, { label: '列表页设计' }])
-  const vueFileEl = ref()
+  const designStore = useDesignListStore()
+  layoutStore.changeBreadcrumb([{label: '设计管理'}, {label: '列表页设计'}])
+  const vueFileRef = ref()
+  const aceDrawerRef = ref()
   const container = ref()
-  const routeQuery = useRoute().query
+  const {id, formId} = useRoute().query
   const router = useRouter()
+  const columnsCheckList = ref([])
   const state = reactive({
-    searchData: {},
     loading: false,
-    attrObj: {},
-    config: {},
-    previewVisible: false,
     tabsName: 'second',
     formFieldList: [], // 表单数据源所有可选字段
-    dict: {},
     refreshTable: true
   })
-  const tableData = ref({
-    tableProps: {}, // 表格所有参数
-    columns: [],
-    config: {
-      openType: 'page', // 页面打开方式
-      fixedBottomScroll: true,
-      columnsSetting: true,
-      expand: true
-    },
-    apiKey: {},
-    controlBtn: []
-  })
-  const stringTableData = ref()
-  provide('tableData', tableData)
-  const currentObj = ref({})
-  provide('currentObj', currentObj)
-  const drawer = reactive({
-    visible: false,
-    title: '',
-    direction: 'ltr',
-    content: '',
-    codeType: '',
-    type: ''
-  })
-
-  // 右侧边栏事件
-  const controlAttrChangeEvent = ({ type, value }: {
-    type: string
-    value: any
-  }) => {
-    if (type === 'formId') {
-      // 改变表单数据源时，重新加载可选表头信息
-      getFormColumns(value).then(({ data }) => {
-        state.formFieldList = data
-      })
-    } else if (type === 'openDrawer') {
-      // 打开编辑drawer
-      editOpenDrawer(value)
+  const tableColumns = ref([])
+  const searchFormData = ref([])
+  const {designColumns, designConfig, selectComponent} = storeToRefs(designStore)
+  const tableData = computed(() => {
+    return {
+      columns: designColumns.value,
+      config: designConfig.value
     }
+  })
+  const getActiveCls = (prop: string) => {
+    return prop && selectComponent.value.prop === prop ? 'active' : ''
   }
-
-  const drawerBeforeClose = () => {
-    drawer.visible = false
-    drawer.content = ''
-    drawer.codeType = ''
-    drawer.title = ''
-    drawer.type = ''
+  // 右侧边栏事件
+  const controlAttrChangeEvent = (params: AceDrawerT, id?: string | number) => {
+    if (params.key === 'formId') {
+      columnsCheckList.value = []
+      tableColumns.value = []
+      searchFormData.value = []
+      //清空原设计
+      clearStore()
+      // 改变表单数据源时，重新自动创建列列
+      if (id) {
+        ElMessage.warning('改变数据源，将自动创建数据列表')
+        autoBuildByFormId(id)
+      }
+    } else {
+      // 打开编辑drawer
+      openAceEditDrawer(params)
+    }
   }
 
   const fieldOptions = computed(() => {
     const formField = {
       label: '表单字段',
-      options: state.formFieldList
+      options: tableColumns.value
     }
     const temp = [
       {
         label: '其他字段',
-        options: [
-          {
-            label: '多选',
-            type: 'selection'
-          },
-          { label: '序号', type: 'index', width: '70px' },
-          { label: '操作' }
-        ]
+        options: tableOtherColumns
       }
     ]
-    if (state.formFieldList?.length) {
+    if (tableColumns.value?.length) {
       temp.unshift(formField)
     }
     return temp
@@ -322,55 +282,54 @@
 
   // 删除表头列字段
   const delCol = (row: any) => {
-    tableData.value.columns.forEach((item: any, index: number) => {
-      if (item.prop === row.prop) {
-        tableData.value.columns.splice(index, 1)
-      }
-    })
+    designColumns.value = designColumns.value.filter((item: any) => item.prop !== row.prop)
   }
   // 添加表头列
   const fieldSelectClick = (row: any, val: boolean) => {
     if (val) {
       // 先检查是否已存在
-      let has = false
-      tableData.value.columns.forEach((item: any) => {
-        if (
-            (item.prop && item.prop === row.prop)
-            || (item.type && item.type === row.type)
-        ) {
-          has = true
-        }
-      })
+      const has = designColumns.value.some((item: any) => item.prop === row.prop)
       if (!has) {
-        tableData.value.columns.push(row)
+        designStore.setDesignColumns(row, true)
       }
     } else {
-      tableData.value.columns.forEach((item: any, index: number) => {
-        if (item.prop === row.prop) {
-          tableData.value.columns.splice(index, 1)
-        }
-      })
+      delCol(row)
     }
   }
   const headToolClick = (type: string) => {
     switch (type) {
       case 'del':
         // 清空
-        tableData.value = JSON.parse(stringTableData.value)
-        state.selectField = []
-        currentObj.value = {}
+        designStore.setDesignColumns([])
+        designStore.setDesignConfig({})
+        designStore.setSelectComponent({})
+        searchFormData.value = []
         break
       case 'eye':
-        // 预览
-        state.previewVisible = true
+        // 打开预览窗口
+        const routeUrl = router.resolve({
+          path: '/design/list/list',
+        })
+        // 将数据存
+        setStorage('formPreviewData', objToStringify(tableData.value))
+        window.open(routeUrl.href, '_blank')
         break
       case 'json':
         // 生成脚本
-        editOpenDrawer('json')
+        openAceEditDrawer({
+          content: tableData.value,
+          title: '可编辑修改或将已生成的脚本粘贴进来',
+          callback: (content: Record<string, any> | string) => {
+            if (typeof content === 'object') {
+              designStore.setDesignColumns(content.columns)
+              designStore.setDesignConfig(content.config)
+            }
+          }
+        })
         break
       case 'vue':
         // 导出vue文件
-        vueFileEl.value.openTable(tableData.value)
+        vueFileRef.value.open({data: tableData.value, type: 'table'})
         break
       case 'save':
         // 保存
@@ -378,170 +337,51 @@
         break
     }
   }
-  const editOpenDrawer = (type: string) => {
-    const codeType = ''
-    let editData
-    let title = ''
-    let isString = false
-    let direction = 'ltr'
-    switch (type) {
-      case 'json': // 生成脚本
-        editData = tableData.value
-        direction = 'rtl'
-        break
-      case 'tableConfig':
-        title = 'el-table的相关属性'
-        editData = tableData.value.tableProps || {}
-        break
-      case 'before':
-      case 'after':
-        const newData: any = tableData.value.events || {}
-        editData = newData[type]
-        if (!editData) {
-          editData = getAceContent(type + 'Type', 'list')
-          isString = true
+  const editOpenDrawer = () => {
+    openAceEditDrawer({
+      content: designConfig.value.controlBtn,
+      title: '操作按钮列表，可使用内置key=add/edit/del/export快速设置按钮',
+      callback: (content: Record<string, any> | string) => {
+        if (typeof content === 'object') {
+          designConfig.value.controlBtn = content
         }
-        break
-      case 'treeProp':
-
-        editData = tableData.value.treeData || {}
-        if (Object.keys(editData).length === 1) {
-          editData = {
-            show: true,
-            treeProps: {}, // tree props
-            name: '唯一标识', // 唯一标识，用于
-            method: 'post'
-          }
-        }
-        title = '更多参数详见ak-list组件'
-        break
-      case 'treeBefore':
-        editData = tableData.value.treeData?.before
-        title = getAceTitle.before
-        if (!editData) {
-          editData = getAceContent('beforeType', 'tree')
-          isString = true
-        }
-        break
-      case 'treeAfter':
-        editData = tableData.value.treeData?.after
-        title = getAceTitle.after
-        if (!editData) {
-          editData = getAceContent('afterType', 'tree')
-          isString = true
-        }
-        break
-      case 'buttons':
-        editData = currentObj.value.buttons || []
-        title = '可设置多个操作按钮，可使用内置key=edit/del快速设置按钮'
-        break
-      case 'controlBtn':
-        editData = tableData.value.controlBtn
-        title = '操作按钮列表，可使用内置key=add/edit/del/export快速设置按钮'
-        break
-      case 'columns':
-        editData = currentObj.value || []
-        title = '支持el-table-column所有属性'
-        break
-      case 'renderFormatter':
-        editData = currentObj.value.renderFormatter
-        if (!editData) {
-          editData = getAceContent('renderFormatter')
-          isString = true
-        }
-        title = '渲染前对字段值的预处理方法，需返回新值'
-        break
-    }
-    switch (codeType) {
-      case 'json':
-        editData = json2string(editData, true)
-        break
-      default:
-        if (!isString) {
-          // before,after为空时，使用的默认值已经是字符串了，这里不用再次转换
-          editData = objToStringify(editData, true)
-        }
-    }
-    drawer.visible = true
-    drawer.direction = direction
-    drawer.title = title ? title : (getAceTitle as any)[type]
-    drawer.content = editData
-    drawer.codeType = codeType
-    drawer.type = type
+      }
+    })
+  }
+  const openAceEditDrawer = (params: AceDrawerT) => {
+    aceDrawerRef.value.open(params)
   }
 
-  const dialogConfirm = (content: string) => {
-    const val = stringToObj(content)
-    switch (drawer.type) {
-      case 'json':
-        tableData.value = val
-        break
-      case 'treeProp':
-        tableData.value.treeData = val
-        break
-      case 'buttons':
-        currentObj.value.buttons = val
-        break
-      case 'controlBtn':
-        tableData.value.controlBtn = val
-        break
-      case 'before':
-      case 'after':
-        if (!tableData.value.events) {
-          tableData.value.events = {}
-        }
-        tableData.value.events[drawer.type] = val
-        break
-      case 'tableConfig':
-        tableData.value.tableProps = val
-        break
-      case 'treeBefore':
-        tableData.value.treeData.before = val
-        break
-      case 'treeAfter':
-        tableData.value.treeData.after = val
-        break
-      case 'columns':
-        currentObj.value = val
-        break
-      case 'renderFormatter':
-        currentObj.value.renderFormatter = val
-        break
-    }
-    drawerBeforeClose()
-  }
-  const controlAttrEl = ref()
   const rowClick = (column: any) => {
-    currentObj.value = column
+    designStore.setSelectComponent(column)
     // 切换到字段属性
     state.tabsName = 'first'
-    controlAttrEl.value.rowChange()
   }
   const searchFormClick = () => {
-    if (!routeQuery.id) {
+    if (!id) {
       ElMessage.error('请先保存设计的列表')
       return
     }
     router.push({
       path: '/design/form',
       query: {
-        id: routeQuery.id,
+        id: id,
         type: 'search',
-        redirect: `/design/list?id=${routeQuery.id}`
+        redirect: `/design/list?id=${id}`
       }
     })
   }
   const columnDrop = () => {
     const wrapperTr = container.value.querySelector(
-        '.el-table__header-wrapper tr'
+      '.el-table__header-wrapper tr'
     )
     Sortable.create(wrapperTr, {
       animation: 180,
       delay: 0,
       onEnd: (evt: any) => {
-        const oldItem = tableData.value.columns[evt.oldIndex]
-        tableData.value.columns.splice(evt.oldIndex, 1)
-        tableData.value.columns.splice(evt.newIndex, 0, oldItem)
+        const oldItem = designColumns.value[evt.oldIndex]
+        designColumns.value.splice(evt.oldIndex, 1)
+        designColumns.value.splice(evt.newIndex, 0, oldItem)
         // 重染表格，否则点下面的设置对不上了
         state.refreshTable = false
         nextTick(() => {
@@ -554,103 +394,115 @@
     })
   }
   // 数据相关
-  // 根据所选择的表单获取当前设计的所有字段
-
   const saveData = () => {
-    const { formId, name } = tableData.value.config
-    const { list, del } = tableData.value.apiKey
+    const {formId, name, apiKey: {list, del} = {}} = designConfig.value
     if (!formId && (!list || !del)) {
       return ElMessage.error('请选择所属表单或配置接口url')
     }
     const params: any = {
       listData: objToStringify(tableData.value), // 列表数据
-      data: objToStringify(state.searchData) || '{}', // 搜索表单数据，搜索设置不在这里修改
+      data: objToStringify(searchFormData.value) || '{}', // 搜索表单数据，搜索设置不在这里修改
       source: formId,
       name: name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 2 // 1表单 2列表
     }
     let apiKey = 'designSave'
-    if (routeQuery.id) {
+    if (id) {
       // 编辑状态 当前记录id
-      Object.assign(params, { id: routeQuery.id })
+      Object.assign(params, {id: id})
       apiKey = 'designEdit'
     } else {
       params.status = 1 // 添加时默认启用
     }
     state.loading = true
     getRequest(apiKey, params)
-        .then(() => {
-          ElMessage({
-            message: '保存成功！',
-            type: 'success'
-          })
-          router.push({ path: '/design/list/list' })
-          state.loading = false
+      .then(() => {
+        ElMessage({
+          message: '保存成功！',
+          type: 'success'
         })
-        .catch((res: any) => {
-          ElMessage.error(res.message || '保存异常')
-          state.loading = false
-        })
+        router.push({path: '/design/list/list'})
+        state.loading = false
+      })
+      .catch((res: any) => {
+        ElMessage.error(res.message || '保存异常')
+        state.loading = false
+      })
   }
 
+  const clearStore = () => {
+    designStore.setSelectComponent({})
+    designStore.setDesignColumns([])
+    designStore.setDesignConfig({})
+  }
+  const getInit = () => {
+    if (!id) {
+      return
+    }
+    getInitData(id).then((data: any) => {
+        // 列表数据
+        const {columns, config} = data.tableData
+        designColumns.value = columns
+        designConfig.value = config
+        // search form
+        searchFormData.value = data.searchData
+        if (config.formId) {
+          // 根据选择的表单获取可供选择的表头
+          getFormColumns(config.formId).then(({columns}: any) => {
+            tableColumns.value = columns
+            //勾选默认表格字段
+            const newColumns = [...columns, ...tableOtherColumns]
+            const tableProps = new Set(designColumns.value.map((i: any) => i.prop)); //提取当前表格的所有表头prop
+            columnsCheckList.value = newColumns.filter((i: any) => tableProps.has(i.prop)).map((i: any) => i.prop);
+          })
+        }
+      }
+    )
+  }
+  const autoBuildByFormId = (id: string | number) => {
+    if (!id) {
+      return
+    }
+    getFormColumns(formId).then(({searchData, columns}: any) => {
+      const operate = [{
+        label: "操作",
+        prop: "operate",
+        render: "buttons",
+        config:
+          {
+            buttons: [
+              {
+                key: "edit"
+              },
+              {
+                key: "del"
+              }]
+          }
+      }]
+      const newColumns = [...columns, ...operate]
+      designStore.setDesignColumns(newColumns)
+      searchFormData.value = searchData
+      const config = {
+        formId: parseInt(formId),
+        controlBtn: [{key: 'add'}, {key: 'del'}]
+      }
+      designStore.setDesignConfig(config)
+      tableColumns.value = columns
+      // 默认全部选上
+      columnsCheckList.value = newColumns.map((item: any) => item.prop)
+    })
+  }
   // 数据相关结束
   onMounted(() => {
-    stringTableData.value = JSON.stringify(tableData.value) // 用于恢复初始值
     nextTick(() => {
       columnDrop()
     })
-    if (routeQuery.id) {
-      getInitData(routeQuery.id).then(
-          ({ tableData: tableData2, searchData, source, name }) => {
-            tableData.value = tableData2 // 列表数据
-            state.searchData = searchData // 搜索表单数据
-            if (tableData2.config.formId) {
-              // 根据选择的表单获取可供选择的表头
-              getFormColumns(source as number).then(({ data }) => {
-                state.formFieldList = data
-              })
-            }
-            tableData.value.config.name = name
-          }
-      )
-    }
+    getInit()
     // 从表单列表点创建列表，带有当前表单id，一键创建表单时
-    if (routeQuery.form) {
-       tableData.value.config.formId = routeQuery.form
-      getFormColumns(routeQuery.form).then(({ data, defaultSearch }) => {
-         tableData.value.columns = data
-        // 根据选择的表单获取可供选择的表头
-         state.formFieldList = JSON.parse(JSON.stringify(data))
-        // 添加上方及右侧按钮
-        tableData.value.controlBtn = [{ key: 'add' }, { key: 'del' }]
-        // 列表右侧操作按钮
-         tableData.value.columns.push({
-          label: '操作',
-          render: 'buttons',
-          config: {},
-          buttons: [
-            {
-              key: 'edit'
-            },
-            {
-              key: 'del',
-              render: 'confirm',
-              popConfirm:
-                  {
-                    title: '确认删除该记录吗？',
-                    confirmButtonText: '确认',
-                    cancelButtonText: '取消',
-                    confirmButtonType: 'danger'
-                  }
-            }]
-        })
-        // 默认条件查询
-         state.searchData = {
-          list: defaultSearch,
-          form: { size: 'default' },
-          config: { submitCancel: true }
-        }
-      })
-    }
+    autoBuildByFormId(formId)
+  })
+  onUnmounted(() => {
+    clearStore()
+    searchFormData.value = []
   })
 </script>

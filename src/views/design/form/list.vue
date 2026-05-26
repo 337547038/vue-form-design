@@ -133,7 +133,7 @@
             label: '一键创建列表',
             type: 'primary',
             click: (row: any) => {
-              router.push({ path: '/design/list', query: { form: row.id } })
+              router.push({ path: '/design/list', query: { formId: row.id } })
             }
           }
         ]

@@ -214,11 +214,6 @@
     aceDrawerRef.value.open(params)
   }
 
-  /*
-  // 搜索设计时左侧快速添加字段
-  const searchCheckField = (data: FormData) => {
-    formData.value.list.push(data)
-  }*/
   onMounted(() => {
     // 保持供右侧使用
     designStore.setDesignType(operateType.value)

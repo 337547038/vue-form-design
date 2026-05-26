@@ -1,7 +1,6 @@
-import type {Button} from "@/types/table";
-
-const defaultBtn: any = {
-  add: {
+export const uiType = ['primary', 'success', 'warning', 'danger', 'info']
+export const defaultBtn = [
+  {
     type: 'primary',
     label: '添加',
     tooltip: '',
@@ -9,7 +8,7 @@ const defaultBtn: any = {
     class: '',
     key: 'add'
   },
-  edit: {
+  {
     type: 'primary',
     label: '编辑',
     tooltip: '',
@@ -17,7 +16,7 @@ const defaultBtn: any = {
     class: '',
     key: 'edit'
   },
-  detail: {
+  {
     type: 'primary',
     tooltip: '',
     label: '查看',
@@ -25,7 +24,7 @@ const defaultBtn: any = {
     class: '',
     icon: 'Histogram'
   },
-  del: {
+  {
     render: 'confirm',
     type: 'danger',
     label: '删除',
@@ -39,7 +38,7 @@ const defaultBtn: any = {
       confirmButtonType: 'danger'
     }
   },
-  export: {
+  {
     type: 'primary',
     label: '导出',
     tooltip: '导出',
@@ -47,17 +46,14 @@ const defaultBtn: any = {
     class: '',
     key: 'export'
   }
-}
-export const getBtnOptions = (position = 'top') => {
-  const showList = position === 'top' ? ['add', 'edit', 'del', 'export'] : ['edit', 'detail', 'del']
-  return showList.map(key => ({
-    label: defaultBtn[key].label,
-    value: defaultBtn[key].key
-  }))
-}
-export const mergeDefaultBtn = (buttons: Button[]) => {
-  return buttons?.map((item: any) => {
-    const config = defaultBtn[item.key] || {}
-    return {...config, ...item}
-  })
-}
+]
+
+export const tableOtherColumns = [
+  {
+    label: '多选',
+    type: 'selection',
+    prop: 'selection'
+  },
+  {label: '序号', type: 'index', width: '70px', prop: 'index'},
+  {label: '操作', prop: 'operate'}
+]

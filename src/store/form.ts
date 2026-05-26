@@ -6,8 +6,12 @@ import SparkMD5 from "spark-md5";
 export const useDesignFormStore = defineStore('designForm', () => {
 // ============================================设计表单配置信息
   const designData = ref([])
-  const setDesignData = (data: Component[]) => {
-    return designData.value = data
+  const setDesignData = (data: Component[], push = false) => {
+    if (push) {
+      designData.value.push(data)
+    } else {
+      designData.value = data
+    }
   }
   const designConfig = ref({})
   const setDesignConfig = (data: Config) => {

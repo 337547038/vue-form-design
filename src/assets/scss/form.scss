@@ -102,7 +102,8 @@ $mainColor: #66b1ff;
     &.group-grid, &.group-tabs, &.group-card, &.group-flex, &.group-div, &.group-table {
       &:after {display: none}
     }
-    .drag{min-height: 50px;}
+
+    .drag {min-height: 50px;}
   }
 
   .group-inputSlot {
@@ -162,7 +163,8 @@ $mainColor: #66b1ff;
   .group-card, .group-table, .group-txt, .group-title, .group-flex, .group-tabs {margin-bottom: 15px}
 
   &.form-row-2, &.form-row-3, &.form-row-4 {
-    display: flex;flex-wrap: wrap;column-gap:15px;
+    display: flex;flex-wrap: wrap;column-gap: 15px;
+
     > .drag {display: flex;flex-wrap: wrap}
   }
 
@@ -190,6 +192,15 @@ $mainColor: #66b1ff;
   }
 }
 
+.ak-form-search {
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  padding-bottom: 0;
+  display: flex;
+
+  .el-form-item {margin-bottom: 12px;}
+  .submit-btn-group{width: auto!important;}
+}
 
 /*表格设计*/
 .design-table {
@@ -212,6 +223,8 @@ $mainColor: #66b1ff;
   }
 
   .main-table {padding: 10px 20px;
+
+    .active {color: #ff0000}
 
     .add-form {min-height: auto;display: flex;flex-wrap: wrap;justify-content: flex-start;
 
@@ -261,7 +274,7 @@ $mainColor: #66b1ff;
 }
 
 .table-field-list {
-  h3 {font-size: 14px}
+  h3 {font-size: 14px;padding: 10px 0}
 
   .item {margin-bottom: 20px}
 

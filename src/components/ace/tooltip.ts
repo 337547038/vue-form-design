@@ -13,8 +13,7 @@ export const getAceTitle = {
 
 const beforeTip: any = {
   form: '分获取表单数据和提交表单两种，可选fetch/submit。使用时需对type作判断区分获取和提交',
-  list: '分表格获取数据及删除等，可选fetch/submit/del/export。使用时需对type作判断区分获取和提交',
-  tree: '可选del'
+  list: '分表格获取数据及删除等，可选fetch/submit/del/export。使用时需对type作判断区分获取和提交'
 }
 export const getAceContent = (key: string, tips = '') => {
   switch (key) {

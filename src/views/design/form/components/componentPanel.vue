@@ -6,13 +6,15 @@
         快速选择表单字段
       </div>
       <div class="content">
-        <el-checkbox
-          v-for="item in formDataList"
-          :key="item.name"
-          @change="selectChange(item, $event)"
-        >
-          {{ item.formItem?.label }}
-        </el-checkbox>
+        <el-checkbox-group v-model="hasSelected">
+          <el-checkbox
+            v-for="item in formDataList"
+            :key="item.name"
+            :label="item.formItem?.label"
+            :value="item.name"
+            @change="selectChange(item, $event)"
+          />
+        </el-checkbox-group>
       </div>
     </div>
     <div
@@ -55,7 +57,7 @@
 <script lang="ts" setup>
   import controlListData from './controlList'
   import draggable from 'vuedraggable-es'
-  import {computed, ref, onMounted} from 'vue'
+  import {computed, ref, onMounted, nextTick} from 'vue'
   import {useRoute} from 'vue-router'
   import type {Component} from '@/types/form'
   import UseTemplate from './template.vue'
@@ -67,6 +69,7 @@
   const route = useRoute()
   const formDataList = ref([])
   // 默认搜索允许显示的字段
+  const hasSelected = ref([])
   const searchField = [
     'input',
     'radio',
@@ -76,8 +79,7 @@
     'timePicker',
     'inputNumber',
     'cascader',
-    'component',
-    'button'
+    'component'
   ]
   const isSearch = computed(() => {
     return designStore.designType === 'designSearch'
@@ -117,24 +119,31 @@
   // 筛选设计时左则勾选已有表单字段
   const forEachGetData = (data: Component[]) => {
     data.forEach((item: any) => {
-      if (item.type === 'grid' || item.type === 'tabs') {
+      if (['grid', 'tabs', 'card'].includes(item.type)) {
         item.columns.forEach((col: any) => {
           forEachGetData(col.list)
         })
-      } else if (item.type === 'card') {
+      } else if (item.type === 'div') {
         forEachGetData(item.list)
-      } else if (searchField.includes(item.type) && item.type !== 'button') {
+      } else if (searchField.includes(item.type)) {
         formDataList.value.push(item)
+        //判断当前字段是否已在设计列表中
+        const has = designStore.designData.some((s: any) => s.name === item.name)
+        if (has) {
+          hasSelected.value.push(item.name)
+        }
       }
     })
   }
   const selectChange = (obj: Component, val: boolean) => {
     if (val) {
       // 勾选时追加
-      /*const newObj = jsonParseStringify(obj)
-      delete newObj.rules
-      delete newObj.customRules*/
-
+      const newObj = jsonParseStringify(obj)
+      delete newObj.customRules
+      if (newObj.formItem.reules) {
+        delete newObj.formItem.reules
+      }
+      designStore.setDesignData(newObj, true)
     }
   }
   // 使用模板
@@ -144,9 +153,11 @@
   }
   onMounted(() => {
     // 设计搜索表单时加载
-    const {id} = route.query
-    if (isSearch.value && id) {
-      getFormField(id)
-    }
+    nextTick(() => {
+      const {id} = route.query
+      if (isSearch.value && id) {
+        getFormField(id)
+      }
+    })
   })
 </script>
