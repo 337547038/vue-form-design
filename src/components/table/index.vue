@@ -211,6 +211,7 @@
   import ExpandComp from './components/expand.vue'
   import {beforeAfter} from "@/utils/beforeAfter";
   import DialogForm from './components/dialogForm.vue'
+  import type {After, Before} from "@/types";
 
   defineOptions({name: 'AkList'})
   const props = withDefaults(
@@ -218,8 +219,8 @@
       data: TableData
       searchData?: FormData
       apiKey?: ApiKey
-      before?: string | ((params: any, obj: any) => any)
-      after?: string | ((res: any, obj: any) => any)
+      before?: Before
+      after?: After
       pagination?: { pageSize: number, current: number } | boolean
       fixedBottomScroll?: boolean
       query?: { [key: string]: any } // 一些附加的请求参数

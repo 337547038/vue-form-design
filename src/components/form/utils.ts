@@ -1,9 +1,9 @@
-import {formatNumber, objectToArray} from "@/utils/design.ts";
+import {formatNumber, objectToArray} from "@/utils/design";
 import type {Component} from "@/types/form";
 import {computed, inject} from "vue";
 import {debounce, getStorage} from "@/utils";
 import SparkMD5 from "spark-md5";
-import {beforeAfter} from "@/utils/beforeAfter.ts";
+import {beforeAfter} from "@/utils/beforeAfter";
 
 const store = () => {
   return inject('formStore')

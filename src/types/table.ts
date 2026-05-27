@@ -1,16 +1,5 @@
 import type {ButtonType, ButtonProps, PopconfirmProps, TableColumnCtx, TableProps} from 'element-plus/es'
-
-interface Other {
-  route: Record<string, any> | undefined
-  model: Record<string, any>
-  type?: string | undefined
-}
-
-type BeforeHook = (params: Record<string, any>, other?: Other) => any;
-type AfterHook = (result: any, isSuccess: boolean, type?: string | undefined) => any;
-export type Before = BeforeHook | string | undefined | null;
-export type After = AfterHook | string | undefined | null;
-
+import type {Before, After} from "@/types/index";
 export interface ApiKey {
   list?: string
   edit?: string
@@ -87,4 +76,3 @@ export interface TableData {
   config?: Config
 }
 
-export type EventType = 'switchChange' | 'getData' | 'del' | 'search' | 'export'

@@ -18,8 +18,8 @@ type RequestParams = {
   route?: Record<string, any> | undefined;
   formModel?: Record<string, any>;
   options?: Record<string, any>;
-  before?: BeforeHook | [MayBeHook, MayBeHook] | string;
-  after?: AfterHook | [MayBeHookA, MayBeHookA] | string;
+  before?: BeforeHook | [MayBeHook, MayBeHook] | string | undefined | null;
+  after?: AfterHook | [MayBeHookA, MayBeHookA] | string | undefined | null;
   type?: string | undefined;
 };
 
@@ -32,18 +32,18 @@ const executeBeforeHook = (
   if (!before) return deepCloneParams;
 
   if (typeof before === 'function') {
-    return before(deepCloneParams, other)??deepCloneParams;
+    return before(deepCloneParams, other) ?? deepCloneParams;
   }
 
   if (Array.isArray(before) && before.length === 2) {
     const [hook1, hook2] = before;
     let propsResult = deepCloneParams
     if (typeof hook1 === 'function') {
-      propsResult = hook1(deepCloneParams, other)??deepCloneParams;
+      propsResult = hook1(deepCloneParams, other) ?? deepCloneParams;
     }
     if (propsResult === false) return false;
     if (typeof hook2 === 'function') {
-      return hook2(jsonParseStringify(propsResult), other)??propsResult;
+      return hook2(jsonParseStringify(propsResult), other) ?? propsResult;
     }
     return propsResult
   }
@@ -130,21 +130,3 @@ export const beforeAfter = async (dataParams: RequestParams) => {
   }
 };
 
-
-/**
- * 返回当前事件，优先返回props的，否则返回里的 todo 移除
- * @param props
- * @param key
- * @return props[key]或props.data.config[key]
- */
-export const getRequestEvent = (props: any, key: string) => {
-  let event
-  const propsEvent = (props as any)[key]
-  const events: any = props.data.config
-  if (typeof propsEvent === 'function') {
-    event = propsEvent
-  } else if (events && typeof events[key] === 'function') {
-    event = events[key]
-  }
-  return event
-}

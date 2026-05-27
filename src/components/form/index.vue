@@ -51,14 +51,15 @@
   import {loadResource, removeResource} from "@/utils";
   import type {FormValueChange} from "@/types/form";
   import {storeToRefs} from "pinia";
+  import type {Before, After} from "@/types";
 
   defineOptions({name: 'AkForm'})
   const props = withDefaults(
     defineProps<{
       data: FormData
       disabled?: boolean // 禁用表单提交
-      before?: (params: Record<string, any>, obj: any) => any // 请求编辑数据前参数处理方法，可对请求参数处理
-      after?: (res: Record<string, any>, success: boolean, type: string) => any // 请求数据加载完成后数据处理方法，可对返回数据处理
+      before?: Before // 请求编辑数据前参数处理方法，可对请求参数处理
+      after?: After // 请求数据加载完成后数据处理方法，可对返回数据处理
       query?: { [key: string]: any } // 一些附加的请求参数。也可在`before`处添加
       params?: { [key: string]: any } // 提交表单一些附加参数
       submitUrl?: string // 表单提交url

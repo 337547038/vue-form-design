@@ -1,4 +1,5 @@
 import type {FormProps, FormItemProps} from 'element-plus/es'
+import type {Before, After} from "@/types/index";
 
 interface CustomRules {
   type: string
@@ -29,26 +30,20 @@ export interface Component {
   optionsFun?: string// optionsType=1时为接口url，2时为字典key
   label?: string // 接口数据时从数据哪个字段取label值
   value?: string//同上
-  before?: (params: Record<string, any>, other?: Other) => any
-  after?: string | ((res: Record<string, any>, success: boolean) => any)
+  //before?: (params: Record<string, any>, other?: Other) => any
+  before?: Before
+  after?: After
   linkage?: string // 用于实现级联，当前select组件关联的linkage改变时，重新加载数据
   method?: 'get' | 'post'
   cache?: boolean //是否缓存数据
-  [key:string]:any
+  [key: string]: any
 }
-
-interface Other {
-  type?: string
-  route?: Record<string, any> | undefined
-  model?: Record<string, any> | undefined
-}
-
 export interface Config {
   props?: FormProps // 绑定el-form相关参数
   submitCancel?: boolean // 显示提交取消按钮
   name?: string // 表单名称
-  before?: string | ((params: Record<string, any>, other: Other) => void)
-  after?: string | ((res: Record<string, any>, success: boolean, type: string) => void)
+  before?: Before
+  after?: After
   change?: (obj: Record<string, any>) => void
   transformData?: boolean // 将object转string提交
   size?: string // el-form的props值
