@@ -1,87 +1,199 @@
-<!-- Created by weiXin:337547038 -->
 <template>
   <div>
-    <div
-      v-for="(item,index) in designColumns"
-      :key="index"
+    <ak-list
+      ref="tableListRef"
+      :api-key="{list:'',del:''}"
+      :search-data="searchData"
+      :data="tableData"
+      @btn-click="listBtnClick"
     >
-      <div @click="testClick(item)" />
-    </div>
+      <ak-form
+        ref="formRef"
+        :data="formData"
+        :operate-type="operateType"
+        submit-url=""
+        :after="afterSubmit"
+        @btn-click="formBtnClick"
+      />
+    </ak-list>
   </div>
 </template>
+
 <script setup lang="ts">
-  import {storeToRefs} from "pinia";
-  import {computed, onMounted} from "vue";
-  import {useDesignListStore} from "@/store/list.ts";
+  import {nextTick, ref} from 'vue'
 
+  const formRef = ref()
+  const tableListRef = ref()
+  const closeFormFn = ref()
+  const operateType = ref('add')
 
-  const designStore = useDesignListStore()
-  const {designColumns, designConfig, selectComponent} = storeToRefs(designStore)
-  const tableData = computed(() => {
-    return {
-      columns: designColumns.value,
-      config: designConfig.value
-    }
+  const tableData = ref({
+    columns: [
+      {
+        prop: "text",
+        label: "文本",
+        help: ""
+      },
+      {
+        prop: "checkbox",
+        label: "性别",
+        help: ""
+      },
+      {
+        label: "操作",
+        prop: "operate",
+        render: "buttons",
+        buttons: [
+          {
+            key: "edit",
+            props:
+              {
+                size: "small"
+              }
+          },
+          {
+            key: "del",
+            props:
+              {
+                size: "small"
+              }
+          }]
+      }],
+    config:
+      {
+        name: "组件示例",
+        formId: 94,
+        controlBtn: [
+          {
+            key: "add"
+          },
+          {
+            key: "del"
+          }],
+        apiKey:
+          {
+            list: "list",
+            del: "del"
+          }
+      }
   })
 
-  const testClick = () => {
-    const a = {
-      label: "操作",
-      prop: "operate",
-      render: "switch",
-      config:
-        {
-          width: "100px"
-        }
+  const searchData = ref({
+    list: [
+      {
+        type: "input",
+        control:
+          {
+            modelValue: ""
+          },
+        name: "text",
+        formItem:
+          {
+            label: "文本"
+          }
+      },
+      {
+        type: "radio",
+        control:
+          {
+            modelValue: ""
+          },
+        name: "checkbox",
+        formItem:
+          {
+            label: "性别"
+          },
+        options: [
+          {
+            label: "男",
+            value: "1"
+          },
+          {
+            label: "女",
+            value: "2"
+          }],
+        optionsType: 0
+      }],
+    config:
+      {
+        submitCancel: true
+      }
+  })
+
+  const formData = ref({
+    list: [
+      {
+        type: "input",
+        control:
+          {
+            modelValue: ""
+          },
+        name: "text",
+        formItem:
+          {
+            label: "文本"
+          }
+      },
+      {
+        type: "radio",
+        control:
+          {
+            modelValue: ""
+          },
+        name: "checkbox",
+        formItem:
+          {
+            label: "性别"
+          },
+        options: [
+          {
+            label: "男",
+            value: "1"
+          },
+          {
+            label: "女",
+            value: "2"
+          }],
+        optionsType: 0
+      }],
+    config:
+      {
+        submitCancel: true
+      }
+  })
+
+  /**
+   * 列表按钮点击事件
+   * @param key 按钮标识
+   * @param row 列表右则操作按钮事件时为当前行数据；列表右上方按钮时为当前所勾选的行id
+   * @param close 用于关闭弹的方法
+   */
+  const listBtnClick = (key: string, row: any, close: any) => {
+    closeFormFn.value = close
+    if (key === 'edit') {
+      operateType.value = key
+      nextTick(() => {
+        formRef.value.getData({id: row.id})
+      })
     }
-    selectComponent.value = a
   }
-  onMounted(() => {
-    const opt = {
-      columns: [
-        {
-          prop: "text",
-          label: "文本",
-          help: ""
-        },
-        {
-          prop: "checkbox",
-          label: "性别",
-          help: ""
-        },
-        {
-          label: "操作",
-          prop: "operate",
-          render: "buttons",
-          buttons: [
-            {
-              key: "edit",
-              props:
-                {
-                  type: "danger",
-                  size: "small"
-                }
-            },
-            {
-              key: "del"
-            }]
-        }],
-      config:
-        {
-          formId: 94,
-          controlBtn: [
-            {
-              key: "add",
-              props:
-                {
-                  size: "small"
-                }
-            },
-            {
-              key: "del"
-            }]
-        }
+  // 关闭弹窗
+  const closeForm = () => {
+    closeFormFn.value && closeFormFn.value()
+  }
+  const afterSubmit = (_: any, success: boolean, type: string) => {
+    if (type === 'submit') {
+      if (success) {
+        // 添加成功，刷新列表数据并关闭弹窗
+        tableListRef.value.getListData()
+        closeForm()
+      }
     }
-    designStore.setDesignColumns(opt)
-  })
+  }
+
+  const formBtnClick = (type: string) => {
+    if (type === 'reset' || type === 'cancel') {
+      closeForm()
+    }
+  }
 </script>

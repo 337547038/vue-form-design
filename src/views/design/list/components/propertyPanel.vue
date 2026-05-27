@@ -133,9 +133,9 @@
           </el-form-item>
           <el-form-item label="导出列表URL">
             <el-input
-              v-model="apiKey.export"
+              v-model="apiKey.exportExcel"
               placeholder="一般不需要填写，使用默认值"
-              @input="tableListAttrChange('apiKey.export',$event)"
+              @input="tableListAttrChange('apiKey.exportExcel',$event)"
             />
           </el-form-item>
           <el-form-item class="event-btn">

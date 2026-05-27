@@ -503,7 +503,7 @@
   // 处理switch切换事件结束
   const exportClick = (ids: string[]) => {
     state.loading = true
-    const exportUrl = config.value.apiKey?.export || props.apiKey?.export
+    const exportUrl = config.value.apiKey?.exportExcel || props.apiKey?.exportExcel
     if (!exportUrl) {
       console.warn('请先配置apiKey.exportUrl')
       return

@@ -178,7 +178,7 @@ export const objectToArray = (obj: any): { [key: string | number]: any } => {
 }
 
 /**
- * 根据当前组数据返回一个标识，设计时用于当前选中标识
+ * 根据当前组数据返回一个标识，设计时用于当前选中标识 todo
  * @param item
  * @param index //type=grid下初始时item都是一样的
  */

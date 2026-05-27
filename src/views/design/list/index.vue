@@ -340,7 +340,7 @@
         break
       case 'vue':
         // 导出vue文件
-        vueFileRef.value.open({data: tableData.value, type: 'table'})
+        vueFileRef.value.open({data: tableData.value, type: 'list', search: searchFormData.value})
         break
       case 'save':
         // 保存
@@ -416,7 +416,7 @@
       source: formId,
       name: name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 2, // 1表单 2列表
-      dict: objToStringify(formDict.value) // 这里会存在表单修改了作为列表保存的字典时，列表不会自动更新
+      //dict: objToStringify(formDict.value) // 这里会存在表单修改了作为列表保存的字典时，列表不会自动更新
     }
     let apiKey = 'designSave'
     if (id) {
@@ -479,7 +479,7 @@
     if (!id) {
       return
     }
-    getFormColumns(formId).then(({searchData, columns, name, dict}: any) => {
+    getFormColumns(Number(id)).then(({searchData, columns, name, dict}: any) => {
       const operate = [{
         label: "操作",
         prop: "operate",
@@ -499,7 +499,7 @@
       searchFormData.value = searchData
       const config = {
         name: name,
-        formId: parseInt(formId),
+        formId: Number(id),
         controlBtn: [{key: 'add'}, {key: 'del'}]
       }
       designStore.setDesignConfig(config)

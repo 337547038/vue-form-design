@@ -140,7 +140,7 @@ el-table-column的其他所有属性，如prop、label等
 ### -编辑接口数据请求接口
 `data.apiKey.edit`
 ### -导出数据请求接口
-`data.apiKey.export`
+`data.apiKey.exportExcel`
 
 ## Event事件
 ### -before
