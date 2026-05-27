@@ -194,12 +194,12 @@ $mainColor: #66b1ff;
 
 .ak-form-search {
   flex-wrap: wrap;
-  margin-bottom: 10px;
   padding-bottom: 0;
   display: flex;
 
   .el-form-item {margin-bottom: 12px;}
   .submit-btn-group{width: auto!important;}
+  .group{margin-right: 10px;}
 }
 
 /*表格设计*/
@@ -309,7 +309,7 @@ $mainColor: #66b1ff;
     }
   }
 
-  .table-search {position: relative;
+  .table-search {position: relative;border-bottom: 1px solid #ddd;margin-bottom: 10px;
 
     .drag {display: flex;flex-wrap: wrap;}
 

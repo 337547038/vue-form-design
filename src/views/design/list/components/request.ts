@@ -8,8 +8,8 @@ export const getInitData = (id: string) => {
       const result = res.data
       const tableData = stringToObj(result.listData) // 列表数据
       const searchData = stringToObj(result.data) // 搜索表单数据
-      const dict = string2json(result.dict)
-      resolve({tableData, searchData, dict, source: result.source, name: result.name})
+      const dict = string2json(result.dict) // todo
+      resolve({tableData, searchData, dict, name: result.name})
     })
   })
 }
@@ -36,7 +36,7 @@ export const getFormColumns = (id: number) => {
     getRequest('designById', {id: id}).then(
         (res: any) => {
           const content = stringToObj(res.data.data)
-          resolve(getFilterData(content.list))
+          resolve({...getFilterData(content), ...{name: res.data.name, dict: stringToObj(res.data.dict)}})
         }
     )
   })
@@ -45,13 +45,13 @@ const includeType = ['input', 'radio', 'checkbox', 'select', 'switch', 'datePick
 const getFilterData = (obj: any) => {
   const searchDataList: any = [] // 用于搜索表单
   const columns: any = []//用于表头
-  obj?.forEach((item: any) => {
+  obj.list?.forEach((item: any) => {
     if (['grid', 'tabs', 'card'].includes(item.type)) {
       item.columns.forEach((col: any) => {
-        getFilterData(col.list)
+        getFilterData(col)
       })
     } else if (['div'].includes(item.type)) {
-      getFilterData(item.list)
+      getFilterData(item)
     } else if (includeType.includes(item.type) && item.name && item.formItem?.label) {
       delete item.customRules // 删除校验
       if (item.formItem.rules) {

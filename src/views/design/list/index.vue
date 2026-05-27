@@ -165,6 +165,7 @@
                     </el-tag>
                     <operate-btn
                       v-else-if="item.render === 'buttons'"
+                      class="btn-group"
                       :buttons="mergeDefaultBtn(item.buttons)"
                       :row="{}"
                     />
@@ -184,8 +185,8 @@
         </div>
       </div>
       <property-panel
-        ref="controlAttrEl"
         v-model:tabs-name="state.tabsName"
+        :all-dict="allDict"
         @change-event="controlAttrChangeEvent"
       />
     </div>
@@ -212,7 +213,7 @@
   import OperateBtn from '@/components/table/components/operateButton.vue'
   import {mergeDefaultBtn} from '@/components/table/components/defaultBtn'
   import type {AceDrawerT} from "@/components/ace/type.ts";
-  import {setStorage} from "@/utils";
+  import {getStorage, setStorage} from "@/utils";
   import {useDesignListStore} from "@/store/list";
   import {storeToRefs} from "pinia";
   import {tableOtherColumns} from "./components/const";
@@ -232,6 +233,15 @@
     formFieldList: [], // 表单数据源所有可选字段
     refreshTable: true
   })
+  const globalDict = computed(() => {
+    return getStorage('akAllDict')
+  })
+  const formDict = ref({})//设计表单时保持的字典
+  //返回所有可用的字典key
+  const allDict = computed(() => {
+    const mergedObj = {...globalDict.value, ...formDict.value};
+    return Object.keys(mergedObj)
+  })
   const tableColumns = ref([])
   const searchFormData = ref([])
   const {designColumns, designConfig, selectComponent} = storeToRefs(designStore)
@@ -241,6 +251,7 @@
       config: designConfig.value
     }
   })
+
   const getActiveCls = (prop: string) => {
     return prop && selectComponent.value.prop === prop ? 'active' : ''
   }
@@ -404,7 +415,8 @@
       data: objToStringify(searchFormData.value) || '{}', // 搜索表单数据，搜索设置不在这里修改
       source: formId,
       name: name || '未命名列表', // 表单名称，用于在显示所有已创建的表单列表里显示
-      type: 2 // 1表单 2列表
+      type: 2, // 1表单 2列表
+      dict: objToStringify(formDict.value) // 这里会存在表单修改了作为列表保存的字典时，列表不会自动更新
     }
     let apiKey = 'designSave'
     if (id) {
@@ -443,17 +455,21 @@
         // 列表数据
         const {columns, config} = data.tableData
         designColumns.value = columns
+        if (!config.name) {
+          config.name = data.name
+        }
         designConfig.value = config
         // search form
         searchFormData.value = data.searchData
         if (config.formId) {
           // 根据选择的表单获取可供选择的表头
-          getFormColumns(config.formId).then(({columns}: any) => {
+          getFormColumns(config.formId).then(({columns, dict}: any) => {
             tableColumns.value = columns
             //勾选默认表格字段
             const newColumns = [...columns, ...tableOtherColumns]
             const tableProps = new Set(designColumns.value.map((i: any) => i.prop)); //提取当前表格的所有表头prop
             columnsCheckList.value = newColumns.filter((i: any) => tableProps.has(i.prop)).map((i: any) => i.prop);
+            formDict.value = dict
           })
         }
       }
@@ -463,23 +479,26 @@
     if (!id) {
       return
     }
-    getFormColumns(formId).then(({searchData, columns}: any) => {
+    getFormColumns(formId).then(({searchData, columns, name, dict}: any) => {
       const operate = [{
         label: "操作",
         prop: "operate",
         render: "buttons",
         buttons: [
           {
-            key: "edit"
+            key: "edit",
+            props: {size: 'small'}
           },
           {
-            key: "del"
+            key: "del",
+            props: {size: 'small'}
           }]
       }]
       const newColumns = [...columns, ...operate]
       designStore.setDesignColumns(newColumns)
       searchFormData.value = searchData
       const config = {
+        name: name,
         formId: parseInt(formId),
         controlBtn: [{key: 'add'}, {key: 'del'}]
       }
@@ -487,6 +506,7 @@
       tableColumns.value = columns
       // 默认全部选上
       columnsCheckList.value = newColumns.map((item: any) => item.prop)
+      formDict.value = dict
     })
   }
   // 数据相关结束

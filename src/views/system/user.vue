@@ -29,10 +29,10 @@
 </template>
 
 <script setup>
-  import { useRoute } from 'vue-router'
-  import { nextTick, onMounted, reactive, ref } from 'vue'
-  import { jsonParseStringify } from '@/utils/design'
-  import { flatToTree } from '@/utils/flatTree'
+  import {useRoute} from 'vue-router'
+  import {nextTick, onMounted, reactive, ref} from 'vue'
+  import {jsonParseStringify} from '@/utils/design'
+  import {flatToTree} from '@/utils/flatTree'
 
   const route = useRoute()
   const tableListEl = ref()
@@ -47,7 +47,6 @@
           modelValue: '',
           placeholder: '请输入登录名称'
         },
-        config: {},
         name: 'userName',
         formItem: {
           label: '登录名称'
@@ -59,7 +58,6 @@
           modelValue: '',
           placeholder: '请输入昵称'
         },
-        config: {},
         name: 'nickName',
         formItem: {
           label: '昵称'
@@ -71,7 +69,6 @@
           modelValue: '',
           placeholder: '请输入手机号码'
         },
-        config: {},
         name: 'phone',
         formItem: {
           label: '手机号'
@@ -81,14 +78,11 @@
         type: 'select',
         control: {
           modelValue: '',
-          style: { width: '100px' }
+          style: {width: '100px'}
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-          // transformData: 'string'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '用户状态'
@@ -97,41 +91,36 @@
       {
         type: 'select',
         control: {
-          modelValue: [],
-          style: { width: '100px' }
+          modelValue: '',
+          style: {width: '100px'}
         },
         options: [],
-        config: {
-          optionsType: 1,
-          optionsFun: 'roleList', // 可以为url也可以为api中的key
-          method: 'post',
-          label: 'name', // 指定name为label的值
-          value: 'id' // 指定id为value的值
-        },
+        optionsType: 1,
+        optionsFun: 'roleList', // 可以为url也可以为api中的key
+        method: 'post',
+        label: 'name', // 指定name为label的值
+        value: 'id', // 指定id为value的值,
         name: 'roleId',
         formItem: {
           label: '角色'
         }
       }
     ],
-    form: {
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: {submitCancel: true, size: 'default'}
   })
   const tableData = ref({
     columns: [
-      { label: '多选', type: 'selection' },
-      { label: '序号', type: 'index', width: '70px' },
-      { label: '登录名称', prop: 'userName' },
-      { label: '昵称', prop: 'nickName' },
-      { label: '手机号码', prop: 'phone' },
+      {label: '多选', type: 'selection', prop: 'selection'},
+      {label: '序号', type: 'index', width: '70px', prop: 'index'},
+      {label: '登录名称', prop: 'userName'},
+      {label: '昵称', prop: 'nickName'},
+      {label: '手机号码', prop: 'phone'},
       /* { label: '角色', prop: 'roleId' }, */
       {
         label: '状态',
         prop: 'status',
         render: 'tag',
-        custom: { 1: 'success', 0: 'info' },
+        custom: {1: 'success', 0: 'info'},
         replaceValue: 'sys-status'
       },
       {
@@ -141,40 +130,43 @@
       },
       {
         label: '操作', prop: '__control', render: 'buttons', buttons: [
-          { label: '编辑', key: 'edit' },
-          { label: '删除', key: 'del' }
+          {label: '编辑', key: 'edit'},
+          {label: '删除', key: 'del'}
         ]
       }
     ],
-    config: { openType: 'dialog', searchJump: true },
-    controlBtn: [
-      {
-        label: '新增',
-        key: 'add',
-        type: 'primary',
-        size: 'small',
-        icon: 'plus'
-      },
-      {
-        label: '批量删除',
-        key: 'del',
-        type: 'danger',
-        size: 'small',
-        icon: 'delete'
-      }
-    ],
-    treeData: {
-      show: true,
-      treeProps: {
-        nodeKey: 'id',
-        props: {
-          label: 'name'
+    config: {
+      openType: 'dialog',
+      searchJump: true,
+      controlBtn: [
+        {
+          label: '新增',
+          key: 'add',
+          type: 'primary',
+          size: 'small',
+          icon: 'plus'
+        },
+        {
+          label: '批量删除',
+          key: 'del',
+          type: 'danger',
+          size: 'small',
+          icon: 'delete'
         }
-      },
-      name: 'department',
-      method: 'post',
-      requestUrl: 'deptList',
-      after: afterFetch
+      ],
+      treeData: {
+        show: true,
+        treeProps: {
+          nodeKey: 'id',
+          props: {
+            label: 'name'
+          }
+        },
+        name: 'department',
+        method: 'post',
+        requestUrl: 'deptList',
+        after: afterFetch
+      }
     }
   })
   const formEl = ref()
@@ -186,7 +178,6 @@
           modelValue: '',
           placeholder: '请输入用户名称'
         },
-        config: {},
         name: 'userName',
         formItem: {
           label: '用户名称'
@@ -205,7 +196,6 @@
           modelValue: '',
           placeholder: '请输入用户昵称'
         },
-        config: {},
         name: 'nickName',
         formItem: {
           label: '用户昵称'
@@ -217,7 +207,6 @@
           modelValue: '',
           placeholder: '请输入登录密码'
         },
-        config: {},
         name: 'password',
         formItem: {
           label: '登录密码'
@@ -232,8 +221,7 @@
       },
       {
         type: 'password',
-        control: { modelValue: '', placeholder: '请输入确认登录密码' },
-        config: {},
+        control: {modelValue: '', placeholder: '请输入确认登录密码'},
         name: 'password2',
         formItem: {
           label: '确认密码',
@@ -270,7 +258,6 @@
           modelValue: '',
           placeholder: '请输入手机号码'
         },
-        config: {},
         name: 'phone',
         formItem: {
           label: '手机号码'
@@ -311,13 +298,11 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 1,
-          optionsFun: 'postList', // 可以为url也可以为api中的key
-          method: 'post',
-          label: 'name', // 指定name为label的值
-          value: 'id', // 指定id为value的值
-        },
+        optionsType: 1,
+        optionsFun: 'postList', // 可以为url也可以为api中的key
+        method: 'post',
+        label: 'name', // 指定name为label的值
+        value: 'id', // 指定id为value的值,
         name: 'post',
         formItem: {
           label: '岗位'
@@ -329,10 +314,8 @@
           modelValue: 1
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '状态'
@@ -345,14 +328,11 @@
           multiple: true
         },
         options: [],
-        config: {
-          optionsType: 1,
-          optionsFun: 'roleList', // 可以为url也可以为api中的key
-          method: 'post',
-          label: 'name', // 指定name为label的值
-          value: 'id', // 指定id为value的值
-          // transformData: 'string'
-        },
+        optionsType: 1,
+        optionsFun: 'roleList', // 可以为url也可以为api中的key
+        method: 'post',
+        label: 'name', // 指定name为label的值
+        value: 'id', // 指定id为value的值,
         name: 'roleId',
         formItem: {
           label: '角色'
@@ -363,22 +343,17 @@
         control: {
           modelValue: ''
         },
-        config: {
-          span: 24
-        },
+        span: 24,
         name: 'remark',
         formItem: {
           label: '备注'
         }
       }
     ],
-    form: {
-      size: 'default',
+    config: {submitCancel: true,size: 'default',
       class: 'form-row-2',
       labelWidth: '100px',
-      name: 'userForm'
-    },
-    config: { submitCancel: true }
+      name: 'userForm'}
   })
   const dialog = reactive({
     visible: false,
@@ -450,7 +425,7 @@
   onMounted(() => {
     if (route.query.roleId) {
       // 根据url参数设置查询表单初始值
-      tableListEl.value.setSearchFormValue({ roleId: parseInt(route.query.roleId) })
+      tableListEl.value.setSearchFormValue({roleId: parseInt(route.query.roleId)})
     }
     // 等查询表单设值完整后，再加载列表数据，这样便可获取到查询条件
     nextTick(() => {

@@ -30,55 +30,25 @@
           </ak-form>
         </Transition>
       </div>
-      <slot />
       <div class="control-btn">
         <div class="control-btn-group">
           <operate-button
-            v-if="data.controlBtn?.length"
+            v-if="data.config?.controlBtn?.length"
             position="top"
             :row="state.selectionChecked"
-            :buttons="mergeDefaultBtn(data.controlBtn)"
+            :buttons="mergeDefaultBtn(data.config.controlBtn)"
             @click="btnClick"
           />
           <slot name="controlBtn" />
         </div>
-        <div class="control-other">
-          <el-button-group>
-            <el-button
-              v-if="searchFormExpand"
-              circle
-              icon="Search"
-              title="展开/收起筛选"
-              @click="state.searchFormDown = !state.searchFormDown"
-            />
-            <el-popover
-              v-if="columnsSetting"
-              :width="80"
-              placement="bottom-end"
-              trigger="click"
-              @hide="popoverHideClick"
-              @show="popoverShowClick"
-            >
-              <template #default>
-                <el-checkbox-group v-model="state.columnsCheck">
-                  <el-checkbox
-                    v-for="item in data.columns"
-                    :key="item.prop || item.type"
-                    :value="item.prop || item.type"
-                    :label="item.label"
-                  />
-                </el-checkbox-group>
-              </template>
-              <template #reference>
-                <el-button
-                  circle
-                  icon="SetUp"
-                  title="设置列显示隐藏"
-                />
-              </template>
-            </el-popover>
-          </el-button-group>
-        </div>
+        <expand-comp
+          :id="route.path"
+          v-model="state.columnsCheck"
+          :search-form-toggle="searchFormExpand"
+          :columns-setting="columnsSetting"
+          :columns="data.columns"
+          @toggle-click="state.searchFormDown = !state.searchFormDown"
+        />
       </div>
       <div
         v-if="columnsFilter?.length"
@@ -178,7 +148,7 @@
                     class="btn-group"
                     :row="scope.row"
                     :buttons="mergeDefaultBtn(item.buttons, 'right')"
-                    :dropdown="props.data.config?.operateDropdown"
+                    :dropdown="config.operateDropdown"
                     @click="tableBtnClick(scope.row, $event)"
                   />
                 </template>
@@ -208,6 +178,14 @@
       />
     </div>
   </div>
+  <dialog-form
+    v-if="isDialogForm"
+    v-model="state.formVisible"
+    :width="config.width"
+    :title="state.formTitle"
+  >
+    <slot />
+  </dialog-form>
 </template>
 
 <script lang="ts" setup>
@@ -220,19 +198,21 @@
     ref,
     watch
   } from 'vue'
-  import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+  import {onBeforeRouteLeave, useRoute, useRouter} from 'vue-router'
   import Tooltip from '@/components/tooltip/index.vue'
-  import type { FormData } from '@/types/form'
-  import type { TableData, ApiKey } from '@/types/table'
-  import { dateFormatting, getStorage } from '@/utils'
+  import type {FormData} from '@/types/form'
+  import type {TableData, ApiKey} from '@/types/table'
+  import {dateFormatting, getStorage} from '@/utils'
   import ListTreeSide from './treeSide.vue'
-  import { useDesignStore } from '@/store/design'
-  import { useEventListener } from '@/utils/useEvent'
+  import {useEventListener} from '@/utils/useEvent'
   import OperateButton from './components/operateButton.vue'
-  import * as request from './components/request'
-  import { mergeDefaultBtn } from './components/defaultBtn'
-  import { ElMessage } from 'element-plus'
-  defineOptions({ name: 'AkList' })
+  import {mergeDefaultBtn} from './components/defaultBtn'
+  import {ElMessage} from 'element-plus'
+  import ExpandComp from './components/expand.vue'
+  import {beforeAfter} from "@/utils/beforeAfter";
+  import DialogForm from './components/dialogForm.vue'
+
+  defineOptions({name: 'AkList'})
   const props = withDefaults(
     defineProps<{
       data: TableData
@@ -245,10 +225,11 @@
       query?: { [key: string]: any } // 一些附加的请求参数
       autoLoad?: boolean // 初始时自动请求加载数据
       pk?: string // 主键
+      dict?: Record<string, any> | undefined
     }>(),
     {
       searchData: () => {
-        return { list: [], form: {} }
+        return {list: [], form: {}}
       },
       apiKey: () => {
         return {}
@@ -269,70 +250,72 @@
       before: () => {
       },
       after: () => {
-      }
+      },
+      dict: null
     }
   )
   const emits = defineEmits<{
     (e: 'selectionChange', row: any): void
-    (e: 'btnClick', key: string, row?: any): void // 列表上面及表格列表里添加删除按钮事件
+    (e: 'btnClick', key: string, row?: any, close?: () => void): void // 列表上面及表格列表里添加删除按钮事件
   }>()
-  const designStore = useDesignStore()
   const route = useRoute()
   const router = useRouter()
   const container = ref()
   const searchFormEl = ref()
   const table = ref()
   const tableDataList = ref([]) // 表格行数据
+
+  const pk = computed(() => {
+    return props.data.pk || props.pk
+  })
+  const config = computed(() => {
+    return props.data.config || {}
+  })
+  const treeData = computed(() => {
+    return config.value.treeData || {}
+  })
   const state = reactive({
     loading: false,
     currentPage: 1,
     pageSize:
-      parseInt(props.data.config?.pageSize) || props.pagination?.pageSize,
+      parseInt(config.value.pageSize) || props.pagination?.pageSize,
     total: 0,
     selectionChecked: [],
-    dict: {}, // 接口返回的
     searchFormDown: false,
     treeValue: {}, // 侧栏树选中的值
     tableScrollMargin: 0,
-    columnsCheck: designStore.getColumnsCheck(route.path),
-    currentNodeKey: ''
-  })
-  const pk = computed(() => {
-    return props.data.pk || props.pk
-  })
-  const treeData = computed(() => {
-    return props.data.treeData || {}
+    columnsCheck: [],
+    currentNodeKey: '',
+    formVisible: false,
+    formTitle: '',
+    dict: {}
   })
   // 可折叠查询表单
   const searchFormExpand = computed(() => {
-    return props.searchData?.list?.length && props.data.config?.expand
+    return props.searchData?.list?.length && config.value.expand
   })
-  // 查询点击是否跳转
-  const searchJump = computed(() => {
-    return props.data.config?.searchJump
+  // 列显示隐藏设置
+  const columnsSetting = computed(() => {
+    return config.value.columnsSetting ?? true
+  })
+  const isFixedBottomScroll = computed(() => {
+    // 如果数据里没配置，则使用props
+    const fbs = config.value.fixedBottomScroll
+    return fbs ?? props.fixedBottomScroll
   })
   const columnsFilter = computed(() => {
     if (!state.columnsCheck?.length) {
       return props.data.columns
     } else {
-      return props.data.columns.filter((item: any) => {
-        return state.columnsCheck.includes(item.prop || item.type)
+      return props.data.columns?.filter((item: any) => {
+        return state.columnsCheck.includes(item.prop)
       })
     }
-  })
-  // 列显示隐藏设置
-  const columnsSetting = computed(() => {
-    return props.data.config?.columnsSetting ?? true
   })
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
     const storage = getStorage('akAllDict')
-    return Object.assign(storage || {}, state.dict) || {}
-  })
-  const isFixedBottomScroll = computed(() => {
-    // 如果数据里没配置，则使用props
-    const fbs = props.data.config?.fixedBottomScroll
-    return fbs ?? props.fixedBottomScroll
+    return Object.assign(storage || {}, props.dict, state.dict) || {}
   })
 
   // 搜索表单的值
@@ -343,52 +326,225 @@
       state.treeValue
     )
   })
-  // 数据处理开始
+  const isDialogForm = computed(() => {
+    return config.value.openType === 'dialog'
+  })
+
+  //点击按钮弹出表单窗口时，同时传递关闭方法
+  const closeFormDialog = () => {
+    state.formVisible = false
+  }
+  // 列表右侧按钮事件，处理预设key的内置事件
+  const tableBtnClick = (row: any, key: string) => {
+    if (key === 'del' && pk.value) {
+      delClick([row[pk.value]])
+    }
+    if (['detail', 'edit'].includes(key) && isDialogForm.value) {
+      //使用弹窗口表单时
+      state.formVisible = true
+      state.formTitle = '编辑/查看'
+    }
+    emits('btnClick', key, row, closeFormDialog)
+  }
+  // 表格上方操作按钮事件，处理预设key的内置事件
+  const btnClick = (key: string) => {
+    const ids = state.selectionChecked.map((item: any) => item[pk.value])
+    if (key === 'del' && state.selectionChecked && pk.value) {
+      delClick(ids)
+    } else if (key === 'export') {
+      exportClick(ids)
+    } else if (key === 'edit') {
+      if (ids?.length > 1) {
+        return ElMessage({
+          message: '每次只能编辑一条数据',
+          type: 'warning'
+        })
+      }
+      if (isDialogForm.value) {
+        state.formVisible = true //打出弹窗暂不处理数据
+        state.formTitle = '编辑'
+      }
+      emits('btnClick', key, {[pk.value]: ids[0]}, closeFormDialog)
+    } else if (key === 'add' && isDialogForm.value) {
+      state.formVisible = true //打出弹窗
+      state.formTitle = '新增'
+    }
+    emits('btnClick', key, ids, closeFormDialog)
+  }
+
+  // 处理操作按钮结束
+  // ===========================================数据处理开始
   // 筛选查询列表数据
   const getListData = (page?: number) => {
     state.loading = true
-    request
-      .getData({
-        props,
-        state,
-        page,
-        searchFormValue: searchFormValue.value,
-        route
-      })
-      .then((data: any) => {
+    const getUrl = config.value.apiKey?.list || props.apiKey?.list
+    if (!getUrl) {
+      console.warn(new Error('请先设置请求apiKey.list'))
+      state.loading = false
+      return
+    }
+    if (page) {
+      state.currentPage = page
+    }
+    // 筛选查询一般不存在校验，这里直接取值
+    const formValue = searchFormValue.value || {}
+    const {orderSort, before, after} = config.value
+    const params = {
+      extend: {
+        sort: orderSort,
+        pageSize: state.pageSize,
+        pageNum: state.currentPage
+      },
+      query: Object.assign({}, formValue, props.query)
+    }
+    beforeAfter({
+      apiKey: getUrl,
+      params: params,
+      before: [props.before, before],
+      after: [props.before, after],
+      route: route,
+      type: 'fetch'
+    })
+      .then((res: any) => {
+        const data = res.data
         tableDataList.value = data?.list || data
         // 预防返回的data={}时
-        if(Object.keys(data).length === 0 && data.constructor === Object){
-          tableDataList.value=[]
+        if (Object.keys(data).length === 0 && data.constructor === Object) {
+          tableDataList.value = []
         }
+        state.dict = data.dict || {}
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false
         }, 200)
+        state.total = data.total || 0
       })
       .catch(() => {
+        state.total = 0
+        state.loading = false
         tableDataList.value = []
       })
   }
   // 删除 idList支持多个 ,params为附近参数
   const delClick = (idList: string | number | string[]) => {
-    request
-      .del({ idList, pk: pk.value, props, state, route })
-      .then(() => {
+    state.loading = true
+    const delUrl = config.value.apiKey?.del || props.apiKey?.del
+    if (!pk.value) {
+      console.warn('请配置主键pk')
+      return
+    }
+    const delParams = {
+      [pk.value]: idList.toString() // 多个时转字符串
+    }
+    if (!delUrl) {
+      console.warn('请先配置apiKey.del')
+      return
+    }
+    const {before, after} = config.value
+    beforeAfter({
+      apiKey: delUrl,
+      params: delParams,
+      before: [props.before, before],
+      after: [props.before, after],
+      route: route,
+      type: 'del'
+    })
+      .then((res: any) => {
+        state.loading = false
+        ElMessage.success(res.message || '删除成功')
         getListData() // 请求列表数据
       })
-      .catch(() => {
+      .catch((res: { message: string, code: string | number }) => {
+        state.loading = false
+        ElMessage.error(res.message || '删除失败')
         getListData() // 不管什么情况都刷新下请求列表数据
+      })
+  }
+  // 处理switch切换事件
+  const switchLoading = ref(false)
+  const oldVal = ref(undefined) // 修改前的值
+  const switchBeforeChange = (val: number | string | boolean) => {
+    oldVal.value = val
+    return true
+  }
+  const switchChange = (val: string | number | boolean, obj: any, row: any) => {
+    // 提交修改，这里通过请求数据再使用v-bind绑定参数，初始时也会触发change,但没有触发beforeChange
+    if (oldVal.value === undefined) {
+      return
+    }
+    const apiKey = config.value.apiKey?.edit || props.apiKey?.edit
+    if (!apiKey) {
+      console.warn('请先配置apiKey.edit')
+      row[obj.prop] = oldVal // 回退状态
+      return
+    }
+    switchLoading.value = true
+    const data: any = Object.assign({}, {[pk.value]: row[pk.value], [obj.prop]: val})
+    const {before, after} = config.value
+    beforeAfter({
+      apiKey: apiKey,
+      params: data,
+      before: [props.before, before],
+      after: [props.before, after],
+      type: 'submit'
+    })
+      .then((res: any) => {
+        switchLoading.value = false
+        // 修改成功，不刷新更新值
+        row[obj.prop] = val
+        ElMessage.success(res.message || '操作成功')
+      })
+      .catch(() => {
+        // 修改失败，回退状态
+        row[obj.prop] = oldVal // 回退状态
+        switchLoading.value = false
+      })
+  }
+  // 处理switch切换事件结束
+  const exportClick = (ids: string[]) => {
+    state.loading = true
+    const exportUrl = config.value.apiKey?.export || props.apiKey?.export
+    if (!exportUrl) {
+      console.warn('请先配置apiKey.exportUrl')
+      return
+    }
+    const {before, after} = config.value
+    beforeAfter({
+      apiKey: exportUrl,
+      params: {
+        [pk.value]: ids.toString() // 多个时转字符串
+      },
+      before: [props.before, before],
+      after: [props.before, after],
+      route: route, // 为方便需要从路由获取参数提供便利
+      type: 'export',
+      options: {responseType: 'blob'}
+    })
+      .then((res: any) => {
+        state.loading = false
+        const {data, headers} = res.data
+        const filename: string = decodeURI(
+          headers['content-disposition']?.split(';')[1]?.split('=')[1]
+        )
+        const downloadUrl: string = window.URL.createObjectURL(
+          new Blob([data], {type: data.type})
+        )
+        const link = document.createElement('a')
+        link.style.display = 'none'
+        link.href = downloadUrl
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        ElMessage.success(res.message || '导出成功')
+      })
+      .catch((res: { message: string, code: string | number }) => {
+        state.loading = false
+        ElMessage.error(res.message || '导出失败')
       })
   }
   // 数据处理结束
 
-  // 仅清空筛选输入
-  const searchClear = () => {
-    searchFormEl.value.resetFields() // 这个只是清空了model的值
-    searchFormEl.value.setValue(searchFormValue.value, true) // 重新将取到的空值对筛选表单赋值
-    getListData(1) // 重新请求数据
-  }
   const handleSizeChange = (page: number) => {
     state.pageSize = page
     getListData(1)
@@ -399,38 +555,11 @@
 
   // 使用了 render 属性时,渲染前对字段值的预处理方法，需返回新值
   const getRenderFormatValue = (row: any, column: any) => {
-     if (typeof column.renderFormatter === 'function') {
+    if (typeof column.renderFormatter === 'function') {
       return column.renderFormatter(row[column.prop], row)
     }
     return row[column.prop]
   }
-
-  // 处理switch切换事件
-  const switchLoading = ref(false)
-  const oldVal = ref(undefined) // 修改前的值
-  const switchBeforeChange = (val: number | string | boolean) => {
-    oldVal.value = val
-    return true
-  }
-  const switchChange = (val: string | number | boolean, obj: any, row: any) => {
-    // 提交修改，这里通过请求数据再使用v-bind绑定参数，初始时也会触发change,但没有触发beforeChange
-    console.log('switchChange')
-    console.log(val)
-    console.log(obj)
-    console.log(row)
-    if (oldVal.value === undefined) {
-      return
-    }
-    request.switchEvent({
-      props,
-      switchLoading,
-      val,
-      rowProp: obj.prop,
-      oldVal: oldVal.value,
-      params: row // 这里使用当前行的所有数据，可根据实际如取pk
-    })
-  }
-  // 处理switch切换事件结束
 
   // 处理图片开始
   const getImgSrc = (row: any, column: any, type?: string) => {
@@ -494,38 +623,7 @@
   }
   // 处理时间结束
 
-  // 列表右侧按钮事件，处理预设key的内置事件
-  const tableBtnClick = (row: any, key: string) => {
-    if (key === 'del' && pk.value) {
-      delClick([row[pk.value]])
-    } else {
-      // todo 这里目前先对外提示点击事件
-      emits('btnClick', key, row)
-    }
-  }
-  // 表格上方操作按钮事件，处理预设key的内置事件
-  const btnClick = (key: string) => {
-    const ids = state.selectionChecked.map((item) => item[pk.value])
-    if (key === 'del' && state.selectionChecked && pk.value) {
-      delClick(ids)
-    } else if (key === 'export') {
-      request.exportEvent({ props, state, route, params: ids })
-    } else if (key === 'edit') {
-      // todo 编辑或查看时请数据拉回来，或者是对外暴露拉取数据的方法
-      if (ids?.length > 1) {
-        return ElMessage({
-          message: '每次只能编辑一条数据',
-          type: 'warning'
-        })
-      }
-      emits('btnClick', key, { [pk.value]: ids[0] })
-    } else {
-      emits('btnClick', key, ids)
-    }
-  }
-
-  // 处理操作按钮结束
-
+  // el-table事件
   const selectionChange = (row: any) => {
     state.selectionChecked = row
     emits('selectionChange', row)
@@ -544,18 +642,19 @@
       }
     }
     const params = Object.assign({}, route.query, searchFormVal)
-    // router.push({ path: route.path, query: params })
-     router.replace({ query: params })
+    router.replace({query: params})
   }
   const formBtnClick = (type: string) => {
-    if (searchJump.value) {
+    if (config.value.searchJump) {
       // 将参数拼接到url上
       getParamsJump(type)
     }
     if (type === 'submit') {
       getListData(1)
     } else if (type === 'reset') {
-      searchClear()
+      searchFormEl.value.resetFields() // 这个只是清空了model的值
+      searchFormEl.value.setValue(searchFormValue.value, true) // 重新将取到的空值对筛选表单赋值
+      getListData(1) // 重新请求数据
     }
   }
   // 侧栏树点击事件
@@ -565,8 +664,8 @@
       return
     }
     state.currentNodeKey = val
-    state.treeValue = { [treeData.value.name]: val }
-    if (searchJump.value) {
+    state.treeValue = {[treeData.value.name]: val}
+    if (config.value.searchJump) {
       // 带参数跳转
       getParamsJump()
     } else {
@@ -586,7 +685,7 @@
           return
         }
         const tableBodyDom = tableEl.querySelector('.el-table__body') // table
-        const { top: tableBodyDomTop }
+        const {top: tableBodyDomTop}
           = tableBodyWrapDom.getBoundingClientRect()
         const tableHeight = tableBodyDom.offsetHeight // 表格的高度
         const windowHeight = window.innerHeight
@@ -619,17 +718,7 @@
       || document.querySelector('body')
     )
   })
-  // 显示隐藏列设置
-  const popoverShowClick = () => {
-    if (!state.columnsCheck?.length) {
-      // 为空时，则全部勾选上
-      props.data.columns.forEach((item: any) => {
-        if (item.prop) {
-          state.columnsCheck.push(item.prop)
-        }
-      })
-    }
-  }
+
   // 可根据条件设置表单初始查询值
   const setSearchFormValue = (obj: { [key: string]: string[] }) => {
     searchFormEl.value.setValue(obj)
@@ -637,13 +726,7 @@
   const getSearchFormValue = () => {
     return searchFormValue.value
   }
-  // 列显示隐藏设置收起时，这里可将设置保存于服务端或本地
-  const popoverHideClick = () => {
-    if (state.columnsCheck?.length !== props.data.columns.length) {
-      // 非全选状态时
-      designStore.setColumnsCheck(route.path, state.columnsCheck)
-    }
-  }
+
   // 监听url参数变化重新请求数据
   const setSearchValueFormQuery = () => {
     const routeQuery = route.query
@@ -651,13 +734,13 @@
       if (searchFormEl.value) {
         searchFormEl.value.setValue(routeQuery, true)
       }
-      const { show, name } = treeData.value
+      const {show, name} = treeData.value
       const val = routeQuery[name]
       if (show && val) {
         // 开启树时
         setTimeout(() => {
           state.currentNodeKey = isNaN(val) ? val : parseInt(val)
-          state.treeValue = { [treeData.value.name]: val }
+          state.treeValue = {[treeData.value.name]: val}
         }, 500)
       }
     }
@@ -693,7 +776,8 @@
   const resetList = () => {
     tableDataList.value = []
   }
-  onBeforeUnmount(() => {})
+  onBeforeUnmount(() => {
+  })
   defineExpose({
     getListData,
     delClick,

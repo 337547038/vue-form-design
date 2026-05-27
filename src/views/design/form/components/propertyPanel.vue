@@ -165,49 +165,48 @@
                 </el-button>
               </el-form-item>
             </template>
-            <el-form-item v-if="[1,2].includes(selectComponent.optionsType)">
-              <el-input
-                v-model="selectComponent.optionsFun"
-                :placeholder="
-                  getOptionPlaceholder(selectComponent.optionsType)
-                "
-              >
-                <template
-                  v-if="selectComponent.optionsType === 1"
-                  #prepend
-                >
-                  <el-select
-                    v-model="selectComponent.method"
-                    style="width: 80px"
-                  >
-                    <el-option
-                      label="get"
-                      value="get"
-                    />
-                    <el-option
-                      label="post"
-                      value="post"
-                    />
-                  </el-select>
-                </template>
-              </el-input>
-            </el-form-item>
-            <template v-if="showHide(['select'], true)">
-              <el-form-item label="是否可筛选">
-                <el-switch v-model="selectComponent.control.filterable" />
-              </el-form-item>
-            </template>
             <el-form-item
-              v-if="showHide(['select','radio','checkbox'],true)&&[0,1].includes(selectComponent.optionsType)"
+              v-if="[2].includes(selectComponent.optionsType)"
+              label="请选择字典"
             >
-              <el-button
-                type="primary"
-                @click="saveFormListDictClick"
+              <el-select
+                v-model="selectComponent.optionsFun"
+                placeholder="字典key，默认为字段标识"
               >
-                保存为列表字典
-              </el-button>
+                <el-option
+                  v-for="item in allDict"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
             </el-form-item>
             <template v-if="selectComponent.optionsType === 1">
+              <el-form-item>
+                <el-input
+                  v-model="selectComponent.optionsFun"
+                  placeholder="数据源接口URL或api的key"
+                >
+                  <template
+                    v-if="selectComponent.optionsType === 1"
+                    #prepend
+                  >
+                    <el-select
+                      v-model="selectComponent.method"
+                      style="width: 80px"
+                    >
+                      <el-option
+                        label="get"
+                        value="get"
+                      />
+                      <el-option
+                        label="post"
+                        value="post"
+                      />
+                    </el-select>
+                  </template>
+                </el-input>
+              </el-form-item>
               <el-form-item label="指定label属性值">
                 <el-input
                   v-model="selectComponent.label"
@@ -265,7 +264,21 @@
                 </el-button>
               </el-form-item>
             </template>
-
+            <template v-if="showHide(['select'], true)">
+              <el-form-item label="是否可筛选">
+                <el-switch v-model="selectComponent.control.filterable" />
+              </el-form-item>
+            </template>
+            <el-form-item
+              v-if="showHide(['select','radio','checkbox'],true)&&[0,1].includes(selectComponent.optionsType)"
+            >
+              <el-button
+                type="primary"
+                @click="saveFormListDictClick"
+              >
+                保存为列表字典
+              </el-button>
+            </el-form-item>
             <el-form-item label="尝试转换value值为">
               <el-select
                 v-model="selectComponent.transformData"
@@ -412,6 +425,19 @@
               v-model="designConfig[item.key]"
               @change="formAttrChange(item)"
             />
+            <el-button
+              v-else-if="item.type==='button'"
+              type="primary"
+              @click="openAttrDialog(item.key)"
+            >
+              {{ item.name }}
+            </el-button>
+            <div
+              v-else-if="item.type==='div'"
+              class="h3"
+            >
+              <h3>{{ item.text }}</h3>
+            </div>
             <el-input
               v-else
               v-model="designConfig[item.key]"
@@ -419,51 +445,6 @@
               @input="formAttrChange(item)"
             />
           </el-form-item>
-          <el-form-item>
-            <el-button
-              type="primary"
-              @click="openAttrDialog('editCss')"
-            >
-              编辑表单样式
-            </el-button>
-          </el-form-item>
-          <template v-if="!isSearch">
-            <div class="h3">
-              <h3>接口数据事件</h3>
-            </div>
-            <el-form-item label="提交保存url">
-              <el-input
-                v-model="designConfig.submitUrl"
-                placeholder="表单提交的url，通用提交时可不设置"
-              />
-            </el-form-item>
-            <el-form-item label="获取表单数据url">
-              <el-input
-                v-model="designConfig.requestUrl"
-                placeholder="获取表单数据url，通用提交时可不设置"
-              />
-            </el-form-item>
-            <el-form-item class="event-btn">
-              <el-button
-                type="primary"
-                @click="openAttrDialog('before')"
-              >
-                before事件
-              </el-button>
-              <el-button
-                type="primary"
-                @click="openAttrDialog('after')"
-              >
-                after事件
-              </el-button>
-              <el-button
-                type="primary"
-                @click="openAttrDialog('change')"
-              >
-                change改变事件
-              </el-button>
-            </el-form-item>
-          </template>
         </el-form>
       </el-tab-pane>
     </el-tabs>
@@ -480,7 +461,7 @@
   import {useDesignFormStore} from "@/store/form";
   import {storeToRefs} from "pinia";
   import type {DrawerConfig} from "@/components/ace/type";
-  import {loadResource, removeResource} from "@/utils";
+  import {getStorage, loadResource, removeResource} from "@/utils";
   import {getAceTitle} from "@/components/ace/tooltip";
   import type {Component} from "@/types/form";
   import {getRemoteMethod} from "@/components/form/utils.ts";
@@ -496,10 +477,13 @@
   const isSearch = computed(() => {
     return storeForm.designType === 'designSearch'
   })
+  const allDict = computed(() => {
+    return Object.keys(getStorage('akAllDict'))
+  })
   const dataSourceOption = ref([])
   const formAttr = computed(() => {
     //搜索时不显示
-    const isSearchHide = ['name', 'sourceId', 'key', 'submitCancel', 'transformData']
+    const isSearchHide = ['name', 'sourceId', 'key', 'submitCancel', 'transformData','div','submitUrl','requestUrl','before','after','change']
     return [
       {
         label: '表单名称',
@@ -562,6 +546,41 @@
         label: '将object转string提交',
         type: 'switch',
         key: 'transformData'
+      },
+      {
+        name: '编辑表单样式',
+        key: 'editCss',
+        type: 'button'
+      },
+      {
+        text:'接口数据事件',
+        type:'div',
+        key:'div'
+      },
+      {
+        label:'提交保存url',
+        key:'submitUrl',
+        placeholder: '表单提交的url，通用提交时可不设置'
+      },
+      {
+        label:'获取表单数据url',
+        key:'requestUrl',
+        placeholder: '获取表单数据url，通用提交时可不设置'
+      },
+      {
+        type:'button',
+        key:'before',
+        name:'before事件'
+      },
+      {
+        type:'button',
+        key:'after',
+        name:'after事件'
+      },
+      {
+        type:'button',
+        key:'change',
+        name:'change改变事件'
       }
     ].filter(item => {
       if (isSearch.value) {
@@ -574,19 +593,12 @@
     if (!Object.keys(selectComponent.value).length) {
       return []
     }
-    const {
-      control = {},
-      type,
-      config = {},
-      attr = {},
-      list = []
-    } = selectComponent.value
     const sc = selectComponent.value
     let columnIndex = false // 是否显示序号列
-    if (type === 'table') {
+    if (sc.type === 'table') {
       // 表格时处理
-      if (list && list.length > 0) {
-        columnIndex = list[0].type === 'index'
+      if (sc.list && sc.list.length > 0) {
+        columnIndex = sc.list[0].type === 'index'
       }
     }
     const temp = [
@@ -794,7 +806,7 @@
       },
       {
         label: '文本域高度',
-        value: control.rows,
+        value: sc.control.rows,
         placeholder: '输入框行数',
         path: 'control.rows',
         vShow: ['textarea'],
@@ -816,7 +828,7 @@
       },
       {
         label: '状态打开时的值',
-        value: control.activeValue,
+        value: sc.control.activeValue,
         placeholder: '状态打开时的值',
         path: 'control.activeValue',
         vShow: ['switch'],
@@ -824,7 +836,7 @@
       },
       {
         label: '状态关闭时的值',
-        value: control.inactiveValue,
+        value: sc.control.inactiveValue,
         placeholder: '状态关闭时的值',
         path: 'control.inactiveValue',
         vShow: ['switch'],
@@ -848,7 +860,7 @@
       },
       {
         label: '是否多选',
-        value: control.multiple,
+        value: sc.control.multiple,
         path: 'control.multiple',
         type: 'switch',
         vShow: ['select', 'treeSelect'],
@@ -856,14 +868,14 @@
       },
       {
         label: '可清空',
-        value: control.clearable,
+        value: sc.control.clearable,
         path: 'control.clearable',
         type: 'switch',
         vShow: ['select']
       },
       {
         label: '是否禁用',
-        value: control.disabled,
+        value: sc.control.disabled,
         path: 'control.disabled',
         type: 'switch',
         vShow: [
@@ -937,7 +949,7 @@
       },
       {
         label: '设为Input输入框的前/后缀',
-        value: type === 'inputSlot',
+        value: sc.type === 'inputSlot',
         path: '',
         type: 'switch',
         vShow: ['select', 'inputSlot'],
@@ -945,34 +957,34 @@
       },
       {
         label: '标题',
-        value: control.modelValue,
+        value: sc.control.modelValue,
         path: 'control.modelValue',
         vShow: ['title']
       },
       {
         label: '占据的列数span',
-        value: control.span,
+        value: sc.control.span,
         path: 'control.span',
         vShow: ['gridChild'],
         isNum: true
       },
       {
         label: '左侧的间隔格数offset',
-        value: control.offset,
+        value: sc.control.offset,
         path: 'control.offset',
         vShow: ['gridChild'],
         isNum: true
       },
       {
         label: '向右移动格数push',
-        value: control.push,
+        value: sc.control.push,
         path: 'control.push',
         vShow: ['gridChild'],
         isNum: true
       },
       {
         label: '向左移动格数pull',
-        value: control.pull,
+        value: sc.control.pull,
         path: 'control.pull',
         vShow: ['gridChild'],
         isNum: true
@@ -993,14 +1005,14 @@
       },
       {
         label: '上传地址',
-        value: control.action,
+        value: sc.control.action,
         placeholder: '图片/文件上传地址,可不填有默认值',
         path: 'control.action',
         vShow: ['upload']
       },
       {
         label: '文件字段名',
-        value: control.name,
+        value: sc.control.name,
         placeholder: '上传的文件字段名,默认file',
         path: 'control.name',
         vShow: ['upload']
@@ -1024,14 +1036,14 @@
         type: 'select',
         dict: {horizontal: 'horizontal', vertical: 'vertical'},
         placeholder: '分割线方向，默认horizontal',
-        value: control.direction,
+        value: sc.control.direction,
         path: 'control.direction',
         vShow: ['divider']
       },
       {
         label: 'border-style',
         placeholder: '分隔符样式，默认solid',
-        value: control.borderStyle,
+        value: sc.control.borderStyle,
         path: 'control.borderStyle',
         vShow: ['divider']
       },
@@ -1039,13 +1051,13 @@
         label: 'content-position',
         type: 'select',
         dict: {left: 'left', right: 'right', center: 'center'},
-        value: control.contentPosition,
+        value: sc.control.contentPosition,
         path: 'control.contentPosition',
         vShow: ['divider']
       },
       {
         label: '最小值',
-        value: control.min,
+        value: sc.control.min,
         path: 'control.min',
         vShow: ['slider'],
         placeholder: '组件min属性',
@@ -1053,7 +1065,7 @@
       },
       {
         label: '最大值',
-        value: control.max,
+        value: sc.control.max,
         path: 'control.max',
         vShow: ['rate', 'slider'],
         placeholder: '组件max属性',
@@ -1061,7 +1073,7 @@
       },
       {
         label: '步长',
-        value: control.step,
+        value: sc.control.step,
         path: 'control.step',
         vShow: ['slider'],
         placeholder: '组件step属性',
@@ -1069,7 +1081,7 @@
       },
       {
         label: 'type',
-        value: control.type,
+        value: sc.control.type,
         path: 'control.type',
         vShow: ['datePicker'],
         type: 'select',
@@ -1087,21 +1099,21 @@
       },
       {
         label: 'format',
-        value: control.format,
+        value: sc.control.format,
         path: 'control.format',
         vShow: ['datePicker', 'timePicker'],
         placeholder: '显示在输入框中的格式'
       },
       {
         label: 'value-format',
-        value: control.valueFormat,
+        value: sc.control.valueFormat,
         path: 'control.valueFormat',
         vShow: ['datePicker', 'timePicker'],
         placeholder: '绑定的值'
       },
       {
         label: 'color-format',
-        value: control.colorFormat,
+        value: sc.control.colorFormat,
         path: 'control.colorFormat',
         type: 'select',
         placeholder: '写入 v-model 的颜色的格式',
@@ -1110,35 +1122,35 @@
       },
       {
         label: '文本高度',
-        value: control.height,
+        value: sc.control.height,
         path: 'control.height',
         placeholder: '文本高度(预览查看效果)',
         vShow: ['tinymce']
       },
       {
         label: '文本宽度',
-        value: control.width,
+        value: sc.control.width,
         path: 'control.width',
         placeholder: '文本宽度(预览查看效果)',
         vShow: ['tinymce']
       },
       {
         label: '图片上传地址',
-        value: control.imgUrl,
+        value: sc.control.imgUrl,
         path: 'control.imgUrl',
         placeholder: '图片上传地址',
         vShow: ['tinymce']
       },
       {
         label: '附件上传地址',
-        value: control.blobUrl,
+        value: sc.control.blobUrl,
         path: 'control.blobUrl',
         placeholder: '附件上传地址',
         vShow: ['tinymce']
       },
       {
         label: '显示模式',
-        value: control.style,
+        value: sc.control.style,
         path: 'control.style',
         placeholder: '显示风格(预览查看效果)',
         type: 'select',
@@ -1173,10 +1185,10 @@
     return temp.filter((item: any) => {
       let hasFilter = true
       if (item.vShow) {
-        hasFilter = item.vShow.includes(type)
+        hasFilter = item.vShow.includes(sc.type)
       }
       if (item.vHide) {
-        hasFilter = !item.vHide.includes(type)
+        hasFilter = !item.vHide.includes(sc.type)
       }
       if (item.vIf) {
         // 不显示vif＝true的
@@ -1457,16 +1469,7 @@
       getFormFieldBySource(val)
     }
   }
-  // 返回选项配置提示
-  const getOptionPlaceholder = (type: number) => {
-    switch (type) {
-      case 1:
-        return '数据源接口URL或api的key'
-      case 2:
-        return '字典key，默认为字段标识'
-    }
-    return ''
-  }
+
   // 快速添加校验规则改变时，填写默认的校验提示信息
   const rulesSelectChange = (item: any, val: string) => {
     const filter = validate.filter((item) => item.type === val)

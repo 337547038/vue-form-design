@@ -173,6 +173,12 @@
   const emits = defineEmits<{
     (e: 'changeEvent', params: AceDrawerT, type?: string | number): void
   }>()
+  const props = withDefaults(
+    defineProps<{
+      allDict: string[]
+    }>(),
+    {}
+  )
   const store = useDesignListStore()
   const {selectComponent, designConfig} = storeToRefs(store)
   const apiKey = computed({
@@ -226,7 +232,8 @@
           'date',
           'buttons',
           'string',
-          'text'
+          'text',
+          'url'
         ],
         path: 'render'
       },
@@ -287,7 +294,7 @@
         vIf: ['tag', 'text'].includes(sc.render)
       },
       {
-        label: '设置数据替换',
+        label: '设置数据替换类型',
         type: 'select',
         vIf: ['tag', 'text'].includes(sc.render),
         path: 'replaceType',
@@ -296,6 +303,8 @@
       },
       {
         label: '字典类型key',
+        type: 'select',
+        options: props.allDict,
         value: sc.replaceValue,
         path: 'replaceValue',
         placeholder: '请输入字典类型key',
@@ -355,6 +364,11 @@
         vIf: sc.render === 'buttons'
       },
       {
+        label:'功能开发中...',
+        vIf: sc.render==='url',
+        placeholder: '请耐心等待..'
+      },
+      {
         name: 'renderFormatter',
         type: 'button',
         path: 'renderFormatter',
@@ -374,17 +388,23 @@
       //将数组转为object
       val = val.map((item: any) => ({key: item}))
     }
+    if (path === 'replaceType') {
+      selectComponent.value.replaceValue = val === '0' ? '' : {}
+    }
     if (path.indexOf('.') !== -1) {
       setValueByPath(selectComponent.value, path, val)
     } else {
       Object.assign(selectComponent.value, {[path]: val})
     }
     // 切换时清空这些与当前不匹配的设置
-    selectComponent.value.config = {}
-    delete selectComponent.value.replaceValue
-    delete selectComponent.value.timeFormat
-    delete selectComponent.value.buttons
-    delete selectComponent.value.custom
+    if (path === 'render') {
+      selectComponent.value.config = {}
+      delete selectComponent.value.replaceValue
+      delete selectComponent.value.timeFormat
+      delete selectComponent.value.buttons
+      delete selectComponent.value.custom
+      delete selectComponent.value.replaceType
+    }
   }
   const propertyBtnClick = (path: string) => {
     if (['columns', 'renderFormatter', 'buttons'].includes(path)) {
@@ -632,7 +652,7 @@
         title: '支持el-table-column所有属性',
         content: selectComponent.value || {},
         callback: (content: any) => {
-          selectComponent.value = content
+          Object.assign(selectComponent.value, content)
         }
       }),
       renderFormatter: () => ({

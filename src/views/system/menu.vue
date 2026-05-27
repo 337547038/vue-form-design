@@ -25,7 +25,6 @@
         :submit-url="dialog.formType==='add'?'menuSave':'menuEdit'"
         :before="beforeSubmit"
         :after="afterSubmit"
-        :dict="dict"
         @btn-click="btnClick"
         @change="formValueChange"
       />
@@ -163,9 +162,7 @@
         type: 'select',
         control: { modelValue: 1 },
         options: dict.menuType,
-        config: {
-          optionsType: 0
-        },
+        optionsType: 0,
         name: 'type',
         formItem: { label: '类型' }
       },
@@ -173,20 +170,17 @@
         type: 'select',
         control: { modelValue: '' },
         options: [],
-        config: {
-          optionsType: 1,
-          optionsFun: 'designList',
-          method: 'post',
-          label: 'name',
-          value: 'id',
-          hidden: '$.type!==3',
-          debug: true,
-          before: (data) => {
-            data.query = {
-              type: 2
-            }
-            return data
+        optionsType: 1,
+        optionsFun: 'designList',
+        method: 'post',
+        label: 'name',
+        value: 'id',
+        conditionalDisplay: '$.type!==3',
+        before: (data:any) => {
+          data.query = {
+            type: 2
           }
+          return data
         },
         name: 'contentList',
         formItem: { label: '内容列表' }
@@ -194,7 +188,6 @@
       {
         type: 'input',
         control: { modelValue: '', placeholder: '请输入菜单名称' },
-        config: {},
         name: 'name',
         formItem: { label: '菜单名称' },
         customRules: [
@@ -204,9 +197,7 @@
       {
         type: 'input',
         control: { modelValue: '', placeholder: '请输入访问地址/类型标识' },
-        config: {
-          disabled: '$.type===3'
-        },
+        conditionalDisabled: '$.type===3',
         name: 'path',
         formItem: { label: '访问地址' }
       },
@@ -215,10 +206,7 @@
         control: {
           modelValue: ''
         },
-        config: {
-          // componentName: markRaw(iconfont)
-          componentName: 'diyIconfont'
-        },
+        componentName: 'diyIconfont',
         name: 'icon',
         formItem: {
           label: 'icon图标'
@@ -227,7 +215,6 @@
       {
         type: 'inputNumber',
         control: { modelValue: 0, controlsPosition: 'right' },
-        config: {},
         name: 'sort',
         formItem: { label: '排序' }
       },
@@ -235,10 +222,8 @@
         type: 'radio',
         control: { modelValue: 1 },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: { label: '状态' }
       },
@@ -255,9 +240,7 @@
             value: 0
           }
         ],
-        config: {
-          optionsType: 0
-        },
+        optionsType: 0,
         name: 'navShow',
         formItem: { label: '导航显示' }
       },
@@ -266,21 +249,17 @@
         control: {
           modelValue: ''
         },
-        config: {
-          span: 24
-        },
+        span: 24,
         name: 'remark',
         formItem: {
           label: '备注'
         }
       }
     ],
-    form: {
+    config: {
       class: 'form-row-2',
       labelWidth: '100px',
-      size: 'default'
-    },
-    config: {
+      size: 'default',
       submitCancel: true
     }
   })
@@ -296,7 +275,7 @@
     return params
   }
   // 表单提交完成事件
-  const afterSubmit = (res: any, success: boolean, type: string) => {
+  const afterSubmit = (_: any, success: boolean, type: string) => {
     if (type == 'submit') {
       dialog.visible = false
       if (success) {
@@ -313,7 +292,6 @@
   }
 
   const afterFetch = (result: any, success: boolean, type: string) => {
-    console.log('after2')
      if (success && type === 'fetch') {
       result.list = flatToTree(result.list)
       return result
@@ -321,9 +299,8 @@
   }
 
   const formValueChange = (obj: any) => {
-    if (obj.name === 'contentList') {
+    if (obj.prop === 'contentList') {
       obj.model.path = '/design/list/content/' + obj.value
-      // obj.model.name = label
     }
   }
 </script>

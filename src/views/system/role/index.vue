@@ -16,7 +16,6 @@
       <ak-form
         ref="formEl"
         :data="formData"
-        :dict="dialog.dict"
         :operate-type="dialog.formType"
         :submit-url="dialog.formType==='add'?'roleSave':'roleEdit'"
         :before="beforeSubmit"
@@ -129,7 +128,6 @@
           modelValue: '',
           placeholder: '请输入角色名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '角色名称'
@@ -148,10 +146,8 @@
           modelValue: 1
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '状态'
@@ -162,9 +158,7 @@
         control: {
           modelValue: ''
         },
-        config: {
-          componentName: markRaw(ContentTree)
-        },
+        componentName: markRaw(ContentTree),
         name: 'menuId',
         formItem: {
           label: '菜单权限'
@@ -175,18 +169,14 @@
         control: {
           modelValue: ''
         },
-        config: {},
         name: 'remark',
         formItem: {
           label: '备注'
         }
       }
     ],
-    form: {
-      labelWidth: 80,
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: { submitCancel: true,labelWidth: 80,
+      size: 'default' }
   })
   const dialog = reactive({
     visible: false,
