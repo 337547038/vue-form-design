@@ -77,7 +77,7 @@
   const loading = ref(false)
   // 远程搜索
   const getRemoteM = debounce((name: string) => {
-    getRemoteMethod(props.data, (opt) => {
+    getRemoteMethod(props.data, store,(opt) => {
       props.remoteMethod && props.remoteMethod(opt)
       if (props.type === 'slot') {
         optionSlot.value = opt
@@ -94,7 +94,7 @@
       return false
     }
     optionSlot.value = props.data.options // 默认等于静态的
-    getOptionsList(props.data, (opt: Record<string, any>) => {
+    getOptionsList(props.data, store,(opt: Record<string, any>) => {
       optionSlot.value = opt
     })
   }

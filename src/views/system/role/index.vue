@@ -27,9 +27,10 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router'
-  import { ref, nextTick, reactive, markRaw } from 'vue'
+  import {useRouter} from 'vue-router'
+  import {ref, nextTick, reactive, markRaw} from 'vue'
   import ContentTree from './components/content.vue'
+
   const router = useRouter()
   const formEl = ref()
   const tableListEl = ref()
@@ -41,7 +42,6 @@
           modelValue: '',
           placeholder: '请输入角色名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '角色名称'
@@ -51,42 +51,38 @@
         type: 'select',
         control: {
           modelValue: '',
-          style: { width: '100px' }
+          style: {width: '100px'}
         },
         options: [],
-        config: {
-          optionsType: 2,
-          addAll: '全部',
-          optionsFun: 'sys-status'
-        },
+        optionsType: 2,
+        addAll: '全部',
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '状态'
         }
       }
     ],
-    form: {
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: {submitCancel: true}
   })
   const tableData = ref({
     columns: [
-      { label: '多选', type: 'selection' },
-      { label: '序号', type: 'index', width: '70px' },
-      { label: '角色名称', prop: 'name' },
+      {label: '多选', type: 'selection'},
+      {label: '序号', type: 'index', width: '70px'},
+      {label: '角色名称', prop: 'name'},
       {
         label: '状态',
         prop: 'status',
         render: 'tag',
-        custom: { 1: 'success', 0: 'info' },
+        custom: {1: 'success', 0: 'info'},
         replaceValue: 'sys-status'
       },
-      { label: '操作', prop: '__control', render: 'buttons', buttons: [
+      {
+        label: '操作', prop: '__control', render: 'buttons', buttons: [
           {
             label: '已分配用户',
             click: (row: any) => {
-              router.push({ path: '/system/user', query: { roleId: row.id } })
+              router.push({path: '/system/user', query: {roleId: row.id}})
             }
           },
           {
@@ -99,26 +95,29 @@
               })
             }
           },
-          { label: '删除', key: 'del' }
-        ] }
-    ],
-    config: { expand: true, openType: 'dialog' },
-    controlBtn: [
-      {
-        label: '新增',
-        key: 'add',
-        type: 'primary',
-        size: 'small',
-        icon: 'plus'
-      },
-      {
-        label: '批量删除',
-        key: 'del',
-        type: 'danger',
-        size: 'small',
-        icon: 'delete'
+          {label: '删除', key: 'del'}
+        ]
       }
-    ]
+    ],
+    config: {
+      expand: true, openType: 'dialog',
+      controlBtn: [
+        {
+          label: '新增',
+          key: 'add',
+          type: 'primary',
+          size: 'small',
+          icon: 'plus'
+        },
+        {
+          label: '批量删除',
+          key: 'del',
+          type: 'danger',
+          size: 'small',
+          icon: 'delete'
+        }
+      ]
+    }
   })
   const formData = ref({
     list: [
@@ -175,8 +174,11 @@
         }
       }
     ],
-    config: { submitCancel: true,labelWidth: 80,
-      size: 'default' }
+    config: {
+      submitCancel: true,
+      labelWidth: 80,
+      size: 'default'
+    }
   })
   const dialog = reactive({
     visible: false,
@@ -217,7 +219,7 @@
     return params
   }
   // 提交表单后事件
-  const afterSubmit = (res: any, success: boolean) => {
+  const afterSubmit = (_: any, success: boolean) => {
     if (success) {
       // 添加成功，刷新列表数据
       closeResetDialog()

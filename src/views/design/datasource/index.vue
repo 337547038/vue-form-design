@@ -121,20 +121,20 @@
         ]
       },
     ],
-    controlBtn: [
-      {
-        label: '新增',
-        type: 'primary',
-        click: () => {
-          dialog.visible = true
-          dialog.title = '创建数据源'
-          dialog.type = 'add'
-          dialog.id = ''
-        }
-      },
-      { label: '删除', key: 'del', type: 'danger' }
-    ],
     config: {
+      controlBtn: [
+        {
+          label: '新增',
+          type: 'primary',
+          click: () => {
+            dialog.visible = true
+            dialog.title = '创建数据源'
+            dialog.type = 'add'
+            dialog.id = ''
+          }
+        },
+        { label: '删除', key: 'del', type: 'danger' }
+      ],
       expand: true,
       searchJump: true
     }

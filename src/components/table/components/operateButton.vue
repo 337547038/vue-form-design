@@ -89,16 +89,11 @@
     if (clickEventResult === false) {
       return false
     }
-    if (
-      btn.key
-      && ['add', 'del', 'edit', 'detail', 'export'].includes(btn.key)
-    ) {
-      emits('click', btn.key)
-    }
+    emits('click', btn.key)
   }
   const dropdownBtnClick = (btn: Button) => {
     if (btn.render === 'confirm') {
-      // 下拉菜单再放el-popconfirm时会导致弹出窗定位不准。这里改用messageBox
+      // 下拉菜单再放el-popconfirm时会导致弹出窗定位不准。这里改用messageBox todo
       const { title, confirmButtonText, cancelButtonText } = btn.popConfirm
       ElMessageBox({
         title: '温馨提示',

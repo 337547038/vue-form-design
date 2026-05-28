@@ -56,7 +56,7 @@
         class="table-main"
       >
         <el-table
-          v-bind="data.tableProps"
+          v-bind="config.tableProps"
           ref="table"
           :data="tableDataList"
           @selection-change="selectionChange"
@@ -179,10 +179,10 @@
     </div>
   </div>
   <dialog-form
-    v-if="isDialogForm"
-    v-model="state.formVisible"
-    :width="config.width"
-    :title="state.formTitle"
+    v-if="isDialogForm&&$slots.default"
+    v-model="dialogFormStore.visible"
+    :width="dialogFormStore.width||config.dialogWidth"
+    :title="dialogFormStore.title||state.formTitle"
   >
     <slot />
   </dialog-form>
@@ -190,7 +190,7 @@
 
 <script lang="ts" setup>
   import {
-    computed,
+    computed, getCurrentInstance, inject,
     nextTick,
     onBeforeUnmount,
     onMounted,
@@ -212,6 +212,7 @@
   import {beforeAfter} from "@/utils/beforeAfter";
   import DialogForm from './components/dialogForm.vue'
   import type {After, Before} from "@/types";
+  import {useListDialogForm} from "@/store/list.ts";
 
   defineOptions({name: 'AkList'})
   const props = withDefaults(
@@ -287,7 +288,6 @@
     tableScrollMargin: 0,
     columnsCheck: [],
     currentNodeKey: '',
-    formVisible: false,
     formTitle: '',
     dict: {}
   })
@@ -330,10 +330,14 @@
   const isDialogForm = computed(() => {
     return config.value.openType === 'dialog'
   })
+  //接收inject akListDialogForm参数作为标题
+  const akListDialogForm = inject('akListDialogForm')
+  const instance = getCurrentInstance()
+  const dialogFormStore = akListDialogForm ? akListDialogForm : useListDialogForm(instance.uid)()
 
   //点击按钮弹出表单窗口时，同时传递关闭方法
   const closeFormDialog = () => {
-    state.formVisible = false
+    dialogFormStore.setVisible(false)
   }
   // 列表右侧按钮事件，处理预设key的内置事件
   const tableBtnClick = (row: any, key: string) => {
@@ -342,13 +346,18 @@
     }
     if (['detail', 'edit'].includes(key) && isDialogForm.value) {
       //使用弹窗口表单时
-      state.formVisible = true
+      dialogFormStore.setVisible(true)
       state.formTitle = '编辑/查看'
+      nextTick(() => {
+        emits('btnClick', key, row, closeFormDialog)
+      })
+      return false
     }
     emits('btnClick', key, row, closeFormDialog)
   }
   // 表格上方操作按钮事件，处理预设key的内置事件
   const btnClick = (key: string) => {
+    console.log('btnClick', key)
     const ids = state.selectionChecked.map((item: any) => item[pk.value])
     if (key === 'del' && state.selectionChecked && pk.value) {
       delClick(ids)
@@ -362,13 +371,22 @@
         })
       }
       if (isDialogForm.value) {
-        state.formVisible = true //打出弹窗暂不处理数据
+        dialogFormStore.setVisible(true) //打出弹窗暂不处理数据
         state.formTitle = '编辑'
+        //防止外面点击事件时使用ref找不到当前对象
+        nextTick(() => {
+          emits('btnClick', key, {[pk.value]: ids[0]}, closeFormDialog)
+        })
+        return false
       }
       emits('btnClick', key, {[pk.value]: ids[0]}, closeFormDialog)
     } else if (key === 'add' && isDialogForm.value) {
-      state.formVisible = true //打出弹窗
+      dialogFormStore.setVisible(true) //打出弹窗
       state.formTitle = '新增'
+      nextTick(() => {
+        emits('btnClick', key, ids, closeFormDialog)
+      })
+      return false
     }
     emits('btnClick', key, ids, closeFormDialog)
   }
@@ -402,7 +420,7 @@
       apiKey: getUrl,
       params: params,
       before: [props.before, before],
-      after: [props.before, after],
+      after: [props.after, after],
       route: route,
       type: 'fetch'
     })

@@ -336,7 +336,7 @@
         loading.value = true
         // 处理数据格式，将多选表格之类的转为字符串形式提交
         let temp: any = {}
-        if (props.data.transformData) {
+        if (props.data.config?.transformData) {
           for (const key in fields) {
             if (typeof fields[key] === 'object') {
               temp[key] = JSON.stringify(fields[key])

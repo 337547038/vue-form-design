@@ -20,7 +20,6 @@ export const useDesignListStore = defineStore('designList', () => {
     designConfig.value = data
   }
 
-
   return {
     designColumns,
     setDesignColumns,
@@ -28,5 +27,27 @@ export const useDesignListStore = defineStore('designList', () => {
     setSelectComponent,
     designConfig,
     setDesignConfig
+  }
+})
+export const useListDialogForm = (id: number | string) => defineStore(`dialogForm-${id}`, () => {
+  const title = ref('')
+  const setTitle = (text: string) => {
+    title.value = text
+  }
+  const width = ref('')
+  const setWidth = (value: string) => {
+    width.value = value
+  }
+  const visible = ref(false)
+  const setVisible = (value: boolean) => {
+    visible.value = value
+  }
+  return {
+    title,
+    setTitle,
+    visible,
+    setVisible,
+    width,
+    setWidth
   }
 })

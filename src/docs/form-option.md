@@ -454,13 +454,9 @@ const formData = ref({
             trigger: "blur"
           }]
       }],
-    form:
-      {
-        size: "default",
-        name: "form1"
-      },
     config:
       {
+        key: "form1",
         submitCancel: true
       }
   })

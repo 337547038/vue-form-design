@@ -1,13 +1,10 @@
 import {formatNumber, objectToArray} from "@/utils/design";
 import type {Component} from "@/types/form";
-import {computed, inject} from "vue";
+import {computed} from "vue";
 import {debounce, getStorage} from "@/utils";
 import SparkMD5 from "spark-md5";
 import {beforeAfter} from "@/utils/beforeAfter";
 
-const store = () => {
-  return inject('formStore')
-}
 /**
  * 提供一个方法，用于根据name从data.list里查找数据
  * @param data
@@ -59,7 +56,7 @@ const getTransformData = (val: any, transform: string) => {
 const globalDict = computed(() => {
   return getStorage('akAllDict')
 })
-export const getOptionsList = (component: Component, callback: (opt: Record<string, any>) => void) => {
+export const getOptionsList = (component: Component, store: any, callback: (opt: Record<string, any>) => void) => {
   if (['select', 'radio', 'checkbox', 'treeSelect', 'inputSlot'].includes(component.type)) {
     const {optionsType, optionsFun} = component
     const {filterable, remote} = component.control
@@ -82,13 +79,14 @@ export const getOptionsList = (component: Component, callback: (opt: Record<stri
           getOptions({id: props.modelValue}, 'edit')
         }*/
       } else {
-        getRemoteMethod(component, callback)
+        getRemoteMethod(component, store, callback)
       }
     }
   }
 }
-export const getRemoteMethod = (component: Component, callback: (opt: Record<string, any>) => void, data = {}) => {
-  const {formValue} = store()
+
+export const getRemoteMethod = (component: Component, store: any, callback: (opt: Record<string, any>) => void, data = {}) => {
+  const {formValue} = store
   const {optionsType, optionsFun, cache, method, before, after} = component
   const {remote} = component.control
   let params = {}
@@ -107,7 +105,7 @@ export const getRemoteMethod = (component: Component, callback: (opt: Record<str
       const spark = new SparkMD5()
       spark.append(optionsFun + JSON.stringify(params))
       cacheKey = spark.end()
-      const cacheData = store().formComponentsDataCache[cacheKey]
+      const cacheData = store.formComponentsDataCache[cacheKey]
       if (cacheData) {
         callback && callback(cacheData)
         return false
@@ -127,14 +125,14 @@ export const getRemoteMethod = (component: Component, callback: (opt: Record<str
           const result = res.data.list || res.data
           callback && callback(result)
           if (cache && !remote) {
-            store().setFormComponentsDataCache(cacheKey, result)
+            store.setFormComponentsDataCache(cacheKey, result)
           }
         })
 
   }
 }
 
-export const getRemoteMethodDebounce = debounce((component: Component, callback: (opt: Record<string, any>) => void, data = {}) => {
-  getRemoteMethod(component, callback, data)
+export const getRemoteMethodDebounce = debounce((component: Component, store: any, callback: (opt: Record<string, any>) => void, data = {}) => {
+  getRemoteMethod(component, store, callback, data)
 })
 //==========================================options相关结束

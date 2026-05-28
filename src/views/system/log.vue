@@ -11,9 +11,10 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+  import {ref} from 'vue'
+
   const tableListEl = ref()
-  const dict = ref({ status: { 1: '成功', 0: '失败' } })
+  const dict = ref({status: {1: '成功', 0: '失败'}})
   const searchData = ref({
     list: [
       {
@@ -22,7 +23,6 @@
           modelValue: '',
           placeholder: '请输入用户名'
         },
-        config: {},
         name: 'userName',
         formItem: {
           label: '用户名'
@@ -34,7 +34,6 @@
           modelValue: '',
           placeholder: '请输入登录ip地址'
         },
-        config: {},
         name: 'ip',
         formItem: {
           label: '登录IP'
@@ -48,41 +47,40 @@
           valueFormat: 'YYYY-MM-DD',
           placeholder: '请输入登录时间'
         },
-        config: {},
         name: 'dateTime',
         formItem: {
           label: '登录时间'
         }
       }
     ],
-    form: {
+    config: {
+      submitCancel: true,
       labelWidth: '',
       class: '',
       size: 'default'
-    },
-    config: { submitCancel: true }
+    }
   })
   const tableData = ref({
     columns: [
-      { label: '多选', type: 'selection', prop: 'selection' },
-      { label: '序号', type: 'index', width: '70px', prop: 'index' },
-      { label: '用户名称', prop: 'userName' },
-      { label: '登录地址', prop: 'loginIp' },
+      {label: '多选', type: 'selection', prop: 'selection'},
+      {label: '序号', type: 'index', width: '70px', prop: 'index'},
+      {label: '用户名称', prop: 'userName'},
+      {label: '登录地址', prop: 'loginIp'},
       {
         label: '登录状态',
         prop: 'status',
         render: 'tag',
         replaceValue: 'status',
-        custom: { 1: 'success', 0: 'warning' }
+        custom: {1: 'success', 0: 'warning'}
       },
       {
         label: '登录时间',
         prop: 'dateTime',
         width: '170px',
         render: 'datetime',
-        config: { }
+        config: {}
       },
-      { label: '操作信息', prop: 'remark' },
+      {label: '操作信息', prop: 'remark'},
       {
         label: '操作',
         prop: 'control',
@@ -94,16 +92,15 @@
       }
     ],
     config: {
-      // columnsSetting: false
-    },
-    controlBtn: [
-      {
-        label: '批量删除',
-        key: 'del',
-        type: 'danger',
-        size: 'small',
-        icon: 'delete'
-      }
-    ]
+      controlBtn: [
+        {
+          label: '批量删除',
+          key: 'del',
+          type: 'danger',
+          size: 'small',
+          icon: 'delete'
+        }
+      ]
+    }
   })
 </script>

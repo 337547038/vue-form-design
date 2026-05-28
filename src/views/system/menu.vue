@@ -42,10 +42,6 @@
   }
   const refreshTable = ref(true)
   const tableData = ref({
-    tableProps: {
-      rowKey: 'id',
-      defaultExpandAll: false
-    },
     columns: [
       { label: '菜单名称', prop: 'name' },
       {
@@ -110,33 +106,37 @@
           }
         ] }
     ],
-    controlBtn: [
-      {
-        label: '新增',
-        type: 'primary',
-        icon: 'plus',
-        click: () => {
-          dialog.visible = true
-          dialog.title = '新增菜单'
-          dialog.formType = 'add'
-        }
-      },
-      {
-        label: '展开折叠',
-        click: () => {
-          tableData.value.tableProps.defaultExpandAll
-              = !tableData.value.tableProps.defaultExpandAll
-          refreshTable.value = false
-          nextTick(() => {
-            refreshTable.value = true
-          })
-        }
-      }
-    ],
     config: {
+      controlBtn: [
+        {
+          label: '新增',
+          type: 'primary',
+          icon: 'plus',
+          click: () => {
+            dialog.visible = true
+            dialog.title = '新增菜单'
+            dialog.formType = 'add'
+          }
+        },
+        {
+          label: '展开折叠',
+          click: () => {
+            tableData.value.tableProps.defaultExpandAll
+              = !tableData.value.tableProps.defaultExpandAll
+            refreshTable.value = false
+            nextTick(() => {
+              refreshTable.value = true
+            })
+          }
+        }
+      ],
       pageSize: '100',
       sort: 'sort asc',
-      fixedBottomScroll: false
+      fixedBottomScroll: false,
+      tableProps: {
+        rowKey: 'id',
+        defaultExpandAll: false
+      }
     }
   })
   // 表单

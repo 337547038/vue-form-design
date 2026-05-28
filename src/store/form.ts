@@ -88,8 +88,12 @@ export const useFormStore = (id: number | string) => defineStore(`form-${id}`, (
 
   //===============================通过手动设置表单项的如select/radio/checkbox选项值
   const formOptions = ref({})
-  const setFormOptions = (data: { [key: string]: string[] }) => {
-    formOptions.value = data
+  const setFormOptions = (data: { [key: string]: string[] }, update = false) => {
+    if (update) {
+      Object.assign(formOptions.value, data)
+    } else {
+      formOptions.value = data
+    }
   }
 
   //==============================表单组件缓存接口数据

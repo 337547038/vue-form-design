@@ -212,15 +212,16 @@
   })
 
   //=====================================获取options
-  const optionsList = ref(props.data.options)
+  //const optionsList = ref(props.data.options)
   const options = computed(() => {
     // 使用了setOptions时，优先使用此值
+    // 接口数据获取结果也会更新这个，否则当使用了setOptions方法后，接口就数据就失效了
     const opt = store.formOptions[props.data.name]
     if (opt) {
       return objectToArray(opt)
     } else {
       // 判断下option的类型，为对象时转换下
-      return objectToArray(optionsList.value)
+      return objectToArray(props.data.options)
     }
   })
 
@@ -230,7 +231,8 @@
     return getTransformLabelValue(type, obj, {transformData, label, value})
   }
   const getSelectRemoteMethod = (option: any) => {
-    optionsList.value = option
+    //optionsList.value = option
+    store.setFormOptions({[props.data.name]:option},true)
   }
   //=====================================获取options结束
   const getInputSlot = (key?: string) => {
@@ -349,15 +351,17 @@
     ? watch(
       () => formValue.value[linkage],
       (val: any) => {
-        getRemoteMethodDebounce(props.data, (opt: any) => {
-          optionsList.value = opt
+        getRemoteMethodDebounce(props.data, store, (opt: any) => {
+          store.setFormOptions({[props.data.name]:opt},true)
+          //optionsList.value = opt
         }, {[linkage]: val})
       }
     )
     : null
   onMounted(() => {
-    getOptionsList(props.data, (opt: Record<string, any>) => {
-      optionsList.value = opt
+    getOptionsList(props.data, store, (opt: Record<string, any>) => {
+      store.setFormOptions({[props.data.name]:opt},true)
+      //optionsList.value = opt
     })
   })
   onUnmounted(() => {

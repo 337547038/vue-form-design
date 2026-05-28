@@ -17,7 +17,6 @@
       <ak-form
         ref="formEl"
         :data="formData"
-        :dict="dialog.dict"
         :operate-type="dialog.formType"
         :submit-url="dialog.formType==='add'?'userSave':'userEdit'"
         :before="beforeSubmit"
@@ -350,10 +349,12 @@
         }
       }
     ],
-    config: {submitCancel: true,size: 'default',
+    config: {
+      submitCancel: true,
+      size: 'default',
       class: 'form-row-2',
       labelWidth: '100px',
-      name: 'userForm'}
+      key: 'userForm'}
   })
   const dialog = reactive({
     visible: false,

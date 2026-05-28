@@ -5,15 +5,10 @@
       :api-key="{list:'dictList',del:'dictDelete'}"
       :search-data="searchData"
       :data="tableData"
-    />
-    <el-dialog
-      v-model="dialog.visible"
-      :title="dialog.type==='add'?'添加字典':'修改'"
-      width="400px"
-      destroy-on-close
+      @btn-click="listBtnClick"
     >
       <ak-form
-        ref="formEl"
+        ref="formRef"
         :data="dialog.formData"
         :operate-type="dialog.type"
         :submit-url="dialog.type==='add'?'dictSave':'dictEdit'"
@@ -21,39 +16,24 @@
         :after="afterSubmit"
         @btn-click="cancelClick"
       />
-    </el-dialog>
-    <el-dialog
-      v-model="dialog2.visible"
-      title="设置字典数据"
-      width="400px"
-      destroy-on-close
-    >
-      <ak-form
-        ref="formEl2"
-        :data="dialog2.formData"
-        operate-type="edit"
-        submit-url="dictEdit"
-        :before="beforeSubmit2"
-        :after="afterSubmit('set')"
-        @btn-click="cancelClick"
-      />
-    </el-dialog>
+    </ak-list>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, nextTick } from 'vue'
-  import { useLayoutStore } from '@/store/layout'
+  import {ref, reactive, provide} from 'vue'
+  import {useLayoutStore} from '@/store/layout'
+  import {string2json} from "@/utils/design";
+  import {useListDialogForm} from '@/store/list'
 
   const store = useLayoutStore()
+  const formStore = useListDialogForm('dict')()
+  provide('akListDialogForm', formStore)
 
   const tableListEl = ref()
-  const formEl = ref()
-  const formEl2 = ref()
+  const formRef = ref()
   const dialog = reactive({
-    visible: false,
     type: 'add',
-    editId: '',
     formData: {
       list: [
         {
@@ -62,7 +42,6 @@
             modelValue: '',
             placeholder: '请输入字典名称'
           },
-          config: {},
           name: 'name',
           formItem: {
             label: '字典名称'
@@ -81,9 +60,7 @@
             modelValue: '',
             placeholder: '请输入字典标识'
           },
-          config: {
-            disabledEdit: true
-          },
+          disabledEdit: true,
           name: 'type',
           formItem: {
             label: '字典标识'
@@ -111,49 +88,10 @@
               value: 0
             }
           ],
-          config: {
-            optionsType: 0
-          },
+          optionsType: 0,
           name: 'status',
           formItem: {
             label: '状态'
-          }
-        },
-        {
-          type: 'textarea',
-          control: {
-            modelValue: ''
-          },
-          config: {},
-          name: 'remark',
-          formItem: {
-            label: '说明描述'
-          }
-        }
-      ],
-      form: {
-        labelWidth: '',
-        size: 'default'
-      },
-      config: { submitCancel: true }
-    }
-  })
-  const dialog2 = reactive({
-    visible: false,
-    editId: '',
-    formData: {
-      list: [
-        {
-          type: 'input',
-          control: {
-            modelValue: '',
-            disabled: true,
-            placeholder: '请输入字典名称'
-          },
-          config: {},
-          name: 'name',
-          formItem: {
-            label: '字典名称'
           }
         },
         {
@@ -165,7 +103,6 @@
                 modelValue: '',
                 placeholder: '显示的标签名称'
               },
-              config: {},
               name: 'label',
               formItem: {
                 label: '字典标签'
@@ -176,7 +113,6 @@
               control: {
                 modelValue: ''
               },
-              config: {},
               name: 'value',
               formItem: {
                 label: '键值'
@@ -185,31 +121,45 @@
           ],
           tableData: [],
           control: {},
-          config: {
-            addBtnText: '添加一行',
-            delBtnText: '删除'
-          },
+          addBtnText: '添加一行',
+          delBtnText: '删除',
           name: 'children'
+        },
+        {
+          type: 'textarea',
+          control: {
+            modelValue: ''
+          },
+          name: 'remark',
+          formItem: {
+            label: '说明描述'
+          }
         }
       ],
-      form: {
-        labelWidth: '',
-        size: 'default'
-      },
       config: {
         transformData: true,
         submitCancel: true,
-        style:
-          '.flex-item{display:flex}\n.flex-item .el-form-item{ margin-right:10px}'
+        style: '.flex-item{display:flex}\n.flex-item .el-form-item{ margin-right:10px;margin-bottom:10px;}'
       }
-    }
+    },
+    closeFn: ''
   })
+
+  const listBtnClick = (key: string, row: any, close: () => void) => {
+    dialog.closeFn = close
+    dialog.type = key
+    if (key === 'edit') {
+      const newRow = {...row, children: string2json(row.children)}
+      formRef.value.setValue(newRow)
+    }
+    formStore.setTitle(key === 'add' ? '新增字典' : '编辑字典')
+  }
   const tableData = ref({
     columns: [
-      { label: '多选', type: 'selection' },
-      { label: '序号', type: 'index', width: '70px' },
-      { label: '字典名称', prop: 'name' },
-      { label: '字典标识', prop: 'type' },
+      {label: '多选', type: 'selection'},
+      {label: '序号', type: 'index', width: '70px'},
+      {label: '字典名称', prop: 'name'},
+      {label: '字典标识', prop: 'type'},
       {
         label: '状态',
         prop: 'status',
@@ -219,8 +169,7 @@
           0: 'info',
           1: 'success'
         },
-        config: {
-        }
+        config: {}
       },
       {
         label: '更新时间',
@@ -229,66 +178,42 @@
         render: 'datetime',
         config: {}
       },
-      { label: '操作', prop: '__control', width: 200, render: 'buttons', buttons: [
-          {
-            label: '设置',
-            type: 'primary',
-            click: () => {
-              dialog2.visible = true
-              // dialog2.editId = row.id
-              /* nextTick(() => {
-                formEl2.value.setValue({
-                  name: row.name,
-                  children: row.children ? JSON.parse(row.children) : []
-                })
-              }) */
-            }
-          },
+      {
+        label: '操作', prop: '__control', width: 200, render: 'buttons', buttons: [
           {
             label: '编辑',
             icon: 'edit',
             type: 'primary',
-            click: (row: any) => {
-              dialog.visible = true
-              dialog.type = 'edit'
-              dialog.editId = row.id
-              nextTick(() => {
-                formEl.value.setValue(row, true)
-              })
-            }
+            key: 'edit'
           },
           {
             label: '删除',
             key: 'del',
             icon: 'delete',
-            visible: '$.isSystem!==1'
+            display: (row: any) => {
+              return row.isSystem !== 1
+            }
           }
-        ] }
-    ],
-    controlBtn: [
-      {
-        label: '新增',
-        type: 'primary',
-        size: 'small',
-        icon: 'plus',
-        click: () => {
-          dialog.visible = true
-          dialog.type = 'add'
-          dialog.editId = ''
-          nextTick(() => {
-            // formEl.value.resetFields()
-          })
-        }
-      },
-      {
-        label: '批量删除',
-        type: 'danger',
-        size: 'small',
-        icon: 'delete',
-        key: 'del'
+        ]
       }
     ],
     config: {
+      controlBtn: [
+        {
+          label: '新增',
+          type: 'primary',
+          icon: 'plus',
+          key: 'add'
+        },
+        {
+          label: '批量删除',
+          type: 'danger',
+          icon: 'delete',
+          key: 'del'
+        }
+      ],
+      openType: 'dialog',
+      dialogWidth: '400px',
       expand: true,
       searchJump: true
     }
@@ -301,7 +226,6 @@
           modelValue: '',
           placeholder: '请输入字典名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '字典名称'
@@ -311,7 +235,7 @@
         type: 'select',
         control: {
           modelValue: '',
-          style: { width: '100px' }
+          style: {width: '100px'}
         },
         options: [
           {
@@ -324,44 +248,27 @@
           }
         ],
         name: 'status',
-        config: {
-          optionsType: 0
-          // transformData: 'string'
-        },
+        optionsType: 0,
         formItem: {
           label: '状态'
         }
       }
     ],
-    form: {
-      labelWidth: '',
-      class: '',
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: {submitCancel: true}
   }) // 筛选表单
   const beforeSubmit = (params: any) => {
-    params.id = dialog.editId // 添加编辑id
     return params
   }
-  const beforeSubmit2 = (params: any) => {
-    params.id = dialog2.editId // 添加编辑id
-    return params
-  }
-  const afterSubmit = (type: string) => {
-    dialog.visible = false
-    // dialog2.visible = false
+  const afterSubmit = () => {
+    //dialog.closeFn && dialog.closeFn()
+    formStore.setVisible(false)
     tableListEl.value.getListData() // 重新拉数据
-    if (type === 'set') {
-      // 更新设置时，同时更新保存在本地的dict
-      store.getDict()
-    }
+    store.getDict(true)// 更新设置时，同时更新保存在本地的dict
   }
   const cancelClick = (type: string) => {
     if (type === 'reset') {
-      dialog.visible = false
-      dialog2.visible = false
+      formStore.setVisible(false)
+      //dialog.closeFn && dialog.closeFn()
     }
-    console.log('btn click')
   }
 </script>

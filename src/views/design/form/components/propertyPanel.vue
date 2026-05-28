@@ -453,7 +453,7 @@
 </template>
 
 <script lang="ts" setup>
-  import {computed, nextTick, onMounted, onUnmounted, reactive, ref} from 'vue'
+  import {computed, inject, nextTick, onMounted, onUnmounted, reactive, ref} from 'vue'
   import {getRequest} from '@/api'
   import validate from '@/components/form/validate'
   import {ElMessage} from 'element-plus'
@@ -1502,8 +1502,9 @@
   })
   // 接口数据处理
   //测试连接
+  const store = inject('formStore')
   const getOptionTest = () => {
-    getRemoteMethod(storeForm.selectComponent, () => {
+    getRemoteMethod(storeForm.selectComponent, store,() => {
       ElMessage.success('连接成功')
     })
   }
