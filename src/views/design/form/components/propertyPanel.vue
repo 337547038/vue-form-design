@@ -1,10 +1,10 @@
 <!-- Created by 337547038 on 2021/6/1 0001. -->
 <template>
   <div class="sidebar-tools">
-    <el-tabs model-value="first">
+    <el-tabs v-model="storeForm.configTabsName">
       <el-tab-pane
         label="字段配置"
-        name="first"
+        name="filedConfig"
       >
         <el-form
           size="small"
@@ -393,7 +393,7 @@
       </el-tab-pane>
       <el-tab-pane
         label="表单配置"
-        name="second"
+        name="formConfig"
       >
         <el-form
           size="small"

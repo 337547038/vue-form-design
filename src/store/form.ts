@@ -21,11 +21,17 @@ export const useDesignFormStore = defineStore('designForm', () => {
   const setDesignType = (data: string) => {
     designType.value = data
   }
+
   // ===============================当前选中的组件
+  const configTabsName = ref('formConfig')
   const selectComponent = ref({})
   const setSelectComponent = (component: Component) => {
     selectComponent.value = component
+    configTabsName.value='filedConfig'
   }
+  /*const setConfigTabsName = (name: string) => {
+    configTabsName.value = name
+  }*/
   //===============================返回当前组件是否为选中状态
   const getIsActive = (item: Component) => {
     if (item.name) {
@@ -49,6 +55,7 @@ export const useDesignFormStore = defineStore('designForm', () => {
       Object.assign(formOptionDict.value, data || {})
     }
   }
+
   return {
     designConfig,
     setDesignConfig,
@@ -60,7 +67,8 @@ export const useDesignFormStore = defineStore('designForm', () => {
     formOptionDict,
     setFormOptionDict,
     designData,
-    setDesignData
+    setDesignData,
+    configTabsName
   }
 })
 export const useFormStore = (id: number | string) => defineStore(`form-${id}`, () => {
