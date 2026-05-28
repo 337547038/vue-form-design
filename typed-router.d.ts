@@ -48,6 +48,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/design/flow/': RouteRecordInfo<
+      '/design/flow/',
+      '/design/flow',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/design/flow/list': RouteRecordInfo<
+      '/design/flow/list',
+      '/design/flow/list',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/design/form/': RouteRecordInfo<
       '/design/form/',
       '/design/form',
@@ -223,6 +237,62 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/task/apply/': RouteRecordInfo<
+      '/task/apply/',
+      '/task/apply',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/apply/start': RouteRecordInfo<
+      '/task/apply/start',
+      '/task/apply/start',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/applyed': RouteRecordInfo<
+      '/task/applyed',
+      '/task/applyed',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/components/drawerCom': RouteRecordInfo<
+      '/task/components/drawerCom',
+      '/task/components/drawerCom',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/components/drawerTodo': RouteRecordInfo<
+      '/task/components/drawerTodo',
+      '/task/components/drawerTodo',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/components/tabs': RouteRecordInfo<
+      '/task/components/tabs',
+      '/task/components/tabs',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/done': RouteRecordInfo<
+      '/task/done',
+      '/task/done',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/todo': RouteRecordInfo<
+      '/task/todo',
+      '/task/todo',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/test': RouteRecordInfo<
       '/test',
       '/test',
@@ -272,6 +342,18 @@ declare module 'vue-router/auto-routes' {
     'src/views/design/datasource/index.vue': {
       routes:
         | '/design/datasource/'
+      views:
+        | never
+    }
+    'src/views/design/flow/index.vue': {
+      routes:
+        | '/design/flow/'
+      views:
+        | never
+    }
+    'src/views/design/flow/list.vue': {
+      routes:
+        | '/design/flow/list'
       views:
         | never
     }
@@ -422,6 +504,54 @@ declare module 'vue-router/auto-routes' {
     'src/views/system/user.vue': {
       routes:
         | '/system/user'
+      views:
+        | never
+    }
+    'src/views/task/apply/index.vue': {
+      routes:
+        | '/task/apply/'
+      views:
+        | never
+    }
+    'src/views/task/apply/start.vue': {
+      routes:
+        | '/task/apply/start'
+      views:
+        | never
+    }
+    'src/views/task/applyed.vue': {
+      routes:
+        | '/task/applyed'
+      views:
+        | never
+    }
+    'src/views/task/components/drawerCom.vue': {
+      routes:
+        | '/task/components/drawerCom'
+      views:
+        | never
+    }
+    'src/views/task/components/drawerTodo.vue': {
+      routes:
+        | '/task/components/drawerTodo'
+      views:
+        | never
+    }
+    'src/views/task/components/tabs.vue': {
+      routes:
+        | '/task/components/tabs'
+      views:
+        | never
+    }
+    'src/views/task/done.vue': {
+      routes:
+        | '/task/done'
+      views:
+        | never
+    }
+    'src/views/task/todo.vue': {
+      routes:
+        | '/task/todo'
       views:
         | never
     }
