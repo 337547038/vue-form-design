@@ -453,7 +453,7 @@
 </template>
 
 <script lang="ts" setup>
-  import {computed, inject, nextTick, onMounted, onUnmounted, reactive, ref} from 'vue'
+  import {computed, nextTick, onMounted, onUnmounted, reactive, ref} from 'vue'
   import {getRequest} from '@/api'
   import validate from '@/components/form/validate'
   import {ElMessage} from 'element-plus'
@@ -483,7 +483,7 @@
   const dataSourceOption = ref([])
   const formAttr = computed(() => {
     //搜索时不显示
-    const isSearchHide = ['name', 'sourceId', 'key', 'submitCancel', 'transformData','div','submitUrl','requestUrl','before','after','change']
+    const isSearchHide = ['name', 'sourceId', 'key', 'submitCancel', 'transformData', 'div', 'submitUrl', 'requestUrl', 'before', 'after', 'change']
     return [
       {
         label: '表单名称',
@@ -553,34 +553,39 @@
         type: 'button'
       },
       {
-        text:'接口数据事件',
-        type:'div',
-        key:'div'
+        text: '接口数据事件',
+        type: 'div',
+        key: 'div'
       },
       {
-        label:'提交保存url',
-        key:'submitUrl',
+        label: '提交保存url',
+        key: 'submitUrl',
         placeholder: '表单提交的url，通用提交时可不设置'
       },
       {
-        label:'获取表单数据url',
-        key:'requestUrl',
+        label: '获取表单数据url',
+        key: 'requestUrl',
         placeholder: '获取表单数据url，通用提交时可不设置'
       },
       {
-        type:'button',
-        key:'before',
-        name:'before事件'
+        type: 'button',
+        key: 'before',
+        name: 'before事件'
       },
       {
-        type:'button',
-        key:'after',
-        name:'after事件'
+        type: 'button',
+        key: 'after',
+        name: 'after事件'
       },
       {
-        type:'button',
-        key:'change',
-        name:'change改变事件'
+        type: 'button',
+        key: 'change',
+        name: 'change改变事件'
+      },
+      {
+        type: 'button',
+        key: 'dict',
+        name: '表单字典'
       }
     ].filter(item => {
       if (isSearch.value) {
@@ -1388,6 +1393,13 @@
         callback: (content: any) => {
           selectComponent.value.control.data = content
         }
+      }),
+      dict: () => ({
+        title: '提供给列表使用的表单字典，如{sex:{1:“男”,2:“女”}}',
+        content: storeForm.formOptionDict,
+        callback: (content: any) => {
+          storeForm.setFormOptionDict(content)
+        }
       })
     }
 
@@ -1501,7 +1513,7 @@
   // 接口数据处理
   //测试连接
   const getOptionTest = () => {
-    getRemoteMethod(storeForm.selectComponent, {},() => {
+    getRemoteMethod(storeForm.selectComponent, {}, () => {
       ElMessage.success('连接成功')
     })
   }

@@ -50,6 +50,7 @@
 <script setup lang="ts">
   import {computed, onUnmounted, ref, watch} from 'vue'
   import {uiType} from './const'
+  import {arrayToObject, objectToArray} from "@/utils/design";
 
   const props = withDefaults(
     defineProps<{
@@ -89,29 +90,6 @@
         value: ''
       }
     )
-  }
-  const arrayToObject = (array: any) => {
-    if (!array) {
-      return {}
-    }
-    const obj: any = {}
-    for (const item of array) {
-      obj[item.value] = item.label
-    }
-    return obj
-  }
-  const objectToArray = (obj: any) => {
-    if (!obj) {
-      return []
-    }
-    const array: any = []
-    for (const key in obj) {
-      array.push({
-        value: key,
-        label: obj[key]
-      })
-    }
-    return array
   }
   onUnmounted(() => {
     unWatch()

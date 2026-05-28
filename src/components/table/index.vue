@@ -213,6 +213,7 @@
   import DialogForm from './components/dialogForm.vue'
   import type {After, Before} from "@/types";
   import {useListDialogForm} from "@/store/list.ts";
+  import {arrayToObject} from "@/utils/design.ts";
 
   defineOptions({name: 'AkList'})
   const props = withDefaults(
@@ -227,7 +228,7 @@
       query?: { [key: string]: any } // 一些附加的请求参数
       autoLoad?: boolean // 初始时自动请求加载数据
       pk?: string // 主键
-      dict?: Record<string, any> | undefined
+      dict?: Record<string, any> | undefined | Record<string, any>[]
     }>(),
     {
       searchData: () => {
@@ -316,7 +317,7 @@
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
     const storage = getStorage('akAllDict')
-    return Object.assign(storage || {}, props.dict, state.dict) || {}
+    return Object.assign(storage || {}, props.dict || {}) || {}
   })
 
   // 搜索表单的值
@@ -331,7 +332,7 @@
     return config.value.openType === 'dialog'
   })
   //接收inject akListDialogForm参数作为标题
-  const akListDialogForm = inject('akListDialogForm',{})
+  const akListDialogForm = inject('akListDialogForm', {})
   const instance = getCurrentInstance()
   const dialogFormStore = akListDialogForm ? akListDialogForm : useListDialogForm(instance.uid)()
 
@@ -430,7 +431,6 @@
         if (Object.keys(data).length === 0 && data.constructor === Object) {
           tableDataList.value = []
         }
-        state.dict = data.dict || {}
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false

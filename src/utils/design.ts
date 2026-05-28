@@ -179,6 +179,23 @@ export const objectToArray = (obj: any): { [key: string | number]: any } => {
   }
   return obj
 }
+/**
+ * 将[{label:'key',value:'value'}]转{key:value}
+ * @param array
+ */
+export const arrayToObject = (array: any) => {
+  if (!array) {
+    return {}
+  }
+  if (!Array.isArray(array)) {
+    return array
+  }
+  const obj: any = {}
+  for (const item of array) {
+    obj[item.value] = item.label
+  }
+  return obj
+}
 
 /**
  * 数据克隆

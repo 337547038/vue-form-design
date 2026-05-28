@@ -65,7 +65,7 @@
       if (result && Object.keys(result).length) {
         state.searchData = stringToObj(result.data)
         state.tableData = stringToObj(result.listData)
-        //state.dict = string2json(result.dict)
+        state.dict = string2json(result.dict)
         state.source = result.source
         // 获取列表数据
         nextTick(() => {

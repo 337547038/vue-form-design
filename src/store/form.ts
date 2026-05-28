@@ -42,11 +42,11 @@ export const useDesignFormStore = defineStore('designForm', () => {
   }
   //============================设计时将option保存为供列表使用的字典
   const formOptionDict = ref({})
-  const setFormOptionDict = (key: string, data?: Record<string, any>) => {
-    if (!key) {
+  const setFormOptionDict = (data?: Record<string, any>) => {
+    if (!data) {
       formOptionDict.value = {}
     } else {
-      formOptionDict.value[key] = data
+      Object.assign(formOptionDict.value, data || {})
     }
   }
   return {

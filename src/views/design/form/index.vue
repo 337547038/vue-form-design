@@ -94,6 +94,9 @@
             designStore.setDesignData(resultData.list)
             designStore.setDesignConfig(resultData.config)
           }
+          if (result.dict) {
+            designStore.setFormOptionDict(JSON.parse(result.dict))
+          }
         }
         if (result.source && operateType.value !== 'designSearch') {
           // 加载属性侧边栏的字段标识，搜索时不需要请求

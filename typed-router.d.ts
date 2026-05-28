@@ -307,13 +307,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/upload': RouteRecordInfo<
-      '/upload',
-      '/upload',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
   }
 
   /**
@@ -564,12 +557,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/test1.vue': {
       routes:
         | '/test1'
-      views:
-        | never
-    }
-    'src/views/upload.vue': {
-      routes:
-        | '/upload'
       views:
         | never
     }

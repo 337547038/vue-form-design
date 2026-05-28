@@ -1,4 +1,4 @@
-// Created by 337547038 weixin:337547038
+// created by 337547038 weixin:337547038
 import request from '../utils/request'
 import form from './form'
 import system from './system'
