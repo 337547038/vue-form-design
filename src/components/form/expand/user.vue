@@ -26,6 +26,7 @@
   const props = withDefaults(
     defineProps<{
       disabled?: boolean
+      modelValue?:number|string
     }>(),
     {}
   )

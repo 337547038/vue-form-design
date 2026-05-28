@@ -128,7 +128,6 @@
   const userDialogEl = ref()
   const userSelectChange = (obj: any) => {
     if (obj?.length) {
-      console.log('obj', obj)
       const params = {
         id: state.obj?.id,
         userId: userId.value,

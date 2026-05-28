@@ -129,7 +129,6 @@
         /* placeSearch.search(evt.poi.name, function (status, result) {
           //关键字查询查询
           // 查询成功时，result即对应匹配的POI信息
-          console.log("搜索结果", result);
         }); */
         state.tipInput = evt.poi.name // 更新输入框的值
       }) // 注册监听，当选中某条记录时会触发
@@ -162,7 +161,6 @@
     })
   }
   onMounted(() => {
-    console.log('onMountedonMounted')
     loadResource(
       'https://webapi.amap.com/maps?v=2.0&key=160cab8ad6c50752175d76e61ef92c50&plugin=AMap.PlaceSearch'
     ).then(() => {})

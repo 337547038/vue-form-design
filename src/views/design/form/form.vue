@@ -106,12 +106,10 @@
       ElMessage.error('此模式不能提交操作..')
       return false
     }
-    console.log('before')
     params.formId = formId.value
     return params
   }
   const after = (res: any, success: boolean, type: string) => {
-    console.log('after', res,success, type)
     if (success && type === 'submit') {
       router.go(-1)
     }

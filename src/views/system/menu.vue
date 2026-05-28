@@ -89,7 +89,6 @@
             label: '编辑',
             type: 'primary',
             click: (row: any) => {
-              // console.log(row)
               dialog.visible = true
               dialog.title = '编辑菜单'
               dialog.formType = 'edit'

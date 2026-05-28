@@ -143,7 +143,6 @@
   }
   const confirmClick = (val: FileList) => {
     const string = val.map((item: { fileUrl: any }) => item.fileUrl)
-    console.log('confirmClick', string)
     modelValue.value = string.join(',')
   }
 </script>

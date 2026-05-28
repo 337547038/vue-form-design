@@ -1297,7 +1297,6 @@
    * @param eventType
    */
   const openAttrDialog = (eventType: string) => {
-    console.log('openAttrDialog', eventType)
     const drawerConfigMap: DrawerConfig = {
       //表单配置－编辑表单样式
       editCss: () => ({
@@ -1354,7 +1353,6 @@
         key: eventType,
         content: selectComponent.value.control,
         callback: (content: any) => {
-          console.log(typeof content)
           selectComponent.value.control = content
         }
       }),
@@ -1522,7 +1520,6 @@
     }
     getRequest('sourceById', {id: sourceId})
       .then((res: { data: any }) => {
-        // console.log(res)
         const tableData = res.data?.tableData
         try {
           state.dataSourceFiledList = JSON.parse(tableData)
@@ -1531,8 +1528,7 @@
           state.dataSourceFiledList = []
         }
       })
-      .catch((res: any) => {
-        console.log(res)
+      .catch((_: any) => {
       })
   }
   // 接口数据处理结束

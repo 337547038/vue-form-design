@@ -61,7 +61,6 @@ export const getOptionsList = (component: Component, store: any, callback: (opt:
     const {optionsType, optionsFun} = component
     const {filterable, remote} = component.control
     if (optionsType === 2 && optionsFun) {
-      console.log('2')
       // 从字典获取,根据设定key从字典获取
       if (globalDict.value) {
         const opt = globalDict.value[optionsFun]
@@ -70,7 +69,6 @@ export const getOptionsList = (component: Component, store: any, callback: (opt:
         }
       }
     } else if (optionsType === 1 && optionsFun) {
-      console.log('else')
       // 从接口获取
       if (filterable && remote) {
         // 远程搜索时，初始不需要请求。编辑时需要回显 todo

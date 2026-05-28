@@ -357,7 +357,6 @@
   }
   // 表格上方操作按钮事件，处理预设key的内置事件
   const btnClick = (key: string) => {
-    console.log('btnClick', key)
     const ids = state.selectionChecked.map((item: any) => item[pk.value])
     if (key === 'del' && state.selectionChecked && pk.value) {
       delClick(ids)

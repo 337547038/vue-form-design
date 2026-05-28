@@ -117,7 +117,6 @@
   watch(
     () => route.path,
     () => {
-      // console.log(route)
       setTabViews()
     }
   )

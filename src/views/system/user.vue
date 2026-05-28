@@ -230,7 +230,6 @@
                 // 获取密码的值
                 // eslint-disable-next-line no-undef
                 const val = getuserFormValueByName('password')
-                console.log(val)
                 if (value === '') {
                   callback(new Error('请输入密码'))
                 } else if (value !== val) {
@@ -375,7 +374,6 @@
       // 编辑，根据id加载
       if (key === 'edit') {
         nextTick(() => {
-          console.log(newRow)
           // 将角色数据转换下
           if (newRow.roleId) {
             newRow.roleId = newRow.roleId.split(',').map(Number)

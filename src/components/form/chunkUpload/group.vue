@@ -109,7 +109,6 @@ const groupId = ref('')
 const groupClick = (obj: any) => {
   groupId.value = obj.id
   emits('changeGroup', obj.id)
-  console.log('groupClick', obj.id)
 }
 const showAddGroup = () => {
   isAddGroup.value = true

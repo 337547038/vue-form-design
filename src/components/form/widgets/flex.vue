@@ -66,7 +66,6 @@
     props.data.list.forEach((item: any) => {
       temp[item.name] = item.control.modelValue
     })
-    // console.log(temp)
     return temp
   }
   const addRow = () => {

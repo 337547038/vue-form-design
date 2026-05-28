@@ -67,7 +67,6 @@
   const imgUploadFn = (blobInfo: any, progress: number) =>
     new Promise((resolve, reject) => {
       // https://www.tiny.cloud/docs/tinymce/6/file-image-upload/#images_upload_handler
-      console.log('progress', progress)
       const params = new FormData()
       params.append('file', blobInfo.blob())
       let apiKey = 'upload'
@@ -77,9 +76,7 @@
       getRequest(apiKey, params, {})
         .then((res: { code: number, data: unknown }) => {
           if (res.code === 1) {
-            console.log('ok')
-            resolve(res.data) // 上传成功，在成功函数里填入图片路径
-            // console.log('[文件上传]', res.data)
+            resolve(res.data) // 上传成功，在成功函数里填入图片路
           } else {
             reject('上传失败')
           }
@@ -98,7 +95,6 @@
     input.click()
     input.onchange = () => {
       const file = input?.files && input.files[0] // 获取文件信息
-      // console.log(file)
       // meta对应于file_picker_types的三种类型
       let attr = {}
       if (meta.filetype === 'file') {

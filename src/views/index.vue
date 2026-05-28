@@ -101,7 +101,6 @@
     ElMessageBox.alert('即将离开此项目，进入流程2.0系统', '警告', {
       confirmButtonText: '确认',
       callback: (action) => {
-        console.log(action)
         if (action === 'confirm') {
           window.open('https://337547038.github.io/ak-flow/')
         }

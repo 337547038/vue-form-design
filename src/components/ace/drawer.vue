@@ -68,7 +68,6 @@
   const open = (obj: AceDrawerT) => {
     visible.value = true
     let content = obj.content
-    console.log(obj)
     switch (obj.type) {
       case 'json':
         content = json2string(obj.content, true)

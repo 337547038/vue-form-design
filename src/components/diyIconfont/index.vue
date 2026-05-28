@@ -97,7 +97,6 @@
     return temp
   })
   const iconClick = (newVal: string, type?: string) => {
-   // console.log('iconClick', newVal, type)
     let val
     if (props.colorPicker) {
       if (type === 'val') {

@@ -90,7 +90,6 @@
             key: 'edit',
             click: (row: any) => {
               nextTick(() => {
-                console.log(row)
                 // formEl.value.setValue(row) // 可以这里使用click处理，也可以放listBtnClick里处理
               })
             }

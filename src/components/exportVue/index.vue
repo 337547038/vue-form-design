@@ -39,7 +39,6 @@
   const editor = ref()
   // 根据生成的json提取需要导入的组件，远程方法，检验方法
   const open = ({data, type, search}: { data: any, type: string, search: any }) => {
-    console.log(type)
     visible.value = true
     let html = ''
     switch (type) {

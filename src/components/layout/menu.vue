@@ -25,6 +25,5 @@
     return getStorage('formMenuList', true)
   })
   const select = () => {
-    // console.log('select')
   }
 </script>

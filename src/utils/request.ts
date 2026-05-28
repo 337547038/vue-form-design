@@ -44,7 +44,6 @@ function getNewToken(refreshToken: any) {
   axios
       .post(baseUrl[mode] + '/api/system/user/refreshToken', params)
       .then((result: any) => {
-        console.log(result)
         if (result.data.code === 1) {
           const data = result.data.data
           // 统一方法保存保存token，和登录时一致

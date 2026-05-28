@@ -77,8 +77,6 @@
   })
 
   const uploadError = (err: any, file: any, fileList: any) => {
-    // console.log('uploadError')
-    // ElMessage.error(file.name + '上传失败')
     props.control?.onError(err, file, fileList)
   }
   const uploadSuccess = (response: any, uploadFile: any, uploadFiles: any) => {

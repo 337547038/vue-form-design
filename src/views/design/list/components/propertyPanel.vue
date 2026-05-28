@@ -383,7 +383,6 @@
   })
 
   const propertyChange = (path: string, val: any) => {
-    console.log(path, val)
     if (path === 'buttons') {
       //将数组转为object
       val = val.map((item: any) => ({key: item}))
@@ -593,7 +592,6 @@
   }
 
   const editOpenDrawer = (type: string) => {
-    console.log(type)
     const drawerConfigMap: DrawerConfig = {
       //数据列表配置->before
       before: () => ({

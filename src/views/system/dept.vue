@@ -258,7 +258,6 @@
   }
   // 处理表格数据，转换为可折叠表格
   const afterFetch = (result: any, _: boolean, type: string) => {
-    console.log('after',type,result)
     if (type === 'fetch') {
       const list = result.list
       const treeList = flatToTree(list)

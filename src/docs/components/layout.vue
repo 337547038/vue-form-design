@@ -149,7 +149,6 @@
   ])
   const activeIndex = ref('/docs')
   const handleSelect = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
     // activeIndex.value = key
   }
   onMounted(() => {

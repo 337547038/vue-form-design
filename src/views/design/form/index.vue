@@ -90,7 +90,6 @@
         const result = res.data
         if (result.data) {
           const resultData = stringToObj(result.data)
-          console.log(resultData)
           if (resultData && Object.keys(resultData).length) {
             designStore.setDesignData(resultData.list)
             designStore.setDesignConfig(resultData.config)
@@ -103,7 +102,6 @@
         loading.value = false
       })
       .catch((res: any) => {
-        // console.log(res)
         ElMessage.error(res.message || '加载异常')
         loading.value = false
       })

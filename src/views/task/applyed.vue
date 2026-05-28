@@ -128,7 +128,6 @@
               if ([0, 2].includes(row.status)) {
                 withdraw(row)
               }
-              console.log('row')
             },
             display: (row) => {
               return [0, 2].includes(row.status) && !isCopyer.value// 非待审批时只能查看不能修改

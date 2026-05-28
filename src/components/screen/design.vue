@@ -168,7 +168,6 @@
     if (startWidth !== newW && startHeight !== newH) {
       resizeDrag.value.hasMove = true
     }
-    console.log('resizeDrag.value.hasMove', resizeDrag.value.hasMove)
   }
   const dragStart = (evt: MouseEvent, obj: Component) => {
     emits('clickFocus') // 设置焦点，确保焦点在父节点，否则删除可能失败

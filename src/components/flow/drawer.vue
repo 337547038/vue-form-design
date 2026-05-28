@@ -183,7 +183,6 @@
       remark: state.remark
     }
     Object.assign(nodeData.value, newObj)
-    console.log('confirm', nodeData.value)
   }
   const open = (data: NodeList, index: number, length: number) => {
     state.userType = '' // 重置
