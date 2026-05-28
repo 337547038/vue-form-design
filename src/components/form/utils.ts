@@ -84,9 +84,9 @@ export const getOptionsList = (component: Component, store: any, callback: (opt:
     }
   }
 }
-
+//设计面板属性测试时/保存字典，store={}
 export const getRemoteMethod = (component: Component, store: any, callback: (opt: Record<string, any>) => void, data = {}) => {
-  const {formValue} = store
+  const {formValue = {}} = store
   const {optionsType, optionsFun, cache, method, before, after} = component
   const {remote} = component.control
   let params = {}
@@ -101,7 +101,7 @@ export const getRemoteMethod = (component: Component, store: any, callback: (opt
   if (optionsType === 1 && optionsFun) {
     // 当前控件为动态获取数据，防多次加载，先从本地取。
     // remote时参数过多，暂不缓存
-    if (cache && !remote) {
+    if (cache && !remote && Object.keys(store).length) {
       const spark = new SparkMD5()
       spark.append(optionsFun + JSON.stringify(params))
       cacheKey = spark.end()
@@ -124,7 +124,7 @@ export const getRemoteMethod = (component: Component, store: any, callback: (opt
         .then((res: any) => {
           const result = res.data.list || res.data
           callback && callback(result)
-          if (cache && !remote) {
+          if (cache && !remote && Object.keys(store).length) {
             store.setFormComponentsDataCache(cacheKey, result)
           }
         })

@@ -35,8 +35,9 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router'
-  import { nextTick, reactive, ref } from 'vue'
+  import {useRouter} from 'vue-router'
+  import {nextTick, reactive, ref} from 'vue'
+
   const router = useRouter()
   const dialog = reactive({
     visible: false
@@ -45,38 +46,34 @@
   const tableListEl = ref()
   const tableData = ref({
     columns: [
-      { label: '勾选', type: 'selection' },
-      { prop: 'id', label: 'ID', width: '60px' },
-      { prop: 'name', label: '表单名称', width: '150px' },
+      {label: '勾选', type: 'selection'},
+      {prop: 'id', label: 'ID', width: '60px'},
+      {prop: 'name', label: '表单名称', width: '150px'},
       {
         prop: 'source',
         label: '数据源名称',
         width: '150px',
         render: 'text',
-        replaceValue: 'source',
-        config: {}
+        replaceValue: 'source'
       },
       {
         prop: 'category',
         label: '分类',
-        config: {},
         render: 'tag',
         replaceValue: 'sys-form',
-        custom: { 1: 'success', 2: 'danger' }
+        custom: {1: 'success', 2: 'danger'}
       },
       {
         prop: 'status',
         label: '状态',
         render: 'switch',
-        config: {
-          inlinePrompt: true,
-          activeText: '启用',
-          inactiveText: '禁用',
-          activeValue: 1,
-          inactiveValue: 0
-        },
+        inlinePrompt: true,
+        activeText: '启用',
+        inactiveText: '禁用',
+        activeValue: 1,
+        inactiveValue: 0,
         renderFormatter: (val: any) => {
-         // return val && val.toString()
+          // return val && val.toString()
           return val
         }
       },
@@ -84,14 +81,12 @@
         prop: 'creatUserId',
         label: '创建人',
         render: 'text',
-        replaceValue: 'creatUser',
-        config: {}
+        replaceValue: 'creatUser'
       },
       {
         prop: 'updateDate',
         label: '更新时间',
         width: 200,
-        config: {},
         render: 'datetime',
         // timeFormat: '{yyyy}-{mm}-{dd}'
       },
@@ -133,31 +128,31 @@
             label: '一键创建列表',
             type: 'primary',
             click: (row: any) => {
-              router.push({ path: '/design/list', query: { formId: row.id } })
+              router.push({path: '/design/list', query: {formId: row.id}})
             }
           }
         ]
       }
     ],
-    controlBtn: [
-      {
-        label: '新增',
-        type: 'primary',
-        size: 'small',
-        click: () => {
-          toFormDesign({})
-        }
-      },
-      { label: '删除', key: 'del', size: 'small' }
-    ],
     config: {
+      controlBtn: [
+        {
+          label: '新增',
+          type: 'primary',
+          size: 'small',
+          click: () => {
+            toFormDesign({})
+          }
+        },
+        {label: '删除', key: 'del', size: 'small'}
+      ],
       expand: true
     }
   })
   const toFormDesign = (row: any) => {
     router.push({
       path: '/design/form',
-      query: { id: row.id } // 根据id获取已设计的数据
+      query: {id: row.id} // 根据id获取已设计的数据
     })
   }
   const searchData = ref({
@@ -168,7 +163,6 @@
           modelValue: '',
           placeholder: '请输入表单名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '表单名称'
@@ -180,7 +174,6 @@
           modelValue: '',
           placeholder: '请输入数据源名称'
         },
-        config: {},
         name: 'sourceName',
         formItem: {
           label: '数据源名称'
@@ -192,24 +185,16 @@
           modelValue: '',
           placeholder: '请选择表单分类'
         },
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-form',
-          span: 3
-          // transformData: 'string'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-form',
+        span: 3,
         name: 'category',
         formItem: {
           label: '分类'
         }
       }
     ],
-    form: {
-      labelWidth: '',
-      class: '',
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: {submitCancel: true}
   })
   const dialogFormData = ref({
     list: [
@@ -218,7 +203,6 @@
         control: {
           modelValue: ''
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '表单名称'
@@ -237,11 +221,8 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-form'
-          // transformData: 'string'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-form',
         name: 'category',
         formItem: {
           label: '分类'
@@ -253,24 +234,19 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-          // transformData: 'string'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '启用状态'
         }
       }
     ],
-    form: {
+    config: {
+      key: 'formDialog',
       labelWidth: '140px',
-      class: '',
-      size: 'default',
-      name: 'formDialog'
-    },
-    config: { submitCancel: true }
+      submitCancel: true
+    }
   })
   const afterSubmit = () => {
     dialog.visible = false

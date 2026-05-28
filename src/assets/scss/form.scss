@@ -148,6 +148,7 @@ $mainColor: #66b1ff;
 
   .group-flex {
     .flex-group {display: flex;}
+    .flex-item{flex: 2}
 
     .flex-delete-btn {margin-left: 10px;}
   }
@@ -169,19 +170,19 @@ $mainColor: #66b1ff;
   }
 
   &.form-row-2 {
-    .group {
+    >.group,.drag>.group {
       width: calc(50% - 15px);
     }
   }
 
   &.form-row-3 {
-    .group {
+    >.group,.drag>.group {
       width: calc(33% - 30px);
     }
   }
 
   &.form-row-4 {
-    .group {
+    >.group,.drag>.group {
       /*flex: 1 1 calc(25% - 45px);*/
       width: calc(25% - 45px);
     }

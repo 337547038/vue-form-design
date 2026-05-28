@@ -48,7 +48,6 @@
   import {useDesignFormStore} from "@/store/form";
 
   const designStore = useDesignFormStore()
-  const store = inject('formStore')
 
   const loading = ref(false)
   const tips = ref('')
@@ -82,7 +81,7 @@
   }
   const updateClick = () => {
     loading.value = true
-    getRemoteMethod(designStore.selectComponent, store,(opt) => {
+    getRemoteMethod(designStore.selectComponent, {},(opt) => {
       const {label = 'label', value = 'value'} = selectComponent.value
       loading.value = false
       if (opt?.length) {

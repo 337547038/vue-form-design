@@ -451,7 +451,7 @@
         placeholder: '弹窗宽度',
         value: dc.dialogWidth,
         key: 'dialogWidth',
-        hide: !(dc.openType === 'page')
+        hide: dc.openType !== 'dialog'
       },
       {
         label: '横向滚动固定在底部',

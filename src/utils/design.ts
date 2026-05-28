@@ -102,7 +102,11 @@ export function stringToObj(string: string) {
 }
 
 export function string2json(string: string) {
-  return JSON.parse(string || '{}')
+  try {
+    return JSON.parse(string || '{}')
+  } catch (e) {
+    return {}
+  }
 }
 
 export function json2string(obj: any, isBeautify?: boolean) {

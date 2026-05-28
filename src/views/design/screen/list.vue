@@ -61,15 +61,13 @@
         prop: 'creatUserId',
         label: '创建人',
         render: 'text',
-        replaceValue: 'creatUser',
-        config: {}
+        replaceValue: 'creatUser'
       },
       {
         prop: 'creatDate',
         label: '创建时间',
         width: 200,
-        render: 'datetime',
-        config: {}
+        render: 'datetime'
       },
       {
         label: '操作', prop: 'control', width: '240px', fixed: 'right', render: 'buttons', buttons: [
@@ -137,8 +135,7 @@
         type: 'danger',
         icon: 'delete'
       }
-    ],
-    config: {}
+    ]
   })
   const toDesign = (row: any) => {
     router.push({
@@ -154,18 +151,12 @@
           modelValue: '',
           placeholder: '请输入大屏名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '名称'
         }
       }
     ],
-    form: {
-      labelWidth: '',
-      class: '',
-      size: 'default'
-    },
     config: { submitCancel: true }
   })
   const dialogFormData = ref({
@@ -175,7 +166,6 @@
         control: {
           modelValue: ''
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '名称'
@@ -187,10 +177,8 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-screen'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-screen',
         name: 'category',
         formItem: {
           label: '分类'
@@ -202,14 +190,12 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 1,
-          optionsFun: 'roleList', // 可以为url也可以为api中的key
-          method: 'post',
-          label: 'name', // 指定name为label的值
-          value: 'id', // 指定id为value的值
-          help: '哪些角色可以查看'
-        },
+        optionsType: 1,
+        optionsFun: 'roleList', // 可以为url也可以为api中的key
+        method: 'post',
+        label: 'name', // 指定name为label的值
+        value: 'id', // 指定id为value的值
+        help: '哪些角色可以查看',
         name: 'roleId',
         formItem: {
           label: '权限角色'
@@ -221,25 +207,18 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 2,
-          // transformData: 'string',
-          optionsFun: 'sys-status'
-        },
+        optionsType: 2,
+        // transformData: 'string',
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '启用状态'
         }
       }
     ],
-    form: {
-      labelWidth: '140px',
-      class: '',
-      size: 'default',
-      name: 'formDialog'
-    },
     config: {
-      source: '',
+      labelWidth: '140px',
+      key: 'formDialog',
       submitCancel: true
     }
   })

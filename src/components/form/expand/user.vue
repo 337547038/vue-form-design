@@ -34,7 +34,7 @@
     (e: 'update:modelValue', value: string): void
   }>() */
   const userDialogEl = ref()
-  const value = defineModel<string>()
+  const value = defineModel<string|number>()
   const openDialog = () => {
     userDialogEl.value.open()
   }

@@ -210,7 +210,7 @@
   const unWatch = watch(
     () => props.data,
     () => {
-      console.log('watch props.data')
+      //console.log('watch props.data')
       // data从接口获取时
       const {list, config} = props.data
       forEachGetFormModel(list)

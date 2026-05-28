@@ -20,7 +20,7 @@
 {meta:{permissions:'none'}}
 </route>
 <script setup lang="ts">
-  import {ref, reactive, onMounted, computed} from 'vue'
+  import {ref, reactive, onMounted, computed, nextTick} from 'vue'
   import {useRoute, useRouter} from 'vue-router'
   import {getRequest} from '@/api'
   import {ElMessage} from 'element-plus'
@@ -85,7 +85,9 @@
           }
           // 编辑时加载表单初始数据。或设置了添加时获取请求
           if (id.value) {
-            formRef.value.getData({formId: formId.value, id: id.value})
+            nextTick(()=>{
+             formRef.value.getData({formId: formId.value, id: id.value})
+            })
           }
           layoutStore.changeBreadcrumb([
             {label: '内容管理'},

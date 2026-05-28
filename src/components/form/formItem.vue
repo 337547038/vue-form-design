@@ -95,6 +95,7 @@
     />
     <select-comp
       v-if="['select','inputSlot'].includes(data.type)"
+      v-model="modelValue"
       :data="data"
       :disabled="disabled"
       :options="options"

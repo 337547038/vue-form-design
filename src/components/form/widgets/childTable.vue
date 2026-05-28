@@ -15,7 +15,7 @@
       >
         <template #default="scope">
           <span v-if="item.type === 'index'">{{ scope.$index + 1 }}</span>
-          <div v-if="type === 'detail' || disabledEdit">
+          <div v-if="formType === 'detail' || disabledEdit">
             {{ getText(scope.row[item.name]) }}
           </div>
           <form-item

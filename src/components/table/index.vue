@@ -331,7 +331,7 @@
     return config.value.openType === 'dialog'
   })
   //接收inject akListDialogForm参数作为标题
-  const akListDialogForm = inject('akListDialogForm')
+  const akListDialogForm = inject('akListDialogForm',{})
   const instance = getCurrentInstance()
   const dialogFormStore = akListDialogForm ? akListDialogForm : useListDialogForm(instance.uid)()
 

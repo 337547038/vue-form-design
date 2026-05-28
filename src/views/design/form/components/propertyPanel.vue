@@ -1502,9 +1502,8 @@
   })
   // 接口数据处理
   //测试连接
-  const store = inject('formStore')
   const getOptionTest = () => {
-    getRemoteMethod(storeForm.selectComponent, store,() => {
+    getRemoteMethod(storeForm.selectComponent, {},() => {
       ElMessage.success('连接成功')
     })
   }

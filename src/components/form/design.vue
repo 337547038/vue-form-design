@@ -17,7 +17,7 @@
       <component-factory
         :element="element"
       >
-        <template v-if="designStore.getIsActive(element)&&designStore.designType.indexOf('design')!==-1">
+        <template v-if="designStore.getIsActive(element)&&formStore.formType.indexOf('design')!==-1">
           <div
             class="drag-control"
           >
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { onUnmounted} from 'vue'
+  import {inject, onUnmounted} from 'vue'
   import {onBeforeRouteLeave} from 'vue-router'
   import draggable from 'vuedraggable-es'
   import ComponentFactory from './componentFactory.vue'
@@ -64,9 +64,10 @@
     }
   })
   const designStore = useDesignFormStore()
+  const formStore = inject('formStore')
   // 不能嵌套
   const notNested = (type: string) => {
-    return ['grid', 'table', 'tabs', 'div', 'flex', 'card'].includes(type)
+    return ['grid', 'table', 'tabs', 'flex', 'div', 'card'].includes(type)
   }
   /**
    * 删除或复制
@@ -115,6 +116,11 @@
         dataList.value.splice(newIndex, 1)
         return
       }
+    } else if (parentType === 'div' && obj.type === 'div') {
+      //不能多层嵌套
+      ElMessage.warning('div区域不能使用组件：' + obj.label)
+      dataList.value.splice(newIndex, 1)
+      return
     }
     if (!obj) {
       return

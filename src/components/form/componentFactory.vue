@@ -154,7 +154,6 @@
       >
         <design-form
           :data="element.list"
-          data-nested="not-nested"
           data-type="div"
         />
       </div>

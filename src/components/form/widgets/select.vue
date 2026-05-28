@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-bind="data.control"
-    v-model="value"
+    v-model="modelValue"
     :disabled="disabled"
     :loading="loading"
     :remote-method="getRemoteM"
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-  import {computed, inject, onMounted, ref} from 'vue'
+  import {computed, inject, onMounted, onUnmounted, ref, watch} from 'vue'
   import {onBeforeRouteLeave} from 'vue-router'
   import type {Component} from '@/types/form'
   import {getTransformLabelValue, getOptionsList, getRemoteMethod} from "../utils";
@@ -46,6 +46,7 @@
       remoteMethod: null
     }
   )
+  const modelValue = defineModel<any>()
   const store = inject('formStore')
   const {formValue} = storeToRefs(store)
   const optionSlot = ref([])
@@ -57,8 +58,15 @@
     }
   })
   const selectChange = (val: any) => {
-    formValue.value[props.data.name] = val
+    if (props.type === 'slot') {
+      // 这里没有modelValue．这种赋值方式不能放在子表及弹性布局里面，要注意
+      formValue.value[props.data.name] = val
+    }
   }
+  //监听赋值
+  const unWatch = watch(() => formValue.value[props.data.name], (val: any) => {
+    modelValue.value = val
+  })
   // 这里数据转换放在选项里处理
   const getLabelValue = (type: string, obj: Record<string, any>) => {
     const {transformData, label, value} = props.data
@@ -67,17 +75,10 @@
   const queryName = computed(() => {
     return props.data?.queryName || 'name'
   })
-  const value = computed({
-    get: () => {
-      return formValue.value[props.data.name]
-    },
-    set: () => {
-    }
-  })
   const loading = ref(false)
   // 远程搜索
   const getRemoteM = debounce((name: string) => {
-    getRemoteMethod(props.data, store,(opt) => {
+    getRemoteMethod(props.data, store, (opt) => {
       props.remoteMethod && props.remoteMethod(opt)
       if (props.type === 'slot') {
         optionSlot.value = opt
@@ -94,7 +95,7 @@
       return false
     }
     optionSlot.value = props.data.options // 默认等于静态的
-    getOptionsList(props.data, store,(opt: Record<string, any>) => {
+    getOptionsList(props.data, store, (opt: Record<string, any>) => {
       optionSlot.value = opt
     })
   }
@@ -103,6 +104,9 @@
     if (props.type === 'slot') {
       initSlot()
     }
+  })
+  onUnmounted(() => {
+    unWatch()
   })
   onBeforeRouteLeave(() => {
 
