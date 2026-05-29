@@ -61,16 +61,21 @@
       type: 'custom'
     }
   )
-  const unWatch = watch(() => props.modelValue, (val: Record<string, any>) => {
-    list.value = objectToArray(val)
-  })
   const list = ref([])
+  const unWatch = watch(() => props.modelValue, (val: Record<string, any>) => {
+    if (!val) {
+      list.value = []
+    } else {
+      list.value = objectToArray(val)
+    }
+  }, {immediate: true})
+
   const emits = defineEmits<{
     (e: 'update:modelValue', val: any): void
   }>()
   const showBtn = computed(() => {
     if (props.type === 'custom') {
-      return list.value.length < uiType.length
+      return list.value?.length < uiType.length
     }
     return true
   })

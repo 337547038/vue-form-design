@@ -319,10 +319,15 @@
       case 'eye':
         // 打开预览窗口
         const routeUrl = router.resolve({
-          path: '/design/list/list',
+          path: '/design/list/content/preview',
         })
         // 将数据存
-        setStorage('formPreviewData', objToStringify(tableData.value))
+        const previewData = {
+          tableData: tableData.value,
+          searchForm: searchFormData.value,
+          dict: formDict.value
+        }
+        setStorage('formPreviewData', objToStringify(previewData))
         window.open(routeUrl.href, '_blank')
         break
       case 'json':

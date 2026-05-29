@@ -364,8 +364,8 @@
         vIf: sc.render === 'buttons'
       },
       {
-        label:'功能开发中...',
-        vIf: sc.render==='url',
+        label: '功能开发中...',
+        vIf: sc.render === 'url',
         placeholder: '请耐心等待..'
       },
       {
@@ -587,7 +587,7 @@
     if (key.indexOf('.') !== -1) {
       setValueByPath(designConfig.value, key, val)
     } else {
-      Object.assign(designConfig.value, {[key]: val || ''})
+      Object.assign(designConfig.value, {[key]: val ?? ''})
     }
   }
 

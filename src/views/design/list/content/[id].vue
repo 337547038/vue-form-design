@@ -33,7 +33,8 @@
   import {getRequest} from '@/api'
   import {ElMessage} from 'element-plus'
   import {string2json, stringToObj} from '@/utils/design'
-  import {download} from '@/utils/download'
+  import {getStorage} from "@/utils";
+  import {useLayoutStore} from '@/store/layout'
 
   const route = useRoute()
   const router = useRouter()
@@ -49,8 +50,36 @@
   const listId = computed(() => {
     return route.params.id
   })
+
+  ////==========================================列表预览
+  const layoutStore = useLayoutStore()
+  const initPreview = () => {
+    const previewData = stringToObj(getStorage('formPreviewData'))
+    if (!previewData) {
+      ElMessage.error('数据异常')
+      loading.value = false
+      return
+    }
+    state.searchData = previewData?.searchForm
+    state.tableData = previewData?.tableData
+    state.dict = previewData?.dict
+    state.source = previewData?.tableData?.config?.formId
+    const previewName = previewData?.tableData?.config?.name
+    layoutStore.changeBreadcrumb([{label: previewName || '内容管理'}, {label: '设计预览'}])
+    // 获取列表数据
+    nextTick(() => {
+      listEl.value.getListData()
+      loading.value = false
+    })
+    getFormInit()
+  }
+  ////==========================================列表预览结束
   // 根据当前设计的表单id获取使用了此id设计的列表
   const initList = () => {
+    if (listId.value === 'preview') {
+      initPreview()
+      return
+    }
     state.tableData = []
     listEl.value.resetList()
     if (!listId.value) {
@@ -84,9 +113,6 @@
     () => route.params.id,
     () => {
       initList()
-    },
-    {
-      // deep: true
     }
   )
   const beforeFetch = (params: any, {type}: any) => {

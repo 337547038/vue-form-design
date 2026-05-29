@@ -22,7 +22,7 @@ import {routes} from 'vue-router/auto-routes'
 console.log("autoRoutes", routes)
 
 // 路由白名单，同时可在页面配置permissions=false。支持正则
-const whiteList: (RegExp | string)[] = [/^\/docs/, '/test1', '/test']
+const whiteList: (RegExp | string)[] = [/^\/docs/, '/design/list/content/preview','/test1', '/test']
 // 根据条件提取路由
 const filterRoutePage = (type?: string) => {
   return routes.filter((item: any) => {

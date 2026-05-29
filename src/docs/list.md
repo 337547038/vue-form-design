@@ -10,6 +10,7 @@
 <template>
   <div>
     <ak-list
+      ref="tableRef"
       :api-key='{}'
       :search-data="searchData"
       :data="tableData"
@@ -19,8 +20,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref} from 'vue'
+  import { ref,onMounted} from 'vue'
 
+  const tableRef=ref()
   const tableData = ref({
     columns: [
       {
@@ -45,7 +47,12 @@
       {}
   })
   const searchData = ref([])
-  
+
+  //添加一条演示数据
+  onMounted(()=>{
+    tableRef.value.setTableData([{name:'姓名'}])
+  })
+
 </script>
 
 ```

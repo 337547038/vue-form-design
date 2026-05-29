@@ -109,7 +109,7 @@
     params.formId = formId.value
     return params
   }
-  const after = (res: any, success: boolean, type: string) => {
+  const after = (_: any, success: boolean, type: string) => {
     if (success && type === 'submit') {
       router.go(-1)
     }
