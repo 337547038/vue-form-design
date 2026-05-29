@@ -16,8 +16,6 @@
   import {nextTick, ref} from 'vue'
 
   const tableListRef = ref()
-  const operateType = ref('add')
-
   const tableData = ref({{tableData}})
   const searchData = ref({{searchData}})
 
@@ -28,10 +26,9 @@
    */
   const listBtnClick = (key: string, row: any) => {
     if (key === 'add') {
-      operateType.value=key
       // 添加方法
     }else if(key==='edit'){
-      operateType.value=key
+
     }else {
      // 其他按钮事件
     }

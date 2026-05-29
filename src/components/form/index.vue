@@ -181,8 +181,8 @@
       } else if (['card', 'div'].includes(item.type)) {
         forEachGetFormModel(item.list)
       } else {
-        const excludeType = ['title', 'divider', 'txt', 'button']
-        if (excludeType.indexOf(item.type) === -1) {
+        const excludeType = ['title', 'divider', 'txt', 'button','selection','index']
+        if (excludeType.indexOf(item.type) === -1&&item.control) {
           model.value[item.name] = jsonParseStringify(item.control.modelValue)
         }
       }
@@ -276,7 +276,7 @@
     })
   }
   const getData = (params = {}) => {
-    const requestUrl = props.data.requestUrl || props.requestUrl
+    const requestUrl = props.data.config.requestUrl || props.requestUrl
     if (!['add', 'edit', 'detail'].includes(props.operateType)) {
       console.error('当前模式不能请求数据！')
       return
@@ -322,7 +322,7 @@
       })
   }
   const submit = (params = {}) => {
-    const apiUrl: string | undefined = props.submitUrl || props.data.submitUrl
+    const apiUrl: string | undefined = props.submitUrl || props.data.config?.submitUrl
     if (!['add', 'edit'].includes(props.operateType) || loading.value) {
       return // 只有add/edit允许提交表单，其他不提交表单
     }

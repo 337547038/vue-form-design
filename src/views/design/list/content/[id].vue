@@ -7,7 +7,7 @@
       :search-data="state.searchData"
       :data="state.tableData"
       :dict="state.dict"
-      :api-key="{list:'getContentList',del:'delFormContent',export:'exportContent',edit:'editFormContent'}"
+      :api-key="{list:'getContentList',del:'delFormContent',exportExcel:'exportExcel',edit:'editFormContent'}"
       :before="beforeFetch"
       :auto-load="false"
       @btn-click="listBtnClick"
@@ -129,19 +129,7 @@
   const listBtnClick = (key: string, row: any, close: any) => {
     // 选择了数据源和设置了弹窗方式打开时
     dialog.close = close
-    if (key === 'export') {
-      // 使用查询表单的值及当前列表的id
-      const params = Object.assign({}, listEl.value.getSearchFormValue(), {
-        listId: listId.value
-      })
-      download('importExcel', params)
-        .then(() => {
-          ElMessage.success('正在导出..')
-        })
-        .catch((res: any) => {
-          ElMessage.error(res.message)
-        })
-    } else if (key === 'add' || key === 'edit') {
+    if (key === 'add' || key === 'edit') {
       if (canOpenDialog.value) {
         // 打开弹窗
         dialog.formType = key

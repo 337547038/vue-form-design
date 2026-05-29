@@ -4,7 +4,7 @@ export interface ApiKey {
   list?: string
   edit?: string
   del?: string
-  export?: string
+  exportExcel?: string
 }
 
 export interface Columns extends Partial<TableColumnCtx<any>> {

@@ -212,8 +212,7 @@
   import {beforeAfter} from "@/utils/beforeAfter";
   import DialogForm from './components/dialogForm.vue'
   import type {After, Before} from "@/types";
-  import {useListDialogForm} from "@/store/list.ts";
-  import {arrayToObject} from "@/utils/design.ts";
+  import {useListDialogForm} from "@/store/list";
 
   defineOptions({name: 'AkList'})
   const props = withDefaults(
@@ -317,7 +316,7 @@
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
     const storage = getStorage('akAllDict')
-    return Object.assign(storage || {}, props.dict || {}) || {}
+    return Object.assign(storage || {}, props.dict || {},state.dict) || {}
   })
 
   // 搜索表单的值
@@ -334,7 +333,7 @@
   //接收inject akListDialogForm参数作为标题
   const akListDialogForm = inject('akListDialogForm', {})
   const instance = getCurrentInstance()
-  const dialogFormStore = akListDialogForm ? akListDialogForm : useListDialogForm(instance.uid)()
+  const dialogFormStore = (akListDialogForm && Object.keys(akListDialogForm).length > 0) ? akListDialogForm : useListDialogForm(instance.uid)()
 
   //点击按钮弹出表单窗口时，同时传递关闭方法
   const closeFormDialog = () => {
@@ -431,6 +430,7 @@
         if (Object.keys(data).length === 0 && data.constructor === Object) {
           tableDataList.value = []
         }
+        state.dict=res.data.dict||{}
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false
@@ -744,7 +744,9 @@
   const getSearchFormValue = () => {
     return searchFormValue.value
   }
-
+  const setTableData = (obj: any) => {
+    tableDataList.value = obj
+  }
   // 监听url参数变化重新请求数据
   const setSearchValueFormQuery = () => {
     const routeQuery = route.query
@@ -802,6 +804,7 @@
     table,
     setSearchFormValue,
     getSearchFormValue,
-    resetList
+    resetList,
+    setTableData
   })
 </script>

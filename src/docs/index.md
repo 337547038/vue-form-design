@@ -23,9 +23,6 @@ src
     ├─ design 设计表单及列表公共方法
     ├─ download 导出excel
     ├─ flatTree 扁平数据及树结构数据相关操作类
-    ├─ formatResult 提交表单及请求列表等数据公共方法，用于拦截转换
-    ├─ formatScreen 大屏请求数据公共方法，用于拦截转换
-    ├─ formChangeValue 表单控件改变事件，可用于监听数据变化修改值等操作
     ├─ index 一些常用方法
     └─ request axios封装的数据请求
  └─views 页面

@@ -15,7 +15,7 @@ export default {
   delFormContent: 'content/delete', // 删除表单内容
   getFormContent: 'content/get', // 获取表单内容
   upload: 'upload/single', // 默认el-upload上传url，也可单独在设计时填写上传地址
-  importExcel: '', // 导出excel
+  exportExcel: 'content/exportExcel', // 导出excel
   chunkUploadAddGroup: 'upload/group/save', // 选择上传文件添加分组
   chunkUploadEditGroup: 'upload/group/edit',
   chunkUploadDelGroup: 'upload/group/delete',

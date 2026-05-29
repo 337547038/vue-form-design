@@ -258,27 +258,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/task/components/drawerCom': RouteRecordInfo<
-      '/task/components/drawerCom',
-      '/task/components/drawerCom',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/task/components/drawerTodo': RouteRecordInfo<
-      '/task/components/drawerTodo',
-      '/task/components/drawerTodo',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/task/components/tabs': RouteRecordInfo<
-      '/task/components/tabs',
-      '/task/components/tabs',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/task/done': RouteRecordInfo<
       '/task/done',
       '/task/done',
@@ -515,24 +494,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/task/applyed.vue': {
       routes:
         | '/task/applyed'
-      views:
-        | never
-    }
-    'src/views/task/components/drawerCom.vue': {
-      routes:
-        | '/task/components/drawerCom'
-      views:
-        | never
-    }
-    'src/views/task/components/drawerTodo.vue': {
-      routes:
-        | '/task/components/drawerTodo'
-      views:
-        | never
-    }
-    'src/views/task/components/tabs.vue': {
-      routes:
-        | '/task/components/tabs'
       views:
         | never
     }
