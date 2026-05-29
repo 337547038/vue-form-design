@@ -14,12 +14,11 @@
     defineProps<{
       width: string | undefined
       title: string | undefined
-      beforeClose?: (done: any) => void
     }>(),
     {}
   )
   const visible = defineModel<boolean>()
-  const beforeClose = (done: any) => {
+  const beforeClose = () => {
     //props.beforeClose && props.beforeClose(done)
     visible.value = false
   }

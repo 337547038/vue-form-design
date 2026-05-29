@@ -28,7 +28,10 @@
       disabled?: boolean
       modelValue?:number|string
     }>(),
-    {}
+    {
+      modelValue:'',
+      disabled:false
+    }
   )
 
   /*  const emits = defineEmits<{

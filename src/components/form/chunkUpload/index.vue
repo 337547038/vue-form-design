@@ -96,7 +96,11 @@
       data?: Component
       disabled?: boolean
     }>(),
-    {}
+    {
+      data:()=>{
+        return {}
+      }
+    }
   )
 
   const modelValue = defineModel<any>()

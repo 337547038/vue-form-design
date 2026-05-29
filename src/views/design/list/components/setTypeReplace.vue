@@ -58,9 +58,6 @@
       type?: 'replaceValue' | 'custom' | undefined
     }>(),
     {
-      modelValue: () => {
-        return {}
-      },
       type: 'custom'
     }
   )

@@ -52,7 +52,6 @@
       modelValue: string[] | undefined
     }>(),
     {
-      modelValue: []
     }
   )
   const emits = defineEmits<{
