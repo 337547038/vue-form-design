@@ -55,17 +55,6 @@
         <h3>流程设计</h3>
         <p>高效、灵活且易用简单审批流程</p>
       </div>
-      <div
-        class="item"
-        @click="toFlow"
-      >
-        <img
-          src="../assets/img/flow.png"
-          alt=""
-        >
-        <h3>流程设计v2.0</h3>
-        <p>高效、灵活且易用简单审批流程</p>
-      </div>
     </div>
     <div class="info-box">
       <div class="info">
@@ -95,18 +84,7 @@
 {meta:{permissions:"none"}}
 </route>
 <script setup>
-  import {ElMessageBox} from 'element-plus'
 
-  const toFlow = () => {
-    ElMessageBox.alert('即将离开此项目，进入流程2.0系统', '警告', {
-      confirmButtonText: '确认',
-      callback: (action) => {
-        if (action === 'confirm') {
-          window.open('https://337547038.github.io/ak-flow/')
-        }
-      },
-    })
-  }
 </script>
 <style lang="scss">
   .design-index {
