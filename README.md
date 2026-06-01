@@ -206,14 +206,6 @@ pnpm build
 [数据大屏-大屏设计组件数据获取](https://www.bilibili.com/video/BV1em7Zz7Ed1/?vd_source=bcdd3240479f23e6c5bf3c4159785b92)
 
 
-## 开源不易 感谢赞赏
-
-感谢您对ak-design开源项目的关注，如果该项目对您有帮助，并愿意支持其持续发展，欢迎扫码赞助。
-
-<img src="https://gitee.com/q337547038/vue-form-design/raw/main/wx.jpg" width ="200" alt=""/>
-
-
-
 ## `Star`
 
 非常感谢留下星星的好心人，感谢您的支持 :heart:
