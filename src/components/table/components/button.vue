@@ -5,24 +5,11 @@
     placement="top"
     :disabled="!btn.tooltip"
   >
-    <el-text
-      v-if="type === 'text'"
-      v-show="getDisplay(btn)"
-      :type="btn.type"
-      :class="[btn.class]"
-      v-bind="btn.attr"
-      :disabled="getDisabled(btn)"
-      @click="clickEvent"
-    >
-      <Icon :name="btn.icon" />
-      <span v-if="btn.label">{{ btn.label }}</span>
-    </el-text>
     <el-button
-      v-else
       v-show="getDisplay(btn)"
-      :type="btn.type"
       :class="[btn.class]"
-      v-bind="btn.attr"
+      :type="btn.type"
+      v-bind="btn.props"
       :disabled="getDisabled(btn)"
       @click="clickEvent"
     >
@@ -33,17 +20,16 @@
 </template>
 <script setup lang="ts">
   import Icon from '@/components/icon/index.vue'
-  import type { Button } from '@/types/table'
+  import type {Button} from '@/types/table'
+
   const props = withDefaults(
     defineProps<{
       btn: Button
       row: any
       position?: string
-      type?: string
     }>(),
     {
-      position: '',
-      type: ''
+      position: ''
     }
   )
   const emits = defineEmits<{

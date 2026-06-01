@@ -5,9 +5,9 @@
  * @param immediate
  */
 export function debounce<T extends (...args: any[]) => void>(
-  func: T,
-  delay = 500,
-  immediate?: boolean
+    func: T,
+    delay = 500,
+    immediate?: boolean
 ): T {
   let timerId: any
 
@@ -79,18 +79,67 @@ export const dateFormatting = (time: any, cFormat?: string) => {
 }
 
 /**
- * 动态远程加载script脚本
- * @param src
+ * 动态加载 JS 或 CSS（根据 ID 判断是否重复）
+ * @param id 唯一ID（会设置在标签上，用于去重 + 移除）,为空则不检查
+ * @param type 资源类型 script / style，默认style
+ * @param content 可以是url,也可以是css内容
  */
-export function loadScript(src: string) {
+export function loadResource(
+    content: string,
+    id?: string,
+    type?: 'script' | 'style',
+): Promise<void> {
+  // 判断是否重复
+  if (id && document.getElementById(id)) {
+    return Promise.resolve();
+  }
+  if (!content) {
+    return Promise.resolve();
+  }
+
   return new Promise((resolve, reject) => {
-    const script = document.createElement('script')
-    script.type = 'text/javascript'
-    script.onload = resolve
-    script.onerror = reject
-    script.src = src
-    document.head.appendChild(script)
-  })
+    let element: HTMLElement;
+    if (type === 'script') {
+      // 创建 script
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = content;
+      element = script;
+    } else {
+      if (content.endsWith('.css')) {
+        //以css为结尾，认为是外链
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = content;
+        element = link;
+      } else {
+        const style = document.createElement('style')
+        //style.appendChild(document.createTextNode(content))
+        style.textContent = content;
+        element = style;
+      }
+    }
+    if (id) {
+      element.id = id;
+    }
+    // 加载回调
+    element.onload = () => resolve();
+    element.onerror = () => reject(new Error(`资源加载失败`));
+
+    document.head.appendChild(element);
+  });
+}
+
+/**
+ * 🔥 根据 ID 从页面直接移除资源
+ * @param id 加载时的唯一ID
+ */
+export function removeResource(id: string): void {
+  const element = document.getElementById(id);
+  if (element && element.parentNode === document.head) {
+    document.head.removeChild(element);
+  }
 }
 
 /**
@@ -121,8 +170,8 @@ export function getRandom(min: number, max: number) {
  * 设置 localStorage 添加对时间的控制，hour单位为小时
  * @param key 保存在storage的key
  * @param data 需存储的数据
- * @param hour null时存sessionStorage(key,value)，即关闭浏览器过期
- * hour=0时，使用localStorage，即永不过期
+ * @param hour null时存sessionStorage(key,value)，即关闭浏览器过期;
+ * hour=0时，使用localStorage，即永不过期;
  * hour>0时localStorage添加时间控制
  */
 
@@ -197,4 +246,12 @@ export const removeStorage = (key: string, hour?: boolean): void => {
   } else {
     window.sessionStorage.removeItem(key)
   }
+}
+
+/**
+ * 判断是否为数组
+ * @param val
+ */
+export const isArray = (val: any) => {
+  return Object.prototype.toString.call(val) === '[object Array]';
 }

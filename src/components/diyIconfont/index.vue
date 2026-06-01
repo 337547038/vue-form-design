@@ -1,4 +1,4 @@
-<!-- Created by 337547038  -->
+<!-- created by 337547038  -->
 <template>
   <el-popover
     v-model:visible="visible"
@@ -97,7 +97,6 @@
     return temp
   })
   const iconClick = (newVal: string, type?: string) => {
-   // console.log('iconClick', newVal, type)
     let val
     if (props.colorPicker) {
       if (type === 'val') {

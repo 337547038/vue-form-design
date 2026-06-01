@@ -1,11 +1,12 @@
-import type { ButtonType, ButtonProps, PopconfirmProps, TableColumnCtx } from 'element-plus/es'
-
+import type {ButtonType, ButtonProps, PopconfirmProps, TableColumnCtx, TableProps} from 'element-plus/es'
+import type {Before, After} from "@/types/index";
 export interface ApiKey {
   list?: string
   edit?: string
   del?: string
-  export?: string
+  exportExcel?: string
 }
+
 export interface Columns extends Partial<TableColumnCtx<any>> {
   help?: string
   render?: 'switch' | 'image' | 'tag' | 'url' | 'datetime' | 'date' | 'buttons'
@@ -21,7 +22,6 @@ export interface Columns extends Partial<TableColumnCtx<any>> {
 export interface Button {
   // 渲染方式confirm=带确认框的按钮
   render?: 'confirm'
-  name?: string // 按钮名称
   tooltip?: string // 鼠标放置时的 title 提示
   label?: string // 直接在按钮内显示的文字，tooltip 有值时可为空
   class?: string
@@ -35,29 +35,44 @@ export interface Button {
   // 按钮是否禁用，请返回布尔值
   disabled?: (row: { [key: string]: any }) => boolean
   // 自定义el-button属性
-  attr?: ButtonProps
+  props?: ButtonProps
   key?: 'add' | 'edit' | 'del' | 'detail' | 'export' // 内容三个特殊值常用的按钮key。其它自定义按钮无需key
-  permission?: string // 权限校验标识
-}
-export interface TableData {
-  tableProps?: any
-  columns: Columns[]
-  controlBtn: Button[]
-  events?: {
-    before?: string | ((type: EventType, params: any, rout: any) => boolean)
-    after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
-  }
-  treeData?: {
-    show: boolean
-    before?: string | ((type: EventType, params: any, rout: any) => boolean)
-    after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
-    method: string
-    requestUrl: string
-    name: string
-  }
-  config?: any
-  apiKey?: ApiKey
-  pk?: string | number
 }
 
-export type EventType = 'switchChange' | 'getData' | 'del' | 'search' | 'export'
+export interface TreeData {
+  show: boolean
+  before?: Before
+  after?: After
+  method: string
+  requestUrl: string
+  name: string
+}
+
+export interface Config {
+  formId?: number // 所属表单
+  name?: string // 名称
+  openType: 'page' | 'dialog'// 页面打开方式
+  dialogWidth?: number | string//窗口宽度
+  fixedBottomScroll: boolean // 横向滚动固定在底部
+  columnsSetting: boolean//列显示隐藏设置
+  expand?: boolean//可折叠查询表单
+  searchJump?: boolean//查询跳转页面
+  operateDropdown?: number//操作列按钮下拉个数
+  pageSize?: number//分页设置
+  orderSort?: string//查询排序
+  controlBtn: Button[] // 操作按钮
+  before?: Before,
+  after?: After,
+  apiKey?: ApiKey,
+  pk?: string | number
+  tableProps?: TableProps<any>
+  treeData?: TreeData
+
+  [key: string]: any
+}
+
+export interface TableData {
+  columns: Columns[]
+  config?: Config
+}
+

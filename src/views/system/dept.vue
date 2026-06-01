@@ -27,9 +27,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, nextTick } from 'vue'
-  import { flatToTree } from '@/utils/flatTree'
-  import { getRequest } from '@/api'
+  import {ref, reactive, nextTick} from 'vue'
+  import {flatToTree} from '@/utils/flatTree'
+  import {getRequest} from '@/api'
 
   const tableListEl = ref()
   const formNameEl = ref()
@@ -42,7 +42,6 @@
           modelValue: '',
           placeholder: '请输入部门名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '部门名称'
@@ -52,32 +51,22 @@
         type: 'select',
         control: {
           modelValue: '',
-          style: { width: '100px' }
+          style: {width: '100px'}
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '状态'
         }
       }
     ],
-    form: {
-      labelWidth: '',
-      class: '',
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: {submitCancel: true}
   })
   const tableData = ref({
-    tableProps: {
-      rowKey: 'id'
-    },
     columns: [
-      { label: '部门名称', prop: 'name' },
+      {label: '部门名称', prop: 'name'},
       {
         label: '排序',
         prop: 'sort'
@@ -86,9 +75,8 @@
         label: '状态',
         prop: 'status',
         render: 'tag',
-        custom: { 1: 'success', 2: 'info' },
+        custom: {1: 'success', 2: 'info'},
         replaceValue: 'sys-status',
-        config: {}
       },
       {
         label: '操作', prop: '__control', render: 'buttons', buttons: [
@@ -99,7 +87,7 @@
               dialog.title = '新增部门'
               dialog.formType = 'add'
               nextTick(() => {
-                formNameEl.value.setValue({ parentId: row.id })
+                formNameEl.value.setValue({parentId: row.id})
               })
               setParentIdData()
             }
@@ -118,13 +106,13 @@
               nextTick(() => {
                 // 有负责人id时，恢复下拉选项
                 if (row.userId) {
-                  getRequest('userById', { id: row.userId })
-                      .then((res) => {
-                        const userName = res.data?.userName
-                        if (userName) {
-                          formNameEl.value.setOptions({ userId: [{ userName: userName, id: row.userId }] })
-                        }
-                      })
+                  getRequest('userById', {id: row.userId})
+                    .then((res) => {
+                      const userName = res.data?.userName
+                      if (userName) {
+                        formNameEl.value.setOptions({userId: [{userName: userName, id: row.userId}]})
+                      }
+                    })
                 }
                 formNameEl.value.setValue(row)
               })
@@ -138,21 +126,24 @@
         ]
       }
     ],
-    controlBtn: [
-      {
-        label: '新增',
-        type: 'primary',
-        size: 'small',
-        icon: 'plus',
-        click: () => {
-          dialog.visible = true
-          dialog.title = '新增部门'
-          dialog.formType = 'add'
-          setParentIdData()
-        }
-      }
-    ],
     config: {
+      controlBtn: [
+        {
+          label: '新增',
+          type: 'primary',
+          size: 'small',
+          icon: 'plus',
+          click: () => {
+            dialog.visible = true
+            dialog.title = '新增部门'
+            dialog.formType = 'add'
+            setParentIdData()
+          }
+        }
+      ],
+      tableProps: {
+        rowKey: 'id'
+      },
       fixedBottomScroll: false
     }
   })
@@ -178,20 +169,17 @@
           checkStrictly: true, // 可选任意级
           placeholder: '请选择上级部门'
         },
-        config: {
-          optionsType: 0
-        },
+        optionsType: 0,
         name: 'parentId',
-        formItem: { label: '上级部门' }
+        formItem: {label: '上级部门'}
       },
       {
         type: 'input',
-        control: { modelValue: '', placeholder: '请输入部门名称' },
-        config: {},
+        control: {modelValue: '', placeholder: '请输入部门名称'},
         name: 'name',
-        formItem: { label: '部门名称' },
+        formItem: {label: '部门名称'},
         customRules: [
-          { type: 'required', message: '部门名称不能为空', trigger: 'blur' }
+          {type: 'required', message: '部门名称不能为空', trigger: 'blur'}
         ]
       },
       {
@@ -201,60 +189,50 @@
           placeholder: '请输入负责人',
           teleported: true,
           filterable: true,
-          remote: true
+          remote: true,
+          clearable:true
         },
-        config: {
-          optionsType: 1,
-          optionsFun: 'userList',
-          method: 'post',
-          label: 'userName',
-          value: 'id',
-          cache: false,
-          // transformData: 'string',
-          queryName: 'userName',
-          before: (params: any) => {
-            return { extend: { pageSize: 20, pageNum: 1 }, query: params }
-          }
+        optionsType: 1,
+        optionsFun: 'userList',
+        method: 'post',
+        label: 'userName',
+        value: 'id',
+        cache: false,
+        queryName: 'userName',
+        before: (params: any) => {
+          return {extend: {pageSize: 20, pageNum: 1}, query: params}
         },
         name: 'userId',
-        formItem: { label: '负责人' }
+        formItem: {label: '负责人'}
       },
       {
         type: 'inputNumber',
-        control: { modelValue: 0, controlsPosition: 'right' },
+        control: {modelValue: 0, controlsPosition: 'right'},
         config: {},
         name: 'sort',
-        formItem: { label: '排序' }
+        formItem: {label: '排序'}
       },
       {
         type: 'radio',
-        control: { modelValue: 1 },
+        control: {modelValue: 1},
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-          // transformData: 'string'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
-        formItem: { label: '状态' }
+        formItem: {label: '状态'}
       },
       {
         type: 'textarea',
         control: {
           modelValue: ''
         },
-        config: {},
         name: 'remark',
         formItem: {
           label: '备注'
         }
       }
     ],
-    form: {
-      labelWidth: '100px',
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: {submitCancel: true, labelWidth: '100px',}
   })
   const beforeSubmit = (params: any) => {
     // 如编辑时添加参数
@@ -265,7 +243,7 @@
     return params
   }
   // 表单提交完成事件
-  const afterSubmit = (res: any, success: boolean) => {
+  const afterSubmit = (_: any, success: boolean) => {
     dialog.visible = false
     if (success) {
       // 操作成功才刷新列表数据
@@ -279,7 +257,7 @@
     }
   }
   // 处理表格数据，转换为可折叠表格
-  const afterFetch = (result: any, success: boolean, type: string) => {
+  const afterFetch = (result: any, _: boolean, type: string) => {
     if (type === 'fetch') {
       const list = result.list
       const treeList = flatToTree(list)
@@ -290,7 +268,7 @@
   // 设置部门下拉选择
   const setParentIdData = () => {
     nextTick(() => {
-      formNameEl.value.setOptions({ parentId: departmentTree.value })
+      formNameEl.value.setOptions({parentId: departmentTree.value})
     })
   }
 </script>

@@ -1,4 +1,4 @@
-// Created by 337547038 weixin:337547038
+// created by 337547038 weixin:337547038
 import request from '../utils/request'
 import form from './form'
 import system from './system'
@@ -20,9 +20,9 @@ const allApi: any = Object.assign(form, system, flow)
  * 4.解决apiKey带动态参数时，可添加$标识符 /api/delete/$id => {apiKey:{$id:xx}}
  */
 export const getRequest = (
-  apiKey: string,
-  data: { [key: string]: any } = {},
-  options: { [key: string]: any } = {}
+    apiKey: string,
+    data: { [key: string]: any } = {},
+    options: { [key: string]: any } = {}
 ) => {
   let url = allApi[apiKey] || apiKey
   if (Object.keys(options.apiKey || {}).length) {
@@ -41,46 +41,49 @@ export const getRequest = (
     url = 'api/' + url
   }
   let obj: any = Object.assign(
-    {
-      url: url, // 添加个前缀
-      method: method,
-      data
-    },
-    options
+      {
+        url: url, // 添加个前缀
+        method: method,
+        data
+      },
+      options
   )
   // localhost演示时使用下面地址
   // 使用接口时可使用本地ip地址访问或注释下面代码
   const host: string = window.location.host
-  if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
-    const { query = {}, id = '', extend = {} } = data
-    let params: string = (query.type || '') + id + (extend.formId || '')
+  if (host.indexOf('localhost0') !== -1 || host.indexOf('github') !== -1) {
+    const {query = {}, id = '', formId = '', extend = {}} = data
+    const paramsIds = []
+    if (query.type) {
+      paramsIds.push(query.type)
+    }
+    if (id) {
+      paramsIds.push(id)
+    }
+    if (query.flowId) {
+      paramsIds.push(query.flowId)
+    }
+    if (formId) {
+      paramsIds.push(formId)
+    }
+    if (extend.formId) {
+      paramsIds.push(extend.formId)
+    }
     let suffix = '.json'
-    if (
-      url.includes('/get')
-      || url.includes('/list')
-      || url.includes('/login')
-      || url.includes('/flow/form')
-      || url.includes('/demo/')
-      || url.includes('/done')
-    ) {
-      /* empty */
-    } else if (url.includes('static/')) {
+    if (url.includes('static/')) {
       suffix = '' // 这情况不需要加后缀
-    } else {
-      url = 'mock/ok'
-      params = ''
     }
     if (options.method) {
       delete options.method
     }
     url = url.replace('api/', 'mock/')
     obj = Object.assign(
-      {
-        url: `${url}${params}${suffix}`,
-        method: 'get', // json演示时统一使用get
-        data: data
-      },
-      options
+        {
+          url: `${url}${paramsIds.join('-')}${suffix}`,
+          method: 'get', // json演示时统一使用get
+          data: data
+        },
+        options
     )
   }
   return request(obj)

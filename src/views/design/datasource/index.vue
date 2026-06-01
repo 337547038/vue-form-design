@@ -121,20 +121,20 @@
         ]
       },
     ],
-    controlBtn: [
-      {
-        label: '新增',
-        type: 'primary',
-        click: () => {
-          dialog.visible = true
-          dialog.title = '创建数据源'
-          dialog.type = 'add'
-          dialog.id = ''
-        }
-      },
-      { label: '删除', key: 'del', type: 'danger' }
-    ],
     config: {
+      controlBtn: [
+        {
+          label: '新增',
+          type: 'primary',
+          click: () => {
+            dialog.visible = true
+            dialog.title = '创建数据源'
+            dialog.type = 'add'
+            dialog.id = ''
+          }
+        },
+        { label: '删除', key: 'del', type: 'danger' }
+      ],
       expand: true,
       searchJump: true
     }
@@ -167,8 +167,7 @@
     ],
     config: {
       submitCancel: true
-    },
-    form: {}
+    }
   })
   const formData = ref({
     list: [
@@ -178,7 +177,6 @@
           modelValue: '',
           placeholder: '请输入数据源名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '名称'
@@ -197,9 +195,7 @@
           modelValue: '',
           placeholder: '请输入数据表名'
         },
-        config: {
-          disabledEdit: true
-        },
+        disabledEdit: true,
         name: 'tableName',
         formItem: {
           label: '数据表名'
@@ -218,11 +214,8 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          // transformData: 'string',
-          optionsType: 2,
-          optionsFun: 'sys-source' // 使用字典选项，字典key为source
-        },
+        optionsType: 2,
+        optionsFun: 'sys-source', // 使用字典选项，字典key为source,
         name: 'category',
         formItem: {
           label: '分类'
@@ -234,9 +227,7 @@
           modelValue: '',
           placeholder: '数据库表注释'
         },
-        config: {
-          disabledEdit: true
-        },
+        disabledEdit: true,
         name: 'remark',
         formItem: {
           label: '表注释'
@@ -249,7 +240,6 @@
           activeValue: 1,
           inactiveValue: 0
         },
-        config: {},
         name: 'status',
         formItem: {
           label: '状态'
@@ -260,19 +250,15 @@
         control: {
           modelValue: '数据库表字段'
         },
-        config: {
-          span: 24
-        },
+        span: 24,
         name: 'title'
       }
     ],
-    form: {
+    config: {
       labelWidth: '100px',
       class: 'form-row-2',
       size: 'default',
-      name: 'source'
-    },
-    config: {
+      name: 'source',
       submitCancel: true
     }
   })
@@ -297,8 +283,8 @@
     }
   }
   // 提交表单前校验
-  const beforeSubmit = (params: any, type: string) => {
-    if (type === 'submit') {
+  const beforeSubmit = (params: any, other: any) => {
+    if (other.type === 'submit') {
       if (dialog.type === 'add') {
         if (!childTableData.value.length) {
           ElMessage.error('数据库表字段内容不能为空')

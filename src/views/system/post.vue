@@ -26,16 +26,16 @@
 </template>
 
 <script setup>
-  import { ref, reactive, nextTick } from 'vue'
+  import {ref, reactive, nextTick} from 'vue'
 
   const searchData = ref({})
   const formEl = ref(null)
   const tableListEl = ref()
   const tableData = ref({
     columns: [
-      { label: '多选', type: 'selection' },
-      { label: '序号', type: 'index', width: 100 },
-      { label: '岗位名称', prop: 'name' },
+      {label: '多选', type: 'selection'},
+      {label: '序号', type: 'index', width: 100},
+      {label: '岗位名称', prop: 'name'},
       {
         label: '操作', prop: '__control', render: 'buttons', buttons: [{
           label: '编辑',
@@ -47,23 +47,25 @@
           }]
       }
     ],
-    config: { expand: true, columnsSetting: true },
-    controlBtn: [
-      {
-        label: '添加',
-        key: 'add',
-        type: 'primary',
-        size: 'small',
-        icon: 'plus'
-      },
-      {
-        label: '批量删除',
-        key: 'del',
-        type: 'danger',
-        size: 'small',
-        icon: 'delete'
-      }
-    ]
+    config: {
+      expand: true, columnsSetting: true,
+      controlBtn: [
+        {
+          label: '添加',
+          key: 'add',
+          type: 'primary',
+          size: 'small',
+          icon: 'plus'
+        },
+        {
+          label: '批量删除',
+          key: 'del',
+          type: 'danger',
+          size: 'small',
+          icon: 'delete'
+        }
+      ]
+    }
   })
 
   const dialog = reactive({
@@ -76,7 +78,6 @@
           modelValue: '',
           placeholder: '请输入职位名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '职位名称'
@@ -88,11 +89,7 @@
             trigger: 'blur'
           }]
       }],
-      form: {
-        labelWidth: '',
-        size: 'default'
-      },
-      config: { submitCancel: true }
+      config: {submitCancel: true}
     }
   })
   const listBtnClick = (key, row) => {

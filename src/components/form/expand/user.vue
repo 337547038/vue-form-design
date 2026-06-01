@@ -4,6 +4,7 @@
     v-bind="$props"
     v-model="value"
     placeholder="请选择用户或输入用户名称"
+    :disabled="disabled"
     @click="openDialog"
   >
     <template #append>
@@ -20,25 +21,30 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, nextTick } from 'vue'
-  /*  const props = withDefaults(
+  import {ref, onMounted, nextTick} from 'vue'
+
+  const props = withDefaults(
     defineProps<{
-      modelValue?: string
       disabled?: boolean
+      modelValue?:number|string
     }>(),
-    {}
-  ) */
+    {
+      modelValue:'',
+      disabled:false
+    }
+  )
 
   /*  const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void
   }>() */
   const userDialogEl = ref()
-  const value = defineModel<string>()
+  const value = defineModel<string|number>()
   const openDialog = () => {
     userDialogEl.value.open()
   }
 
   onMounted(() => {
-    nextTick(() => {})
+    nextTick(() => {
+    })
   })
 </script>

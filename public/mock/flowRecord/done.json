@@ -1,0 +1,1 @@
+{"code":1,"data":{"total":4,"dict":{"creatUser":{"1":"admin"}},"list":[{"dateTime":"2026-06-01 13:59:35","nodeName":"主管审批","d_name":"请假申请","id":68,"category":3,"flowId":48,"userId":1},{"dateTime":"2026-06-01 12:02:28","nodeName":"用户任务","d_name":"通用审批流程","id":62,"category":1,"flowId":44,"userId":1}]}}

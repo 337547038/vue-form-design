@@ -1,39 +1,35 @@
-// 这个要先合并好再传给operateButton.vue
-import type { Button } from '@/types/table'
-import { permission } from '@/directive/permissions'
+import type {Button} from "@/types/table";
+
 const defaultBtn: any = {
   add: {
     type: 'primary',
-    name: 'Add',
-    label: '',
-    tooltip: '添加',
+    label: '添加',
+    tooltip: '',
     icon: 'Plus',
     class: '',
     key: 'add'
   },
   edit: {
     type: 'primary',
-    name: 'Edit',
-    label: '',
-    tooltip: '编辑',
+    label: '编辑',
+    tooltip: '',
     icon: 'Edit',
     class: '',
     key: 'edit'
   },
   detail: {
     type: 'primary',
-    tooltip: '查看',
+    tooltip: '',
+    label: '查看',
     key: 'detail',
-    name: 'Detail',
     class: '',
     icon: 'Histogram'
   },
   del: {
     render: 'confirm',
     type: 'danger',
-    label: '',
-    tooltip: '删除',
-    name: 'Del',
+    label: '删除',
+    tooltip: '',
     icon: 'Delete',
     key: 'del',
     popConfirm: {
@@ -45,7 +41,6 @@ const defaultBtn: any = {
   },
   export: {
     type: 'primary',
-    name: 'Export',
     label: '导出',
     tooltip: '导出',
     icon: 'icon-export',
@@ -53,40 +48,16 @@ const defaultBtn: any = {
     key: 'export'
   }
 }
-export const mergeDefaultBtn = (buttons: any, position = 'top') => {
-  const temp: any = []
-  // 表格上方按钮预设有add/edit/del，表格行右侧预设有edit/detail/del
-  const includeBtn
-    = position === 'top'
-      ? ['edit', 'add', 'del', 'export']
-      : ['edit', 'detail', 'del']
-  buttons.forEach((item: Button) => {
-    // 同时返回有权限的
-    if (permission(item.permission)) {
-      if (item.key && includeBtn.includes(item.key)) {
-        if (item.key === 'del' && !item.render) {
-          item.render = 'confirm' // 自动添加popConfirm相关代码
-          item.popConfirm = Object.assign(
-            defaultBtn[item.key].popConfirm,
-            item.popConfirm || {}
-          )
-        }
-        // 表格上方时默认添加label
-        let defaultLabel: any = {}
-        if (position === 'top' && !item.label) {
-          const labelArray: any = {
-            add: '新增',
-            edit: '编辑',
-            del: '批量删除',
-            export: '导出'
-          }
-          defaultLabel = { label: labelArray[item.key] || item.label }
-        }
-        temp.push(Object.assign({}, defaultBtn[item.key], defaultLabel, item))
-      } else {
-        temp.push(item)
-      }
-    }
+export const getBtnOptions = (position = 'top') => {
+  const showList = position === 'top' ? ['add', 'edit', 'del', 'export'] : ['edit', 'detail', 'del']
+  return showList.map(key => ({
+    label: defaultBtn[key].label,
+    value: defaultBtn[key].key
+  }))
+}
+export const mergeDefaultBtn = (buttons: Button[]) => {
+  return buttons?.map((item: any) => {
+    const config = defaultBtn[item.key] || {}
+    return {...config, ...item}
   })
-  return temp
 }

@@ -48,20 +48,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/design/echarts/': RouteRecordInfo<
-      '/design/echarts/',
-      '/design/echarts',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/design/echarts/list': RouteRecordInfo<
-      '/design/echarts/list',
-      '/design/echarts/list',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/design/flow/': RouteRecordInfo<
       '/design/flow/',
       '/design/flow',
@@ -121,13 +107,6 @@ declare module 'vue-router/auto-routes' {
     '/design/screen/': RouteRecordInfo<
       '/design/screen/',
       '/design/screen',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/design/screen/demo/map': RouteRecordInfo<
-      '/design/screen/demo/map',
-      '/design/screen/demo/map',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -272,9 +251,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/task/applyed': RouteRecordInfo<
-      '/task/applyed',
-      '/task/applyed',
+    '/task/copy': RouteRecordInfo<
+      '/task/copy',
+      '/task/copy',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -282,6 +261,13 @@ declare module 'vue-router/auto-routes' {
     '/task/done': RouteRecordInfo<
       '/task/done',
       '/task/done',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/my': RouteRecordInfo<
+      '/task/my',
+      '/task/my',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -303,13 +289,6 @@ declare module 'vue-router/auto-routes' {
     '/test1': RouteRecordInfo<
       '/test1',
       '/test1',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/upload': RouteRecordInfo<
-      '/upload',
-      '/upload',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -342,18 +321,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/design/datasource/index.vue': {
       routes:
         | '/design/datasource/'
-      views:
-        | never
-    }
-    'src/views/design/echarts/index.vue': {
-      routes:
-        | '/design/echarts/'
-      views:
-        | never
-    }
-    'src/views/design/echarts/list.vue': {
-      routes:
-        | '/design/echarts/list'
       views:
         | never
     }
@@ -408,12 +375,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/design/screen/index.vue': {
       routes:
         | '/design/screen/'
-      views:
-        | never
-    }
-    'src/views/design/screen/demo/map.vue': {
-      routes:
-        | '/design/screen/demo/map'
       views:
         | never
     }
@@ -537,15 +498,21 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/views/task/applyed.vue': {
+    'src/views/task/copy.vue': {
       routes:
-        | '/task/applyed'
+        | '/task/copy'
       views:
         | never
     }
     'src/views/task/done.vue': {
       routes:
         | '/task/done'
+      views:
+        | never
+    }
+    'src/views/task/my.vue': {
+      routes:
+        | '/task/my'
       views:
         | never
     }
@@ -564,12 +531,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/test1.vue': {
       routes:
         | '/test1'
-      views:
-        | never
-    }
-    'src/views/upload.vue': {
-      routes:
-        | '/upload'
       views:
         | never
     }

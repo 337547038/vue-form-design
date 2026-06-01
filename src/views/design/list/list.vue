@@ -35,8 +35,8 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router'
-  import { ref, reactive, nextTick } from 'vue'
+  import {useRouter} from 'vue-router'
+  import {ref, reactive, nextTick} from 'vue'
 
   const router = useRouter()
   const dialog = reactive({
@@ -47,16 +47,16 @@
   const tableListEl = ref()
   const tableData = ref({
     columns: [
-      { label: '勾选', type: 'selection' },
-      { prop: 'id', label: 'ID', width: '60px' },
-      { prop: 'name', label: '名称', width: '150px' },
-      { prop: 'sourceName', label: '表单名称/ID', width: 150 },
+      {label: '勾选', type: 'selection'},
+      {prop: 'id', label: 'ID', width: '60px'},
+      {prop: 'name', label: '名称', width: '150px'},
+      {prop: 'sourceName', label: '表单名称/ID', width: 150},
       {
         prop: 'category',
         label: '分类',
         render: 'tag',
         replaceValue: 'sys-list',
-        custom: { 1: 'success', 2: 'danger' }
+        custom: {1: 'success', 2: 'danger'}
       },
       {
         prop: 'status',
@@ -137,22 +137,22 @@
         ]
       }
     ],
-    controlBtn: [
-      {
-        label: '新增列表',
-        key: 'add',
-        size: 'small',
-        click: () => {
-          toFormDesign({})
-        }
-      },
-      {
-        label: '删除',
-        key: 'del',
-        size: 'small'
-      }
-    ],
     config: {
+      controlBtn: [
+        {
+          label: '新增列表',
+          key: 'add',
+          size: 'small',
+          click: () => {
+            toFormDesign({})
+          }
+        },
+        {
+          label: '删除',
+          key: 'del',
+          size: 'small'
+        }
+      ],
       fixedBottomScroll: true,
       columnsSetting: true,
       expand: true
@@ -161,7 +161,7 @@
   const toFormDesign = (row: any) => {
     router.push({
       path: '/design/list',
-      query: { id: row.id }
+      query: {id: row.id}
     })
   }
   const searchData = ref({
@@ -172,7 +172,6 @@
           modelValue: '',
           placeholder: '请输入列表名称'
         },
-        config: {},
         name: 'name',
         formItem: {
           label: '名称'
@@ -184,19 +183,13 @@
           modelValue: '',
           placeholder: '请输入表单名称'
         },
-        config: {},
         name: 'sourceName',
         formItem: {
           label: '表单名称'
         }
       }
     ],
-    form: {
-      labelWidth: '',
-      class: '',
-      size: 'default'
-    },
-    config: { submitCancel: true }
+    config: {submitCancel: true}
   })
   const dialogFormData = ref({
     list: [
@@ -217,11 +210,8 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-list'
-          // transformData: 'string'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-list',
         name: 'category',
         formItem: {
           label: '分类'
@@ -233,25 +223,18 @@
           modelValue: ''
         },
         options: [],
-        config: {
-          optionsType: 2,
-          optionsFun: 'sys-status'
-          // transformData: 'string'
-        },
+        optionsType: 2,
+        optionsFun: 'sys-status',
         name: 'status',
         formItem: {
           label: '启用状态'
         }
       }
     ],
-    form: {
-      labelWidth: '140px',
-      class: '',
-      size: 'default',
-      name: 'formDialog'
-    },
     config: {
-      submitCancel: true
+      submitCancel: true,
+      labelWidth: '140px',
+      key: 'formDialog'
     }
   })
   const afterSubmit = () => {

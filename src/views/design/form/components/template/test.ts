@@ -1,7 +1,5 @@
-import logo from './test.png'
-export const imgPath = logo
-export const title: string = '演示test'
 export const formData = {
+  image:'/static/images/template.png',
   list: [
     {
       type: 'input',
@@ -15,8 +13,5 @@ export const formData = {
       }
     }
   ],
-  form: {
-    size: 'default'
-  },
-  config: {}
+  config: {name:'模板演示'}
 }

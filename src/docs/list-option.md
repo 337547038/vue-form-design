@@ -1,6 +1,6 @@
 # ak-list 配置手册
 
-## 数据列表配置
+## 一些数据列表配置
 
 ### -pk
 `data.pk`
@@ -9,29 +9,16 @@
 当前列表数据主键，用于删除和编辑等相关操作
 
 
-### -当前对应表单id
-`data.config.formId`
-
-当前列表对应的表单id，设计列表时可从该表单获取可供选择的表头字段名称。获取列表数据时也是从对应的表单数据中获取。
-
-### -设计列表保存的名称
-`data.config.name`
-
-显示于列表页数据管理页面，数据的名称
-
 ### -新增编辑显示方式
 `data.config.openType`
 可选dialog/page。设计列表页里点击新增或编辑按钮时，对应表单的显示方式，可以为弹窗和新标签页打开两种方式。
 
-### -表单窗口宽度
-`data.config.dialogWidth`
-打开弹窗的宽度，仅当`data.config.openType=dialog`时有效
 
 ### -固定列表横向滚动条
 `data.config.fixedBottomScroll`
 - 类型：boolean，默认true。
 
-当列表出现横向滚动条时，设置为true可固定在浏览器底部。方便在翻页查看列表最右边信息时，无需先滚动纵向滚动条到底部，再滚动横向滚动条到右边才能查看
+当列表出现横向滚动条时，设置为true可将滚动条固定在浏览器底部。方便在翻页查看列表最右边信息时，无需先滚动纵向滚动条到底部，再滚动横向滚动条到右边才能查看
 
 ### -列显示隐藏设置
 `data.config.columnsSetting`
@@ -39,9 +26,6 @@
 
 用于设置表头列的显示与隐藏，即可个性化设置当前列表需要显示或隐藏哪些表头，以方便查看
 
-### -显示与隐藏查询表单
-`data.config.expand`
-类型：boolean，默认true。有条件查询表单时，可设置展开可收起查询表单。
 
 ### -条件查询是否跳转页面
 `data.config.searchJump`
@@ -51,45 +35,10 @@
 `data.config.operateDropdown`
 类型：number。一般为列表右侧的编辑删除等操作按钮，当按钮个大于当前设定时，其余的侧以下拉菜单的形式展示。如设置`operateDropdown=2`，当操作按钮个数大于2个时，其余的侧以下拉菜单展示。
 
-### -列表分页设置
-`data.config.pageSize`
-当前列表每页显示多少条
-
-### -排序设置
-`data.config.orderSort`
-作为扩展参数传接口，用于对列表数据进行排序
-
-## 表格prop
-
-### -el-table的prop设置
-`data.tableProps`
-支持el-table所有prop参数设置，如：
-
-```javascript
-const data={
-  tableProps:{
-    height:500,
-    border:true,
-    rowKey:"id",
-    emptyText:""
-  }
-}
-```
-
-## 表格columns
-同时支持el-table-columns所有属性
-
+## 一些字段属性配置说明
 ### -help
 `data.columns.help`
 显示在表头的帮助信息，鼠标滑过时提示
-
-### -render
-`data.columns.render`
-当前列表渲染模式，支持`switch | image | tag | url | datetime | date | buttons`
-
-### -attr
-`data.columns.attr`
-附加属性，设置将绑定到对应组件，当`render=switch、image、tag、button`组件的属性。
 
 ### -replaceValue
 `data.columns.replaceValue`
@@ -104,19 +53,6 @@ const data={
 
 仅当`render=tag/text`时,tag的显示类型属性，如{ '1': 'success', '0': 'danger' }
 
-### -timeFormat
-`data.columns.timeFormat`
-
-类型：timeFormat?: string
-
-仅当`render=datetime、date`时，对日期格式化，如YYYY年MM月dd日
-
-### -buttons
-`data.columns.buttons`
-
-类型：buttons?: Button[]
-
-见下方操作按钮配置
 
 ### -renderFormatter
 `data.columns.renderFormatter`
@@ -125,55 +61,260 @@ const data={
 
   使用了 `render` 属性时,渲染前对字段的值进行预处理方法，需返回新值
 
-### -prop
-`data.cloumns.prop`
 
-类型：prop?: string
-
-el-table-column的其他所有属性，如prop、label等
-
-## ApiKey
-### -列表数据请求接口
-`data.apiKey.list`
-### -删除数据请求接口
-`data.apiKey.del`
-### -编辑接口数据请求接口
-`data.apiKey.edit`
-### -导出数据请求接口
-`data.apiKey.export`
-
-## Event事件
-### -before
-`data.events.before`
-类型：before?: string | ((type: EventType, params: any, rout: any) => boolean)
-
-请求列表数据，编辑和删除等接口事件发送请求前，这里可对发送的数据进行拦截处理。
-* type支持的类型`switchChange | getData | del | search | export`，用于表示的同的接口事件类型
-* params请求的参数，可对此参数进行修改，然后return回去
-* route当前页面路由信息
-
-同时支持string字符串类型，这个需要自定义开发，适用于处理一些比较复杂的逻辑处理时，根据设置的字符将处理逻辑写入本地文件
-
-### -after
-`data.events.after`
-类型：after?: string | ((type: EventType, res: any, isSuccess?: boolean) => any)
-
-类似于前面的`before`。最后需要将处理后的结果 return res
-
-## 按钮
 ### -操作按钮配置
 适用于表格左上方及表格列表内右侧按钮
 
-`data.controlBtn` 为表格左上方，`data.columns`下`render=buttons`为列表右侧按钮，如：
+`data.config.controlBtn` 为表格左上方，`data.columns`下`render=buttons`为列表右侧按钮，如：
 ```javascript
 const data={
-  controlBtn:[], //为表格左上方按钮配置
+  config:{
+    controlBtn:[], //为表格左上方按钮配置
+  },
   columns:[{
     render:'buttons', //为列表右侧按钮
     buttons:[]
   }]
 }
 ```
+对于按钮key=add/edit/del作了系统内置事件，在使用时可通过使用return false阻止或者key设置为空或不填
+在默认下如果设置了`config.openType=dailog`，并且组件下有default slot，在点击`key=add/edit`时会将slot作为弹窗打开
+```vue preview
+<!-- created by weiXin:337547038 -->
+<template>
+  <div>
+    <ak-list
+            ref="tableListRef"
+            :api-key="{}"
+            :search-data="searchData"
+            :data="tableData"
+            @btn-click="listBtnClick"
+    >
+      <ak-form
+              ref="formRef"
+              :data="formData"
+              :operate-type="operateType"
+              submit-url=""
+              :after="afterSubmit"
+              @btn-click="formBtnClick"
+      />
+    </ak-list>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import {nextTick, ref,onMounted} from 'vue'
+
+  const formRef = ref()
+  const tableListRef = ref()
+  const closeFormFn = ref()
+  const operateType = ref('add')
+
+  const tableData = ref({
+    columns: [
+      {
+        label: "多选",
+        type: "selection",
+        prop: "selection"
+      },
+      {
+        prop: "text",
+        label: "文本",
+        help: ""
+      },
+      {
+        prop: "checkbox",
+        label: "性别",
+        help: ""
+      },
+      {
+        label: "操作",
+        prop: "operate",
+        render: "buttons",
+        buttons: [
+          {
+            key: "edit",
+            props:
+                    {
+                      size: "small"
+                    }
+          },
+          {
+            key: "del",
+            props:
+                    {
+                      size: "small"
+                    }
+          }]
+      }],
+    config:
+            {
+              controlBtn: [
+                {
+                  key: "add"
+                },
+                {
+                  key: "del"
+                }],
+              openType: "dialog",
+              dialogWidth: "600"
+            }
+  })
+
+  const searchData = ref({
+    list: [
+      {
+        type: "input",
+        control:
+                {
+                  modelValue: ""
+                },
+        name: "text",
+        formItem:
+                {
+                  label: "文本"
+                }
+      },
+      {
+        type: "radio",
+        control:
+                {
+                  modelValue: ""
+                },
+        name: "checkbox",
+        formItem:
+                {
+                  label: "性别"
+                },
+        options: [
+          {
+            label: "男",
+            value: "1"
+          },
+          {
+            label: "女",
+            value: "2"
+          }],
+        optionsType: 0
+      }],
+    config:
+            {
+              submitCancel: true
+            }
+  })
+
+  const formData = ref({
+    list: [
+      {
+        type: "input",
+        control:
+                {
+                  modelValue: ""
+                },
+        name: "text",
+        formItem:
+                {
+                  label: "文本"
+                }
+      },
+      {
+        type: "radio",
+        control:
+                {
+                  modelValue: ""
+                },
+        name: "checkbox",
+        formItem:
+                {
+                  label: "性别"
+                },
+        options: [
+          {
+            label: "男",
+            value: "男"
+          },
+          {
+            label: "女",
+            value: "女"
+          }],
+        optionsType: 0
+      }],
+    config:
+            {
+              submitCancel: true
+            }
+  })
+
+  /**
+   * 列表按钮点击事件
+   * @param key 按钮标识
+   * @param row 列表右则操作按钮事件时为当前行数据；列表右上方按钮时为当前所勾选的行id
+   * @param close 用于关闭弹的方法
+   */
+  const listBtnClick = (key: string, row: any, close: any) => {
+    closeFormFn.value = close
+    if (key === 'edit') {
+      operateType.value = key
+      nextTick(() => {
+        formRef.value.setValue(row)
+      })
+    }
+  }
+  // 关闭弹窗
+  const closeForm = () => {
+    closeFormFn.value && closeFormFn.value()
+  }
+  const afterSubmit = (_: any, success: boolean, type: string) => {
+    if (type === 'submit') {
+      if (success) {
+        // 添加成功，刷新列表数据并关闭弹窗
+        tableListRef.value.getListData()
+        closeForm()
+      }
+    }
+  }
+
+  const formBtnClick = (type: string) => {
+    if (type === 'reset' || type === 'cancel') {
+      closeForm()
+    }
+  }
+
+  onMounted(()=>{
+    //提供些演示数据
+    tableListRef.value.setTableData([
+      {text:'张三',checkbox:'男'},
+      {text:'李四',checkbox:'女'},
+    ])
+  })
+</script>
+
+```
+
+在点击按钮弹出对话框时，同时带有关闭弹窗的方法
+```javascript
+const listBtnClick = (key: string, row: any, close: any) => {
+    // 这里close为关闭弹窗的方法，如
+    // closeFn.value=close
+    // 在需要关闭弹窗时使用closeFn.value&&closeFn.value()即可关闭
+  }
+```
+
+为了更方便对弹窗作设置，还可以通过`pinia`对弹窗作设置及关闭
+```javascript
+import {useLayoutStore} from '@/store/layout'
+import {getCurrentInstance} from 'vue'
+
+const store = useLayoutStore()
+const instance = getCurrentInstance()
+const formStore = useListDialogForm(instance.uid)() // 这里需传下唯一的id，自定或手动设置都可以
+provide('akListDialogForm', formStore)
+// 完成上面配置即可使用
+formStore.setTitle('弹窗窗口标题')
+formStore.setVisible(false) //关闭弹窗
+formStore.setWidth('800px') //设置弹窗宽度
+```
+
 详细配置如：
 ```javascript
 const buttons=[
@@ -184,7 +325,6 @@ const buttons=[
   {
     // 渲染方式:tooltip=带tip的按钮,confirm=带确认框的按钮，空为正常的按钮
     render: "tooltip",
-    name: "", // 按钮名称
     title: "", // 鼠标放置时的 title 提示
     label: "", // 直接在按钮内显示的文字，title 有值时可为空
     class: "",
@@ -193,7 +333,7 @@ const buttons=[
     popConfirm: {}, //自定popConfirm属性，当render=confirm
     // 自定义点击事件
     click: (row: { [key: string]: any }) => {
-
+      //可使用return false阻止自定义按钮事件
     },
     // 按钮是否显示，true显示
     display: (row: { [key: string]: any }) =>{
@@ -204,43 +344,7 @@ const buttons=[
       return false;
     },
     // 自定义el-button属性
-    attr: {},
-    permission: 'string' //权限校验标识，也可通过display操作
+    props: {}
   }
 ]
 ```
-
-
-
-## 侧边栏树
-
-### -show
-`data.treeData.show`
-类型: boolean。是否开启树
-
-### -before
-`data.treeData.before`
-类型：before?: Function | string
-
-同`event.before`
-
-### -after
-类型：after?: Function | string
-同`event.after`
-
-### -method
-`data.treeData.method`
-类型: string
-
-树列表数据的请求方式
-
-### -requestUrl
-`data.treeData.requestUrl`
-类型: string
-
-树列表数据的请求接口地址
-
-### -name
-`data.treeData.name`
-类型: string
-

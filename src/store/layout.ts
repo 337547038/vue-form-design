@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import { nextTick } from 'vue'
-import { removeStorage, getStorage, setStorage } from '@/utils'
-import { getRequest } from '@/api'
+import {defineStore} from 'pinia'
+import {nextTick} from 'vue'
+import {removeStorage, getStorage, setStorage} from '@/utils'
+import {getRequest} from '@/api'
 
 /* interface Breadcrumb {
   label: string
@@ -62,7 +62,7 @@ export const useLayoutStore = defineStore('layout', {
       removeStorage('akAllDict')
       removeStorage('userInfo', true)
       if (router) {
-        router.push({ path: '/login' })
+        router.push({path: '/login'})
       }
     },
     // 保存登录的信息
@@ -76,28 +76,29 @@ export const useLayoutStore = defineStore('layout', {
       setStorage('refreshToken', data.refreshToken, time * 2)
       saveUserInfo && setStorage('userInfo', data, 0)
     },
-    getDict() {
+    getDict(forceRefresh = false) {
       const storageDict = getStorage('akAllDict')
-      if (!storageDict) {
-        getRequest('dictList', { query: { status: 1 } }).then((res: any) => {
-          const result = res.data?.list
-          const temp: any = {}
-          if (result?.length) {
-            result.forEach((item: any) => {
-              const children = item.children
-              if (children) {
-                const childJson = JSON.parse(children)
-                const list: any = {}
-                childJson.forEach((ch: any) => {
-                  list[ch.value] = ch.label
-                })
-                temp[item.type] = list
-              }
-            })
-            setStorage('akAllDict', temp)
-          }
-        })
+      if (!forceRefresh && storageDict) {
+        return
       }
+      getRequest('dictList', {query: {status: 1}}).then((res: any) => {
+        const result = res.data?.list
+        const temp: any = {}
+        if (result?.length) {
+          result.forEach((item: any) => {
+            const children = item.children
+            if (children) {
+              const childJson = JSON.parse(children)
+              const list: any = {}
+              childJson.forEach((ch: any) => {
+                list[ch.value] = ch.label
+              })
+              temp[item.type] = list
+            }
+          })
+          setStorage('akAllDict', temp)
+        }
+      })
     }
   }
 })

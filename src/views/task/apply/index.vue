@@ -23,6 +23,9 @@
         </div>
       </div>
     </div>
+    <div v-if="list?.length===0">
+      暂无数据
+    </div>
   </div>
 </template>
 
@@ -54,7 +57,8 @@
   const getListData = () => {
     const params = {
       query: {
-        type: 3
+        type: 3,
+        status:1
       }
     }
     getRequest('designList', params).then((res: any) => {

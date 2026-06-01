@@ -1,5 +1,4 @@
 import jsBeautify from 'js-beautify'
-import SparkMD5 from 'spark-md5'
 
 export const EDITTYPE: string = 'javascript' // 弹出编辑器可输入类型 json/javascript
 /**
@@ -15,60 +14,70 @@ function evil(fn: any) {
  * @param o
  */
 function obj2string(o: unknown): string {
-  // 处理 null / undefined
-  if (o === null) return 'null';
-  if (o === undefined) return 'undefined';
-
-  // 处理字符串（转义引号、换行、制表符）
-  if (typeof o === 'string') {
-    return `"${o
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r')
-        .replace(/\t/g, '\\t')}"`;
-  }
-
-  // 处理数字、布尔、Symbol、BigInt 等原始类型
-  if (typeof o !== 'object') {
-    return String(o);
-  }
-
-  // 处理数组
-  if (Array.isArray(o)) {
-    const items = o.map(item => obj2string(item));
-    return `[${items.join(',')}]`;
-  }
-
-  // 处理普通对象（排除循环引用，避免死循环）
+  // 用来检测循环引用，必须放在递归外部
   const seen = new Set<unknown>();
-  const keys = Object.keys(o);
-  const result: string[] = [];
 
-  for (const key of keys) {
-    const value = (o as Record<string, unknown>)[key];
-    // 跳过循环引用
-    if (seen.has(value)) continue;
+  // 内部递归函数
+  function stringify(value: unknown): string {
+    // 处理 null / undefined
+    if (value === null) return 'null';
+    if (value === undefined) return 'undefined';
+
+    // 处理字符串
+    if (typeof value === 'string') {
+      return `"${value
+          .replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
+          .replace(/\t/g, '\\t')}"`;
+    }
+
+    // 处理数字、布尔、Symbol、BigInt
+    if (typeof value !== 'object') {
+      return String(value);
+    }
+
+    // 循环引用检测
+    if (seen.has(value)) {
+      return '"[Circular]"';
+    }
     seen.add(value);
 
-    const keyStr = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
-        ? key
-        : `"${key}"`;
-    result.push(`${keyStr}:${obj2string(value)}`);
+    // 处理数组
+    if (Array.isArray(value)) {
+      const items = value.map(item => stringify(item));
+      return `[${items.join(',')}]`;
+    }
+
+    // 处理普通对象
+    const keys = Object.keys(value);
+    const result: string[] = [];
+
+    for (const key of keys) {
+      const val = (value as Record<string, unknown>)[key];
+      const keyStr = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
+          ? key
+          : `"${key}"`;
+      result.push(`${keyStr}:${stringify(val)}`);
+    }
+
+    return `{${result.join(',')}}`;
   }
 
-  return `{${result.join(',')}}`;
+  return stringify(o);
 }
 
 /**
  * 将拖拽生成的表单数据转为字符串类型
  * @param obj
  * @param isBeautify
+ * @param opt 在ace编辑器里需要添加
  */
-export function objToStringify(obj: any, isBeautify?: boolean) {
+export function objToStringify(obj: any, isBeautify?: boolean, opt = "opt=") {
   if (EDITTYPE === 'javascript') {
     if (isBeautify) {
-      return jsBeautify('opt=' + obj2string(obj), {
+      return jsBeautify(`${opt}${obj2string(obj)}`, {
         indent_size: 2,
         brace_style: 'expand'
       })
@@ -93,8 +102,13 @@ export function stringToObj(string: string) {
 }
 
 export function string2json(string: string) {
-  return JSON.parse(string || '{}')
+  try {
+    return JSON.parse(string || '{}')
+  } catch (e) {
+    return {}
+  }
 }
+
 export function json2string(obj: any, isBeautify?: boolean) {
   return isBeautify ? JSON.stringify(obj, null, 2) : JSON.stringify(obj)
 }
@@ -102,15 +116,13 @@ export function json2string(obj: any, isBeautify?: boolean) {
 // ace编辑器相关
 /**
  * 打开aceEdit编辑器相关配置
- * @param data
- * @param id
- * @param type
+ * @param content
+ * @param id 页面标签id,防止同一页面出现两个编辑器
+ * @param type 显示编码类型 json/javascript/css 默认javascript
  */
-export const aceEdit = (data: any, id?: string, type?: string) => {
+export const aceEdit = ({content, id, type}: { content: string, id?: string, type?: string }) => {
   type = type ? type : 'javascript'
   id = id ? id : 'editJson'
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
   const editor = ace.edit(id)
   editor.setOptions({
     enableBasicAutocompletion: true,
@@ -121,7 +133,7 @@ export const aceEdit = (data: any, id?: string, type?: string) => {
   editor.setShowPrintMargin(false)
   editor.session.setMode('ace/mode/' + type)
   editor.setTheme('ace/theme/tomorrow_night')
-  editor.setValue(data)
+  editor.setValue(content)
   return editor
 }
 
@@ -167,50 +179,22 @@ export const objectToArray = (obj: any): { [key: string | number]: any } => {
   }
   return obj
 }
-/****
- * 动态插入移除css
- * @param id 标签id
- * @param cssContent 要插入的css内容
- * @param append true插入false移除
- */
-export const appendOrRemoveStyle = (
-  id: string,
-  cssContent: string,
-  append?: boolean
-): void => {
-  const styleId: any = document.getElementById(id)
-  if (styleId && append) {
-    // 存在时直接修改，不用多次插入
-    styleId.innerText = cssContent
-    return
-  }
-  if (cssContent && append) {
-    const styleEl = document.createElement('style')
-    styleEl.id = id
-    styleEl.type = 'text/css'
-    styleEl.appendChild(document.createTextNode(cssContent))
-    document.head.appendChild(styleEl)
-  }
-  if (!append || !cssContent) {
-    // 移除
-    if (styleId) {
-      styleId.parentNode.removeChild(styleId)
-    }
-  }
-}
 /**
- * 根据当前组数据返回一个标识，设计时用于当前选中标识
- * @param item
- * @param index //type=grid下初始时item都是一样的
+ * 将[{label:'key',value:'value'}]转{key:value}
+ * @param array
  */
-export const getGroupName = (item: any, index?: number): string => {
-  if (item.name) {
-    return item.name
-  } else {
-    const spark = new SparkMD5()
-    spark.append(JSON.stringify(item) + index)
-    return spark.end()
+export const arrayToObject = (array: any) => {
+  if (!array) {
+    return {}
   }
+  if (!Array.isArray(array)) {
+    return array
+  }
+  const obj: any = {}
+  for (const item of array) {
+    obj[item.value] = item.label
+  }
+  return obj
 }
 
 /**
@@ -222,4 +206,40 @@ export const jsonParseStringify = (val: any) => {
   } else {
     return val
   }
+}
+
+/**
+ * 深克隆
+ * @param obj
+ */
+export const deepClone = (obj: any) => {
+  return evil(obj2string(obj))
+}
+
+/**
+ * 根据路径修改对象值
+ * @param obj 数据源对象
+ * @param path 路径,路径不存在时自动创建
+ * @param value 新值
+ */
+export const setValueByPath = (obj: any, path: string, value: any) => {
+  /*const keys = path.split('.')
+  const lastKey = keys.pop()!
+  const target = keys.reduce((o, k) => o[k], obj)
+  target[lastKey] = value*/
+  const keys = path.split('.')
+  let current = obj
+
+  // 遍历到倒数第二层，自动创建不存在的对象
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i]
+    // 如果没有这个属性 / 不是对象，就强制创建空对象
+    if (!current[key] || typeof current[key] !== 'object') {
+      current[key] = {}
+    }
+    current = current[key]
+  }
+  // 最后一层赋值
+  const lastKey = keys.pop()!
+  current[lastKey] = value
 }
