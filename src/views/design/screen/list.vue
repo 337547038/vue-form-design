@@ -28,7 +28,6 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { ref, reactive, nextTick } from 'vue'
-  import AkForm from '@/components/form/index.vue'
 
   const router = useRouter()
   const dialog = reactive({
