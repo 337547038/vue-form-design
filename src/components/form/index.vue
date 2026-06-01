@@ -65,7 +65,7 @@
       submitUrl?: string // 表单提交url
       requestUrl?: string // 用于回显填充数据请求数据url
       // add/edit用于根据当前类型显示或禁用相关组件操作。design**设计模式。detail用于详情页查看。search用于列表上方条件筛选
-      operateType?: 'add' | 'edit' | 'designForm' | 'detail' | 'search' | 'designSearch' | 'designFlow'
+      operateType?: 'add' | 'edit' | 'designForm' | 'detail' | 'search' | 'designSearch' | 'designFlow'|'flow'
     }>(),
     {
       query: () => {
@@ -85,7 +85,7 @@
   )
 
   const emits = defineEmits<{
-    (e: 'btnClick', type: string): void
+    (e: 'btnClick', type: string, model: Record<string, any>): void
     (e: 'change', obj: FormValueChange): void
   }>()
   const instance = getCurrentInstance()
@@ -134,7 +134,7 @@
             icon: 'RefreshLeft'
           }
         ]
-      } else if (['add', 'edit', 'designForm'].includes(props.operateType)) {
+      } else if (['add', 'edit', 'designForm','flow'].includes(props.operateType)) {
         return [
           {
             label: '确定',
@@ -153,8 +153,8 @@
     }
   })
   const defaultBtnClick = (key: string) => {
-    emits('btnClick', key)
-    if (!['add', 'edit', 'search'].includes(props.operateType)) {
+    emits('btnClick', key, model.value)
+    if (!['add', 'edit', 'search','flow'].includes(props.operateType)) {
       return ElMessage.error('当前模式不能提交表单')
     }
     switch (key) {
@@ -181,8 +181,8 @@
       } else if (['card', 'div'].includes(item.type)) {
         forEachGetFormModel(item.list)
       } else {
-        const excludeType = ['title', 'divider', 'txt', 'button','selection','index']
-        if (excludeType.indexOf(item.type) === -1&&item.control) {
+        const excludeType = ['title', 'divider', 'txt', 'button', 'selection', 'index']
+        if (excludeType.indexOf(item.type) === -1 && item.control) {
           model.value[item.name] = jsonParseStringify(item.control.modelValue)
         }
       }
@@ -227,16 +227,19 @@
   /**
    * 设置表单选项的option值，setOptions({select:[{label:'',value:''}]})
    * @param obj
+   * @param update true会合并不会整个覆盖
    */
-  const setOptions = (obj: { [key: string]: string[] }) => {
-    store.setFormOptions(obj)
+  const setOptions = (obj: { [key: string]: string[] }, update = true) => {
+    store.setFormOptions(obj, update)
   }
+  const emitsIsChange = ref(true)
   /**
    * 对表单设置初始值，提供外部引用
    * @param obj
    * @param filter 分两种，false时将obj所有值合并到model，当obj有某些值不存于表单中，也会合并到model，当提交表单也会提交此值.true则过滤没用的值，即存在当前表单的才合并
+   *@param emitsChange 使用此方法时，是否触表单change事件
    */
-  const setValue = (obj: { [key: string]: any }, filter?: boolean) => {
+  const setValue = (obj: { [key: string]: any }, filter?: boolean, emitsChange = true) => {
     if (filter) {
       for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(model.value, key)) {
@@ -245,6 +248,12 @@
       }
     } else {
       model.value = Object.assign({}, model.value, jsonParseStringify(obj))
+    }
+    emitsIsChange.value = emitsChange
+    if (!emitsChange) {
+      setTimeout(() => {
+        emitsIsChange.value = true
+      }, 10)
     }
   }
   /**
@@ -383,6 +392,9 @@
 
   // 表单组件值改变时
   provide('akFormValueChange', (params: FormValueChange) => {
+    if (!emitsIsChange.value) {
+      return false
+    }
     // change事件修改调整model的值
     const onFormChange = props.data.config?.change
     if (typeof onFormChange === 'function') {

@@ -1,18 +1,11 @@
-export interface NodeList {
-  id: string
-  nodeType: number
-  parentId: string
-  content?: string // 选择的用户
-  userType?: string
-  flowType?: string
-  priority?: number
-  checkedUserId?: string
-  // rules?: string // 条件规则
+export interface NodeStyle {
+    [x: string]: any;
+
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
-export interface EmitsEvent {
-  event: string
-  nodeType?: number
-  id: string
-  parentId?: string
-  addType?: number
+
+export interface AnyType {
+    [x: string]: any;
 }

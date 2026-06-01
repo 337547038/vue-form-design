@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
+    "@logicflow/core": "^2.2.3",
+    "@logicflow/extension": "^2.2.3",
     "axios": "1.15.0",
     "clipboard": "^2.0.11",
     "element-plus": "^2.13.7",

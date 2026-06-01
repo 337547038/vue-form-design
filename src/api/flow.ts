@@ -1,12 +1,12 @@
 export default {
-  flowSave: 'flow/save',
-  flowList: 'flow/list',
-  flowById: 'flow/get',
-  flowFrom: 'flow/form',
-  flowWithdraw: 'flow/withdraw', // 撤回
-  flowToUser: 'flow/flowToUser', // 流转
-  flowShenPi: 'flow/shenPi', // 审批
-  flowRecordSave: 'flow/flowRecord/save', // 添加审批记录
-  flowRecordList: 'flow/flowRecord/list', // 审批记录
-  flowRecordDone: 'flow/flowRecord/done', // 已办事项
+  saveFlow:'flow/save',
+  getMy:'flow/my',
+  getCancel: 'flow/cancel',
+  getFlowById: 'flow/get',
+  getFlowRecord: 'flowRecord/list',
+  getTodoFlow: 'flow/todo',
+  getDoneFlow: 'flowRecord/done',
+  getCopyFlow: 'flowRecord/copy',
+  getRecordById: 'flowRecord/get',
+  submitApproval: "flow/approval"
 }

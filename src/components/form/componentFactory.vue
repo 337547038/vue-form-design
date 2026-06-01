@@ -4,6 +4,7 @@
     class="group"
     :class="{
       ['group-' + element.type]: true,
+      [element.className]: element.className,
       active: designStore.getIsActive(element)
     }"
     :style="getFormItemStyle(element.span)"
@@ -12,14 +13,12 @@
     <template v-if="element.type === 'txt'">
       <div
         v-bind="element.control"
-        :class="[element?.className]"
         v-html="element.control?.modelValue"
       />
     </template>
     <template v-else-if="element.type === 'title'">
       <div
         class="title"
-        :class="[element.className]"
         v-bind="element.control"
       >
         <span v-html="element.control?.modelValue" />
@@ -47,7 +46,6 @@
     <template v-else-if="element.type === 'grid'">
       <el-row
         class="form-grid"
-        :class="[element.className]"
       >
         <el-col
           v-for="(col, i) in element.columns"
@@ -80,30 +78,26 @@
       </el-row>
     </template>
     <template v-else-if="element.type === 'tabs'">
-      <div class="form-tabs">
-        <el-tabs
-          v-bind="element.control"
-          :class="[element?.className]"
+      <el-tabs
+        v-bind="element.control"
+      >
+        <el-tab-pane
+          v-for="(item, tIndex) in element.columns"
+          :key="tIndex"
+          :label="item.label"
         >
-          <el-tab-pane
-            v-for="(item, tIndex) in element.columns"
-            :key="tIndex"
-            :label="item.label"
-          >
-            <design-form
-              :data="item.list"
-              data-nested="not-nested"
-              data-type="tabs"
-            />
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+          <design-form
+            :data="item.list"
+            data-nested="not-nested"
+            data-type="tabs"
+          />
+        </el-tab-pane>
+      </el-tabs>
     </template>
     <template v-else-if="element.type === 'card'">
       <el-collapse
         model-value="1"
         v-bind="element.control"
-        :class="[element?.className]"
       >
         <el-collapse-item
           v-for="(item, tIndex) in element.columns"
@@ -148,9 +142,6 @@
       <div
         class="div-layout"
         v-bind="element.control"
-        :class="{
-          [element.className]: element.className
-        }"
       >
         <design-form
           :data="element.list"
@@ -159,14 +150,12 @@
       </div>
     </template>
     <template v-else-if="element.type === 'button'">
-      <div :class="[element?.className]">
-        <el-button
-          v-bind="element.control"
-          @click="clickBtn(element.control.key)"
-        >
-          {{ element.control?.label }}
-        </el-button>
-      </div>
+      <el-button
+        v-bind="element.control"
+        @click="clickBtn(element.control.key)"
+      >
+        {{ element.control?.label }}
+      </el-button>
     </template>
     <form-item
       v-else

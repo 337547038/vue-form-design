@@ -251,9 +251,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/task/applyed': RouteRecordInfo<
-      '/task/applyed',
-      '/task/applyed',
+    '/task/copy': RouteRecordInfo<
+      '/task/copy',
+      '/task/copy',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -261,6 +261,13 @@ declare module 'vue-router/auto-routes' {
     '/task/done': RouteRecordInfo<
       '/task/done',
       '/task/done',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/task/my': RouteRecordInfo<
+      '/task/my',
+      '/task/my',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -491,15 +498,21 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/views/task/applyed.vue': {
+    'src/views/task/copy.vue': {
       routes:
-        | '/task/applyed'
+        | '/task/copy'
       views:
         | never
     }
     'src/views/task/done.vue': {
       routes:
         | '/task/done'
+      views:
+        | never
+    }
+    'src/views/task/my.vue': {
+      routes:
+        | '/task/my'
       views:
         | never
     }
