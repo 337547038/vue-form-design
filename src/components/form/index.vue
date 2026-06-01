@@ -65,7 +65,7 @@
       submitUrl?: string // 表单提交url
       requestUrl?: string // 用于回显填充数据请求数据url
       // add/edit用于根据当前类型显示或禁用相关组件操作。design**设计模式。detail用于详情页查看。search用于列表上方条件筛选
-      operateType?: 'add' | 'edit' | 'designForm' | 'detail' | 'search' | 'designSearch' | 'designFlow'|'flow'
+      operateType?: 'add' | 'edit' | 'designForm' | 'detail' | 'search' | 'designSearch' | 'designFlow' | 'flow'
     }>(),
     {
       query: () => {
@@ -134,7 +134,7 @@
             icon: 'RefreshLeft'
           }
         ]
-      } else if (['add', 'edit', 'designForm','flow'].includes(props.operateType)) {
+      } else if (['add', 'edit', 'designForm', 'flow', 'designFlow'].includes(props.operateType)) {
         return [
           {
             label: '确定',
@@ -154,7 +154,7 @@
   })
   const defaultBtnClick = (key: string) => {
     emits('btnClick', key, model.value)
-    if (!['add', 'edit', 'search','flow'].includes(props.operateType)) {
+    if (!['add', 'edit', 'search', 'flow'].includes(props.operateType)) {
       return ElMessage.error('当前模式不能提交表单')
     }
     switch (key) {

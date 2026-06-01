@@ -1521,7 +1521,13 @@
   const getDataSource = () => {
     // 获取数据源，表单设计才加载，搜索设置不需要
     if (!isSearch.value) {
-      getRequest('sourceList').then((res: any) => {
+      let params = {}
+      console.log('storeForm.designFlow',storeForm.designFlow)
+      console.log('storeForm',!isSearch.value)
+      if (storeForm.designType === 'designFlow') {
+        params = {query:{category: 2}}
+      }
+      getRequest('sourceList', params).then((res: any) => {
         dataSourceOption.value = res.data?.list || []
       })
     }
