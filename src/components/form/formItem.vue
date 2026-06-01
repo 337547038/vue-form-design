@@ -20,6 +20,8 @@
       :placeholder="getPlaceholder"
       :disabled="disabled"
       :type="inputType"
+      @focus="focusEvent"
+      @blur="blurEvent"
     >
       <template
         v-if="data.prepend"
@@ -100,6 +102,8 @@
       :disabled="disabled"
       :options="options"
       :remote-method="getSelectRemoteMethod"
+      @focus="focusEvent"
+      @blur="blurEvent"
     />
     <el-cascader
       v-if="data.type==='cascader'"
@@ -148,7 +152,7 @@
 </template>
 <script setup lang="ts">
   import type {Component} from "@/types/form";
-  import {computed, markRaw, watch, ref, onMounted, onUnmounted, inject} from "vue";
+  import {computed, markRaw, watch, onMounted, onUnmounted, inject} from "vue";
   import {storeToRefs} from "pinia";
   import Tooltip from "@/components/tooltip/index.vue";
   import selectComp from './widgets/select.vue'
@@ -233,7 +237,7 @@
   }
   const getSelectRemoteMethod = (option: any) => {
     //optionsList.value = option
-    store.setFormOptions({[props.data.name]:option},true)
+    store.setFormOptions({[props.data.name]: option}, true)
   }
   //=====================================获取options结束
   const getInputSlot = (key?: string) => {
@@ -325,27 +329,37 @@
     return temp
   }
 
-  const akFormValueChange = inject('akFormValueChange', '') as any
+
+  const akFormComponentEvent = inject('akFormComponentEvent', '') as any
+  const formEvent = (key: string, newVal: any) => {
+    let parentProp = ''
+    if (props.parentProp) {
+      // 将prop设为当前table或flex的name
+      const parts = props.parentProp?.split('.')
+      if (parts?.length) {
+        parentProp = parts[0]
+      }
+    }
+    akFormComponentEvent && akFormComponentEvent({
+      prop: props.data.name,
+      value: newVal,
+      parentProp: parentProp,
+      options: options.value,
+      model: formValue.value
+    }, key)
+  }
   const unwatch = watch(
     () => modelValue.value,
     (newVal: any) => {
-      let parentProp = ''
-      if (props.parentProp) {
-        // 将prop设为当前table或flex的name
-        const parts = props.parentProp?.split('.')
-        if (parts?.length) {
-          parentProp = parts[0]
-        }
-      }
-      akFormValueChange && akFormValueChange({
-        prop: props.data.name,
-        value: newVal,
-        parentProp: parentProp,
-        options: options.value,
-        model: formValue.value
-      })
+      formEvent('change', newVal)
     }
   )
+  const focusEvent = (val: any) => {
+    formEvent('focus', val)
+  }
+  const blurEvent = (val: any) => {
+    formEvent('blur', val)
+  }
   //级联
   const linkage = props.data.linkage
   const unWatchLink = linkage
@@ -353,7 +367,7 @@
       () => formValue.value[linkage],
       (val: any) => {
         getRemoteMethodDebounce(props.data, store, (opt: any) => {
-          store.setFormOptions({[props.data.name]:opt},true)
+          store.setFormOptions({[props.data.name]: opt}, true)
           //optionsList.value = opt
         }, {[linkage]: val})
       }
@@ -361,7 +375,7 @@
     : null
   onMounted(() => {
     getOptionsList(props.data, store, (opt: Record<string, any>) => {
-      store.setFormOptions({[props.data.name]:opt},true)
+      store.setFormOptions({[props.data.name]: opt}, true)
       //optionsList.value = opt
     })
   })

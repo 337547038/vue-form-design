@@ -10,6 +10,7 @@
 ```
 
 ## 基本表单
+
 ```vue preview
 <!-- Created by weiXin:337547038 -->
 <template>
@@ -65,18 +66,20 @@
 |----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | btnClick | 按钮组件点击事件                                                                                                                                                                             |
 | change   | 表单组件值发生变化事件{ prop: string, value: any, model: any, parentProp: string, options: any }。prop为当前的name值，model为当前表单的值，parentProp为上级(talbe/flex)的name值，options为radio/checkbox/select下拉选择数据 |
+| focus    | 同change                                                                                                                                                                              |
+| bulr     | 同change                                                                                                                                                                              |
 
 ### Methods
 
-| 方法          | 说明                                                               |
-|-------------|------------------------------------------------------------------|
-| validate    | 表单校验方法                                                           |
-| getValue    | 用于获取表单的值                                                         |
-| setValue    | 对表单设置初始值(model,filter:boolean) filter=true时将会过滤掉model中不属于当前表单的字段 |
-| setOptions  | 对表单选择项快速设置                                                       |
-| resetFields | 重置表单方法                                                           |
-| getData     | 加载表单初始数据(params:any)                                             |
-| submit      | 表单提交                                                             |
+| 方法          | 说明                                                                                                   |
+|-------------|------------------------------------------------------------------------------------------------------|
+| validate    | 表单校验方法                                                                                               |
+| getValue    | 用于获取表单的值                                                                                             |
+| setValue    | 对表单设置初始值(model,filter:boolean,emit=true) filter=true时将会过滤掉model中不属于当前表单的字段。使用此方法设置表单值时是否触发表单change事件 |
+| setOptions  | 对表单选择项快速设置                                                                                           |
+| resetFields | 重置表单方法                                                                                               |
+| getData     | 加载表单初始数据(params:any)                                                                                 |
+| submit      | 表单提交                                                                                                 |
 
 两个全局特殊方法
 

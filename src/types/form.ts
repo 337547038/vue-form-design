@@ -38,6 +38,7 @@ export interface Component {
   cache?: boolean //是否缓存数据
   [key: string]: any
 }
+
 export interface Config {
   props?: FormProps // 绑定el-form相关参数
   submitCancel?: boolean // 显示提交取消按钮

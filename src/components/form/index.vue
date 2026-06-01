@@ -87,6 +87,8 @@
   const emits = defineEmits<{
     (e: 'btnClick', type: string, model: Record<string, any>): void
     (e: 'change', obj: FormValueChange): void
+    (e: 'focus', obj: FormValueChange): void
+    (e: 'blur', obj: FormValueChange): void
   }>()
   const instance = getCurrentInstance()
   const store = useFormStore(instance.uid)()
@@ -391,22 +393,27 @@
   }
 
   // 表单组件值改变时
-  provide('akFormValueChange', (params: FormValueChange) => {
+  provide('akFormComponentEvent', (params: FormValueChange, key: string) => {
     if (!emitsIsChange.value) {
       return false
     }
-    // change事件修改调整model的值
-    const onFormChange = props.data.config?.change
-    if (typeof onFormChange === 'function') {
-      const returnVal = onFormChange(params)
+    const {change, focus, blur} = props.data.config
+    const hookMap = [
+      { key: 'change', fn: change },
+      { key: 'focus', fn: focus },
+      { key: 'blur', fn: blur }
+    ];
+    const targetHook = hookMap.find(item => item.key === key && typeof item.fn === 'function');
+    if (targetHook) {
+      const returnVal = targetHook.fn(params);
       if (returnVal && typeof returnVal === 'string') {
-        console.log('change 钩子返回字符串标识，暂不处理:');
+        console.log(`${targetHook.key} 钩子返回字符串标识，暂不处理:`);
       } else if (typeof returnVal === 'object') {
-        model.value = returnVal
+        model.value = returnVal;
       }
     }
-    emits('change', Object.assign({}, params, {model: model.value}))
-    //console.log('form value is change:', Object.assign({}, params, {model: model.value}))
+    emits(key, Object.assign({}, params, {model: model.value}))
+    console.log(`form is ${key}:`, Object.assign({}, params, {model: model.value}))
   })
 
   onMounted(() => {

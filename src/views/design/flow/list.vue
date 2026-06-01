@@ -168,7 +168,7 @@
 
   const formBtnClick = (key: string) => {
     if (key === 'addForm') {
-      router.push({path: '/design/form', query: {type: 'flow', redirect: '/design/list/list'}})
+      router.push({path: '/design/form', query: {type: 'flow'}})
     }
   }
   const btnListClick = (key: string, row: any) => {

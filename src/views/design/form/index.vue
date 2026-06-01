@@ -97,6 +97,10 @@
           if (result.dict) {
             designStore.setFormOptionDict(JSON.parse(result.dict))
           }
+          if (result.category === 2) {
+            //流程表单
+            designStore.setDesignType('designFlow')
+          }
         }
         if (result.source && operateType.value !== 'designSearch') {
           // 加载属性侧边栏的字段标识，搜索时不需要请求
@@ -123,7 +127,8 @@
       source: designConfig.value.sourceId, // 数据源允许在表单属性设置里修改的
       name: designConfig.value.name || '未命名', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1, // 1表单 2列表
-      dict: JSON.stringify(designStore.formOptionDict)
+      dict: JSON.stringify(designStore.formOptionDict),
+      category: operateType.value === 'designFlow' ? 2 : 1
     }
     let apiKey = 'designSave'
     if (id) {

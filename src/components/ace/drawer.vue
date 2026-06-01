@@ -18,6 +18,12 @@
     <div class="dialog-footer">
       <el-button
         type="primary"
+        @click="copyClick"
+      >
+        复制
+      </el-button>
+      <el-button
+        type="primary"
         @click="dialogConfirm"
       >
         确定
@@ -30,6 +36,8 @@
   import {aceEdit, json2string, objToStringify, string2json, stringToObj} from "@/utils/design";
   import type {AceDrawerT} from "@/components/ace/type"
   import {getAceContent, getAceTitle} from "./tooltip";
+  import Clipboard from "clipboard";
+  import {ElMessage} from "element-plus";
 
   const emits = defineEmits<{
     (e: 'beforeClose'): void
@@ -91,6 +99,28 @@
     nextTick(() => {
       editor.value = aceEdit({content: content, type: obj.type})
     })
+  }
+  const copyClick = (e: any) => {
+    nextTick(() => {
+      const clipboard: any = new Clipboard(e.target, {
+        text: () => {
+          return editor.value.getValue()
+        }
+      })
+      clipboard.on('success', function () {
+        ElMessage({
+          message: '复制成功！',
+          type: 'success'
+        })
+        clipboard.destroy()
+      })
+      clipboard.on('error', function () {
+        ElMessage.error('复制失败')
+        clipboard.destroy()
+      })
+      clipboard.onClick(e)
+    })
+
   }
 
   onMounted(() => {

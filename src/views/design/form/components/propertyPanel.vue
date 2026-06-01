@@ -555,17 +555,20 @@
       {
         text: '接口数据事件',
         type: 'div',
-        key: 'div'
+        key: 'div',
+        hide: storeForm.designType === 'designFlow'
       },
       {
         label: '提交保存url',
         key: 'submitUrl',
-        placeholder: '表单提交的url，通用提交时可不设置'
+        placeholder: '表单提交的url，通用提交时可不设置',
+        hide: storeForm.designType === 'designFlow'
       },
       {
         label: '获取表单数据url',
         key: 'requestUrl',
-        placeholder: '获取表单数据url，通用提交时可不设置'
+        placeholder: '获取表单数据url，通用提交时可不设置',
+        hide: storeForm.designType === 'designFlow'
       },
       {
         type: 'button',
@@ -581,6 +584,16 @@
         type: 'button',
         key: 'change',
         name: 'change改变事件'
+      },
+      {
+        type: 'button',
+        key: 'focus',
+        name: 'focus事件'
+      },
+      {
+        type: 'button',
+        key: 'blur',
+        name: 'blur事件'
       },
       {
         type: 'button',
@@ -1345,6 +1358,22 @@
           designConfig.value.change = content
         }
       }),
+      focus: () => ({
+        title: '表单组件focus事件。这里可修改其他组件的值',
+        key: 'change',
+        content: designConfig.value.focus,
+        callback: (content: any) => {
+          designConfig.value.focus = content
+        }
+      }),
+      blur: () => ({
+        title: '表单组件blur事件。这里可修改其他组件的值',
+        key: 'change',
+        content: designConfig.value.blur,
+        callback: (content: any) => {
+          designConfig.value.blur = content
+        }
+      }),
       //字段属性->编写校验规则
       editRules: () => ({
         key: eventType,
@@ -1463,7 +1492,7 @@
     }
     selectComponent.value.customRules.push({
       type: 'required',
-      message: '必填项',
+      message: '请输入' + selectComponent.value.formItem?.label || '',
       trigger: 'blur'
     })
   }
@@ -1522,10 +1551,8 @@
     // 获取数据源，表单设计才加载，搜索设置不需要
     if (!isSearch.value) {
       let params = {}
-      console.log('storeForm.designFlow',storeForm.designFlow)
-      console.log('storeForm',!isSearch.value)
       if (storeForm.designType === 'designFlow') {
-        params = {query:{category: 2}}
+        params = {query: {category: 2}}
       }
       getRequest('sourceList', params).then((res: any) => {
         dataSourceOption.value = res.data?.list || []

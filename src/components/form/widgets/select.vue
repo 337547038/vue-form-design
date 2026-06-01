@@ -6,6 +6,8 @@
     :loading="loading"
     :remote-method="getRemoteM"
     @change="selectChange"
+    @focus="selectFocus"
+    @blur="selectBlur"
   >
     <el-option
       v-if="data?.addAll"
@@ -46,6 +48,10 @@
       remoteMethod: null
     }
   )
+  const emits = defineEmits<{
+      (e: 'focus', val: any): void
+      (e: 'blur', val: any): void
+    }>()
   const modelValue = defineModel<any>()
   const store = inject('formStore')
   const {formValue} = storeToRefs(store)
@@ -62,6 +68,12 @@
       // 这里没有modelValue．这种赋值方式不能放在子表及弹性布局里面，要注意
       formValue.value[props.data.name] = val
     }
+  }
+  const selectFocus = (val: any) => {
+    emits('focus', val)
+  }
+  const selectBlur = (val: any) => {
+    emits('blur', val)
   }
   //监听赋值
   const unWatch = watch(() => formValue.value[props.data.name], (val: any) => {

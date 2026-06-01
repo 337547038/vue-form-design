@@ -67,14 +67,12 @@
         prop: 'status',
         label: '状态',
         render: 'switch',
-        inlinePrompt: true,
-        activeText: '启用',
-        inactiveText: '禁用',
-        activeValue: 1,
-        inactiveValue: 0,
-        renderFormatter: (val: any) => {
-          // return val && val.toString()
-          return val
+        config: {
+          inlinePrompt: true,
+          activeText: '启用',
+          inactiveText: '禁用',
+          activeValue: 1,
+          inactiveValue: 0
         }
       },
       {
