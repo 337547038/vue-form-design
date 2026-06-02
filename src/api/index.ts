@@ -51,7 +51,7 @@ export const getRequest = (
   // localhost演示时使用下面地址
   // 使用接口时可使用本地ip地址访问或注释下面代码
   const host: string = window.location.host
-  if (host.indexOf('localhost') !== -1 || host.indexOf('github') !== -1) {
+  if (host.indexOf('localhost0') !== -1 || host.indexOf('github') !== -1) {
     const {query = {}, id = '', formId = '', extend = {}} = data
     const paramsIds = []
     if (query.type) {
