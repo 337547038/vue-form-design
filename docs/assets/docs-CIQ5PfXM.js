@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:docs/assets/docs-CIQ5PfXM.js
 import{B as e,h as t,v as n}from"./runtime-core.esm-bundler-BgH13u1H.js";import"./component--LW9uapU.js";var r={class:`marked-body`},i={__name:`index`,setup(i){return(i,a)=>(e(),t(`div`,r,[...a[0]||=[n(`<h1 id="开发指南"><a name="-" class="anchor" href="#-"><span class="header-link"></span></a> 开发指南 </h1><p>欢迎有兴趣的同学参与完善文档</p><h2 id="目录结构"><a name="-" class="anchor" href="#-"><span class="header-link"></span></a> 目录结构 </h2><pre class="language-text"><code class="hljs">nodejs 模拟后端接口
-========
-import{_ as e,m as t,z as n}from"./runtime-core.esm-bundler-DxlV0Puh.js";import"./component-CNiqdUll.js";var r={class:`marked-body`},i={__name:`index`,setup(i){return(i,a)=>(n(),t(`div`,r,[...a[0]||=[e(`<h1 id="开发指南"><a name="-" class="anchor" href="#-"><span class="header-link"></span></a> 开发指南 </h1><p>欢迎有兴趣的同学参与完善文档</p><h2 id="目录结构"><a name="-" class="anchor" href="#-"><span class="header-link"></span></a> 目录结构 </h2><pre class="language-text"><code class="hljs">nodejs 模拟后端接口
->>>>>>>> cc3d81e (更新示例):docs/assets/docs-BStFYxU0.js
 public
  ├─mock json模拟数据
  ├─static 静态资源
