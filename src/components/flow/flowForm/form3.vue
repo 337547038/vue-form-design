@@ -1,12 +1,27 @@
 <template>
   <div>
-    <el-form label-width="100" :disabled="disabled" :model="formData" :rules="rules" ref="formEl">
-
+    <el-form
+      ref="formEl"
+      label-width="100"
+      :disabled="disabled"
+      :model="formData"
+      :rules="rules"
+    >
       <el-form-item label="申请理由">
-        <el-input type="textarea" :rows="5" v-model="formData.remark" placeholder="请输入请假原因"></el-input>
+        <el-input
+          v-model="formData.remark"
+          type="textarea"
+          :rows="5"
+          placeholder="请输入请假原因"
+        />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitClick">确定</el-button>
+        <el-button
+          type="primary"
+          @click="submitClick"
+        >
+          确定
+        </el-button>
         <el-button>取消</el-button>
       </el-form-item>
     </el-form>

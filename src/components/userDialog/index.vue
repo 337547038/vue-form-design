@@ -239,8 +239,8 @@
   }
   // 关闭弹窗
   const confirmClick = () => {
-    const userName = checkData.value.map((item) => item.userName).join(',')
-    const userId = checkData.value.map((item) => item.id).join(',')
+    const userName = checkData.value.map((item:any) => item.userName).join(',')
+    const userId = checkData.value.map((item:any) => item.id).join(',')
     emits('update:modelValue', userId)
     emits('update:userName', userName)
     emits('change', checkData.value)

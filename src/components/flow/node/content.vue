@@ -1,8 +1,12 @@
 <template>
   <div class="flow-html-content">
-    <div class="label">{{ state.nodeName }}</div>
+    <div class="label">
+      {{ state.nodeName }}
+    </div>
     <div class="content">
-      <p class="gray">参与人：</p>
+      <p class="gray">
+        参与人：
+      </p>
       <p>{{ state.userName }}</p>
     </div>
   </div>

@@ -3,7 +3,7 @@
     <div
       id="container"
       ref="containerRef"
-      class="design-container"
+      class="flow-design-container"
     />
     <ControlMenu
       :undo-able="undoDisable"
