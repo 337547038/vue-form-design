@@ -166,8 +166,7 @@
   import {objectToArray} from "@/utils/design";
   import UploadFile from './widgets/uploadFile.vue'
   import ChunkUpload from './chunkUpload/index.vue'
-  //import TinymceEdit from './widgets/tinymce.vue'
-  import TinymceEdit from '@/components/libs/tinymce.es'
+  import TinymceEdit from './widgets/tinymce.vue'
   import ExpandUser from './expand/user.vue'
 
   const props = withDefaults(
