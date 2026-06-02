@@ -5,33 +5,34 @@
 * 友情价：90元
 * 创建时间: 2026-6
 */
-import { a as e, i as t, n, o as r, r as i, s as a, t as o } from "./api-4sWOaxLf.js";
-import { a as s, c, i as l, n as u, s as d } from "./design-BJu9ezPh.js";
-import { Fragment as f, computed as p, createBlock as m, createCommentVNode as h, createElementBlock as g, createElementVNode as _, createTextVNode as v, createVNode as y, defineComponent as b, getCurrentInstance as x, inject as S, mergeProps as C, nextTick as ee, normalizeProps as w, normalizeStyle as T, onActivated as E, onDeactivated as D, onMounted as O, onUnmounted as k, openBlock as A, ref as j, renderList as M, renderSlot as N, resolveComponent as P, resolveDynamicComponent as F, toDisplayString as I, watch as L, withCtx as R } from "vue";
+import { a as e, i as t, n, o as r, r as i, s as a, t as o } from "./api-2vEvKYmc.js";
+import { a as s, c, i as l, n as u, s as d } from "./design-ZYUl2LQ4.js";
+import { Fragment as f, computed as p, createBlock as m, createCommentVNode as h, createElementBlock as g, createElementVNode as _, createTextVNode as v, createVNode as y, defineComponent as b, getCurrentInstance as x, inject as S, mergeProps as C, nextTick as w, normalizeProps as T, normalizeStyle as E, onActivated as D, onDeactivated as O, onMounted as k, onUnmounted as A, openBlock as j, ref as M, renderList as N, renderSlot as P, resolveComponent as F, resolveDynamicComponent as I, toDisplayString as L, watch as R, withCtx as z } from "vue";
+import { defineStore as B } from "pinia";
 //#region src/store/screen.ts
-var z = n("screen", () => {
-	let n = j(t("screenConfig", !0) || {});
+var V = B("screen", () => {
+	let n = M(t("screenConfig", !0) || {});
 	function i(e) {
 		let t = Object.assign({}, n.value, e);
 		a("screenConfig", t, 0), n.value = t;
 	}
-	let o = j(n.value.isShowGrid ?? !0);
+	let o = M(n.value.isShowGrid ?? !0);
 	function s(e) {
 		o.value = e, i({ isShowGrid: e });
 	}
-	let c = j(n.value.isShowRuler ?? !0);
+	let c = M(n.value.isShowRuler ?? !0);
 	function l(e) {
 		c.value = e, i({ isShowRuler: e });
 	}
-	let d = j(n.value.scale);
+	let d = M(n.value.scale);
 	function f(e) {
 		d.value = e, i({ scale: e });
 	}
-	let m = j(0);
+	let m = M(0);
 	function h(e) {
 		m.value = e;
 	}
-	let g = j([]), _ = j(-1), v = (e) => {
+	let g = M([]), _ = M(-1), v = (e) => {
 		g.value = g.value.slice(0, _.value + 1), g.value.push(e), _.value = g.value.length - 1, g.value.length > 30 && (g.value.shift(), _.value--);
 	}, y = () => {
 		x.value && (g.value[_.value].undo(), _.value--);
@@ -51,7 +52,7 @@ var z = n("screen", () => {
 			undo: () => r.reverse().forEach((e) => e.undo())
 		};
 		v(i), n || i.execute();
-	}, ee = (e, t, n = !1, r) => {
+	}, w = (e, t, n = !1, r) => {
 		let i = n ? { ...t } : { ...e }, a = n ? { ...e } : { ...t }, o = {
 			execute: () => {
 				Object.assign(e, a), r && r("redo");
@@ -61,17 +62,17 @@ var z = n("screen", () => {
 			}
 		};
 		v(o), n || o.execute();
-	}, w = j(n.value.showComponentPanel ?? !0);
-	function T() {
-		let e = !w.value;
-		w.value = e, i({ showComponentPanel: e });
+	}, T = M(n.value.showComponentPanel ?? !0);
+	function E() {
+		let e = !T.value;
+		T.value = e, i({ showComponentPanel: e });
 	}
-	let E = j(n.value.showPropertyPanel ?? !0);
-	function D() {
-		let e = !E.value;
-		E.value = e, i({ showPropertyPanel: e });
+	let D = M(n.value.showPropertyPanel ?? !0);
+	function O() {
+		let e = !D.value;
+		D.value = e, i({ showPropertyPanel: e });
 	}
-	let O = j({
+	let k = M({
 		width: "1920px",
 		height: "1080px",
 		background: "#000",
@@ -80,55 +81,55 @@ var z = n("screen", () => {
 		primary: "#409eff",
 		method: "get"
 	});
-	function k(e) {
-		O.value = e;
+	function A(e) {
+		k.value = e;
 	}
-	let A = j([]), M = p(() => A.value.filter((e) => e.type !== "rect"));
-	function N(e, t = !1, n = !1) {
-		let r = Array.isArray(e) ? e : [e], i = r.map((e) => e.id), a = u(A.value), o = {
+	let j = M([]), N = p(() => j.value.filter((e) => e.type !== "rect"));
+	function P(e, t = !1, n = !1) {
+		let r = Array.isArray(e) ? e : [e], i = r.map((e) => e.id), a = u(j.value), o = {
 			execute: () => {
-				t ? A.value.push(...r) : A.value = r;
+				t ? j.value.push(...r) : j.value = r;
 			},
 			undo: () => {
-				t ? A.value = A.value.filter((e) => !i.includes(e.id)) : A.value = a;
+				t ? j.value = j.value.filter((e) => !i.includes(e.id)) : j.value = a;
 			}
 		};
 		n && v(o), o.execute();
 	}
-	function P(e, t = !1) {
-		let n = Array.isArray(e) ? e : [e], r = A.value.filter((t) => e.includes(t.id)), i = {
+	function F(e, t = !1) {
+		let n = Array.isArray(e) ? e : [e], r = j.value.filter((t) => e.includes(t.id)), i = {
 			execute: () => {
-				A.value = A.value.filter((e) => !n.includes(e.id));
+				j.value = j.value.filter((e) => !n.includes(e.id));
 			},
 			undo: () => {
-				A.value.push(...r);
+				j.value.push(...r);
 			}
 		};
 		t && v(i), i.execute();
 	}
-	let F = j([]);
-	function I(t, n) {
-		n && !Array.isArray(t) ? F.value.some((e) => e.id === t.id) || F.value.push(t) : F.value = e(t) ? t : [t];
+	let I = M([]);
+	function L(t, n) {
+		n && !Array.isArray(t) ? I.value.some((e) => e.id === t.id) || I.value.push(t) : I.value = e(t) ? t : [t];
 	}
-	let L = p(() => F.value[0] || {});
-	function R() {
-		A.value = A.value.filter((e) => e.type !== "rect");
+	let R = p(() => I.value[0] || {});
+	function z() {
+		j.value = j.value.filter((e) => e.type !== "rect");
 	}
-	let z = j(!1);
-	function B(e) {
-		z.value = e;
+	let B = M(!1);
+	function V(e) {
+		B.value = e;
 	}
-	let V = j();
-	function H(e) {
-		V.value = e;
+	let H = M();
+	function U(e) {
+		H.value = e;
 	}
-	let U = j({});
-	function te(e) {
-		U.value = e;
+	let W = M({});
+	function G(e) {
+		W.value = e;
 	}
-	let W = JSON.stringify(O.value);
-	function G() {
-		A.value = [], O.value = JSON.parse(W), F.value = [], g.value = [], U.value = {}, r("scopedStyleId"), r("styleLink");
+	let K = JSON.stringify(k.value);
+	function q() {
+		j.value = [], k.value = JSON.parse(K), I.value = [], g.value = [], W.value = {}, r("scopedStyleId"), r("styleLink");
 	}
 	return {
 		isShowGrid: o,
@@ -139,26 +140,26 @@ var z = n("screen", () => {
 		setScale: f,
 		autoScale: m,
 		setAutoScale: h,
-		showComponentPanel: w,
-		setShowComponentPanel: T,
-		showPropertyPanel: E,
-		setShowPropertyPanel: D,
-		designData: A,
-		designFilterData: M,
-		setDesignData: N,
-		setDeleteDesignData: P,
-		designConfig: O,
-		setDesignConfig: k,
-		selectedComp: F,
-		setSelectedComp: I,
-		activeComp: L,
-		deleteRect: R,
-		ctrlPress: z,
-		setCtrlPress: B,
-		controlTip: V,
-		setControlTip: H,
-		getScreenGlobal: U,
-		setScreenGlobal: te,
+		showComponentPanel: T,
+		setShowComponentPanel: E,
+		showPropertyPanel: D,
+		setShowPropertyPanel: O,
+		designData: j,
+		designFilterData: N,
+		setDesignData: P,
+		setDeleteDesignData: F,
+		designConfig: k,
+		setDesignConfig: A,
+		selectedComp: I,
+		setSelectedComp: L,
+		activeComp: R,
+		deleteRect: z,
+		ctrlPress: B,
+		setCtrlPress: V,
+		controlTip: H,
+		setControlTip: U,
+		getScreenGlobal: W,
+		setScreenGlobal: G,
 		history: g,
 		setHistory: v,
 		canUndo: x,
@@ -166,18 +167,72 @@ var z = n("screen", () => {
 		setUndo: y,
 		setRedo: b,
 		updateComponentHistory: C,
-		updateCompHistory: ee,
-		clearOnExitDesign: G
+		updateCompHistory: w,
+		clearOnExitDesign: q
 	};
-}), B = {};
-function V(e, t) {
-	return A(), g("div");
+});
+Array.isArray;
+var H = /* @__PURE__ */ function(e) {
+	return e[e.MATCHER_NOT_FOUND = 1] = "MATCHER_NOT_FOUND", e[e.NAVIGATION_GUARD_REDIRECT = 2] = "NAVIGATION_GUARD_REDIRECT", e[e.NAVIGATION_ABORTED = 4] = "NAVIGATION_ABORTED", e[e.NAVIGATION_CANCELLED = 8] = "NAVIGATION_CANCELLED", e[e.NAVIGATION_DUPLICATED = 16] = "NAVIGATION_DUPLICATED", e;
+}({});
+Symbol(process.env.NODE_ENV === "production" ? "" : "navigation failure"), H.MATCHER_NOT_FOUND, H.NAVIGATION_GUARD_REDIRECT, H.NAVIGATION_ABORTED, H.NAVIGATION_CANCELLED, H.NAVIGATION_DUPLICATED;
+var U = Symbol(process.env.NODE_ENV === "production" ? "" : "router view location matched");
+Symbol(process.env.NODE_ENV === "production" ? "" : "router view depth"), Symbol(process.env.NODE_ENV === "production" ? "" : "router"), Symbol(process.env.NODE_ENV === "production" ? "" : "route location"), Symbol(process.env.NODE_ENV === "production" ? "" : "router view location");
+//#endregion
+//#region node_modules/.pnpm/vue-router@5.0.4_@vue+compi_347ff7aca99ec2241ea0068e088df74d/node_modules/vue-router/dist/devtools-DUDsFuj9.js
+function W(e) {
+	let t = Array.from(arguments).slice(1);
+	console.warn.apply(console, ["[Vue Router warn]: " + e].concat(t));
 }
-var H = /* @__PURE__ */ c(B, [["render", V]]), U = { class: "scroll-content" }, te = /* @__PURE__ */ c(/* @__PURE__ */ b({
+function G(e, t, n) {
+	let r = e.value;
+	if (!r) {
+		process.env.NODE_ENV !== "production" && W(`No active route record was found when calling \`${t === "updateGuards" ? "onBeforeRouteUpdate" : "onBeforeRouteLeave"}()\`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?`);
+		return;
+	}
+	let i = r, a = () => {
+		i[t].delete(n);
+	};
+	A(a), O(a), D(() => {
+		let r = e.value;
+		process.env.NODE_ENV !== "production" && !r && W("No active route record was found when reactivating component with navigation guard. This is likely a bug in vue-router. Please report it."), r && (i = r), i[t].add(n);
+	}), i[t].add(n);
+}
+function K(e) {
+	if (process.env.NODE_ENV !== "production" && !x()) {
+		W("getCurrentInstance() returned null. onBeforeRouteLeave() must be called at the top of a setup function");
+		return;
+	}
+	G(S(U, {}), "leaveGuards", e);
+}
+//#endregion
+//#region src/components/screen/widgets/echartsInt.vue
+var q = /* @__PURE__ */ b({
+	__name: "echartsInt",
+	props: { option: {} },
+	setup(e) {
+		let t = e, n = M(), r = M(), a = i(() => {
+			n.value && (r.value = echarts.init(n.value), r.value.setOption(t.option), window.onresize = r.value);
+		}, 100), o = R(() => t, () => {
+			r.value && (r.value.clear(), r.value.dispose()), a();
+		}, { deep: !0 });
+		return K(() => {
+			o();
+		}), k(() => {
+			w(() => {
+				a();
+			});
+		}), (e, t) => (j(), g("div", {
+			ref_key: "echartsEl",
+			ref: n,
+			class: "echarts"
+		}, null, 512));
+	}
+}), ee = { class: "scroll-content" }, te = /* @__PURE__ */ c(/* @__PURE__ */ b({
 	__name: "scrollText",
 	props: { data: {} },
 	setup(e) {
-		let t = e, n = j(null), r = j(null), i = j(0), a = null, o = p(() => t.data.direction || "left"), s = p(() => ["left", "right"].includes(o.value)), c = p(() => {
+		let t = e, n = M(null), r = M(null), i = M(0), a = null, o = p(() => t.data.direction || "left"), s = p(() => ["left", "right"].includes(o.value)), c = p(() => {
 			let e = s.value ? `translateX(${i.value}px)` : `translateY(${i.value}px)`;
 			return {
 				display: "flex",
@@ -208,76 +263,39 @@ var H = /* @__PURE__ */ c(B, [["render", V]]), U = { class: "scroll-content" }, 
 		function u() {
 			a &&= (clearInterval(a), null);
 		}
-		return O(() => {
+		return k(() => {
 			l(), n.value && (n.value.addEventListener("mouseenter", u), n.value.addEventListener("mouseleave", l));
-		}), k(() => {
+		}), A(() => {
 			u();
-		}), (e, t) => (A(), g("div", {
+		}), (e, t) => (j(), g("div", {
 			ref_key: "containerRef",
 			ref: n,
 			class: "scroll-container"
 		}, [_("div", {
 			class: "scroll-inner",
-			style: T(c.value)
+			style: E(c.value)
 		}, [_("div", {
 			ref_key: "contentRef",
 			ref: r,
 			class: "scroll-content"
-		}, [N(e.$slots, "default", {}, void 0, !0)], 512), _("div", U, [N(e.$slots, "default", {}, void 0, !0)])], 4)], 512));
+		}, [P(e.$slots, "default", {}, void 0, !0)], 512), _("div", ee, [P(e.$slots, "default", {}, void 0, !0)])], 4)], 512));
 	}
-}), [["__scopeId", "data-v-2a375c4f"]]);
-Array.isArray;
-var W = /* @__PURE__ */ function(e) {
-	return e[e.MATCHER_NOT_FOUND = 1] = "MATCHER_NOT_FOUND", e[e.NAVIGATION_GUARD_REDIRECT = 2] = "NAVIGATION_GUARD_REDIRECT", e[e.NAVIGATION_ABORTED = 4] = "NAVIGATION_ABORTED", e[e.NAVIGATION_CANCELLED = 8] = "NAVIGATION_CANCELLED", e[e.NAVIGATION_DUPLICATED = 16] = "NAVIGATION_DUPLICATED", e;
-}({});
-Symbol(process.env.NODE_ENV === "production" ? "" : "navigation failure"), W.MATCHER_NOT_FOUND, W.NAVIGATION_GUARD_REDIRECT, W.NAVIGATION_ABORTED, W.NAVIGATION_CANCELLED, W.NAVIGATION_DUPLICATED;
-var G = Symbol(process.env.NODE_ENV === "production" ? "" : "router view location matched");
-Symbol(process.env.NODE_ENV === "production" ? "" : "router view depth"), Symbol(process.env.NODE_ENV === "production" ? "" : "router"), Symbol(process.env.NODE_ENV === "production" ? "" : "route location"), Symbol(process.env.NODE_ENV === "production" ? "" : "router view location");
-//#endregion
-//#region node_modules/.pnpm/vue-router@5.0.4_@vue+compi_347ff7aca99ec2241ea0068e088df74d/node_modules/vue-router/dist/devtools-DUDsFuj9.js
-function K(e) {
-	let t = Array.from(arguments).slice(1);
-	console.warn.apply(console, ["[Vue Router warn]: " + e].concat(t));
-}
-function ne(e, t, n) {
-	let r = e.value;
-	if (!r) {
-		process.env.NODE_ENV !== "production" && K(`No active route record was found when calling \`${t === "updateGuards" ? "onBeforeRouteUpdate" : "onBeforeRouteLeave"}()\`. Make sure you call this function inside a component child of <router-view>. Maybe you called it inside of App.vue?`);
-		return;
-	}
-	let i = r, a = () => {
-		i[t].delete(n);
-	};
-	k(a), D(a), E(() => {
-		let r = e.value;
-		process.env.NODE_ENV !== "production" && !r && K("No active route record was found when reactivating component with navigation guard. This is likely a bug in vue-router. Please report it."), r && (i = r), i[t].add(n);
-	}), i[t].add(n);
-}
-function q(e) {
-	if (process.env.NODE_ENV !== "production" && !x()) {
-		K("getCurrentInstance() returned null. onBeforeRouteLeave() must be called at the top of a setup function");
-		return;
-	}
-	ne(S(G, {}), "leaveGuards", e);
-}
-//#endregion
-//#region src/components/screen/widgets/datetime.vue
-var re = /* @__PURE__ */ b({
+}), [["__scopeId", "data-v-2a375c4f"]]), ne = /* @__PURE__ */ b({
 	__name: "datetime",
 	props: { formatType: {} },
 	setup(e) {
-		let t = e, n = j(), r = j(), a = () => {
-			!t.formatType || t.formatType && t.formatType.indexOf("{i}") !== -1 ? n.value = setInterval(() => {
-				r.value = i(/* @__PURE__ */ new Date(), t.formatType);
-			}, 1e3) : r.value = i(/* @__PURE__ */ new Date(), t.formatType);
-		}, o = L(() => t.formatType, () => {
-			clearInterval(n.value), a();
+		let t = e, r = M(), i = M(), a = () => {
+			!t.formatType || t.formatType && t.formatType.indexOf("{i}") !== -1 ? r.value = setInterval(() => {
+				i.value = n(/* @__PURE__ */ new Date(), t.formatType);
+			}, 1e3) : i.value = n(/* @__PURE__ */ new Date(), t.formatType);
+		}, o = R(() => t.formatType, () => {
+			clearInterval(r.value), a();
 		}, { immediate: !0 });
-		return O(() => {}), q(() => {
+		return k(() => {}), K(() => {
 			o();
-		}), (e, t) => (A(), g("div", null, I(r.value), 1));
+		}), (e, t) => (j(), g("div", null, L(i.value), 1));
 	}
-}), ie = /* @__PURE__ */ c(/* @__PURE__ */ b({
+}), re = /* @__PURE__ */ c(/* @__PURE__ */ b({
 	__name: "table",
 	props: {
 		data: {},
@@ -289,7 +307,7 @@ var re = /* @__PURE__ */ b({
 		speed: { default: 30 }
 	},
 	setup(e) {
-		let t = e, n = j(null), r = () => {
+		let t = e, n = M(null), r = () => {
 			if (!t.carousel || !n.value) return;
 			let e = n.value.$el.querySelector(".el-scrollbar__wrap");
 			function r() {
@@ -301,16 +319,16 @@ var re = /* @__PURE__ */ b({
 			}, n.value.onmouseleave = function() {
 				i = setInterval(r, t.speed);
 			};
-		}, i = L(() => t.data?.list, () => {
-			ee(() => {
+		}, i = R(() => t.data?.list, () => {
+			w(() => {
 				r();
 			});
 		}, { immediate: !0 });
-		return O(() => {}), q(() => {
+		return k(() => {}), K(() => {
 			i();
 		}), (t, r) => {
-			let i = P("el-table-column"), a = P("el-table");
-			return A(), g("div", null, [y(a, {
+			let i = F("el-table-column"), a = F("el-table");
+			return j(), g("div", null, [y(a, {
 				ref_key: "tableRef",
 				ref: n,
 				class: "table",
@@ -318,12 +336,12 @@ var re = /* @__PURE__ */ b({
 				height: `${e.height}`,
 				style: { width: "100%" }
 			}, {
-				default: R(() => [(A(!0), g(f, null, M(e.data?.columns, (e) => (A(), m(i, C({ ref_for: !0 }, e, { key: e.prop }), null, 16))), 128))]),
+				default: z(() => [(j(!0), g(f, null, N(e.data?.columns, (e) => (j(), m(i, C({ ref_for: !0 }, e, { key: e.prop }), null, 16))), 128))]),
 				_: 1
 			}, 8, ["data", "height"])]);
 		};
 	}
-}), [["__scopeId", "data-v-d35bb7bb"]]), ae = (e, t, n) => {
+}), [["__scopeId", "data-v-d35bb7bb"]]), ie = (e, t, n) => {
 	let r = l(e);
 	if (!t) return r;
 	if (typeof t == "function") return t(r, n) ?? r;
@@ -340,10 +358,10 @@ var re = /* @__PURE__ */ b({
 		return typeof i == "function" && (o = i(e, r, n)), o === !1 ? !1 : typeof a == "function" ? a(o ?? e, r, n) : o ?? e;
 	}
 	return console.log("after 钩子返回字符串标识，暂不处理:", t), e;
-}, oe = async (e) => {
+}, ae = async (e) => {
 	let { apiKey: t, params: n = {}, route: r, formModel: i, options: a = {}, before: s, after: c, type: u } = e;
 	if (!t) throw Error("请求 apiKey 不能为空");
-	let d = ae(n, s, {
+	let d = ie(n, s, {
 		route: r,
 		model: l(i),
 		type: u
@@ -359,18 +377,18 @@ var re = /* @__PURE__ */ b({
 	} catch (e) {
 		throw J(e, c, u, !1), e;
 	}
-}, Y = () => z(), se = (e) => {
+}, Y = () => V(), oe = (e) => {
 	try {
 		return /^-?\d+(\.\d+)?$/.test(e.toString());
 	} catch {
 		return !1;
 	}
-}, X = (e) => e === 0 || e === "0" ? 0 : se(e) ? Math.round(e) + "px" : e, Z = (e) => {
+}, X = (e) => e === 0 || e === "0" ? 0 : oe(e) ? Math.round(e) + "px" : e, Z = (e) => {
 	let t = String(e).trim().match(/^-?\d+(\.\d+)?/);
 	if (!t) return 0;
 	let n = parseFloat(t[0]);
 	return Math.round(n);
-}, ce = (e) => {
+}, se = (e) => {
 	let t = Y().designData.find((e) => e.type === "rect"), n = {
 		type: "rect",
 		label: "临时选区",
@@ -381,7 +399,7 @@ var re = /* @__PURE__ */ b({
 		...e
 	};
 	return t ? (Object.assign(t, n), t) : (Y().setDesignData(n, !0), n);
-}, le = () => {
+}, ce = () => {
 	let e = Infinity, t = Infinity, n = -Infinity, r = -Infinity;
 	return Y().selectedComp.forEach((i) => {
 		let { x: a, y: o, width: s, height: c } = i;
@@ -394,7 +412,7 @@ var re = /* @__PURE__ */ b({
 		display: !1,
 		class: "group-wrap"
 	};
-}, ue = (e) => {
+}, le = (e) => {
 	if (e.notUseInlineStyle) return {};
 	let { x: t, y: n, height: r, width: i, zIndex: a, display: o, right: s, bottom: c } = e, l = {
 		left: s ? "auto" : X(t),
@@ -409,14 +427,14 @@ var re = /* @__PURE__ */ b({
 	};
 	return Object.fromEntries(Object.entries(l).filter(([e, t]) => t !== ""));
 };
-function de(e) {
+function ue(e) {
 	return e == null || e === "" ? !1 : /^\d+(px)?$/i.test(String(e));
 }
-var fe = (e) => !(e.display || e.locked || e.notUseInlineStyle || e.right || e.bottom || !de(e.x) || !de(e.y));
-z();
-var pe = (e) => new Promise((t, n) => {
+var de = (e) => !(e.display || e.locked || e.notUseInlineStyle || e.right || e.bottom || !ue(e.x) || !ue(e.y));
+V();
+var fe = (e) => new Promise((t, n) => {
 	let { optionsType: r, requestUrl: i, method: a = "post", before: o, after: s } = e;
-	r === 1 && i ? oe({
+	r === 1 && i ? ae({
 		apiKey: i,
 		params: {},
 		before: o,
@@ -443,11 +461,11 @@ var pe = (e) => new Promise((t, n) => {
 		case "sText": return e.text;
 		default: return e.option;
 	}
-}, me = ["innerHTML"], he = ["src"], ge = /* @__PURE__ */ b({
+}, pe = ["innerHTML"], me = ["src"], he = /* @__PURE__ */ b({
 	__name: "componentFactory",
 	props: { data: {} },
 	setup(e) {
-		let t = z(), n = e, r = p(() => {
+		let t = V(), n = e, r = p(() => {
 			let { fontSize: e, color: t, style: r, border: i, background: a, src: o } = n.data;
 			return {
 				width: "100%",
@@ -459,7 +477,7 @@ var pe = (e) => new Promise((t, n) => {
 				backgroundImage: o ? `url(${o})` : "",
 				...r
 			};
-		}), i = j({}), a = j({}), o = p(() => {
+		}), i = M({}), a = M({}), o = p(() => {
 			let e = {
 				getScreenGlobal: t.getScreenGlobal,
 				getScreenComp: a.value
@@ -469,63 +487,63 @@ var pe = (e) => new Promise((t, n) => {
 				return JSON.stringify(r);
 			}).replace(/{{([\w.]+)}}/g, (t, n) => n.split(".").reduce((e, t) => e?.[t], e) ?? ""));
 		}), c = () => {
-			pe(n.data).then((e) => {
+			fe(n.data).then((e) => {
 				i.value = e.option || {}, a.value = e.res || {};
 			});
 		};
-		return O(() => {
+		return k(() => {
 			c();
-		}), k(() => {
+		}), A(() => {
 			i.value = {}, a.value = {};
-		}), (t, n) => (A(), g(f, null, [
+		}), (t, n) => (j(), g(f, null, [
 			[
 				"line",
 				"bar",
 				"pie",
 				"echarts"
-			].includes(e.data.type) ? (A(), m(H, {
+			].includes(e.data.type) ? (j(), m(q, {
 				key: 0,
 				option: o.value,
-				style: T(r.value)
+				style: E(r.value)
 			}, null, 8, ["option", "style"])) : h("", !0),
-			["text", "border"].includes(e.data.type) ? (A(), g("div", {
+			["text", "border"].includes(e.data.type) ? (j(), g("div", {
 				key: 1,
-				style: T(r.value),
+				style: E(r.value),
 				innerHTML: o.value
-			}, null, 12, me)) : h("", !0),
-			["sText"].includes(e.data.type) ? (A(), m(te, {
+			}, null, 12, pe)) : h("", !0),
+			["sText"].includes(e.data.type) ? (j(), m(te, {
 				key: 2,
 				data: e.data,
-				style: T(r.value)
+				style: E(r.value)
 			}, {
-				default: R(() => [v(I(o.value), 1)]),
+				default: z(() => [v(L(o.value), 1)]),
 				_: 1
 			}, 8, ["data", "style"])) : h("", !0),
-			e.data.type === "image" ? (A(), g("img", {
+			e.data.type === "image" ? (j(), g("img", {
 				key: 3,
 				src: e.data.src,
-				style: T(r.value),
+				style: E(r.value),
 				alt: "请选择或输入图片url地址",
 				class: "default-img"
-			}, null, 12, he)) : h("", !0),
-			e.data.type === "background" ? (A(), g("div", {
+			}, null, 12, me)) : h("", !0),
+			e.data.type === "background" ? (j(), g("div", {
 				key: 4,
-				style: T(r.value),
+				style: E(r.value),
 				class: "default-bg"
 			}, null, 4)) : h("", !0),
-			e.data.type === "clock" ? (A(), m(re, {
+			e.data.type === "clock" ? (j(), m(ne, {
 				key: 5,
 				"format-type": e.data.dateTime,
-				style: T(r.value)
+				style: E(r.value)
 			}, null, 8, ["format-type", "style"])) : h("", !0),
-			["component"].includes(e.data.type) ? (A(), m(F(e.data.component), w(C({ key: 6 }, e.data.props)), null, 16)) : h("", !0),
-			e.data.type === "table" ? (A(), m(ie, {
+			["component"].includes(e.data.type) ? (j(), m(I(e.data.component), T(C({ key: 6 }, e.data.props)), null, 16)) : h("", !0),
+			e.data.type === "table" ? (j(), m(re, {
 				key: 7,
 				height: e.data.height,
 				speed: e.data.speed,
 				carousel: e.data.carousel,
 				data: o.value,
-				style: T(r.value)
+				style: E(r.value)
 			}, null, 8, [
 				"height",
 				"speed",
@@ -535,18 +553,18 @@ var pe = (e) => new Promise((t, n) => {
 			])) : h("", !0)
 		], 64));
 	}
-}), _e = (e) => {
+}), ge = (e) => {
 	try {
 		return /^-?\d+(\.\d+)?$/.test(e.toString());
 	} catch {
 		return !1;
 	}
-}, $ = (e) => e === 0 || e === "0" ? 0 : _e(e) ? Math.round(e) + "px" : e, ve = (e) => {
+}, $ = (e) => e === 0 || e === "0" ? 0 : ge(e) ? Math.round(e) + "px" : e, _e = (e) => {
 	let t = String(e).trim().match(/^-?\d+(\.\d+)?/);
 	if (!t) return 0;
 	let n = parseFloat(t[0]);
 	return Math.round(n);
-}, ye = (e) => {
+}, ve = (e) => {
 	if (e.notUseInlineStyle) return {};
 	let { x: t, y: n, height: r, width: i, zIndex: a, display: o, right: s, bottom: c } = e, l = {
 		left: s ? "auto" : $(t),
@@ -562,4 +580,4 @@ var pe = (e) => new Promise((t, n) => {
 	return Object.fromEntries(Object.entries(l).filter(([e, t]) => t !== ""));
 };
 //#endregion
-export { ue as a, Z as c, fe as i, z as l, ve as n, le as o, ge as r, ce as s, ye as t };
+export { le as a, Z as c, de as i, V as l, _e as n, ce as o, he as r, se as s, ve as t };

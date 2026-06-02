@@ -12,7 +12,8 @@
 </route>
 <script setup lang="ts">
   import {computed, onMounted, ref} from 'vue'
-  import ScreenShow from '@/components/screen/show.vue'
+  //import ScreenShow from '@/components/screen/show.vue'
+  import ScreenShow from '@/components/libs/show.es'
   import {useRoute} from "vue-router";
   import {getInitData, loadConfigResource} from "@/components/screen/getData";
   import {getStorage} from "@/utils";

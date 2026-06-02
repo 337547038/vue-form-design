@@ -332,3 +332,8 @@ export const useScreenStore = defineStore('screen', () => {
       }
     }
 )
+
+
+export function getScreenStore(){
+  return useScreenStore()
+}

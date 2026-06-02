@@ -40,12 +40,11 @@
 <script setup lang="ts">
   import {useLayoutStore} from "@/store/layout";
   import {useScreenStore} from "@/store/screen";
-  import {computed, onMounted, ref, onUnmounted} from "vue";
+  import {computed, onMounted, ref, onUnmounted, provide} from "vue";
   import ComponentPanel from "@/components/screen/componentPanel.vue";
   import PropertyPanel from "@/components/screen/propertyPanel.vue";
   import HeadTools from "../components/headTools.vue";
-  //import DesignArea from "@/components/screen/designArea.vue";
-  import DesignArea from "@/components/libs/screen.es.js";
+  import DesignArea from "@/components/screen/designArea.vue";
   import FooterPanel from "@/components/screen/footerPanel.vue";
   import AceDrawer from '@/components/ace/drawer.vue'
   import type {AceDrawerT} from "@/components/ace/type";
@@ -65,6 +64,7 @@
   const route = useRoute()
   const router = useRouter()
   const screenStore = useScreenStore()
+  provide("akScreenStore",screenStore)
   const layoutStore = useLayoutStore()
   layoutStore.changeBreadcrumb([
     {label: '系统工具'},
