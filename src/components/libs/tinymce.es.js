@@ -5,7 +5,7 @@
 * 友情价：90元
 * 创建时间: 2026-6
 */
-import { t as e, u as t } from "./api-4sWOaxLf.js";
+import { a as e, t } from "./api-DMmHgXj9.js";
 import { computed as n, createElementBlock as r, defineComponent as i, mergeModels as a, onMounted as o, onUnmounted as s, openBlock as c, useModel as l, vModelText as u, withDirectives as d } from "vue";
 //#region src/components/form/widgets/tinymce.vue?vue&type=script&setup=true&lang.ts
 var f = "preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave ", p = "fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor table image | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs", m = "undo cut copy paste pastetext |forecolor backcolor bold italic underline strikethrough|alignleft aligncenter alignright alignjustify|", h = /* @__PURE__ */ i({
@@ -49,9 +49,9 @@ var f = "preview searchreplace autolink directionality visualblocks visualchars 
 			content_css: !1,
 			paste_data_images: !0,
 			urlconverter_callback: (e, t) => (t === "img" && e.startsWith("blob:") && tinymce.activeEditor && tinymce.activeEditor.uploadImages(), e),
-			images_upload_handler: (t, n) => new Promise((n, r) => {
+			images_upload_handler: (e, n) => new Promise((n, r) => {
 				let i = new FormData();
-				i.append("file", t.blob()), a.imgUrl, e("upload", i, {}).then((e) => {
+				i.append("file", e.blob()), a.imgUrl, t("upload", i, {}).then((e) => {
 					e.code === 1 ? n(e.data) : r("上传失败");
 				}).catch(() => {
 					r("上传出错，示例暂不提供上传接口");
@@ -66,10 +66,10 @@ var f = "preview searchreplace autolink directionality visualblocks visualchars 
 					let c = new FormData();
 					c.append("file", r);
 					let l = "upload";
-					a.blobUrl && (l = a.blobUrl), e(l, c).then((e) => {
-						e.code === 1 ? n(e.data, s) : t.error(e?.message);
-					}).catch((e) => {
-						t.error(e.message);
+					a.blobUrl && (l = a.blobUrl), t(l, c).then((t) => {
+						t.code === 1 ? n(t.data, s) : e.error(t?.message);
+					}).catch((t) => {
+						e.error(t.message);
 					});
 				};
 			}

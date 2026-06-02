@@ -5,7 +5,7 @@
 * 友情价：90元
 * 创建时间: 2026-6
 */
-import { G as e, W as t, c as n, l as r, r as i, t as a, u as o } from "./api-4sWOaxLf.js";
+import { B as e, a as t, i as n, n as r, r as i, t as a, z as o } from "./api-DMmHgXj9.js";
 import { Fragment as s, computed as c, createBlock as l, createCommentVNode as u, createElementBlock as d, createElementVNode as f, createTextVNode as p, createVNode as m, defineComponent as h, mergeModels as g, mergeProps as _, normalizeClass as v, normalizeStyle as y, onBeforeUnmount as b, openBlock as x, ref as S, renderList as C, resolveComponent as w, resolveDirective as T, toDisplayString as E, unref as D, useModel as O, vModelText as k, vShow as A, watch as j, withCtx as M, withDirectives as N, withModifiers as P } from "vue";
 //#region src/components/form/chunkUpload/group.vue?vue&type=script&setup=true&lang.ts
 var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:modelValue", "onKeyup"], R = ["onClick"], z = ["title", "onClick"], B = ["onClick"], V = { class: "group-btn" }, ee = {
@@ -17,23 +17,23 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 }, ne = /* @__PURE__ */ h({
 	__name: "group",
 	emits: ["changeGroup"],
-	setup(e, { emit: t }) {
-		let n = t, r = S(!1), i = S(!1), c = S(""), l = S([]), u = S(""), h = (e) => {
-			u.value = e.id, n("changeGroup", e.id);
+	setup(e, { emit: n }) {
+		let r = n, i = S(!1), o = S(!1), c = S(""), l = S([]), u = S(""), h = (e) => {
+			u.value = e.id, r("changeGroup", e.id);
 		}, g = () => {
-			r.value = !0, c.value = "";
+			i.value = !0, c.value = "";
 		}, _ = () => {
 			c.value ? a("chunkUploadAddGroup", { name: c.value }).then(() => {
-				o({
+				t({
 					type: "success",
 					message: "添加成功"
-				}), r.value = !1, A();
+				}), i.value = !1, A();
 			}).catch((e) => {
-				o({
+				t({
 					type: "error",
 					message: e.message
 				});
-			}) : o({
+			}) : t({
 				type: "error",
 				message: "请输入分组名称"
 			});
@@ -42,24 +42,24 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 				id: e.id,
 				name: e.__newName
 			}).then(() => {
-				o({
+				t({
 					type: "success",
 					message: "修改成功"
 				}), A();
 			}).catch((e) => {
-				o({
+				t({
 					type: "error",
 					message: e.message
 				});
 			});
-		}, b = (e, t) => {
+		}, b = (e, n) => {
 			a("chunkUploadDelGroup", { id: e }).then(() => {
-				o({
+				t({
 					type: "success",
 					message: "删除成功"
-				}), l.value.splice(t, 1);
+				}), l.value.splice(n, 1);
 			}).catch((e) => {
-				o({
+				t({
 					type: "error",
 					message: e.message
 				});
@@ -74,7 +74,7 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 			});
 		};
 		return A(), (e, t) => {
-			let n = w("el-popconfirm"), a = w("el-input"), o = w("el-button"), S = T("loading");
+			let n = w("el-popconfirm"), r = w("el-input"), a = w("el-button"), S = T("loading");
 			return x(), d("div", F, [N((x(), d("div", I, [f("ul", null, [f("li", {
 				class: v({ active: u.value === "" }),
 				onClick: t[0] ||= (e) => h({ id: "" })
@@ -112,19 +112,19 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 					}, null, -1)]]),
 					_: 1
 				}, 8, ["onConfirm"])
-			], 2))), 128))])])), [[S, i.value]]), f("div", V, [r.value ? (x(), d("div", ee, [m(a, {
+			], 2))), 128))])])), [[S, o.value]]), f("div", V, [i.value ? (x(), d("div", ee, [m(r, {
 				modelValue: c.value,
 				"onUpdate:modelValue": t[1] ||= (e) => c.value = e,
 				placeholder: "分组名称",
 				size: "small"
-			}, null, 8, ["modelValue"]), m(o, {
+			}, null, 8, ["modelValue"]), m(a, {
 				size: "small",
 				type: "primary",
 				onClick: _
 			}, {
 				default: M(() => [...t[5] ||= [p(" 提交 ", -1)]]),
 				_: 1
-			})])) : (x(), d("div", te, [m(o, {
+			})])) : (x(), d("div", te, [m(a, {
 				size: "small",
 				onClick: g
 			}, {
@@ -133,7 +133,7 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 			})]))])]);
 		};
 	}
-}), H = /* @__PURE__ */ e((/* @__PURE__ */ t(((e, t) => {
+}), H = /* @__PURE__ */ e((/* @__PURE__ */ o(((e, t) => {
 	(function(n) {
 		if (typeof e == "object") t.exports = n();
 		else if (typeof define == "function" && define.amd) define(n);
@@ -394,7 +394,7 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 		groupId: { default: "" }
 	},
 	setup(e) {
-		let t = e, i = S(), c = S([]), m = S(), h = S(0), g = (e) => e.status === 1 ? e.progress + "%" : {
+		let r = e, o = S(), c = S([]), m = S(), h = S(0), g = (e) => e.status === 1 ? e.progress + "%" : {
 			0: "等待上传",
 			1: "正在上传",
 			2: "上传失败",
@@ -402,51 +402,51 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 			4: "上传成功",
 			5: "正在处理"
 		}[e.status], _ = async () => {
-			i.value = "", h.value = 1;
+			o.value = "", h.value = 1;
 			let e = c.value.filter((e) => e.status === 0), t = [];
 			for (let n of e) {
 				for (; t.length >= se;) await Promise.race(t), t.shift();
 				t.push(D(n));
 			}
 			await Promise.all(t);
-		}, b = async (e, n) => {
+		}, b = async (e, t) => {
 			h.value = 0;
-			let r = e;
-			if (n !== "drag" && (r = e.target && e.target.files), !(!r || !r?.length)) {
-				for (let e = 0; e < r.length; e++) {
-					let t = r[e], n = "";
-					/image\/\w+/.test(t.type) && (n = z(t) || ""), c.value.push({
+			let n = e;
+			if (t !== "drag" && (n = e.target && e.target.files), !(!n || !n?.length)) {
+				for (let e = 0; e < n.length; e++) {
+					let t = n[e], r = "";
+					/image\/\w+/.test(t.type) && (r = z(t) || ""), c.value.push({
 						size: R(t.size),
 						progress: 0,
 						speed: "",
 						remainingTime: "",
 						status: 0,
 						name: t.name,
-						src: n,
+						src: r,
 						type: t.type,
 						file: t,
 						source: null
 					});
 				}
-				t.auto && await _();
+				r.auto && await _();
 			}
 		}, T, D = async (e) => {
-			let n = e.file, i = Math.ceil(n.size / Q);
+			let t = e.file, i = Math.ceil(t.size / Q);
 			e.status = 5;
-			let a = await V(n, Q, i), o = r.source();
+			let a = await V(t, Q, i), o = n.source();
 			T = o.token, e.source = o, e.fileHash = a + "", e.source = o, m.value = Date.now();
-			for (let r = 0; r < i; r++) {
-				let { chunk: o } = B(n, r, Q);
+			for (let n = 0; n < i; n++) {
+				let { chunk: o } = B(t, n, Q);
 				await O({
-					chunkNumber: r + 1,
+					chunkNumber: n + 1,
 					chunkSize: Q,
 					currentChunkSize: o.size,
-					totalSize: n.size,
+					totalSize: t.size,
 					fileHash: a,
-					filename: n.name,
+					filename: t.name,
 					totalChunks: i,
 					file: o,
-					groupId: t.groupId
+					groupId: r.groupId
 				}, e);
 			}
 			console.log(`程序运行时间: ${(Date.now() - m.value) / 1e3}秒`);
@@ -472,7 +472,7 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 					default: t.status = 2, r(e);
 				}
 			});
-		}), k = n((e, t, n) => {
+		}), k = i((e, t, n) => {
 			let r = e / ((Date.now() - m.value) / 1e3);
 			n.speed = R(r);
 			let i = (t - e) / r, a = Math.floor(i / 60), o = Math.floor(i - a * 60), s;
@@ -482,14 +482,14 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 		}, P = (e) => {
 			e.source = null, D(e);
 		}, F = (e) => {
-			let t = c.value[e];
-			t.source && t.source.cancel("del"), [
+			let n = c.value[e];
+			n.source && n.source.cancel("del"), [
 				1,
 				2,
 				3,
 				4
-			].includes(t.status) && t.fileHash && a("chunkUploadDel", { fileHash: t.fileHash }).then(() => {
-				o({
+			].includes(n.status) && n.fileHash && a("chunkUploadDel", { fileHash: n.fileHash }).then(() => {
+				t({
 					type: "success",
 					message: "删除成功"
 				});
@@ -542,7 +542,7 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 			}, [
 				f("input", {
 					ref_key: "inputEl",
-					ref: i,
+					ref: o,
 					style: { display: "none" },
 					type: "file",
 					multiple: "multiple",
@@ -621,7 +621,7 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 	},
 	emits: ["checkedChange", "update:modelValue"],
 	setup(e, { expose: t, emit: n }) {
-		let r = e, o = n, h = S([]), g = S([]), _ = S(20), v = S(1), y = S(0), T = j(() => r.modelValue, (e) => {
+		let i = e, o = n, h = S([]), g = S([]), _ = S(20), v = S(1), y = S(0), T = j(() => i.modelValue, (e) => {
 			g.value = e;
 		}, {
 			deep: !0,
@@ -631,8 +631,8 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 		}, A = (e) => {
 			let t = O.value.indexOf(e.fileUrl);
 			t === -1 ? g.value.push(e) : g.value.splice(t, 1), o("update:modelValue", g.value);
-		}, N = (e) => g.value.length >= r.limit ? !O.value.includes(e) : !1, P = (e) => {
-			if (r.limit > 1) {
+		}, N = (e) => g.value.length >= i.limit ? !O.value.includes(e) : !1, P = (e) => {
+			if (i.limit > 1) {
 				if (N(e.fileUrl)) return;
 				A(e);
 			} else k(e);
@@ -656,13 +656,13 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 		return I({}), b(() => {
 			T();
 		}), t({ getList: I }), (t, n) => {
-			let r = w("el-checkbox"), a = w("el-radio"), o = w("el-table-column"), c = w("el-table"), g = w("el-pagination");
+			let i = w("el-checkbox"), a = w("el-radio"), o = w("el-table-column"), c = w("el-table"), g = w("el-pagination");
 			return x(), d(s, null, [h.value.length ? (x(), d(s, { key: 0 }, [e.listType === "table" ? (x(), d("div", le, [m(c, {
 				data: h.value,
 				style: { width: "100%" }
 			}, {
 				default: M(() => [m(o, { label: "文件名" }, {
-					default: M((t) => [e.limit > 1 ? (x(), l(r, {
+					default: M((t) => [e.limit > 1 ? (x(), l(i, {
 						key: 0,
 						disabled: N(t.row.fileUrl),
 						"model-value": O.value.includes(t.row.fileUrl),
@@ -695,7 +695,7 @@ var F = { class: "upload-group" }, I = { class: "group-list" }, L = ["onUpdate:m
 					prop: "creatTime",
 					width: "170"
 				}, {
-					default: M(({ row: e }) => [p(E(D(i)(e.creatTime)), 1)]),
+					default: M(({ row: e }) => [p(E(D(r)(e.creatTime)), 1)]),
 					_: 1
 				})]),
 				_: 1
