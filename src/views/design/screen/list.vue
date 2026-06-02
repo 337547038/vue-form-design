@@ -26,8 +26,9 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router'
-  import { ref, reactive, nextTick } from 'vue'
+  import {useRouter} from 'vue-router'
+  import {ref, reactive, nextTick} from 'vue'
+  import AkForm from '@/components/form/index.vue'
 
   const router = useRouter()
   const dialog = reactive({
@@ -37,9 +38,9 @@
   const tableListEl = ref()
   const tableData = ref({
     columns: [
-      { label: '勾选', type: 'selection' },
-      { prop: 'id', label: 'ID', width: '60px' },
-      { prop: 'name', label: '名称', width: '150px' },
+      {label: '勾选', type: 'selection'},
+      {prop: 'id', label: 'ID', width: '60px'},
+      {prop: 'name', label: '名称', width: '150px'},
       {
         prop: 'category',
         label: '分类',
@@ -98,7 +99,7 @@
             label: '查看',
             type: 'primary',
             click: (row: any) => {
-              const { href } = router.resolve({
+              const {href} = router.resolve({
                 path: '/design/screen/show/' + row.id
               })
               window.open(href)
@@ -119,27 +120,29 @@
         ]
       }
     ],
-    controlBtn: [
-      {
-        label: '新增大屏',
-        icon: 'plus',
-        type: 'primary',
-        click: () => {
-          toDesign({})
+    config: {
+      controlBtn: [
+        {
+          label: '新增大屏',
+          icon: 'plus',
+          type: 'primary',
+          click: () => {
+            toDesign({})
+          }
+        },
+        {
+          label: '删除',
+          key: 'del',
+          type: 'danger',
+          icon: 'delete'
         }
-      },
-      {
-        label: '删除',
-        key: 'del',
-        type: 'danger',
-        icon: 'delete'
-      }
-    ]
+      ]
+    }
   })
   const toDesign = (row: any) => {
     router.push({
       path: '/design/screen',
-      query: { id: row.id }
+      query: {id: row.id}
     })
   }
   const searchData = ref({
@@ -156,7 +159,7 @@
         }
       }
     ],
-    config: { submitCancel: true }
+    config: {submitCancel: true}
   })
   const dialogFormData = ref({
     list: [
