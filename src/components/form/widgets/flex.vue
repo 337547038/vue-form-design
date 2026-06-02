@@ -58,7 +58,7 @@
   const store = inject('formStore')
   const {formValue, formType} = storeToRefs(store)
   const tableDataNew = computed(() => {
-    return formValue.value[props.data.name]
+    return formValue.value[props.data.name]||[]
   })
 
   const getRow = () => {

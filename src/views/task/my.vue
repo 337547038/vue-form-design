@@ -116,7 +116,7 @@
           {
             label: '撤回', props: {text: true}, type: 'primary',
             display: (row: any) => {
-              return row.status === 0
+              return row.status !== 0
             },
             click: (row: any) => {
               cancelClick(row.id)

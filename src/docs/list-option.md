@@ -302,10 +302,9 @@ const listBtnClick = (key: string, row: any, close: any) => {
 
 为了更方便对弹窗作设置，还可以通过`pinia`对弹窗作设置及关闭
 ```javascript
-import {useLayoutStore} from '@/store/layout'
+import {useListDialogForm} from '@/store/list'
 import {getCurrentInstance} from 'vue'
 
-const store = useLayoutStore()
 const instance = getCurrentInstance()
 const formStore = useListDialogForm(instance.uid)() // 这里需传下唯一的id，自定或手动设置都可以
 provide('akListDialogForm', formStore)
@@ -335,7 +334,7 @@ const buttons=[
     click: (row: { [key: string]: any }) => {
       //可使用return false阻止自定义按钮事件
     },
-    // 按钮是否显示，true显示
+    // 按钮是否显示，true隐藏 false显示
     display: (row: { [key: string]: any }) =>{
       return true;
     },

@@ -128,7 +128,6 @@
       name: designConfig.value.name || '未命名', // 表单名称，用于在显示所有已创建的表单列表里显示
       type: 1, // 1表单 2列表
       dict: JSON.stringify(designStore.formOptionDict),
-      category: operateType.value === 'designFlow' ? 2 : 1
     }
     let apiKey = 'designSave'
     if (id) {
@@ -137,6 +136,7 @@
       apiKey = 'designEdit'
     } else {
       params.status = 1 // 添加时默认启用
+      params.category = operateType.value === 'designFlow' ? 2 : 1
     }
     // 列表搜索模式下只有修改
     if (operateType.value === 'designSearch') {

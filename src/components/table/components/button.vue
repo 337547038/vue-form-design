@@ -38,9 +38,10 @@
   const clickEvent = () => {
     emits('click')
   }
+  // true隐藏 false显示
   const getDisplay = (btn: Button) => {
     if (btn.display && typeof btn.display === 'function') {
-      return btn.display(props.row)
+      return !btn.display(props.row)
     }
     return true
   }

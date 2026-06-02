@@ -191,7 +191,7 @@
             key: 'del',
             icon: 'delete',
             display: (row: any) => {
-              return row.isSystem !== 1
+              return row.isSystem === 1
             }
           }
         ]

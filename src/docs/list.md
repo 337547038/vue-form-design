@@ -4,7 +4,9 @@
 
 <ak-list :data="tableData"></ak-list>
 ```
+
 ## 基本表格
+
 ```vue preview
 <!-- Created by weiXin:337547038 -->
 <template>
@@ -20,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref,onMounted} from 'vue'
+  import {ref, onMounted} from 'vue'
 
-  const tableRef=ref()
+  const tableRef = ref()
   const tableData = ref({
     columns: [
       {
@@ -49,13 +51,14 @@
   const searchData = ref([])
 
   //添加一条演示数据
-  onMounted(()=>{
-    tableRef.value.setTableData([{name:'姓名'}])
+  onMounted(() => {
+    tableRef.value.setTableData([{name: '姓名'}])
   })
 
 </script>
 
 ```
+
 ## API
 
 ### Props
@@ -117,12 +120,12 @@
 
 ### Slot
 
-| 参数         | 说明                                                            |
-|------------|---------------------------------------------------------------|
-| default    | 用于弹窗显示添加编辑表单，设计config.openType=dialog时，点击按钮key=add/edit时会弹出对话 |
-| controlBtn | 位于筛列表可配置新增删除按钮后面                                              |
-| searchForm | 位于条件筛选表单内部                                                    |
-| -          | columns对应的props                                               |
+| 参数         | 说明                                                                                                  |
+|------------|-----------------------------------------------------------------------------------------------------|
+| default    | 用于弹窗显示添加编辑表单，设计config.openType=dialog时，点击按钮key=add/edit时会弹出对话                                       |
+| controlBtn | 位于筛列表可配置新增删除按钮后面                                                                                    |
+| searchForm | 位于条件筛选表单内部                                                                                          |
+| -          | columns对应的props；{index:number,name:string,row:Record<string,any>,dict:Record<string,any>,value:any} |
 
 ### tree
 
@@ -167,7 +170,7 @@ const newBtn = {
       key: "edit"
     },
     {
-      key:'del',
+      key: 'del',
       // 渲染方式:tooltip=带tip的按钮,confirm=带确认框的按钮，空为正常的按钮
       render: "tooltip",
       title: "", // 鼠标放置时的 title 提示
@@ -178,9 +181,9 @@ const newBtn = {
       popConfirm: {}, //自定popConfirm属性，当render=confirm
       // 自定义点击事件
       click: (row: { [key: string]: any }) => {
-　　　　　　//当使用了系统内置的key时，这里可以使用return false阻止系统事件
+        //当使用了系统内置的key时，这里可以使用return false阻止系统事件
       },
-      // 按钮是否显示，true显示
+      // 按钮是否显示，true隐藏
       display: (row: { [key: string]: any }) => {
         return true;
       },
