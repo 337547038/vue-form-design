@@ -16,7 +16,7 @@ export default defineConfig({
     },
     build: {
         copyPublicDir: false, // 关键：关闭public目录复制
-        outDir: path.resolve(__dirname, '../src/components/libs'),
+        outDir: path.resolve(__dirname, '../src/components/dist'),
         lib: {
             //entry: path.resolve(__dirname, '../src/components/flow/index.ts'),
             entry:{

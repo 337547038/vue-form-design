@@ -44,7 +44,8 @@
   import ComponentPanel from "@/components/screen/componentPanel.vue";
   import PropertyPanel from "@/components/screen/propertyPanel.vue";
   import HeadTools from "../components/headTools.vue";
-  import DesignArea from "@/components/screen/designArea.vue";
+  //import DesignArea from "@/components/screen/designArea.vue";
+  import DesignArea from "@/components/libs/screen.es.js";
   import FooterPanel from "@/components/screen/footerPanel.vue";
   import AceDrawer from '@/components/ace/drawer.vue'
   import type {AceDrawerT} from "@/components/ace/type";
