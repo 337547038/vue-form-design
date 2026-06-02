@@ -16,8 +16,8 @@ export default defineConfig({
         lib: {
             entry:{
                 flow:path.resolve(__dirname, '../src/components/flow/index.ts'),
-                screen:path.resolve(__dirname, '../src/components/screen/designArea.vue'),
-                show:path.resolve(__dirname, '../src/components/screen/show.vue'),
+                //screen:path.resolve(__dirname, '../src/components/screen/designArea.vue'),
+                //show:path.resolve(__dirname, '../src/components/screen/show.vue'),
                 tinymce:path.resolve(__dirname, '../src/components/form/widgets/tinymce.vue'),
                 chunkUpload:path.resolve(__dirname, '../src/components/form/chunkUpload/index.vue'),
             },
