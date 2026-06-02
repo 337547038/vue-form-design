@@ -167,8 +167,12 @@
   }
 
   const formBtnClick = (key: string) => {
+    console.log('key', key)
     if (key === 'addForm') {
       router.push({path: '/design/form', query: {type: 'flow'}})
+    }
+    if(key==='reset'){
+      dialogFormStore.setVisible(false)
     }
   }
   const btnListClick = (key: string, row: any) => {
@@ -189,7 +193,7 @@
     }
   }
   const getFormList = () => {
-    getRequest('designList', {query: {type: 1}})
+    getRequest('designList', {query: {type: 1,category:2}})
       .then((res: any) => {
         const result = res.data?.list || []
         formList.value = result.map((item: any) => ({

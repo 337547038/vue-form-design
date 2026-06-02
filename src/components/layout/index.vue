@@ -26,7 +26,6 @@
       </el-header>
       <!--      <TagViews v-if="!fullScreen" />-->
       <el-main class="common-main">
-        <!-- todo 引入transition后有时浏览器会出现[Violation] ‘requestAnimationFrame‘ handler took xx ms <transition name="fade-transform" mode="out-in">-->
         <router-view
           v-if="reloadFlag"
           v-slot="{ Component }"

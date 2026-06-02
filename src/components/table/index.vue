@@ -769,7 +769,7 @@
     () => route.query,
     () => {
       if (props.autoLoad) {
-        // todo 这里要区分跳转根据url查询，不自动加载跳转也需加载
+        // 这里要区分跳转根据url查询，不自动加载跳转也需加载
         state.currentPage = 1
         setSearchValueFormQuery()
         getListData(1)

@@ -93,8 +93,8 @@
   }
   const dropdownBtnClick = (btn: Button) => {
     if (btn.render === 'confirm') {
-      // 下拉菜单再放el-popconfirm时会导致弹出窗定位不准。这里改用messageBox todo
-      const { title, confirmButtonText, cancelButtonText } = btn.popConfirm
+      // 下拉菜单再放el-popconfirm时会导致弹出窗定位不准。这里改用messageBox
+      const { title, confirmButtonText, cancelButtonText } = btn.popConfirm||{}
       ElMessageBox({
         title: '温馨提示',
         message: title,

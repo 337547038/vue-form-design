@@ -1,12 +1,10 @@
 <!-- Created by 337547038 工作流程设计-->
 <template>
-  <div class="flow-design">
-    <flow-design
-      ref="flowDesignRef"
-      :is-silent-mode="isSilentMode"
-      @submit-click="submitFlow"
-    />
-  </div>
+  <flow-design
+    ref="flowDesignRef"
+    :is-silent-mode="isSilentMode"
+    @submit-click="submitFlow"
+  />
 </template>
 <route>
 {meta:{permissions:'/design/flow/list'}}
