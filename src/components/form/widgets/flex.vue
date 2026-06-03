@@ -6,8 +6,8 @@
   >
     <div class="flex-item">
       <template
-        v-for="(list, i) in data.list"
-        :key="i"
+        v-for="list in dataList"
+        :key="`${index}-${list.name}`"
       >
         <form-item
           v-model="item[list.name]"
@@ -56,27 +56,41 @@
     }
   )
   const store = inject('formStore')
+  if (!store) {
+    throw new Error('flex组件必须在formStore注入的上下文下使用')
+  }
   const {formValue, formType} = storeToRefs(store)
+  const dataList = computed(() => props.data?.list || [])
   const tableDataNew = computed(() => {
-    return formValue.value[props.data.name]||[]
+    const tableData= formValue.value[props.data.name]
+    //确保返回的是数组
+    if(!Array.isArray(tableData)){
+      //formValue.value[props.data.name] = []
+      return []
+    }
+    return tableData
   })
 
-  const getRow = () => {
-    const temp: any = {}
-    props.data.list.forEach((item: any) => {
-      temp[item.name] = item.control.modelValue
+  /**
+   * 生成空行数据
+   */
+  const createEmptyRow = (): Record<string, any> => {
+    const emptyRow: Record<string, any> = {}
+    dataList.value.forEach((item: any) => {
+      emptyRow[item.name] = item.control.modelValue
     })
-    return temp
+    return emptyRow
   }
+
   const addRow = () => {
-    tableDataNew.value.push(getRow())
+    tableDataNew.value.push(createEmptyRow())
   }
   const deleteRow = (index: number) => {
     tableDataNew.value.splice(index, 1)
   }
   const init = () => {
     if (tableDataNew.value?.length === 0) {
-      tableDataNew.value.push(getRow())
+      tableDataNew.value.push(createEmptyRow())
     }
   }
   onMounted(() => {

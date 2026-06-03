@@ -179,6 +179,9 @@
     }
   )
   const store = inject('formStore')
+  if (!store) {
+    throw new Error("formStore 必须通过 provide 注入");
+  }
   const {formValue} = storeToRefs(store)
 
   const modelValue = defineModel<any>()
@@ -203,7 +206,7 @@
     }
   })
   const control = computed(() => {
-    return props.data.control
+    return props.data.control?? {}
   })
   const inputType = computed(() => {
     if (props.data.type === 'input') {
