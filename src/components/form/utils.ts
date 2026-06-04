@@ -71,11 +71,7 @@ export const getOptionsList = (component: Component, store: any, callback: (opt:
     } else if (optionsType === 1 && optionsFun) {
       // 从接口获取
       if (filterable && remote) {
-        // 远程搜索时，初始不需要请求。编辑时需要回显 todo
-        /*if (formProps.operateType === 'edit') {
-          // 暂统一按照id从接口获取数据作为回显
-          getOptions({id: props.modelValue}, 'edit')
-        }*/
+        // 远程搜索时，初始不需要请求。编辑时需要回显
       } else {
         getRemoteMethod(component, store, callback)
       }
@@ -86,7 +82,7 @@ export const getOptionsList = (component: Component, store: any, callback: (opt:
 export const getRemoteMethod = (component: Component, store: any, callback: (opt: Record<string, any>) => void, data = {}) => {
   const {formValue = {}} = store
   const {optionsType, optionsFun, cache, method, before, after} = component
-  const {remote} = component.control
+  //const {remote} = component.control
   let params = {}
   // 有联动条件的带上联动的参数
   if (component.linkage) {
@@ -98,8 +94,7 @@ export const getRemoteMethod = (component: Component, store: any, callback: (opt
   let cacheKey: string = ''
   if (optionsType === 1 && optionsFun) {
     // 当前控件为动态获取数据，防多次加载，先从本地取。
-    // remote时参数过多，暂不缓存
-    if (cache && !remote && Object.keys(store).length) {
+    if (cache && Object.keys(store).length) {
       const spark = new SparkMD5()
       spark.append(optionsFun + JSON.stringify(params))
       cacheKey = spark.end()
@@ -122,7 +117,7 @@ export const getRemoteMethod = (component: Component, store: any, callback: (opt
         .then((res: any) => {
           const result = res.data.list || res.data
           callback && callback(result)
-          if (cache && !remote && Object.keys(store).length) {
+          if (cache && Object.keys(store).length) {
             store.setFormComponentsDataCache(cacheKey, result)
           }
         })

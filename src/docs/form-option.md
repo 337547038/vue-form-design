@@ -171,13 +171,6 @@ const opt = {
 </script>
 ```
 
-### - 远程数据参数字段名
-
-`config.queryName`
-
-* 类型：string default:'name'
-
-当开启了`Remote`远程数据时有效，作为参数请求接口，如`{name:'xxx'}`
 
 ### - 指定label/value属性值
 
@@ -422,6 +415,76 @@ const control = window.getformNameControlByName('key')
 - 类型：function(name)
 
 同get[formName]ControlByName。返回值不一样
+
+## 常见问题
+
+### select远程数据时如何回显
+
+当组件`select`开启了`remote`和`filterable`，当在编辑状态需要回显选项时，约定根据查询的方式查询数据。
+
+当前表单需要为编辑模式 `operate-type="edit"`。对组件设置了值时即访问`optionsFun`设置的接口地址，参数为`{id:'组件值''}`，可根据接口实际情况在`before`事件作参数处理
+```vue preview
+<!-- Created by weiXin: 337547038 -->
+<template>
+  <div>
+    <ak-form
+      ref="formRef"
+      :data="formData"
+      operate-type="edit"
+    />
+  </div>
+</template>
+<script setup lang="ts">
+  import {ref, onMounted} from 'vue'
+
+  const formData = ref({
+    list: [
+      {
+        type: "select",
+        control:
+          {
+            modelValue: "",
+            teleported: true,
+            remote: true,
+            filterable: true
+          },
+        options: [],
+        formItem:
+          {
+            label: "下拉选择框"
+          },
+        name: "select",
+        optionsType: 1,
+        method: "get",
+        optionsFun: "demo/select",
+        label: "name",
+        value: "value",
+        cache: true,
+        transformData: "string",
+        before: (params, obj) => {
+          //可在这里对参数进行处理，回显数据查询默认为{id:xxxx},可根据接口实际参数
+          return params
+        }
+      }
+    ],
+    config:
+      {
+        submitCancel: true,
+      }
+  })
+
+  const formRef = ref()
+  onMounted(() => {
+    //模拟接口对表单赋值
+    setTimeout(() => {
+      formRef.value.setValue({
+        select: '1'
+      })
+    }, 3000)
+  })
+</script>
+
+```
 
 
 

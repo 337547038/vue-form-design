@@ -162,7 +162,6 @@ formData = {
       },
       transformData: "string",
       linkage: "inputText",
-      queryName: "name",
       name: "checkbox",
       formItem:
           {

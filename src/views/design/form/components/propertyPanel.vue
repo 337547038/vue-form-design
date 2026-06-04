@@ -226,17 +226,6 @@
                 <el-form-item label="开启远程数据Remote">
                   <el-switch v-model="selectComponent.control.remote" />
                 </el-form-item>
-                <el-form-item
-                  v-if="
-                    selectComponent.control.remote || selectComponent.linkage
-                  "
-                  label="远程数据参数字段名"
-                >
-                  <el-input
-                    v-model="selectComponent.queryName"
-                    placeholder="远程数据参数字段名"
-                  />
-                </el-form-item>
                 <el-form-item label="联动关联设置">
                   <el-select v-model="selectComponent.linkage">
                     <el-option

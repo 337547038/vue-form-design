@@ -92,6 +92,7 @@
   }>()
   const instance = getCurrentInstance()
   const store = useFormStore(instance.uid)()
+  store.setFormType(props.operateType)
   provide('formStore', store)
   const {formValue: model} = storeToRefs(store)
   const router = useRouter()
@@ -417,7 +418,7 @@
   })
 
   onMounted(() => {
-    store.setFormType(props.operateType)
+
   })
   onUnmounted(() => {
     removeResource('form-style')

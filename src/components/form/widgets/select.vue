@@ -49,9 +49,9 @@
     }
   )
   const emits = defineEmits<{
-      (e: 'focus', val: any): void
-      (e: 'blur', val: any): void
-    }>()
+    (e: 'focus', val: any): void
+    (e: 'blur', val: any): void
+  }>()
   const modelValue = defineModel<any>()
   const store = inject('formStore')
   const {formValue} = storeToRefs(store)
@@ -78,15 +78,13 @@
   //监听赋值
   const unWatch = watch(() => formValue.value[props.data.name], (val: any) => {
     modelValue.value = val
+    getDefaultOptions(val)
   })
   // 这里数据转换放在选项里处理
   const getLabelValue = (type: string, obj: Record<string, any>) => {
     const {transformData, label, value} = props.data
     return getTransformLabelValue(type, obj, {transformData, label, value})
   }
-  const queryName = computed(() => {
-    return props.data?.queryName || 'name'
-  })
   const loading = ref(false)
   // 远程搜索
   const getRemoteM = debounce((name: string) => {
@@ -96,8 +94,19 @@
         optionSlot.value = opt
       }
       loading.value = false
-    }, {[queryName.value]: name})
+    }, {'queryName': name}) //默认字段为queryName
   })
+
+  const getDefaultOptions = (val: string | number) => {
+    //条件1编辑模式2远程3第一次,4有值
+    const {remote, filterable} = props.data.control
+    const value = val === 0 ? '0' : val
+    if (store.formType === 'edit' && remote && filterable && !optionSlot.value.length&&value) {
+      getRemoteMethod(props.data, store, (opt) => {
+        optionSlot.value = opt
+      },{id:val}) //默认按id查询，可在before事件处理
+    }
+  }
 
   // type=inputSlot
   const initSlot = () => {

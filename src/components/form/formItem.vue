@@ -152,7 +152,7 @@
 </template>
 <script setup lang="ts">
   import type {Component} from "@/types/form";
-  import {computed, markRaw, watch, onMounted, onUnmounted, inject} from "vue";
+  import {computed, markRaw, watch, onMounted, onUnmounted, inject, nextTick} from "vue";
   import {storeToRefs} from "pinia";
   import Tooltip from "@/components/tooltip/index.vue";
   import selectComp from './widgets/select.vue'
@@ -206,7 +206,7 @@
     }
   })
   const control = computed(() => {
-    return props.data.control?? {}
+    return props.data.control ?? {}
   })
   const inputType = computed(() => {
     if (props.data.type === 'input') {
@@ -371,15 +371,15 @@
       (val: any) => {
         getRemoteMethodDebounce(props.data, store, (opt: any) => {
           store.setFormOptions({[props.data.name]: opt}, true)
-          //optionsList.value = opt
         }, {[linkage]: val})
       }
     )
     : null
   onMounted(() => {
-    getOptionsList(props.data, store, (opt: Record<string, any>) => {
-      store.setFormOptions({[props.data.name]: opt}, true)
-      //optionsList.value = opt
+    nextTick(() => {
+      getOptionsList(props.data, store, (opt: Record<string, any>) => {
+        store.setFormOptions({[props.data.name]: opt}, true)
+      })
     })
   })
   onUnmounted(() => {

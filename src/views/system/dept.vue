@@ -190,7 +190,7 @@
           teleported: true,
           filterable: true,
           remote: true,
-          clearable:true
+          clearable: true
         },
         optionsType: 1,
         optionsFun: 'userList',
@@ -200,6 +200,10 @@
         cache: false,
         queryName: 'userName',
         before: (params: any) => {
+          // 查询时参数名默认为queryName,这里接口需要传userName
+          if (params.queryName) {
+            params.userName = params.queryName
+          }
           return {extend: {pageSize: 20, pageNum: 1}, query: params}
         },
         name: 'userId',
