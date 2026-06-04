@@ -198,7 +198,6 @@
         label: 'userName',
         value: 'id',
         cache: false,
-        queryName: 'userName',
         before: (params: any) => {
           // 查询时参数名默认为queryName,这里接口需要传userName
           if (params.queryName) {

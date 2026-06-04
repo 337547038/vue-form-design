@@ -1266,7 +1266,6 @@
     delete selectComponent.value.after
     delete selectComponent.value.label
     delete selectComponent.value.value
-    delete selectComponent.value.queryName
     delete selectComponent.value.linkage
   }
   // 多选固定选项删除
