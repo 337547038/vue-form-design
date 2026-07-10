@@ -347,3 +347,40 @@ const buttons=[
   }
 ]
 ```
+### -render=url
+ 从url接口中获取替换值，类似于字典替换，不同的是url为动态的，字典为固定值。常见于列表中需要动态替换的值
+
+ 可参数列表页设计管理－客户信息管理列表－合作意向列
+
+ -method: 接口请求方式，如`GET/POST`
+
+ -apiKey: 请求的接口url或api的key
+
+ -dataKey: 参数类型，自增id或当前字段值，可选`id/current`。可在`before`事件中修改调整
+```javascript
+//表格数据
+const tableData=[{id:1,name:'名称',status:2}]
+//列表status配置
+const config=[{
+  prop: "status",
+  label: "状态",
+  render: "url",
+  config:
+          {
+            method: "GET",
+            apiKey: "/demo/select",
+            dataKey: "current",//current时参数为{status:2},id时参数为{id:1}
+            label: "label",
+            value: "value"
+          }
+}]
+```
+
+ -label: 取返回数据里的指定字段，默认`label`
+
+ -value: 取返回数据里的指定字段的值，默认`value`
+ ```javascript
+//接口响应数据
+const list=[{id:1,title:'进行中'},{id:2,title:'完成'}]
+//lbael=title,value=id时，则会在status=2时显示完成的状态
+```

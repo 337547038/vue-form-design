@@ -132,6 +132,9 @@
                 >
                   {{ getRenderFormatValue(scope.row, item) }}
                 </el-link>
+                <span v-if="item.prop&&item.render==='url'">
+                  {{ getUrlReplaceVal(scope.row, item) }}
+                </span>
                 <span
                   v-if="
                     item.prop &&
@@ -268,7 +271,7 @@
   const tableDataList = ref([]) // 表格行数据
 
   const pk = computed(() => {
-    return props.data.pk || props.pk
+    return props.data.pk || props.pk || 'id'
   })
   const config = computed(() => {
     return props.data.config || {}
@@ -316,7 +319,7 @@
   // 获取存在storage的dict，进入系统时可将所有字典预先加载存入storage。这里接口返回的和props传参的及公共的
   const listDict = computed(() => {
     const storage = getStorage('akAllDict')
-    return Object.assign(storage || {}, props.dict || {},state.dict) || {}
+    return Object.assign(storage || {}, props.dict || {}, state.dict) || {}
   })
 
   // 搜索表单的值
@@ -392,6 +395,42 @@
 
   // 处理操作按钮结束
   // ===========================================数据处理开始
+  //使用url替换数据
+  const urlReplaceOptions = ref({})
+  const getUrlReplace = (dataList: any[]) => {
+    const renderUrlList = columnsFilter.value?.filter((item: any) => item.render === 'url')
+    if (renderUrlList?.length) {
+      renderUrlList.forEach((item: any) => {
+        //根据配置取出请求的参数
+        const filed = item.config.dataKey === 'id' ? pk.value : item.prop
+        const ids = dataList.map((item: any) => item[filed])
+        // Set自动去重，转回数组
+        const uniqueIds = [...new Set(ids)];
+        const params = {
+          [filed]: uniqueIds.join(',')
+        }
+        const {method, apiKey, before, after, label = 'label', value = 'id'} = item.config
+        if (method && apiKey) {
+          beforeAfter({
+            apiKey: apiKey,
+            params: params,
+            before: before,
+            after: after,
+            route: route,
+            type: 'url'
+          })
+            .then((res) => {
+              const data = res.data?.list || res.data
+              urlReplaceOptions.value[item.prop] = data.reduce((res: any, obj: any) => {
+                // 用 item.id 作为键，item.value 作为值
+                res[obj[value]] = obj[label];
+                return res;
+              }, {});
+            })
+        }
+      })
+    }
+  }
   // 筛选查询列表数据
   const getListData = (page?: number) => {
     state.loading = true
@@ -426,11 +465,12 @@
       .then((res: any) => {
         const data = res.data
         tableDataList.value = data?.list || data
+        getUrlReplace(tableDataList.value)
         // 预防返回的data={}时
         if (Object.keys(data).length === 0 && data.constructor === Object) {
           tableDataList.value = []
         }
-        state.dict=res.data.dict||{}
+        state.dict = res.data.dict || {}
         setTimeout(() => {
           setFixedBottomScroll()
           state.loading = false
@@ -607,6 +647,14 @@
       return
     }
     return column.custom[getRenderFormatValue(row, column)]
+  }
+  const getUrlReplaceVal = (row: any, column: any) => {
+    const oldVal = row[column.prop];
+    const newObjVal = urlReplaceOptions.value[column.prop];
+    if (newObjVal && Object.keys(newObjVal).length) {
+      return newObjVal[oldVal]
+    }
+    return oldVal
   }
   const getTagVal = (row: any, column: any) => {
     const val = getRenderFormatValue(row, column)

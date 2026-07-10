@@ -101,7 +101,7 @@
   const emits = defineEmits<{
     (e: 'click', type: string): void
   }>()
-  const userInfo = getStorage('userInfo', true)
+  const userInfo = getStorage('userInfo', true)||{}
   const toolClick = (type: string) => {
     if (type === 'collapse') {
       store.setCollapseMenu(!collapse.value)

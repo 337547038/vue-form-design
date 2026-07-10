@@ -364,9 +364,55 @@
         vIf: sc.render === 'buttons'
       },
       {
-        label: '功能开发中...',
+        label: '请求类型',
         vIf: sc.render === 'url',
-        placeholder: '请耐心等待..'
+        type:'select',
+        options:['GET','POST'],
+        placeholder: '请选择请求方式',
+        path:'config.method',
+        value: sc.config?.method,
+      },
+      {
+        label: '请求接口url',
+        placeholder: '请求接口url或api key',
+        path:'config.apiKey',
+        vIf: sc.render === 'url',
+        value: sc.config?.apiKey
+      },
+      {
+        label:'参数字段',
+        placeholder: '使用哪个字段的值作为请求参数',
+        type:'select',
+        options:[{label:'自增id',value:'id'},{label:'当前值字段',value:'current'}],
+        path:'config.dataKey',
+        value:sc.config?.dataKey,
+        vIf: sc.render === 'url',
+      },
+      {
+        label:'指定label属性值',
+        placeholder: '显示返回数据哪个字段的值',
+        path:'config.label',
+        value:sc.config?.label,
+        vIf: sc.render === 'url',
+      },
+      {
+        label:'指定value属性值',
+        placeholder: '没替换前的原始值字段',
+        path:'config.value',
+        value:sc.config?.value,
+        vIf: sc.render === 'url',
+      },
+      {
+        name: 'before',
+        type: 'button',
+        path: 'config.before',
+        vIf: sc.render === 'url',
+      },
+      {
+        name: 'after',
+        type: 'button',
+        path: 'config.after',
+        vIf: sc.render === 'url',
       },
       {
         name: 'renderFormatter',
@@ -406,7 +452,7 @@
     }
   }
   const propertyBtnClick = (path: string) => {
-    if (['columns', 'renderFormatter', 'buttons'].includes(path)) {
+    if (['columns', 'renderFormatter', 'buttons','config.before','config.after'].includes(path)) {
       editOpenDrawer(path)
     }
   }
@@ -593,6 +639,24 @@
 
   const editOpenDrawer = (type: string) => {
     const drawerConfigMap: DrawerConfig = {
+      //render=url
+      'config.before':()=>({
+        key:'before',
+        title: getAceTitle.before,
+        content: selectComponent.value.config?.before,
+        callback: (content: any) => {
+          selectComponent.value.config.before = content
+        }
+      }),
+      //render=url
+      'config.after':()=>({
+        key:'after',
+        title: getAceTitle.after,
+        content: selectComponent.value.config?.after,
+        callback: (content: any) => {
+          selectComponent.value.config.after = content
+        }
+      }),
       //数据列表配置->before
       before: () => ({
         key: 'beforeType',

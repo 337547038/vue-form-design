@@ -119,6 +119,10 @@
     if (type === 'fetch') {
       params.extend.formId = state.source
     } else if (['del', 'submit'].includes(type)) {
+      if (listId.value === 'preview') {
+        ElMessage.error('当前模式不能操作')
+        return false //预览模式不能进行操作
+      }
       //submit列表中switch修改时
       params.formId = state.source
     }
@@ -158,7 +162,13 @@
     if (key === 'add' || key === 'edit') {
       if (canOpenDialog.value) {
         // 打开弹窗
-        dialog.formType = key
+        if (listId.value === 'preview') {
+          //设置一个不让提交表单的类型
+          dialog.formType = 'preview'
+        } else {
+          dialog.formType = key
+        }
+
         dialog.editId = row && row.id
         // 编辑，根据id加载
         if (key === 'edit') {

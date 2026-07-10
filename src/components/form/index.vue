@@ -137,7 +137,7 @@
             icon: 'RefreshLeft'
           }
         ]
-      } else if (['add', 'edit', 'designForm', 'flow', 'designFlow'].includes(props.operateType)) {
+      } else if (['add', 'edit', 'designForm', 'flow', 'designFlow','preview'].includes(props.operateType)) {
         return [
           {
             label: '确定',
@@ -336,6 +336,7 @@
   const submit = (params = {}) => {
     const apiUrl: string | undefined = props.submitUrl || props.data.config?.submitUrl
     if (!['add', 'edit'].includes(props.operateType) || loading.value) {
+      console.error(new Error('当前模式不能提交表单'))
       return // 只有add/edit允许提交表单，其他不提交表单
     }
     if (!apiUrl) {
