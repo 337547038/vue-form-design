@@ -417,7 +417,8 @@
             before: before,
             after: after,
             route: route,
-            type: 'url'
+            type: 'url',
+            options:{method:method}
           })
             .then((res) => {
               const data = res.data?.list || res.data
