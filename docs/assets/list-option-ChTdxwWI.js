@@ -256,4 +256,21 @@ formStore.<span class="hljs-title function_">setWidth</span>(<span class="hljs-s
     <span class="hljs-comment">// 自定义el-button属性</span>
     <span class="hljs-attr">props</span>: {}
   }
-]</code></pre>`,6)]))}};export{g as default};
+]</code></pre><h3 id="-render=url"><a name="-render-url" class="anchor" href="#-render-url"><span class="header-link"></span></a> -render=url </h3><p> 从url接口中获取替换值，类似于字典替换，不同的是url为动态的，字典为固定值。常见于列表中需要动态替换的值</p><p> 可参数列表页设计管理－客户信息管理列表－合作意向列</p><p> -method: 接口请求方式，如<code>GET/POST</code></p><p> -apiKey: 请求的接口url或api的key</p><p> -dataKey: 参数类型，自增id或当前字段值，可选<code>id/current</code>。可在<code>before</code>事件中修改调整</p><pre class="language-javascript"><code class="hljs"><span class="hljs-comment">//表格数据</span>
+<span class="hljs-keyword">const</span> tableData=[{<span class="hljs-attr">id</span>:<span class="hljs-number">1</span>,<span class="hljs-attr">name</span>:<span class="hljs-string">&#39;名称&#39;</span>,<span class="hljs-attr">status</span>:<span class="hljs-number">2</span>}]
+<span class="hljs-comment">//列表status配置</span>
+<span class="hljs-keyword">const</span> config=[{
+  <span class="hljs-attr">prop</span>: <span class="hljs-string">&quot;status&quot;</span>,
+  <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;状态&quot;</span>,
+  <span class="hljs-attr">render</span>: <span class="hljs-string">&quot;url&quot;</span>,
+  <span class="hljs-attr">config</span>:
+          {
+            <span class="hljs-attr">method</span>: <span class="hljs-string">&quot;GET&quot;</span>,
+            <span class="hljs-attr">apiKey</span>: <span class="hljs-string">&quot;/demo/select&quot;</span>,
+            <span class="hljs-attr">dataKey</span>: <span class="hljs-string">&quot;current&quot;</span>,<span class="hljs-comment">//current时参数为{status:2},id时参数为{id:1}</span>
+            <span class="hljs-attr">label</span>: <span class="hljs-string">&quot;label&quot;</span>,
+            <span class="hljs-attr">value</span>: <span class="hljs-string">&quot;value&quot;</span>
+          }
+}]</code></pre><p> -label: 取返回数据里的指定字段，默认<code>label</code></p><p> -value: 取返回数据里的指定字段的值，默认<code>value</code></p><pre class="language-javascript"><code class="hljs"><span class="hljs-comment">//接口响应数据</span>
+<span class="hljs-keyword">const</span> list=[{<span class="hljs-attr">id</span>:<span class="hljs-number">1</span>,<span class="hljs-attr">title</span>:<span class="hljs-string">&#39;进行中&#39;</span>},{<span class="hljs-attr">id</span>:<span class="hljs-number">2</span>,<span class="hljs-attr">title</span>:<span class="hljs-string">&#39;完成&#39;</span>}]
+<span class="hljs-comment">//lbael=title,value=id时，则会在status=2时显示完成的状态</span></code></pre>`,16)]))}};export{g as default};
