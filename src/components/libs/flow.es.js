@@ -3,9 +3,9 @@
 * 版本: v4.0.0
 * 当前文件源码暂不开放，如需源码可加微信 337547038 有偿提供
 * 友情价：90元
-* 创建时间: 2026-6
+* 创建时间: 2026-7
 */
-import { A as e, B as t, C as n, D as r, E as i, F as a, I as o, L as s, M as c, N as l, O as u, P as d, R as f, S as p, T as m, _ as h, a as g, b as _, c as v, d as y, f as b, g as x, h as S, j as C, k as w, l as T, m as E, o as ee, p as D, s as te, t as ne, u as re, v as ie, w as ae, x as oe, y as se, z as O } from "./api-D0jlMO_d.js";
+import { A as e, B as t, C as n, D as r, E as i, F as a, I as o, L as s, M as c, N as l, O as u, P as d, R as f, S as p, T as m, _ as h, a as g, b as _, c as v, d as y, f as b, g as x, h as S, j as C, k as w, l as T, m as E, o as ee, p as D, s as te, t as ne, u as re, v as ie, w as ae, x as oe, y as se, z as O } from "./api-B3VSUKZ0.js";
 import { Fragment as ce, computed as le, createApp as ue, createBlock as de, createCommentVNode as fe, createElementBlock as pe, createElementVNode as me, createTextVNode as he, createVNode as k, defineComponent as ge, nextTick as _e, normalizeStyle as ve, onMounted as ye, onUnmounted as be, openBlock as xe, reactive as Se, ref as Ce, renderList as we, resolveComponent as A, toDisplayString as Te, unref as Ee, useCssVars as De, vShow as Oe, withCtx as j, withDirectives as ke } from "vue";
 //#region node_modules/.pnpm/preact@10.29.2/node_modules/preact/dist/preact.module.js
 var Ae, M, je, Me, Ne, Pe, Fe, Ie, Le, Re, ze, Be, Ve, He, Ue = {}, We = [], Ge = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i, Ke = Array.isArray;
@@ -32368,7 +32368,7 @@ var zz = (e) => [
 }, Yz = { class: "flow-html-content" }, Xz = { class: "label" }, Zz = { class: "content" }, Qz = /* @__PURE__ */ ge({
 	__name: "content",
 	setup(e, { expose: t }) {
-		De((e) => ({ c51da408: r.value }));
+		De((e) => ({ v61df9bd7: r.value }));
 		let n = Se({
 			nodeName: "",
 			userName: "",
@@ -32383,7 +32383,7 @@ var zz = (e) => [
 	let n = e.__vccOpts || e;
 	for (let [e, r] of t) n[e] = r;
 	return n;
-}, eB = /* @__PURE__ */ $z(Qz, [["__scopeId", "data-v-b14ee4a0"]]), tB = {
+}, eB = /* @__PURE__ */ $z(Qz, [["__scopeId", "data-v-51d49176"]]), tB = {
 	view: class extends Ej {
 		app;
 		isMounted;
@@ -34638,10 +34638,53 @@ var zB = ({ content: e, id: t, type: n }) => {
 	setup(e, { expose: t, emit: n }) {
 		let r = e, i = n, a = Ce(), o = Ce(), s = Ce(), c = Ce();
 		QM.use(uz), QM.use(hz), QM.use(VR), QM.use(fz);
-		let l = () => {
+		function l(e, t, n) {
+			let r = e.graphModel, { nodes: i } = e.getSelectElements();
+			i.forEach((e) => {
+				r.moveNode(e.id, t, n);
+			});
+		}
+		let u = () => {
 			let e = new QM({
 				container: a.value,
 				plugins: [iz, mL],
+				keyboard: {
+					enabled: !0,
+					shortcuts: [
+						{
+							keys: ["up"],
+							callback: () => l(e, 0, -1)
+						},
+						{
+							keys: "down",
+							callback: () => l(e, 0, 1)
+						},
+						{
+							keys: "left",
+							callback: () => l(e, -1, 0)
+						},
+						{
+							keys: "right",
+							callback: () => l(e, 1, 0)
+						},
+						{
+							keys: "mod+up",
+							callback: () => l(e, 0, -10)
+						},
+						{
+							keys: "mod+down",
+							callback: () => l(e, 0, 10)
+						},
+						{
+							keys: "mod+left",
+							callback: () => l(e, -10, 0)
+						},
+						{
+							keys: "mod+right",
+							callback: () => l(e, 10, 0)
+						}
+					]
+				},
 				grid: {
 					size: 20,
 					visible: !0,
@@ -34653,7 +34696,12 @@ var zB = ({ content: e, id: t, type: n }) => {
 				},
 				isSilentMode: r.isSilentMode
 			});
-			oB(e), e.render({
+			e.extension.menu.addMenuConfig({ nodeMenu: [{
+				text: "设置属性",
+				callback(e) {
+					console.log(e), h(e);
+				}
+			}] }), oB(e), e.render({
 				nodes: [{
 					id: "start",
 					type: "start",
@@ -34675,7 +34723,7 @@ var zB = ({ content: e, id: t, type: n }) => {
 					e.extension.selectionSelect.closeSelectionSelect();
 				});
 			})), s.value = e;
-		}, u = (e) => {
+		}, d = (e) => {
 			switch (e) {
 				case "zoomIn":
 					s.value.zoom(!0);
@@ -34726,20 +34774,20 @@ var zB = ({ content: e, id: t, type: n }) => {
 					break;
 				default: break;
 			}
-		}, d = Ce(!0), f = Ce(!0), p = () => {
+		}, f = Ce(!0), p = Ce(!0), m = () => {
 			s.value.on("history:change", ({ data: e }) => {
-				d.value = !e.undoAble, f.value = !e.redoAble;
-			}), s.value.on("node:click", ({ data: e }) => {
-				[
+				f.value = !e.undoAble, p.value = !e.redoAble;
+			}), s.value.on("node:dbclick", ({ data: e }) => {
+				console.log(e), [
 					"start",
 					"userTask",
 					"sysTask",
 					"end"
-				].includes(e.type) && m(e);
-			}), s.value.on("edge:click", ({ data: e }) => {
-				m(e);
+				].includes(e.type) && h(e);
+			}), s.value.on("edge:dbclick", ({ data: e }) => {
+				h(e);
 			});
-		}, m = (e) => {
+		}, h = (e) => {
 			c.value.open(e, (t, n) => {
 				let i = t;
 				["userTask", "sysTask"].includes(e.type) && n && (i = {
@@ -34758,7 +34806,7 @@ var zB = ({ content: e, id: t, type: n }) => {
 			getDesignFlowData: () => s.value.getGraphData()
 		}), ye(() => {
 			_e(() => {
-				l(), p();
+				u(), m();
 			});
 		}), (t, n) => (xe(), pe("div", JB, [
 			me("div", {
@@ -34768,10 +34816,10 @@ var zB = ({ content: e, id: t, type: n }) => {
 				class: "flow-design-container"
 			}, null, 512),
 			k(Vz, {
-				"undo-able": d.value,
-				"redo-able": f.value,
+				"undo-able": f.value,
+				"redo-able": p.value,
 				"is-silent-mode": e.isSilentMode,
-				onClick: u
+				onClick: d
 			}, null, 8, [
 				"undo-able",
 				"redo-able",

@@ -3,7 +3,7 @@
 * 版本: v4.0.0
 * 当前文件源码暂不开放，如需源码可加微信 337547038 有偿提供
 * 友情价：90元
-* 创建时间: 2026-6
+* 创建时间: 2026-7
 */
 import { Fragment as e, Transition as t, computed as n, createBlock as r, createCommentVNode as i, createElementBlock as a, createElementVNode as o, createTextVNode as s, createVNode as c, defineComponent as l, getCurrentInstance as u, getCurrentScope as d, inject as f, isRef as p, isVNode as m, mergeProps as h, nextTick as g, normalizeClass as _, normalizeStyle as ee, onMounted as v, onScopeDispose as te, openBlock as y, provide as b, readonly as x, ref as S, render as C, renderSlot as w, resolveDynamicComponent as ne, shallowReactive as T, toDisplayString as re, unref as E, vShow as ie, warn as ae, watch as oe, withCtx as se, withDirectives as ce, withModifiers as le } from "vue";
 import { defineStore as ue } from "pinia";
@@ -3161,7 +3161,7 @@ var gs = Object.assign({
 		method: i,
 		data: t
 	}, n), o = window.location.host;
-	if (o.indexOf("localhost0") !== -1 || o.indexOf("github") !== -1) {
+	if (o.indexOf("localhost") !== -1 || o.indexOf("github") !== -1) {
 		let { query: e = {}, id: i = "", formId: o = "", extend: s = {} } = t, c = [];
 		e.type && c.push(e.type), i && c.push(i), e.flowId && c.push(e.flowId), o && c.push(o), s.formId && c.push(s.formId);
 		let l = ".json";
