@@ -8,7 +8,7 @@
     >
       <h3>{{ category[key] || '未分组' }}</h3>
       <div class="list">
-        <div
+        <div class="box"
           v-for="li in item"
           :key="li.id"
           @click="click(li)"

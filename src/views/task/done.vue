@@ -52,10 +52,19 @@
   const tableData = ref({
     columns: [
       {label: '标题', prop: 'title'},
-      {label: '发起人', prop: 'userId', render: 'text', replaceValue: 'creatUser'},
+      /*{label: '发起人', prop: 'userId', render: 'text', replaceValue: 'creatUser'},*/
+      {label: '发起时间', prop: 'startTime', render: 'datetime'},
       {label: '审批时间', prop: 'dateTime', render: 'datetime'},
+      {
+        label: "状态",
+        prop: "status",
+        render: 'tag',
+        replaceType: "0",
+        replaceValue: 'sys-flow-status',
+        custom: {0: 'primary', 1: 'success', 2: 'danger', 3: 'info', 4: 'warning'}
+      },
       {label: '节点名称', prop: 'nodeName'},
-      {label: '流程类型', prop: 'category', render: 'text', replaceValue: 'sys-flow'},
+      {label: '流程类型', prop: 'category', render: 'tag', replaceValue: 'sys-flow'},
       {
         label: '操作',
         prop: 'operate',

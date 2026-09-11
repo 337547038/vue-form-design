@@ -4,24 +4,32 @@
 
   .lf-dndpanel {height: calc(100vh - 123px);overflow: auto;
 
-    .lf-dnd-shape {background-position: center center;background-size: 90% 90%!important;background-repeat: no-repeat!important; }
-    .react-icon .lf-dnd-shape{background: url(@/assets/img/flow/reat.png)}
-    .start-icon .lf-dnd-shape{background: url(@/assets/img/flow/start.png)}
-    .user-icon .lf-dnd-shape{background: url(@/assets/img/flow/user.png)}
-    .sys-icon .lf-dnd-shape{background: url(@/assets/img/flow/system.png)}
-    .condition-icon .lf-dnd-shape{background: url(@/assets/img/flow/condition.png)}
-    .text-icon .lf-dnd-shape{background: url(@/assets/img/flow/text.png)}
-    .subprocess-icon .lf-dnd-shape{background: url(@/assets/img/flow/subprocess.png)}
-    .end-icon .lf-dnd-shape{background: url(@/assets/img/flow/end.png)}
+    .lf-dnd-shape {background-position: center center;background-size: 90% 90% !important;background-repeat: no-repeat !important; }
+
+    .react-icon .lf-dnd-shape {background: url(@/assets/img/flow/reat.png)}
+
+    .start-icon .lf-dnd-shape {background: url(@/assets/img/flow/start.png)}
+
+    .user-icon .lf-dnd-shape {background: url(@/assets/img/flow/user.png)}
+
+    .sys-icon .lf-dnd-shape {background: url(@/assets/img/flow/system.png)}
+
+    .condition-icon .lf-dnd-shape {background: url(@/assets/img/flow/condition.png)}
+
+    .text-icon .lf-dnd-shape {background: url(@/assets/img/flow/text.png)}
+
+    .subprocess-icon .lf-dnd-shape {background: url(@/assets/img/flow/subprocess.png)}
+
+    .end-icon .lf-dnd-shape {background: url(@/assets/img/flow/end.png)}
   }
 }
 
 .flow-control-btn {position: absolute;right: 20px;top: 18px;z-index: 10}
 
 .task-apply {
-  .item {margin-bottom: 40px;
+  .item {margin-bottom: 25px;
 
-    h3 {border-bottom: 1px solid #ddd;
+    h3 {
       padding-bottom: 5px;
       font-size: 16px;margin-bottom: 15px;}
   }
@@ -29,10 +37,21 @@
   .list {display: flex;
     list-style: none;
     margin: 0;
-    padding: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
 
-    > div {margin-right: 20px;display: flex;align-items: center;cursor: pointer}
+    .box {margin-right: 20px;display: flex;align-items: center;cursor: pointer;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      width: 200px;
 
-    .icon {font-size: 30px;margin-right: 5px;border-radius: 10px;}
+      &:hover {
+        opacity: .8;
+      }
+    }
+
+    .icon {font-size: 24px;margin-right: 5px;border-radius: 8px;color: #fff;padding: 5px;}
   }
 }

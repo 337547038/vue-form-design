@@ -31,10 +31,11 @@
 
   const flowFormEl = ref()
 
-  const userInfo = getStorage('userInfo', true)
+  //const userInfo = getStorage('userInfo', true)
   const getTitle = (row: { [key: string]: any }) => {
-    const userName = userInfo.userName;
-    return `${userName}发起的${row.name || ''}`
+    //const userName = userInfo.userName;
+    //return `${userName}发起的${row.name || ''}`
+    return `${row.name || ''}`
   }
 
   const tableRef = ref()
@@ -82,6 +83,11 @@
       {
         label: "发起时间",
         prop: "startTime",
+        render: 'datetime'
+      },
+      {
+        label: "最后审批时间",
+        prop: "endTime",
         render: 'datetime'
       },
       {

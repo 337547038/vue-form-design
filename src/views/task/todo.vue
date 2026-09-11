@@ -75,10 +75,11 @@
   const tableData = ref({
     columns: [
       {label: '标题', prop: 'title'},
-      {label: '发起人', prop: 'userId', render: 'text', replaceValue: 'creatUser'},
+      /*{label: '发起人', prop: 'userId', render: 'text', replaceValue: 'creatUser'},*/
       {label: '发起时间', prop: 'startTime', render: 'datetime'},
+      {label: '最后审批时间', prop: 'endTime', render: 'datetime'},
       {label: '节点名称', prop: 'currentNode'},
-      {label: '流程类型', prop: 'category', render: 'text', replaceValue: 'sys-flow'},
+      {label: '流程类型', prop: 'category', render: 'tag', replaceValue: 'sys-flow'},
       {
         label: '操作',
         prop: 'operate',
