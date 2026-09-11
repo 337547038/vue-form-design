@@ -3,9 +3,9 @@
 * 版本: v4.0.0
 * 当前文件源码暂不开放，如需源码可加微信 337547038 有偿提供
 * 友情价：90元
-* 创建时间: 2026-7
+* 创建时间: 2026-9
 */
-import { a as e, t } from "./api-B3VSUKZ0.js";
+import { a as e, t } from "./api-CwlJOint.js";
 import { computed as n, createElementBlock as r, defineComponent as i, mergeModels as a, onMounted as o, onUnmounted as s, openBlock as c, useModel as l, vModelText as u, withDirectives as d } from "vue";
 //#region src/components/form/widgets/tinymce.vue?vue&type=script&setup=true&lang.ts
 var f = "preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media code codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount autosave ", p = "fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor table image | alignleft aligncenter alignright alignjustify outdent indent | styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs", m = "undo cut copy paste pastetext |forecolor backcolor bold italic underline strikethrough|alignleft aligncenter alignright alignjustify|", h = /* @__PURE__ */ i({
