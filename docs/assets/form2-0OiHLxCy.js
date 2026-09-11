@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-DECur_0Z.js";import{B as t,f as n,h as r,x as i}from"./runtime-core.esm-bundler-BgH13u1H.js";var a=i({name:`测试表单`,__name:`form2`,setup(e){return(e,i)=>(t(),r(`div`,null,[...i[0]||=[n(`p`,null,`本地表单可直接编辑src/components/flowForm目录下的vue文件，按实际需要自定义`,-1),n(`p`,null,`可参考form1.vue`,-1)]]))}}),o=e({default:()=>s}),s=a;export{o as t};
