@@ -55,13 +55,31 @@
         <h3>流程设计</h3>
         <p>高效、灵活且易用简单审批流程</p>
       </div>
+      <div class="block" style="width: 100%;"></div>
+      <div class="item" @click="openUrlClick(0)">
+        <img
+          src="../assets/img/flow.png"
+          alt=""
+        >
+        <h3>仿钉钉流程设计器简洁版</h3>
+        <p>高效、灵活且易用简单审批流程</p>
+      </div>
+      <div class="item" @click="openUrlClick(1)">
+        <img
+          src="../assets/img/flow.png"
+          alt=""
+        >
+        <h3>@logicflow/core流程设计器简洁版</h3>
+        <p>高效、灵活且易用简单审批流程</p>
+      </div>
     </div>
+
     <div class="info-box">
       <div class="info">
         <h3>ak-design基于 Vue3 的可视化低代码快速开发平台</h3>
         <br>
         <div>
-          • 使用基于 Vue 3.0 的桌面端组件库 Elemnet-Plus ，使用广泛，扩展方便
+          • 使用基于 Vue 3.0 的桌面端组件库 Element-Plus ，使用广泛，扩展方便
           <br>
           • 通过可视化的操作，快速完成表单页面、表格列表、列表筛选页面的创建<br>
           • 表格列表页集成常用的时间格式化、字典匹配、Tag标签显示等等<br>
@@ -69,11 +87,10 @@
           • 丰富的API接口，方便快速的生成表单，验证和获取表单数据<br>
           • 一键快速生成表单和列表<br>
           • 代码简洁、易于二次开发 用于学习研究，欢迎交流，微信：<span
-            style="color: red"
-          >337547038</span><br>
+          style="color: red"
+        >337547038</span><br>
           • 如果项目对你有所帮助，请留个赞，以表支持<br>
-          • 如果你对该项目感兴趣，欢迎加入项目建设中来<br>
-          • 如果你有任何建议，请联系我或在评论区留言
+          • 如果你有任何建议，欢迎联系我或在评论区留言
         </div>
         <div><br></div>
       </div>
@@ -84,7 +101,13 @@
 {meta:{permissions:"none"}}
 </route>
 <script setup>
-
+  const openUrlClick = (type) => {
+    let url = 'https://github.com/337547038/flow-dd'
+    if (type === 1) {
+      url = 'https://github.com/337547038/ak-flow'
+    }
+    window.open(url, '_blank')
+  }
 </script>
 <style lang="scss">
   .design-index {
